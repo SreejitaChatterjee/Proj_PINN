@@ -15,19 +15,13 @@ import seaborn as sns
 class ImprovedVisualizer:
     """Updated visualizer for improved PINN results"""
     
-    def __init__(self, improved_model_path, original_model_path, processor):
+    def __init__(self, improved_model_path, processor):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
         # Load improved model
         self.improved_model = ImprovedQuadrotorPINN(input_size=12, hidden_size=128, output_size=16, num_layers=4)
         self.improved_model.load_state_dict(torch.load(improved_model_path, map_location=self.device))
         self.improved_model.eval()
-        
-        # Load original model for comparison
-        from quadrotor_pinn_model import QuadrotorPINN
-        self.original_model = QuadrotorPINN(input_size=12, hidden_size=128, output_size=16, num_layers=4)
-        self.original_model.load_state_dict(torch.load(original_model_path, map_location=self.device))
-        self.original_model.eval()
         
         self.processor = processor
     
@@ -63,7 +57,7 @@ class ImprovedVisualizer:
         return pd.DataFrame(trajectory)
     
     def plot_parameter_comparison(self):
-        """Compare original vs improved model parameters"""
+        """Compare true vs improved model parameters"""
         
         fig, axes = plt.subplots(1, 5, figsize=(20, 5))
         
@@ -74,15 +68,6 @@ class ImprovedVisualizer:
             'Jyy': 9.2e-5,
             'Jzz': 1.366e-4,
             'Gravity': 9.81
-        }
-        
-        # Original model parameters
-        original_params = {
-            'Mass': self.original_model.m.item(),
-            'Jxx': self.original_model.Jxx.item(),
-            'Jyy': self.original_model.Jyy.item(),
-            'Jzz': self.original_model.Jzz.item(),
-            'Gravity': self.original_model.g.item()
         }
         
         # Improved model parameters
@@ -99,9 +84,9 @@ class ImprovedVisualizer:
         for i, param in enumerate(param_names):
             ax = axes[i]
             
-            x = ['True', 'Original\nModel', 'Improved\nModel']
-            y = [true_params[param], original_params[param], improved_params[param]]
-            colors = ['blue', 'red', 'green']
+            x = ['True', 'Improved\nModel']
+            y = [true_params[param], improved_params[param]]
+            colors = ['blue', 'green']
             
             bars = ax.bar(x, y, color=colors, alpha=0.7)
             ax.set_title(f'{param}')
@@ -115,11 +100,10 @@ class ImprovedVisualizer:
             
             ax.grid(True, alpha=0.3)
             
-            # Calculate and show error percentages
-            orig_error = abs(original_params[param] - true_params[param]) / true_params[param] * 100
+            # Calculate and show error percentage
             impr_error = abs(improved_params[param] - true_params[param]) / true_params[param] * 100
             
-            ax.text(0.5, 0.95, f'Orig: {orig_error:.1f}%\nImpr: {impr_error:.1f}%', 
+            ax.text(0.5, 0.95, f'Error: {impr_error:.1f}%', 
                    transform=ax.transAxes, ha='center', va='top', fontsize=8,
                    bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.5))
         
@@ -127,7 +111,7 @@ class ImprovedVisualizer:
         plt.savefig('parameter_comparison_old_vs_new.png', dpi=300, bbox_inches='tight')
         plt.show()
         
-        return true_params, original_params, improved_params
+        return true_params, improved_params
     
     def plot_updated_state_comparison(self, true_data, predicted_data, trajectory_id=0):
         """Updated state comparison with improved predictions"""
@@ -255,9 +239,8 @@ if __name__ == "__main__":
     X, y = processor.prepare_sequences(df)
     processor.fit_transform(X, y)
     
-    # Initialize visualizer with both models
-    visualizer = ImprovedVisualizer('improved_quadrotor_pinn_model.pth', 
-                                   'quadrotor_pinn_model.pth', processor)
+    # Initialize visualizer with improved model
+    visualizer = ImprovedVisualizer('../models/improved_quadrotor_pinn_model.pth', processor)
     
     # Get initial state
     trajectory_0 = df[df['trajectory_id'] == 0].iloc[0].to_dict()
@@ -270,7 +253,7 @@ if __name__ == "__main__":
     print("Creating updated visualizations...")
     
     # Parameter comparison plot
-    true_params, orig_params, impr_params = visualizer.plot_parameter_comparison()
+    true_params, impr_params = visualizer.plot_parameter_comparison()
     
     # Updated state comparison
     visualizer.plot_updated_state_comparison(df, improved_predictions, trajectory_id=0)
@@ -282,18 +265,15 @@ if __name__ == "__main__":
     additional_physics_formulas()
     
     # Summary
-    print(f"\n{'IMPROVEMENT SUMMARY:'}")
+    print(f"\n{'IMPROVED MODEL RESULTS:'}")
     print("=" * 40)
-    print("Parameter Error Reduction:")
+    print("Parameter Accuracy:")
     
     for param in true_params:
-        orig_error = abs(orig_params[param] - true_params[param]) / true_params[param] * 100
         impr_error = abs(impr_params[param] - true_params[param]) / true_params[param] * 100
-        improvement = orig_error - impr_error
-        print(f"{param:<10}: {orig_error:>6.1f}% → {impr_error:>6.1f}% (Δ{improvement:>+6.1f}%)")
+        print(f"{param:<10}: {impr_error:>6.1f}% error")
     
     print(f"\nFiles generated:")
     print("• parameter_comparison_old_vs_new.png")
     print("• improved_state_comparison_trajectory_0.png") 
     print("• improved_predicted_trajectory.csv")
-    print("• improved_training_curves.png")
