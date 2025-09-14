@@ -36,11 +36,11 @@ class EnhancedQuadrotorPINN(nn.Module):
         self.network = nn.Sequential(*layers)
         
         # Physical parameters with tighter bounds
-        self.Jxx = nn.Parameter(torch.tensor(6.86e-5, dtype=torch.float32))
-        self.Jyy = nn.Parameter(torch.tensor(9.2e-5, dtype=torch.float32))  
-        self.Jzz = nn.Parameter(torch.tensor(1.366e-4, dtype=torch.float32))
-        self.m = nn.Parameter(torch.tensor(0.068, dtype=torch.float32))
-        self.g = nn.Parameter(torch.tensor(9.81, dtype=torch.float32))
+        self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
+        self.Jyy = nn.Parameter(torch.tensor(9.2e-5))  
+        self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
+        self.m = nn.Parameter(torch.tensor(0.068))
+        self.g = nn.Parameter(torch.tensor(9.81))
         
         # True parameter values
         self.true_m = 0.068
