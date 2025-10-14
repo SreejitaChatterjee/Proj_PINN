@@ -11,30 +11,32 @@ from torch.utils.data import DataLoader, TensorDataset
 class QuadrotorPINN(nn.Module):
     """Physics-Informed Neural Network for Quadrotor Dynamics"""
     
-    def __init__(self, input_size=12, hidden_size=128, output_size=16, num_layers=4):
+    def __init__(self, input_size=12, hidden_size=128, output_size=18, num_layers=4):
         super(QuadrotorPINN, self).__init__()
-        
+
         self.input_size = input_size
         self.output_size = output_size
-        
+
         # Neural network layers
         layers = []
         layers.append(nn.Linear(input_size, hidden_size))
         layers.append(nn.Tanh())
-        
+
         for _ in range(num_layers - 2):
             layers.append(nn.Linear(hidden_size, hidden_size))
             layers.append(nn.Tanh())
-            
+
         layers.append(nn.Linear(hidden_size, output_size))
-        
+
         self.network = nn.Sequential(*layers)
-        
-        # Physical parameters (learnable)
+
+        # Physical parameters (learnable) - NOW INCLUDING kt and kq
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
-        self.Jyy = nn.Parameter(torch.tensor(9.2e-5))  
+        self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
         self.m = nn.Parameter(torch.tensor(0.068))
+        self.kt = nn.Parameter(torch.tensor(0.01))  # NEW: Thrust coefficient
+        self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # NEW: Torque coefficient
         self.g = nn.Parameter(torch.tensor(9.81))
         
     def forward(self, x):

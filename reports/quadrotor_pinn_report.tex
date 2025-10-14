@@ -107,7 +107,7 @@ This project implements a state-of-the-art Physics-Informed Neural Network (PINN
     \item \textbf{Multi-objective optimization}: Balanced training across multiple performance criteria
 \end{itemize}
 
-The system successfully predicts 12 state variables while identifying 4 critical physical parameters with remarkable accuracy.
+The system successfully predicts 12 state variables while identifying 6 critical physical parameters (mass, inertia tensor components, and motor coefficients) with remarkable accuracy. Training data uses SQUARE WAVE reference inputs to test realistic step response behavior.
 
 \section{Step-by-Step Implementation Process}
 
@@ -119,7 +119,7 @@ The system successfully predicts 12 state variables while identifying 4 critical
 \midrule
 \textbf{1. Quadrotor Model Design} & Defined 12-state dynamics encompassing thrust, position, torques, angles, and rates & Physical model foundation with complete state representation \\
 \addlinespace[3pt]
-\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories featuring different maneuvers and dynamics & 10 × 5,000 samples = 50,000 comprehensive data points \\
+\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with SQUARE WAVE reference inputs for realistic step response testing & 10 × 5,000 samples = 50,000 comprehensive data points \\
 \addlinespace[3pt]
 \textbf{3. Physics Simulation} & Applied Newton-Euler equations with precisely known parameters & Ground truth dynamics dataset for validation \\
 \addlinespace[3pt]
@@ -215,11 +215,11 @@ The system successfully predicts 12 state variables while identifying 4 critical
 \hline
 \textbf{Hidden 3} & 128 & 128 & 16,512 & High-order feature refinement \\
 \hline
-\textbf{Output} & 128 & 16 & 2,064 & Next state + parameter prediction \\
+\textbf{Output} & 128 & 18 & 2,322 & Next state + parameter prediction \\
 \hline
-\textbf{Physics Params} & - & - & 4 & Learnable physical constants \\
+\textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
 \hline
-\textbf{Total} & - & - & \textbf{53,268} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{53,526} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
@@ -289,7 +289,7 @@ The system successfully predicts 12 state variables while identifying 4 critical
 \hline
 \end{longtable}
 
-\textbf{Identified Physical Parameters (4 Variables):}
+\textbf{Identified Physical Parameters (6 Variables):}
 \begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
 \hline
 \textbf{\#} & \textbf{Parameter} & \textbf{Symbol} & \textbf{Units} & \textbf{Physical Description} & \textbf{True Value} \\
@@ -302,11 +302,15 @@ The system successfully predicts 12 state variables while identifying 4 critical
 \hline
 16 & \textbf{inertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ & Moment of inertia (z-axis) & $1.366 \times 10^{-4}$ \\
 \hline
+17 & \textbf{kt} & $k_t$ & - & Thrust coefficient & 0.01 \\
+\hline
+18 & \textbf{kq} & $k_q$ & - & Torque coefficient & $7.8263 \times 10^{-4}$ \\
+\hline
 \end{longtable}
 
 \subsection{PINN Mapping Summary}
 \begin{center}
-\texttt{INPUT VECTOR (12×1) → NEURAL NETWORK → OUTPUT VECTOR (16×1)}
+\texttt{INPUT VECTOR (12×1) → NEURAL NETWORK → OUTPUT VECTOR (18×1)}
 
 \vspace{0.5cm}
 
@@ -319,7 +323,7 @@ $\downarrow$
 
 $\downarrow$
 
-$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{xx}, J_{yy}, J_{zz}]$
+$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]$
 \end{center}
 
 \subsection{Physics-Informed Loss Components}
