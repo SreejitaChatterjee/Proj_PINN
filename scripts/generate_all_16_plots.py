@@ -27,19 +27,31 @@ plt.rcParams.update({
 sns.set_palette("husl", 10)  # 10 distinct colors for 10 trajectories
 
 # Create output directory
-output_dir = Path("detailed_analysis")
-output_dir.mkdir(exist_ok=True)
+output_dir = Path("../visualizations/detailed")
+output_dir.mkdir(exist_ok=True, parents=True)
 
 def load_data():
     """Load training data"""
-    try:
-        df = pd.read_csv('quadrotor_training_data.csv')
-        print(f"Loaded data: {len(df)} samples, {len(df.columns)} columns")
-        print(f"Trajectories: {df['trajectory_id'].nunique()}")
-        return df
-    except FileNotFoundError:
-        print("Error: quadrotor_training_data.csv not found!")
-        return None
+    # Try multiple possible paths
+    possible_paths = [
+        '../data/quadrotor_training_data.csv',
+        'data/quadrotor_training_data.csv',
+        'quadrotor_training_data.csv'
+    ]
+
+    for csv_path in possible_paths:
+        try:
+            df = pd.read_csv(csv_path)
+            print(f"Loaded data from: {csv_path}")
+            print(f"Total samples: {len(df)}")
+            print(f"Columns: {len(df.columns)}")
+            print(f"Trajectories: {df['trajectory_id'].nunique()}")
+            return df
+        except FileNotFoundError:
+            continue
+
+    print("Error: quadrotor_training_data.csv not found in any expected location!")
+    return None
 
 def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
     """Plot individual state variable vs time for all trajectories"""

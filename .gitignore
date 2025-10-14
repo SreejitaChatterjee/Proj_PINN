@@ -1,3 +1,5 @@
 __pycache__/
 *.pyc
 .claude/
+pip_install.log
+*.log
