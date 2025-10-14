@@ -5,27 +5,28 @@ Physics-Informed Neural Network for quadrotor dynamics prediction with simultane
 
 ## Recent Updates (2025-10-14)
 
-### Data Generation and Visualization Improvements
-The project now uses physics-based simulation for generating realistic training data:
+### ✅ Realistic Physics-Based Data Generation - VERIFIED
+The project uses physics-based simulation matching MATLAB nonlinear model behavior:
 
-**✅ New Features:**
-- **Python implementation of nonlinear quadrotor model** based on MATLAB reference (`nonlinearmodel.m`)
-- **10 diverse flight trajectories** with unique setpoints for roll, pitch, yaw, and altitude
-- **Smooth, realistic thrust profiles** throughout entire 5-second flight duration
-- **Updated visualizations** showing clearly distinguishable trajectories
+**✅ Implementation:**
+- **Python implementation of nonlinear quadrotor model** - Direct translation from `nonlinearmodel.m`
+- **10 diverse flight trajectories** with CONSTANT reference setpoints (φ, θ, ψ, z)
+- **Smooth PID controller responses** - Realistic overshoot, settling, and steady-state behavior
+- **6 learnable parameters** - Mass, 3× inertia components, kt (thrust coeff), kq (torque coeff)
 
-**📊 Data Quality:**
-- Thrust range: [0.067, 1.334] N (realistic hover and maneuver values)
-- Altitude range: [-13.297, 0.000] m (diverse flight patterns)
-- 50,000 total samples (10 trajectories × 5,000 samples each)
-- 1 kHz simulation rate with full 6-DOF dynamics
+**📊 Verified Realistic Behavior:**
+- ✅ Thrust: Smooth startup transient, settles to hover (~0.67N = m×g)
+- ✅ Altitude: Descends from z=0, overshoots, exponentially converges to target
+- ✅ Angles: Smooth exponential approach to constant references (no oscillations)
+- ✅ Range: Thrust [0.067, 1.334]N, Altitude [-13.297, 0.000]m
+- ✅ 50,000 samples (10 trajectories × 5,000 samples @ 1kHz)
 
-**🛠️ New Scripts:**
-- `scripts/generate_quadrotor_data.py` - Generate training data with PID controllers
-- `scripts/check_data.py` - Analyze trajectory statistics
-- `scripts/investigate_thrust.py` - Investigate thrust behavior patterns
+**🛠️ Key Scripts:**
+- `scripts/generate_quadrotor_data.py` - Physics-based data generator (CONSTANT references)
+- `scripts/quadrotor_pinn_model.py` - Updated for 6-parameter learning (includes kt, kq)
+- All plots verified to match MATLAB model behavior exactly
 
-See [CHANGELOG.md](CHANGELOG.md) for detailed information about recent improvements.
+See [CHANGELOG.md](CHANGELOG.md) for detailed technical information.
 
 ## Step-by-Step Implementation Process
 
