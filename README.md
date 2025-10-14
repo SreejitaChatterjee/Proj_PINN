@@ -3,6 +3,30 @@
 ## Overview
 Physics-Informed Neural Network for quadrotor dynamics prediction with simultaneous parameter identification. Combines data-driven learning with physical constraints for accurate state prediction.
 
+## Recent Updates (2025-10-14)
+
+### Data Generation and Visualization Improvements
+The project now uses physics-based simulation for generating realistic training data:
+
+**✅ New Features:**
+- **Python implementation of nonlinear quadrotor model** based on MATLAB reference (`nonlinearmodel.m`)
+- **10 diverse flight trajectories** with unique setpoints for roll, pitch, yaw, and altitude
+- **Smooth, realistic thrust profiles** throughout entire 5-second flight duration
+- **Updated visualizations** showing clearly distinguishable trajectories
+
+**📊 Data Quality:**
+- Thrust range: [0.067, 1.334] N (realistic hover and maneuver values)
+- Altitude range: [-13.297, 0.000] m (diverse flight patterns)
+- 50,000 total samples (10 trajectories × 5,000 samples each)
+- 1 kHz simulation rate with full 6-DOF dynamics
+
+**🛠️ New Scripts:**
+- `scripts/generate_quadrotor_data.py` - Generate training data with PID controllers
+- `scripts/check_data.py` - Analyze trajectory statistics
+- `scripts/investigate_thrust.py` - Investigate thrust behavior patterns
+
+See [CHANGELOG.md](CHANGELOG.md) for detailed information about recent improvements.
+
 ## Step-by-Step Implementation Process
 
 ### Phase 1: Data Generation & Preparation
