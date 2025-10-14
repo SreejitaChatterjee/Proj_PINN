@@ -166,7 +166,7 @@ class QuadrotorSimulator:
             if z > 0:
                 break
 
-            # Store data
+            # Store data (including kt and kq for PINN learning)
             data.append({
                 'timestamp': i * dt,
                 'thrust': T,
@@ -186,7 +186,9 @@ class QuadrotorSimulator:
                 'mass': self.m,
                 'inertia_xx': self.Jxx,
                 'inertia_yy': self.Jyy,
-                'inertia_zz': self.Jzz
+                'inertia_zz': self.Jzz,
+                'kt': self.kt,  # Thrust coefficient
+                'kq': self.kq   # Torque coefficient
             })
 
         return pd.DataFrame(data)
