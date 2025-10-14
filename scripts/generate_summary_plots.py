@@ -41,13 +41,24 @@ colors = plt.cm.tab10(np.linspace(0, 1, 10))
 
 def load_data():
     """Load training data"""
-    try:
-        df = pd.read_csv('quadrotor_training_data.csv')
-        print(f"Loaded data: {len(df)} samples, {len(df.columns)} columns")
-        return df
-    except FileNotFoundError:
-        print("Error: quadrotor_training_data.csv not found!")
-        return None
+    # Try multiple possible paths
+    possible_paths = [
+        '../data/quadrotor_training_data.csv',
+        'data/quadrotor_training_data.csv',
+        'quadrotor_training_data.csv'
+    ]
+
+    for csv_path in possible_paths:
+        try:
+            df = pd.read_csv(csv_path)
+            print(f"Loaded data from: {csv_path}")
+            print(f"Total samples: {len(df)}, Columns: {len(df.columns)}")
+            return df
+        except FileNotFoundError:
+            continue
+
+    print("Error: quadrotor_training_data.csv not found in any expected location!")
+    return None
 
 def plot_01_complete_analysis(df):
     """01: All outputs complete analysis - 4x4 grid of all 16 outputs"""
