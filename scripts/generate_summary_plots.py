@@ -93,7 +93,7 @@ def plot_01_complete_analysis(df):
 
         if var_name in df.columns and idx < 12:  # State variables
             # Plot only representative trajectory
-            traj_id = 0
+            traj_id = 2
             traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             if len(traj_data) > 0:
                 ax.plot(traj_data['timestamp'], traj_data[var_name],
@@ -147,7 +147,7 @@ def plot_02_key_flight_variables(df):
         ax = axes[row, col]
 
         # Plot only representative trajectory
-        traj_id = 0
+        traj_id = 2
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
             ax.plot(traj_data['timestamp'], traj_data[var_name],
@@ -239,7 +239,7 @@ def plot_04_control_inputs(df):
         ax = axes[row, col]
 
         # Plot only representative trajectory
-        traj_id = 0
+        traj_id = 2
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
             ax.plot(traj_data['timestamp'], traj_data[var_name],

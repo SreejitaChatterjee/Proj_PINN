@@ -57,8 +57,8 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
     """Plot individual state variable vs time for a representative trajectory"""
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # Plot only trajectory 0 as representative example
-    traj_id = 0
+    # Plot only trajectory 2 as representative example (smoother profile)
+    traj_id = 2
     traj_data = df[df['trajectory_id'] == traj_id].copy()
     traj_data = traj_data.sort_values('timestamp')
 
@@ -75,11 +75,11 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
     # Add simple legend
     ax.legend(loc='best', fontsize=10, framealpha=0.8)
 
-    # Add statistics box
-    mean_val = df[variable_name].mean()
-    std_val = df[variable_name].std()
-    min_val = df[variable_name].min()
-    max_val = df[variable_name].max()
+    # Add statistics box for this trajectory only
+    mean_val = traj_data[variable_name].mean()
+    std_val = traj_data[variable_name].std()
+    min_val = traj_data[variable_name].min()
+    max_val = traj_data[variable_name].max()
 
     stats_text = f'Mean: {mean_val:.4f}\nStd: {std_val:.4f}\nRange: [{min_val:.4f}, {max_val:.4f}]'
     ax.text(0.02, 0.98, stats_text, transform=ax.transAxes,
