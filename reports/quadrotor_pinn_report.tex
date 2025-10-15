@@ -189,7 +189,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \midrule
 \textbf{21. Comprehensive Plotting} & Generated all 16 individual output visualizations over time with detailed analysis & 5 essential analysis plots plus 16 detailed time-series \\
 \addlinespace[3pt]
-\textbf{22. Color-Coded Trajectories} & Implemented distinct color visualization for each flight path trajectory & Clear trajectory differentiation and pattern recognition \\
+\textbf{22. Clean Visualization} & Implemented single representative trajectory plots with professional styling & Clear, uncluttered visual presentation \\
 \addlinespace[3pt]
 \textbf{23. Performance Metrics} & Calculated comprehensive MAE, RMSE, and correlation metrics for all outputs & Complete numerical validation and statistical analysis \\
 \addlinespace[3pt]
@@ -488,13 +488,13 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \section{All 16 Outputs Time-Series Analysis}
 
 \subsection{State Variable Time-Domain Results}
-Individual time-series analysis was performed for all 12 state variables, showing behavior across 10 different flight trajectories over 5-second durations:
+Individual time-series analysis was performed for all 12 state variables, showing behavior of a representative flight trajectory over a 5-second duration:
 
 \textbf{Control and Position Variables:}
 \begin{itemize}
-\item Thrust force trajectories demonstrate smooth control transitions
-\item Altitude (z-position) shows diverse flight patterns from hover to aggressive maneuvers
-\item All trajectories maintain physical consistency with realistic quadrotor behavior
+\item Thrust force trajectory demonstrates smooth control transitions
+\item Altitude (z-position) shows realistic flight pattern with controlled descent
+\item The representative trajectory maintains physical consistency with realistic quadrotor behavior
 \end{itemize}
 
 \textbf{Torque and Attitude Dynamics:}
@@ -546,7 +546,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{detailed_analysis/01_thrust_time_analysis.png}
-\caption{Thrust Force vs Time - Multiple flight trajectories showing control input variations across different maneuvers over 5-second duration.}
+\caption{Thrust Force vs Time - Representative flight trajectory showing smooth control transitions and realistic thrust dynamics over 5-second duration.}
 \label{fig:thrust_analysis}
 \end{figure}
 
@@ -581,14 +581,14 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{detailed_analysis/06_roll_time_analysis.png}
-\caption{Roll Angle vs Time - Banking angles across multiple trajectories showing attitude control performance.}
+\caption{Roll Angle vs Time - Banking angle showing smooth attitude control performance in representative flight.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{detailed_analysis/07_pitch_time_analysis.png}
-\caption{Pitch Angle vs Time - Nose-up/down attitudes demonstrating longitudinal control across flight phases.}
+\caption{Pitch Angle vs Time - Nose-up/down attitude demonstrating longitudinal control in representative flight.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
@@ -670,7 +670,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{02_key_flight_variables.png}
-\caption{Key Flight Variables Analysis - Critical quadrotor states (altitude, thrust, attitudes, rates) across multiple flight trajectories.}
+\caption{Key Flight Variables Analysis - Critical quadrotor states (altitude, thrust, attitudes, rates) from representative flight trajectory.}
 \label{fig:key_variables}
 \end{figure}
 
