@@ -54,26 +54,26 @@ def load_data():
     return None
 
 def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
-    """Plot individual state variable vs time for all trajectories"""
+    """Plot individual state variable vs time for a representative trajectory"""
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # Plot each trajectory with different color
-    for traj_id in sorted(df['trajectory_id'].unique()):
-        traj_data = df[df['trajectory_id'] == traj_id].copy()
-        traj_data = traj_data.sort_values('timestamp')
+    # Plot only trajectory 0 as representative example
+    traj_id = 0
+    traj_data = df[df['trajectory_id'] == traj_id].copy()
+    traj_data = traj_data.sort_values('timestamp')
 
-        ax.plot(traj_data['timestamp'], traj_data[variable_name],
-                linewidth=2, alpha=0.8, label=f'Trajectory {traj_id}')
+    ax.plot(traj_data['timestamp'], traj_data[variable_name],
+            linewidth=2.5, alpha=0.9, color='steelblue', label=f'Representative Trajectory')
 
     ax.set_xlabel('Time (seconds)', fontsize=14, fontweight='bold')
     ax.set_ylabel(f'{ylabel} [{units}]', fontsize=14, fontweight='bold')
-    ax.set_title(f'{title}\nMultiple Flight Trajectories Over Time',
+    ax.set_title(f'{title}\nSingle Representative Flight Trajectory',
                 fontsize=16, fontweight='bold', pad=20)
 
     ax.grid(True, alpha=0.3)
 
-    # Add legend to identify trajectories
-    ax.legend(loc='best', fontsize=9, framealpha=0.8, ncol=2)
+    # Add simple legend
+    ax.legend(loc='best', fontsize=10, framealpha=0.8)
 
     # Add statistics box
     mean_val = df[variable_name].mean()
