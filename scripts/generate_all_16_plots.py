@@ -63,7 +63,7 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
         traj_data = traj_data.sort_values('timestamp')
 
         ax.plot(traj_data['timestamp'], traj_data[variable_name],
-                linewidth=2, alpha=0.8)
+                linewidth=2, alpha=0.8, label=f'Trajectory {traj_id}')
 
     ax.set_xlabel('Time (seconds)', fontsize=14, fontweight='bold')
     ax.set_ylabel(f'{ylabel} [{units}]', fontsize=14, fontweight='bold')
@@ -71,6 +71,9 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
                 fontsize=16, fontweight='bold', pad=20)
 
     ax.grid(True, alpha=0.3)
+
+    # Add legend to identify trajectories
+    ax.legend(loc='best', fontsize=9, framealpha=0.8, ncol=2)
 
     # Add statistics box
     mean_val = df[variable_name].mean()

@@ -97,7 +97,7 @@ def plot_01_complete_analysis(df):
                 traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
                 if len(traj_data) > 0:
                     ax.plot(traj_data['timestamp'], traj_data[var_name],
-                           color=colors[traj_id], alpha=0.7, linewidth=1.5)
+                           color=colors[traj_id], alpha=0.7, linewidth=1.5, label=f'Traj {traj_id}')
         elif idx >= 12:  # Physical parameters - show convergence
             # Simulate parameter convergence
             epochs = np.arange(0, 100)
@@ -118,6 +118,9 @@ def plot_01_complete_analysis(df):
         if idx < 12:
             ax.set_xlabel('Time [s]')
             ax.set_xlim(0, 5)
+            # Add small legend only for first few plots to avoid clutter
+            if idx < 2:
+                ax.legend(fontsize=6, loc='best', ncol=5, framealpha=0.7)
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
@@ -146,12 +149,12 @@ def plot_02_key_flight_variables(df):
         row, col = idx // 3, idx % 3
         ax = axes[row, col]
 
-        # Plot all trajectories (no labels - they're meaningless)
+        # Plot all trajectories with legend
         for traj_id in range(10):
             traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             if len(traj_data) > 0:
                 ax.plot(traj_data['timestamp'], traj_data[var_name],
-                       color=colors[traj_id], alpha=0.8, linewidth=2)
+                       color=colors[traj_id], alpha=0.8, linewidth=2, label=f'Traj {traj_id}')
 
         ax.set_xlabel('Time [s]', fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
@@ -159,6 +162,11 @@ def plot_02_key_flight_variables(df):
         ax.grid(True, alpha=0.3)
         ax.patch.set_alpha(0.0)  # Make axes background transparent
         ax.set_xlim(0, 5)
+
+        # Add legend to first plot only (applies to all since same colors)
+        if idx == 0:
+            ax.legend(fontsize=8, loc='best', ncol=2, framealpha=0.8)
+
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
@@ -238,12 +246,12 @@ def plot_04_control_inputs(df):
         row, col = idx // 2, idx % 2
         ax = axes[row, col]
 
-        # Plot all trajectories with consistent styling (no artificial grouping)
+        # Plot all trajectories with legend
         for traj_id in range(10):
             traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             if len(traj_data) > 0:
                 ax.plot(traj_data['timestamp'], traj_data[var_name],
-                       color=colors[traj_id], alpha=0.7, linewidth=2)
+                       color=colors[traj_id], alpha=0.7, linewidth=2, label=f'Traj {traj_id}')
 
         ax.set_xlabel('Time [s]', fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
@@ -251,7 +259,11 @@ def plot_04_control_inputs(df):
         ax.grid(True, alpha=0.3)
         ax.patch.set_alpha(0.0)  # Make axes background transparent
         ax.set_xlim(0, 5)
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
+
+        # Add legend to first plot only
+        if idx == 0:
+            ax.legend(fontsize=8, loc='best', ncol=2, framealpha=0.8)
+
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
