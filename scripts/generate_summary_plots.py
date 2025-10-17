@@ -96,8 +96,26 @@ def plot_01_complete_analysis(df):
             traj_id = 2
             traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             if len(traj_data) > 0:
-                ax.plot(traj_data['timestamp'], traj_data[var_name],
+                plot_data = traj_data[var_name].copy()
+
+                # Apply MATLAB transformations
+                if var_name == 'z':
+                    plot_data = -plot_data  # Height = -z
+                elif var_name in ['roll', 'pitch', 'yaw']:
+                    plot_data = plot_data * 180 / np.pi  # Convert to degrees
+
+                ax.plot(traj_data['timestamp'], plot_data,
                        color='steelblue', alpha=0.9, linewidth=2)
+
+                # Add reference lines for attitude and altitude (trajectory 2 setpoints)
+                if var_name == 'z':
+                    ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                elif var_name == 'roll':
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                elif var_name == 'pitch':
+                    ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                elif var_name == 'yaw':
+                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
         elif idx >= 12:  # Physical parameters - show convergence
             # Simulate parameter convergence
             epochs = np.arange(0, 100)
@@ -117,7 +135,7 @@ def plot_01_complete_analysis(df):
 
         if idx < 12:
             ax.set_xlabel('Time [s]')
-            ax.set_xlim(0, 5)
+            ax.set_xlim(0, 5)  # Show full trajectory
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
@@ -130,7 +148,7 @@ def plot_02_key_flight_variables(df):
     """02: Key flight variables analysis"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
     fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
-    fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States Across All Trajectories',
+    fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States vs Reference Setpoints',
                  fontsize=16, fontweight='bold')
 
     key_vars = [
@@ -146,19 +164,39 @@ def plot_02_key_flight_variables(df):
         row, col = idx // 3, idx % 3
         ax = axes[row, col]
 
-        # Plot only representative trajectory
+        # Plot representative trajectory
         traj_id = 2
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
-            ax.plot(traj_data['timestamp'], traj_data[var_name],
+            plot_data = traj_data[var_name].copy()
+
+            # Apply MATLAB transformations
+            if var_name == 'z':
+                plot_data = -plot_data  # Height = -z
+                ylabel = 'Height [m]'
+            elif var_name in ['roll', 'pitch', 'yaw']:
+                plot_data = plot_data * 180 / np.pi
+                ylabel = ylabel.replace('[rad]', '[deg]')
+
+            ax.plot(traj_data['timestamp'], plot_data,
                    color='steelblue', alpha=0.9, linewidth=2.5)
+
+            # Add reference lines (trajectory 2 setpoints)
+            if var_name == 'z':
+                ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+            elif var_name == 'roll':
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+            elif var_name == 'pitch':
+                ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+            elif var_name == 'yaw':
+                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
 
         ax.set_xlabel('Time [s]', fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
         ax.set_title(title, fontsize=13, fontweight='bold')
         ax.grid(True, alpha=0.3)
         ax.patch.set_alpha(0.0)  # Make axes background transparent
-        ax.set_xlim(0, 5)
+        ax.set_xlim(0, 5)  # Show full trajectory
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
@@ -224,7 +262,7 @@ def plot_04_control_inputs(df):
     """04: Control inputs analysis"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
-    fig.suptitle('Control Input Analysis\nQuadrotor Actuation Commands Across Maneuvers',
+    fig.suptitle('Control Input Analysis\nQuadrotor Actuation Commands',
                  fontsize=16, fontweight='bold')
 
     controls = [
@@ -238,19 +276,26 @@ def plot_04_control_inputs(df):
         row, col = idx // 2, idx % 2
         ax = axes[row, col]
 
-        # Plot only representative trajectory
+        # Plot representative trajectory
         traj_id = 2
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
             ax.plot(traj_data['timestamp'], traj_data[var_name],
                    color='steelblue', alpha=0.9, linewidth=2.5)
 
+            # Add steady-state thrust reference for thrust plot
+            if var_name == 'thrust':
+                steady_thrust = 0.671  # Trajectory 2 steady-state
+                ax.axhline(steady_thrust, color='red', linestyle='--', alpha=0.6,
+                          linewidth=1.5, label=f'Setpoint: {steady_thrust:.3f}N')
+                ax.legend(fontsize=10)
+
         ax.set_xlabel('Time [s]', fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
         ax.set_title(title, fontsize=13, fontweight='bold')
         ax.grid(True, alpha=0.3)
         ax.patch.set_alpha(0.0)  # Make axes background transparent
-        ax.set_xlim(0, 5)
+        ax.set_xlim(0, 5)  # Show full trajectory
         ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()

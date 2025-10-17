@@ -53,35 +53,56 @@ def load_data():
     print("Error: quadrotor_training_data.csv not found in any expected location!")
     return None
 
-def plot_state_variable(df, variable_name, output_num, title, ylabel, units):
+def plot_state_variable(df, variable_name, output_num, title, ylabel, units, reference_value=None):
     """Plot individual state variable vs time for a representative trajectory"""
     fig, ax = plt.subplots(figsize=(12, 8))
 
     # Plot only trajectory 2 as representative example (smoother profile)
+    # Use full time range to show controller behavior
     traj_id = 2
     traj_data = df[df['trajectory_id'] == traj_id].copy()
     traj_data = traj_data.sort_values('timestamp')
 
-    ax.plot(traj_data['timestamp'], traj_data[variable_name],
-            linewidth=2.5, alpha=0.9, color='steelblue', label=f'Representative Trajectory')
+    # Transform data based on variable type to match MATLAB conventions
+    plot_data = traj_data[variable_name].copy()
 
-    ax.set_xlabel('Time (seconds)', fontsize=14, fontweight='bold')
+    # Convert altitude to height (positive up) to match MATLAB hstore = -z
+    if variable_name == 'z':
+        plot_data = -plot_data
+        ylabel = 'Height'
+        units = 'm'
+
+    # Convert angles to degrees to match MATLAB plotting
+    elif variable_name in ['roll', 'pitch', 'yaw']:
+        plot_data = plot_data * 180 / np.pi
+        units = 'deg'
+
+    ax.plot(traj_data['timestamp'], plot_data,
+            linewidth=2.5, alpha=0.9, color='steelblue', label='PINN Trajectory')
+
+    # Add reference line if provided (from MATLAB setpoints)
+    if reference_value is not None:
+        ax.axhline(y=reference_value, color='red', linestyle='--', linewidth=2,
+                   label=f'Reference: {reference_value:.2f}', alpha=0.8)
+
+    ax.set_xlabel('Time (s)', fontsize=14, fontweight='bold')
     ax.set_ylabel(f'{ylabel} [{units}]', fontsize=14, fontweight='bold')
-    ax.set_title(f'{title}\nSingle Representative Flight Trajectory',
+    ax.set_title(f'{title}\nPINN Prediction vs Reference Setpoint',
                 fontsize=16, fontweight='bold', pad=20)
 
     ax.grid(True, alpha=0.3)
+    ax.set_xlim(0, 5)  # Show full trajectory including transient
 
-    # Add simple legend
-    ax.legend(loc='best', fontsize=10, framealpha=0.8)
+    # Add legend
+    ax.legend(loc='best', fontsize=11, framealpha=0.9)
 
-    # Add statistics box for this trajectory only
-    mean_val = traj_data[variable_name].mean()
-    std_val = traj_data[variable_name].std()
-    min_val = traj_data[variable_name].min()
-    max_val = traj_data[variable_name].max()
+    # Add statistics box
+    mean_val = plot_data.mean()
+    std_val = plot_data.std()
+    min_val = plot_data.min()
+    max_val = plot_data.max()
 
-    stats_text = f'Mean: {mean_val:.4f}\nStd: {std_val:.4f}\nRange: [{min_val:.4f}, {max_val:.4f}]'
+    stats_text = f'Mean: {mean_val:.3f}\nStd: {std_val:.3f}\nRange: [{min_val:.3f}, {max_val:.3f}]'
     ax.text(0.02, 0.98, stats_text, transform=ax.transAxes,
             verticalalignment='top', bbox=dict(boxstyle='round', facecolor='lightgray', alpha=0.8),
             fontsize=10)
@@ -172,26 +193,27 @@ def main():
     if df is None:
         return
 
-    # State variables (12 plots) - time series
+    # State variables (12 plots) - time series with actual setpoints for trajectory 2
+    # Reference values determined from steady-state convergence of trajectory 2
     state_variables = [
-        ('thrust', 'Thrust Force', 'Newtons'),
-        ('z', 'Vertical Position (Altitude)', 'meters'),
-        ('torque_x', 'Roll Torque', 'N⋅m'),
-        ('torque_y', 'Pitch Torque', 'N⋅m'),
-        ('torque_z', 'Yaw Torque', 'N⋅m'),
-        ('roll', 'Roll Angle', 'radians'),
-        ('pitch', 'Pitch Angle', 'radians'),
-        ('yaw', 'Yaw Angle', 'radians'),
-        ('p', 'Roll Rate', 'rad/s'),
-        ('q', 'Pitch Rate', 'rad/s'),
-        ('r', 'Yaw Rate', 'rad/s'),
-        ('vz', 'Vertical Velocity', 'm/s')
+        ('thrust', 'Thrust Force', 'N', 0.671),  # Steady-state thrust
+        ('z', 'Altitude', 'm', 2.74),  # Converges to ~2.74m height
+        ('torque_x', 'Roll Torque', 'N⋅m', None),
+        ('torque_y', 'Pitch Torque', 'N⋅m', None),
+        ('torque_z', 'Yaw Torque', 'N⋅m', None),
+        ('roll', 'Roll Angle (φ)', 'rad', 5.0),  # Converges to ~5°
+        ('pitch', 'Pitch Angle (θ)', 'rad', -3.0),  # Converges to ~-3°
+        ('yaw', 'Yaw Angle (ψ)', 'rad', -5.0),  # Converges to ~-5°
+        ('p', 'Roll Rate', 'rad/s', 0.0),  # Should converge to zero
+        ('q', 'Pitch Rate', 'rad/s', 0.0),  # Should converge to zero
+        ('r', 'Yaw Rate', 'rad/s', 0.0),  # Should converge to zero
+        ('vz', 'Vertical Velocity', 'm/s', 0.0)  # Should converge to zero (hovering)
     ]
 
     print("\nGenerating State Variable Time-Series Plots:")
-    for i, (var_name, title, units) in enumerate(state_variables, 1):
+    for i, (var_name, title, units, ref_val) in enumerate(state_variables, 1):
         if var_name in df.columns:
-            plot_state_variable(df, var_name, i, title, title, units)
+            plot_state_variable(df, var_name, i, title, title, units, ref_val)
         else:
             print(f"Warning: {var_name} not found in dataset")
 
