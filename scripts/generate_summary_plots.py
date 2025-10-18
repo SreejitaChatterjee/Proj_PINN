@@ -68,7 +68,7 @@ def plot_01_complete_analysis(df):
     """01: All outputs complete analysis - 4x4 grid of all 16 outputs"""
     fig, axes = plt.subplots(4, 4, figsize=(20, 16))
     fig.suptitle('Complete PINN Analysis: All 16 Outputs vs Time\nPhysics-Informed Neural Network Performance',
-                 fontsize=18, fontweight='bold', y=0.95)
+                 fontsize=18, fontweight='bold', y=0.95, color='black')
 
     # Define all 16 outputs with their properties
     outputs = [
@@ -152,7 +152,7 @@ def plot_02_key_flight_variables(df):
     """02: Key flight variables analysis"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
     fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States vs Reference Setpoints',
-                 fontsize=16, fontweight='bold')
+                 fontsize=16, fontweight='bold', color='black')
 
     key_vars = [
         ('z', 'Altitude [m]', 'Position Control'),
@@ -210,7 +210,7 @@ def plot_03_physical_parameters(df):
     """03: Physical parameters analysis"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.suptitle('Physical Parameter Identification Results\nPINN Learning of Quadrotor Properties',
-                 fontsize=16, fontweight='bold')
+                 fontsize=16, fontweight='bold', color='black')
 
     # Parameter data - use consistent final values that converge to true
     params = [
@@ -266,7 +266,7 @@ def plot_04_control_inputs(df):
     """04: Control inputs analysis"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
     fig.suptitle('Control Input Analysis\nQuadrotor Actuation Commands',
-                 fontsize=16, fontweight='bold')
+                 fontsize=16, fontweight='bold', color='black')
 
     controls = [
         ('thrust', 'Thrust Force [N]', 'Primary Control'),
@@ -309,7 +309,7 @@ def plot_05_model_statistics(df):
     """05: Model performance statistics"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
     fig.suptitle('Model Performance Statistics\nPINN Accuracy and Physics Compliance Analysis',
-                 fontsize=16, fontweight='bold')
+                 fontsize=16, fontweight='bold', color='black')
 
     # Performance metrics from your results
     variables = ['Thrust', 'Altitude', 'Roll', 'Pitch', 'Yaw', 'Rates']
@@ -320,33 +320,39 @@ def plot_05_model_statistics(df):
     # Plot 1: MAE comparison
     ax1 = axes[0, 0]
     bars1 = ax1.bar(variables, mae_values, color='skyblue', alpha=0.8, edgecolor='navy')
-    ax1.set_ylabel('Mean Absolute Error')
-    ax1.set_title('Prediction Accuracy (MAE)', fontweight='bold')
-    ax1.tick_params(axis='x', rotation=45)
+    ax1.set_ylabel('Mean Absolute Error', fontsize=12, fontweight='bold', color='black')
+    ax1.set_title('Prediction Accuracy (MAE)', fontsize=13, fontweight='bold', color='black')
+    ax1.tick_params(axis='x', rotation=45, colors='black')
+    ax1.tick_params(axis='y', colors='black')
+    ax1.grid(True, alpha=0.3)
     for bar, val in zip(bars1, mae_values):
         ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + max(mae_values)*0.01,
-                f'{val:.3f}', ha='center', fontweight='bold')
+                f'{val:.3f}', ha='center', fontweight='bold', color='black')
 
     # Plot 2: RMSE comparison
     ax2 = axes[0, 1]
     bars2 = ax2.bar(variables, rmse_values, color='lightcoral', alpha=0.8, edgecolor='darkred')
-    ax2.set_ylabel('Root Mean Square Error')
-    ax2.set_title('Prediction Precision (RMSE)', fontweight='bold')
-    ax2.tick_params(axis='x', rotation=45)
+    ax2.set_ylabel('Root Mean Square Error', fontsize=12, fontweight='bold', color='black')
+    ax2.set_title('Prediction Precision (RMSE)', fontsize=13, fontweight='bold', color='black')
+    ax2.tick_params(axis='x', rotation=45, colors='black')
+    ax2.tick_params(axis='y', colors='black')
+    ax2.grid(True, alpha=0.3)
     for bar, val in zip(bars2, rmse_values):
         ax2.text(bar.get_x() + bar.get_width()/2, bar.get_height() + max(rmse_values)*0.01,
-                f'{val:.3f}', ha='center', fontweight='bold')
+                f'{val:.3f}', ha='center', fontweight='bold', color='black')
 
     # Plot 3: Correlation comparison
     ax3 = axes[0, 2]
     bars3 = ax3.bar(variables, correlations, color='steelblue', alpha=0.8, edgecolor='darkblue')
-    ax3.set_ylabel('Correlation Coefficient')
-    ax3.set_title('Prediction Correlation', fontweight='bold')
+    ax3.set_ylabel('Correlation Coefficient', fontsize=12, fontweight='bold', color='black')
+    ax3.set_title('Prediction Correlation', fontsize=13, fontweight='bold', color='black')
     ax3.set_ylim(0.8, 1.0)
-    ax3.tick_params(axis='x', rotation=45)
+    ax3.tick_params(axis='x', rotation=45, colors='black')
+    ax3.tick_params(axis='y', colors='black')
+    ax3.grid(True, alpha=0.3)
     for bar, val in zip(bars3, correlations):
         ax3.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.005,
-                f'{val:.3f}', ha='center', fontweight='bold')
+                f'{val:.3f}', ha='center', fontweight='bold', color='black')
 
     # Plot 4: Training convergence
     ax4 = axes[1, 0]
@@ -358,9 +364,10 @@ def plot_05_model_statistics(df):
     ax4.semilogy(epochs, train_loss, 'b-', label='Training Loss', linewidth=2)
     ax4.semilogy(epochs, val_loss, 'r-', label='Validation Loss', linewidth=2)
     ax4.semilogy(epochs, physics_loss, 'purple', label='Physics Loss', linewidth=2)
-    ax4.set_xlabel('Training Epoch')
-    ax4.set_ylabel('Loss (Log Scale)')
-    ax4.set_title('Training Convergence', fontweight='bold')
+    ax4.set_xlabel('Training Epoch', fontsize=12, fontweight='bold', color='black')
+    ax4.set_ylabel('Loss (Log Scale)', fontsize=12, fontweight='bold', color='black')
+    ax4.set_title('Training Convergence', fontsize=13, fontweight='bold', color='black')
+    ax4.tick_params(colors='black', which='both')
     ax4.legend()
     ax4.grid(True, alpha=0.3)
 
@@ -376,12 +383,15 @@ def plot_05_model_statistics(df):
     bars_epoch = ax5_twin.bar([x+0.2 for x in range(len(models))], epochs_conv,
                              width=0.4, color='purple', alpha=0.8, label='Convergence Epochs')
 
-    ax5.set_xlabel('Model Variant')
-    ax5.set_ylabel('Parameter Error (%)', color='orange')
-    ax5_twin.set_ylabel('Convergence Epochs', color='purple')
-    ax5.set_title('Model Performance Comparison', fontweight='bold')
+    ax5.set_xlabel('Model Variant', fontsize=12, fontweight='bold', color='black')
+    ax5.set_ylabel('Parameter Error (%)', fontsize=12, fontweight='bold', color='black')
+    ax5_twin.set_ylabel('Convergence Epochs', fontsize=12, fontweight='bold', color='black')
+    ax5.set_title('Model Performance Comparison', fontsize=13, fontweight='bold', color='black')
     ax5.set_xticks(range(len(models)))
     ax5.set_xticklabels(models)
+    ax5.tick_params(colors='black', which='both')
+    ax5_twin.tick_params(colors='black', which='both')
+    ax5.grid(True, alpha=0.3)
 
     # Plot 6: Physics compliance
     ax6 = axes[1, 2]
@@ -389,8 +399,12 @@ def plot_05_model_statistics(df):
     compliance = [90.2, 95.1, 97.9, 94.7]
 
     wedges, texts, autotexts = ax6.pie(compliance, labels=physics_metrics, autopct='%1.1f%%',
-                                      colors=['lightblue', 'lightcoral', 'lightyellow', 'lightpink'])
-    ax6.set_title('Physics Compliance (%)', fontweight='bold')
+                                      colors=['lightblue', 'lightcoral', 'lightyellow', 'lightpink'],
+                                      textprops={'fontweight': 'bold', 'color': 'black'})
+    for autotext in autotexts:
+        autotext.set_color('black')
+        autotext.set_fontweight('bold')
+    ax6.set_title('Physics Compliance (%)', fontsize=13, fontweight='bold', color='black')
 
 
     plt.tight_layout()
