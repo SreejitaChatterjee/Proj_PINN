@@ -107,7 +107,7 @@ This project implements a state-of-the-art Physics-Informed Neural Network (PINN
     \item \textbf{Multi-objective optimization}: Balanced training across multiple performance criteria
 \end{itemize}
 
-The system successfully predicts 12 state variables while identifying 6 critical physical parameters (mass, inertia tensor components, and motor coefficients) with remarkable accuracy. Training data uses SQUARE WAVE reference inputs to test realistic step response behavior.
+The system successfully predicts 12 state variables while identifying 4 critical physical parameters (mass and inertia tensor components) with good accuracy (4-7\% error). Training data uses SQUARE WAVE reference inputs to test realistic step response behavior.
 
 \section{Step-by-Step Implementation Process}
 
@@ -135,7 +135,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Achievement} \\
 \midrule
-\textbf{6. Network Design} & 4-layer architecture with 128 neurons each, implementing 12$\rightarrow$16 state mapping & 53,268 parameter deep network architecture \\
+\textbf{6. Network Design} & 4-layer architecture with 128 neurons each, implementing 12$\rightarrow$16 mapping (next states + parameters) & 53,380 total trainable parameters \\
 \addlinespace[3pt]
 \textbf{7. Physics Integration} & Embedded Newton-Euler equations directly into the loss function computation & Multi-objective training with physics constraints \\
 \addlinespace[3pt]
@@ -215,11 +215,11 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \textbf{Hidden 3} & 128 & 128 & 16,512 & High-order feature refinement \\
 \hline
-\textbf{Output} & 128 & 18 & 2,322 & Next state + parameter prediction \\
+\textbf{Output} & 128 & 16 & 2,176 & Next state + parameter prediction \\
 \hline
-\textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
+\textbf{Physics Params} & - & - & 4 & Learnable physical constants (m, Jxx, Jyy, Jzz) \\
 \hline
-\textbf{Total} & - & - & \textbf{53,526} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{53,380} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
@@ -259,6 +259,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \subsubsection{Outputs from PINN Model (16 Variables)}
 
 \textbf{Predicted Next States (12 Variables):}
+\textit{The PINN predicts the state vector at the next timestep $(t+1)$ given current state at time $t$.}
 \begin{longtable}{|p{0.05\textwidth}|p{0.2\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.4\textwidth}|}
 \hline
 \textbf{\#} & \textbf{Output Variable} & \textbf{Symbol} & \textbf{Units} & \textbf{Prediction Description} \\
@@ -289,7 +290,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \end{longtable}
 
-\textbf{Identified Physical Parameters (6 Variables):}
+\textbf{Identified Physical Parameters (4 Variables):}
+\textit{These parameters are learned as trainable nn.Parameter tensors during PINN training.}
 \begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
 \hline
 \textbf{\#} & \textbf{Parameter} & \textbf{Symbol} & \textbf{Units} & \textbf{Physical Description} & \textbf{True Value} \\
@@ -302,15 +304,13 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 16 & \textbf{inertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ & Moment of inertia (z-axis) & $1.366 \times 10^{-4}$ \\
 \hline
-17 & \textbf{kt} & $k_t$ & - & Thrust coefficient & 0.01 \\
-\hline
-18 & \textbf{kq} & $k_q$ & - & Torque coefficient & $7.8263 \times 10^{-4}$ \\
-\hline
 \end{longtable}
+
+\textbf{Note on Motor Coefficients:} The thrust coefficient ($k_t$) and torque coefficient ($k_q$) are used in the MATLAB simulation to convert motor speeds to forces/torques, but are not learned by the PINN. The PINN directly learns thrust and torque dynamics from the data, making $k_t$ and $k_q$ unnecessary for the neural network's prediction task.
 
 \subsection{PINN Mapping Summary}
 \begin{center}
-\texttt{INPUT VECTOR (12×1) → NEURAL NETWORK → OUTPUT VECTOR (18×1)}
+\texttt{INPUT VECTOR (12×1) → NEURAL NETWORK → OUTPUT VECTOR (16×1)}
 
 \vspace{0.5cm}
 
@@ -319,11 +319,11 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_t$
 $\downarrow$
 
 \textbf{PHYSICS-INFORMED NEURAL NETWORK}
-(4 layers × 128 neurons)
+(4 layers × 128 neurons + 4 learnable parameters)
 
 $\downarrow$
 
-$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]$
+$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{xx}, J_{yy}, J_{zz}]$
 \end{center}
 
 \subsection{Physics-Informed Loss Components}
@@ -599,6 +599,8 @@ The thrust profile for Trajectory 0 exhibits three distinct phases reflecting re
 
 This thrust behavior is physically realistic and matches Newton's second law: when hovering, the thrust force must equal the weight of the vehicle to maintain zero vertical acceleration.
 
+\textbf{Important Note:} While the initial thrust value starts at approximately 1.334 N, the PID altitude controller continuously modulates the thrust during the climb phase. The controller reduces thrust as the quadrotor approaches the 5m setpoint to prevent overshoot. The "climb phase" designation (t=0-2s) refers to the period of net upward acceleration, not constant maximum thrust. The actual thrust profile is smooth and controller-modulated, ensuring the quadrotor reaches exactly 5m altitude without significant overshoot.
+
 \newpage
 \section{All 16 Outputs Time-Series Analysis}
 
@@ -819,14 +821,14 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \newpage
 \section{Conclusion}
 
-This implementation demonstrates successful integration of physics knowledge with neural network learning, achieving accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency and enabling reliable parameter identification ($<$ 7\% error) for quadrotor dynamics.
+This implementation demonstrates successful integration of physics knowledge with neural network learning, achieving accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency and enabling parameter identification with 4-7\% error for quadrotor dynamics.
 
 \subsection{Key Achievements}
 \begin{itemize}
 \item \textbf{Comprehensive State Prediction}: All 12 state variables predicted with high accuracy (correlation $>$ 0.86)
-\item \textbf{Successful Parameter Identification}: All 4 physical parameters learned within 7.3\% error
+\item \textbf{Successful Parameter Identification}: All 4 physical parameters (mass and inertia components) learned with 4.4-7.3\% error
 \item \textbf{Physics Compliance}: 90-95\% reduction in constraint violations
-\item \textbf{Model Evolution}: Systematic improvement from 14.8\% to 5.8\% parameter error
+\item \textbf{Model Evolution}: Systematic improvement from 14.8\% to 5.8\% average parameter error across three model variants
 \item \textbf{Robust Generalization}: $<$ 10\% accuracy degradation on unseen trajectories
 \end{itemize}
 
@@ -838,7 +840,7 @@ This implementation demonstrates successful integration of physics knowledge wit
 \item Comprehensive validation across multiple flight maneuvers
 \end{itemize}
 
-The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification, demonstrating the effectiveness of PINNs\index{PINNs} for complex dynamical system modeling.
+The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. The learned parameters (mass and inertia tensor components) show 4-7\% identification error, demonstrating that PINNs\index{PINNs} can effectively extract physical properties from trajectory data while maintaining physics consistency through embedded Newton-Euler dynamics.
 
 \newpage
 % \printindex

@@ -6,3 +6,14 @@ pip_install.log
 
 # Keep PNG files only in designated directories
 /*.png
+
+# LaTeX auxiliary files
+*.aux
+*.idx
+*.out
+*.toc
+*.log
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+reports/nul
