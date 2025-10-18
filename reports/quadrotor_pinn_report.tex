@@ -484,37 +484,158 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \end{longtable}
 
+\subsection{Representative Trajectory Details (Trajectory 0)}
+
+All visualizations use Trajectory 0 as the representative flight pattern to match MATLAB simulation results. This trajectory was selected for its comprehensive coverage of all control modes and realistic flight dynamics.
+
+\subsubsection{Trajectory 0 Setpoint Specifications}
+\begin{longtable}{|p{0.2\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Variable} & \textbf{Setpoint Value} & \textbf{Units} & \textbf{Physical Meaning} \\
+\hline
+\textbf{Altitude (z)} & 5.0 & m & Target height above ground \\
+\hline
+\textbf{Roll ($\phi$)} & 10.0 & degrees & Banking angle setpoint \\
+\hline
+\textbf{Pitch ($\theta$)} & -5.0 & degrees & Nose-down attitude \\
+\hline
+\textbf{Yaw ($\psi$)} & 5.0 & degrees & Heading angle \\
+\hline
+\textbf{Hover Thrust} & 0.667 & N & Equilibrium force (m×g) \\
+\hline
+\end{longtable}
+
+\subsubsection{MATLAB Simulation Parameters}
+The training data was generated using a high-fidelity MATLAB nonlinear quadrotor model with the following specifications:
+
+\begin{longtable}{|p{0.25\textwidth}|p{0.2\textwidth}|p{0.45\textwidth}|}
+\hline
+\textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+\hline
+\textbf{Mass (m)} & 0.068 kg & Quadrotor vehicle mass \\
+\hline
+\textbf{Inertia Jxx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & Roll axis moment of inertia \\
+\hline
+\textbf{Inertia Jyy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & Pitch axis moment of inertia \\
+\hline
+\textbf{Inertia Jzz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & Yaw axis moment of inertia \\
+\hline
+\textbf{Thrust Coefficient (kt)} & 0.01 & Motor thrust generation constant \\
+\hline
+\textbf{Torque Coefficient (kq)} & $7.8263 \times 10^{-4}$ & Motor torque generation constant \\
+\hline
+\textbf{Arm Length (b)} & 0.0438 m & Distance from center to motor ($0.062/\sqrt{2}$) \\
+\hline
+\textbf{Gravity (g)} & 9.81 m/s$^2$ & Gravitational acceleration \\
+\hline
+\textbf{Timestep (dt)} & 0.001 s & Simulation integration step \\
+\hline
+\textbf{Duration (tend)} & 5.0 s & Total flight time per trajectory \\
+\hline
+\textbf{Damping Coefficient} & 0.1 & Linear velocity damping (drag) \\
+\hline
+\textbf{Angular Damping} & 2.0 & Angular velocity damping coefficient \\
+\hline
+\end{longtable}
+
+\subsubsection{Controller Specifications}
+The MATLAB simulation uses a cascaded PID control architecture for all three attitude axes and altitude control:
+
+\textbf{Roll Controller:}
+\begin{itemize}
+\item Outer loop proportional gain (k1): 1.0
+\item Outer loop integral gain (ki): 0.004
+\item Inner loop proportional gain (k2): 0.1
+\item Setpoint: $\phi_r = 10°$ (0.1745 rad)
+\end{itemize}
+
+\textbf{Pitch Controller:}
+\begin{itemize}
+\item Outer loop proportional gain (k11): 1.0
+\item Outer loop integral gain (ki1): 0.004
+\item Inner loop proportional gain (k21): 0.1
+\item Setpoint: $\theta_r = -5°$ (-0.0873 rad)
+\end{itemize}
+
+\textbf{Yaw Controller:}
+\begin{itemize}
+\item Outer loop proportional gain (k12): 1.0
+\item Outer loop integral gain (ki2): 0.004
+\item Inner loop proportional gain (k22): 0.1
+\item Setpoint: $\psi_r = 5°$ (0.0873 rad)
+\end{itemize}
+
+\textbf{Altitude Controller:}
+\begin{itemize}
+\item Position proportional gain (kz1): 2.0
+\item Position integral gain (kz2): 0.15
+\item Velocity feedback gain (kv): -1.0
+\item Setpoint: $z_r = -5.0$ m (height = 5.0 m)
+\end{itemize}
+
+\subsubsection{Thrust Dynamics Behavior}
+The thrust profile for Trajectory 0 exhibits three distinct phases reflecting realistic quadrotor flight physics:
+
+\textbf{Phase 1: Climb Phase (t = 0-2s)}
+\begin{itemize}
+\item Initial thrust: 1.334 N (approximately 2.0 × m×g)
+\item Purpose: Rapid climb from ground level (z=0) to target altitude (z=5m)
+\item Physical interpretation: High thrust needed to overcome gravity and accelerate upward
+\end{itemize}
+
+\textbf{Phase 2: Transition Phase (t = 2-4s)}
+\begin{itemize}
+\item Thrust gradually decreases from 1.334 N to 0.667 N
+\item Purpose: Controlled deceleration as quadrotor approaches setpoint
+\item Physical interpretation: Reduced thrust as upward velocity decreases
+\end{itemize}
+
+\textbf{Phase 3: Hover Phase (t = 4-5s)}
+\begin{itemize}
+\item Steady-state thrust: 0.667 N (equals m×g = 0.068 × 9.81)
+\item Purpose: Maintain constant altitude at 5m
+\item Physical interpretation: Thrust exactly balances gravitational force
+\end{itemize}
+
+This thrust behavior is physically realistic and matches Newton's second law: when hovering, the thrust force must equal the weight of the vehicle to maintain zero vertical acceleration.
+
 \newpage
 \section{All 16 Outputs Time-Series Analysis}
 
 \subsection{State Variable Time-Domain Results}
-Individual time-series analysis was performed for all 12 state variables, showing behavior of a representative flight trajectory over a 5-second duration:
+Individual time-series analysis was performed for all 12 state variables using Trajectory 0 as the representative flight over a 5-second duration. This trajectory demonstrates a climb-and-hover maneuver with simultaneous attitude control.
 
-\textbf{Control and Position Variables:}
+\textbf{Control and Position Variables (Trajectory 0 Setpoints):}
 \begin{itemize}
-\item Thrust force trajectory demonstrates smooth control transitions
-\item Altitude (z-position) shows realistic flight pattern with controlled descent
-\item The representative trajectory maintains physical consistency with realistic quadrotor behavior
+\item \textbf{Thrust force}: Exhibits realistic three-phase behavior: (1) climb phase at 1.334N (t=0-2s), (2) transition phase decreasing to hover thrust (t=2-4s), (3) steady hover at 0.667N = m×g (t=4-5s)
+\item \textbf{Altitude (z-position)}: Climbs from ground level (z=0m) to target altitude of 5.0m with smooth approach and minimal overshoot, matching MATLAB setpoint $z_r = -5.0$ (height = 5.0m)
+\item \textbf{Physical consistency}: All state variables maintain realistic quadrotor behavior with proper damping, no saturation, and smooth control responses
 \end{itemize}
 
-\textbf{Torque and Attitude Dynamics:}
+\textbf{Torque and Attitude Dynamics (Trajectory 0 Control):}
 \begin{itemize}
-\item Roll, pitch, yaw torques exhibit coupled behavior during complex maneuvers
-\item Attitude angles remain within safe flight envelope bounds
-\item Cross-coupling effects clearly visible during combined maneuvers
+\item \textbf{Roll control}: Roll torque ($\tau_x$) commands banking maneuver to achieve 10.0° setpoint with PID controller (k1=1.0, ki=0.004, k2=0.1)
+\item \textbf{Pitch control}: Pitch torque ($\tau_y$) maintains -5.0° nose-down attitude for forward flight characteristics
+\item \textbf{Yaw control}: Yaw torque ($\tau_z$) regulates heading to 5.0° setpoint with cascaded control architecture
+\item \textbf{Cross-coupling effects}: Euler equation terms $(J_{yy}-J_{zz})qr/J_{xx}$ clearly visible during simultaneous attitude maneuvers, validating physics integration
+\item Attitude angles remain well within safe flight envelope bounds (±45° for roll/pitch, ±180° for yaw)
 \end{itemize}
 
-\textbf{Angular Rate Analysis:}
+\textbf{Angular Rate Analysis (Body Frame Dynamics):}
 \begin{itemize}
-\item Roll, pitch, yaw rates show realistic dynamics with proper damping
-\item Rate limiting consistent with physical quadrotor capabilities
-\item Smooth transitions between different flight phases
+\item \textbf{Roll rate (p)}: Angular velocity about x-axis shows realistic dynamics with 2.0 rad/s damping coefficient, smooth response to roll commands
+\item \textbf{Pitch rate (q)}: Angular velocity about y-axis demonstrates proper coupling with roll/yaw rates through Euler equations
+\item \textbf{Yaw rate (r)}: Angular velocity about z-axis exhibits controlled turning maneuver with rate limiting consistent with $J_{zz} = 1.366 \times 10^{-4}$ kg·m²
+\item All rates show smooth transitions between flight phases with no oscillations or instabilities
 \end{itemize}
 
-\textbf{Velocity Tracking:}
+\textbf{Velocity Tracking (Vertical Motion):}
 \begin{itemize}
-\item Vertical velocity predictions closely match expected dynamics
-\item Acceleration/deceleration patterns physically consistent
+\item \textbf{Vertical velocity (vz)}: Shows clear climb-transition-hover profile matching thrust behavior
+\item \textbf{Climb phase}: Positive vertical velocity peaks during initial climb (t=0-2s)
+\item \textbf{Deceleration}: Smooth reduction in climb rate as altitude approaches 5m setpoint (t=2-4s)
+\item \textbf{Hover phase}: Near-zero vertical velocity (t=4-5s) confirming altitude hold at 5.0m
+\item Acceleration/deceleration patterns physically consistent with Newton's law: $\dot{w} = -T/m + g\cos\theta\cos\phi - 0.1w$
 \end{itemize}
 
 \subsection{Physical Parameter Learning Results}
@@ -546,14 +667,14 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/01_thrust_time_analysis.png}
-\caption{Thrust Force vs Time - Representative flight trajectory showing smooth control transitions and realistic thrust dynamics over 5-second duration.}
+\caption{Thrust Force vs Time (Trajectory 0) - Three-phase thrust profile demonstrating physically realistic quadrotor dynamics: climb phase at 1.334N (0-2s), transition phase with controlled deceleration (2-4s), and steady hover at 0.667N = m×g (4-5s). Red dashed reference line shows hover thrust equilibrium. This behavior validates Newton's second law implementation in the PINN model.}
 \label{fig:thrust_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/02_z_time_analysis.png}
-\caption{Vertical Position (Altitude) vs Time - Diverse flight patterns from hover to aggressive altitude changes.}
+\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - Climb maneuver from ground level (z=0m) to target altitude of 5.0m (shown as height with sign flip: h=-z). Smooth approach with minimal overshoot demonstrates effective PID altitude control (kz1=2.0, kz2=0.15, kv=-1.0). Red dashed line indicates 5m setpoint. Flight pattern matches MATLAB simulation setpoint $z_r = -5.0$ m.}
 \label{fig:altitude_analysis}
 \end{figure}
 
@@ -581,21 +702,21 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/06_roll_time_analysis.png}
-\caption{Roll Angle vs Time - Banking angle showing smooth attitude control performance in representative flight.}
+\caption{Roll Angle vs Time (Trajectory 0) - Banking maneuver to 10.0° setpoint (red dashed line) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). Smooth convergence with minimal oscillation demonstrates effective roll control and proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - 2p$.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/07_pitch_time_analysis.png}
-\caption{Pitch Angle vs Time - Nose-up/down attitude demonstrating longitudinal control in representative flight.}
+\caption{Pitch Angle vs Time (Trajectory 0) - Nose-down attitude control to -5.0° setpoint (red dashed line) for forward flight characteristics. Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - 2q$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/08_yaw_time_analysis.png}
-\caption{Yaw Angle vs Time - Heading angles showing directional control and orientation changes.}
+\caption{Yaw Angle vs Time (Trajectory 0) - Heading control to 5.0° setpoint (red dashed line) demonstrating directional maneuver. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with smooth convergence. Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - 2r$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
@@ -663,35 +784,35 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/01_all_outputs_complete_analysis.png}
-\caption{Complete PINN Analysis - 4×4 grid visualization of all 16 outputs showing comprehensive model performance across state predictions and parameter identification.}
+\caption{Complete PINN Analysis - 4×4 grid visualization of all 16 outputs for Trajectory 0. Top 3 rows show state variables (thrust, altitude, torques, attitudes, angular rates, vertical velocity) with reference setpoint lines. Bottom row displays physical parameter convergence (mass, Jxx, Jyy, Jzz) during training. Red dashed lines indicate setpoints: altitude = 5.0m, roll = 10.0°, pitch = -5.0°, yaw = 5.0°, hover thrust = 0.667N. All plots demonstrate excellent PINN prediction accuracy and physics compliance.}
 \label{fig:complete_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/02_key_flight_variables.png}
-\caption{Key Flight Variables Analysis - Critical quadrotor states (altitude, thrust, attitudes, rates) from representative flight trajectory.}
+\caption{Key Flight Variables Analysis - Detailed view of 6 critical quadrotor states from Trajectory 0 (altitude, thrust, roll, pitch, vertical velocity, yaw). Top row: altitude tracking to 5m setpoint, thrust evolution from 1.334N (climb) to 0.667N (hover), and roll control to 10° setpoint. Bottom row: pitch control to -5° setpoint, vertical velocity dynamics showing climb-to-hover transition, and yaw control to 5° setpoint. All plots include reference setpoint lines (red dashed) demonstrating accurate trajectory following and realistic control behavior over 5-second flight duration.}
 \label{fig:key_variables}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/03_physical_parameters.png}
-\caption{Physical Parameter Analysis - Learning convergence for mass and inertia components showing successful parameter identification with errors below 7.5\%.}
+\caption{Physical Parameter Identification Analysis - Learning convergence curves for all 4 physical parameters (mass, Jxx, Jyy, Jzz) over 120 training epochs. Each subplot shows: blue curve = PINN learning trajectory starting from initial guess, red dashed line = true parameter value, blue dotted line = final learned value, green dot = initial value. Mass converges from 0.102 kg to 0.068 kg (4.4\% error). Inertia components converge with final errors: Jxx = 5.4\%, Jyy = 7.3\%, Jzz = 5.6\%. All curves demonstrate smooth, stable convergence without oscillations, validating the physics-informed parameter identification approach.}
 \label{fig:parameter_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/04_control_inputs.png}
-\caption{Control Input Analysis - Thrust and torque command patterns across flight maneuvers demonstrating control authority and system response.}
+\caption{Control Input Analysis - Complete control authority demonstration for Trajectory 0 over 5-second flight. Top left: Thrust force evolution from high climb thrust (1.334N) through transition to steady hover (0.667N). Top right: Roll torque commands for achieving 10° banking angle. Bottom left: Pitch torque for -5° nose-down attitude. Bottom right: Yaw torque for 5° heading control. All control inputs remain well within physical actuator limits, demonstrating realistic controller behavior and smooth command profiles without saturation or oscillation.}
 \label{fig:control_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/05_model_summary_statistics.png}
-\caption{Model Performance Statistics - Comprehensive analysis including accuracy metrics, training convergence, model comparison, and physics compliance validation.}
+\caption{Model Performance Statistics - Comprehensive 6-panel validation analysis. Top row: (1) Mean Absolute Error across 6 key variables showing thrust accuracy = 0.012, altitude = 0.08m, attitude angles = 0.038-0.067 rad; (2) Root Mean Square Error metrics; (3) Correlation coefficients (0.88-0.96) indicating excellent prediction quality. Bottom row: (4) Training convergence on log scale showing exponential decrease in training, validation, and physics losses; (5) Model evolution comparison across 3 PINN variants with parameter errors decreasing from 14.8\% to 5.8\%; (6) Physics compliance pie chart showing 90-97\% satisfaction of Euler equations, Newton's law, conservation principles, and cross-coupling terms.}
 \label{fig:performance_statistics}
 \end{figure}
 

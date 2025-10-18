@@ -95,8 +95,8 @@ def plot_01_complete_analysis(df):
         ax = axes[row, col]
 
         if var_name in df.columns and idx < 12:  # State variables
-            # Plot only representative trajectory
-            traj_id = 2
+            # Plot only representative trajectory (matches MATLAB)
+            traj_id = 0
             traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             if len(traj_data) > 0:
                 plot_data = traj_data[var_name].copy()
@@ -110,19 +110,23 @@ def plot_01_complete_analysis(df):
                 ax.plot(traj_data['timestamp'], plot_data,
                        color='steelblue', alpha=0.9, linewidth=2, label='PINN Output')
 
-                # Add reference lines for attitude and altitude (trajectory 2 setpoints)
+                # Add reference lines for attitude and altitude (trajectory 0 setpoints - matches MATLAB)
                 if var_name == 'z':
-                    ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 2.74m')
-                elif var_name == 'roll':
                     ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 5.0°')
+                              label='Setpoint: 5.0m')
+                elif var_name == 'thrust':
+                    hover_thrust = 0.068 * 9.81  # m*g
+                    ax.axhline(hover_thrust, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label=f'Hover: {hover_thrust:.3f}N')
+                elif var_name == 'roll':
+                    ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: 10.0°')
                 elif var_name == 'pitch':
-                    ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: -3.0°')
-                elif var_name == 'yaw':
                     ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
                               label='Setpoint: -5.0°')
+                elif var_name == 'yaw':
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: 5.0°')
         elif idx >= 12:  # Physical parameters - show convergence
             # Simulate parameter convergence
             epochs = np.arange(0, 100)
@@ -144,7 +148,7 @@ def plot_01_complete_analysis(df):
             ax.set_xlabel('Time [s]', fontweight='bold', color='black')
             ax.set_xlim(0, 5)  # Show full trajectory
             # Add legend if reference line exists
-            if var_name in ['z', 'roll', 'pitch', 'yaw']:
+            if var_name in ['z', 'thrust', 'roll', 'pitch', 'yaw']:
                 ax.legend(fontsize=9, loc='best')
         else:
             ax.set_xlabel('Training Epoch', fontweight='bold', color='black')
@@ -174,8 +178,8 @@ def plot_02_key_flight_variables(df):
         row, col = idx // 3, idx % 3
         ax = axes[row, col]
 
-        # Plot representative trajectory
-        traj_id = 2
+        # Plot representative trajectory (matches MATLAB)
+        traj_id = 0
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
             plot_data = traj_data[var_name].copy()
@@ -191,19 +195,23 @@ def plot_02_key_flight_variables(df):
             ax.plot(traj_data['timestamp'], plot_data,
                    color='steelblue', alpha=0.9, linewidth=2.5, label='PINN Output')
 
-            # Add reference lines (trajectory 2 setpoints)
+            # Add reference lines (trajectory 0 setpoints - matches MATLAB)
             if var_name == 'z':
-                ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 2.74m')
-            elif var_name == 'roll':
                 ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 5.0°')
+                          label='Setpoint: 5.0m')
+            elif var_name == 'thrust':
+                hover_thrust = 0.068 * 9.81  # m*g
+                ax.axhline(hover_thrust, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label=f'Hover: {hover_thrust:.3f}N')
+            elif var_name == 'roll':
+                ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: 10.0°')
             elif var_name == 'pitch':
-                ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: -3.0°')
-            elif var_name == 'yaw':
                 ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
                           label='Setpoint: -5.0°')
+            elif var_name == 'yaw':
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: 5.0°')
 
         ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
         ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
@@ -212,7 +220,7 @@ def plot_02_key_flight_variables(df):
         ax.grid(True, alpha=0.3)
         ax.set_xlim(0, 5)  # Show full trajectory
         # Add legend if reference line exists
-        if var_name in ['z', 'roll', 'pitch', 'yaw']:
+        if var_name in ['z', 'thrust', 'roll', 'pitch', 'yaw']:
             ax.legend(fontsize=10, loc='best')
 
     plt.tight_layout()
@@ -293,8 +301,8 @@ def plot_04_control_inputs(df):
         row, col = idx // 2, idx % 2
         ax = axes[row, col]
 
-        # Plot representative trajectory
-        traj_id = 2
+        # Plot representative trajectory (matches MATLAB)
+        traj_id = 0
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
             ax.plot(traj_data['timestamp'], traj_data[var_name],
