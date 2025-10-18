@@ -108,17 +108,21 @@ def plot_01_complete_analysis(df):
                     plot_data = plot_data * 180 / np.pi  # Convert to degrees
 
                 ax.plot(traj_data['timestamp'], plot_data,
-                       color='steelblue', alpha=0.9, linewidth=2)
+                       color='steelblue', alpha=0.9, linewidth=2, label='PINN Output')
 
                 # Add reference lines for attitude and altitude (trajectory 2 setpoints)
                 if var_name == 'z':
-                    ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                    ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: 2.74m')
                 elif var_name == 'roll':
-                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: 5.0°')
                 elif var_name == 'pitch':
-                    ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                    ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: -3.0°')
                 elif var_name == 'yaw':
-                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1)
+                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                              label='Setpoint: -5.0°')
         elif idx >= 12:  # Physical parameters - show convergence
             # Simulate parameter convergence
             epochs = np.arange(0, 100)
@@ -139,6 +143,9 @@ def plot_01_complete_analysis(df):
         if idx < 12:
             ax.set_xlabel('Time [s]', fontweight='bold', color='black')
             ax.set_xlim(0, 5)  # Show full trajectory
+            # Add legend if reference line exists
+            if var_name in ['z', 'roll', 'pitch', 'yaw']:
+                ax.legend(fontsize=9, loc='best')
         else:
             ax.set_xlabel('Training Epoch', fontweight='bold', color='black')
 
@@ -182,17 +189,21 @@ def plot_02_key_flight_variables(df):
                 ylabel = ylabel.replace('[rad]', '[deg]')
 
             ax.plot(traj_data['timestamp'], plot_data,
-                   color='steelblue', alpha=0.9, linewidth=2.5)
+                   color='steelblue', alpha=0.9, linewidth=2.5, label='PINN Output')
 
             # Add reference lines (trajectory 2 setpoints)
             if var_name == 'z':
-                ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+                ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: 2.74m')
             elif var_name == 'roll':
-                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: 5.0°')
             elif var_name == 'pitch':
-                ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+                ax.axhline(-3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: -3.0°')
             elif var_name == 'yaw':
-                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
+                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
+                          label='Setpoint: -5.0°')
 
         ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
         ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
@@ -200,6 +211,9 @@ def plot_02_key_flight_variables(df):
         ax.set_title(title, fontsize=13, fontweight='bold', color='black')
         ax.grid(True, alpha=0.3)
         ax.set_xlim(0, 5)  # Show full trajectory
+        # Add legend if reference line exists
+        if var_name in ['z', 'roll', 'pitch', 'yaw']:
+            ax.legend(fontsize=10, loc='best')
 
     plt.tight_layout()
     plt.savefig('02_key_flight_variables.png', dpi=300, bbox_inches='tight')
