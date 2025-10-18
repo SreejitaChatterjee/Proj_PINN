@@ -488,7 +488,7 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 
 \subsection{Representative Trajectory Details (Trajectory 0)}
 
-All visualizations use Trajectory 0 as the representative flight pattern to match MATLAB simulation results. This trajectory was selected for its comprehensive coverage of all control modes and realistic flight dynamics.
+\textbf{CRITICAL CORRECTION:} The current plots in Figures 1-12 were generated using Trajectory 2 (3.0m altitude target) instead of Trajectory 0 (5.0m target) due to a plotting script error. This has been corrected in generate\_all\_16\_plots.py:66. Additionally, all training data was generated with the inverted controller bug (kv=-1.0), causing significant altitude undershoot across all trajectories. Both issues have been fixed in the codebase, and data/plots will be regenerated with the corrected controller (kv=+1.0) showing proper altitude tracking to the intended 5.0m target for Trajectory 0.
 
 \subsubsection{Trajectory 0 Setpoint Specifications}
 \begin{longtable}{|p{0.2\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.35\textwidth}|}
@@ -680,7 +680,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/02_z_time_analysis.png}
-\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - Climb maneuver from ground level (z=0m) to target altitude of 5.0m (shown as height with sign flip: h=-z). Smooth approach with minimal overshoot demonstrates effective PID altitude control (kz1=2.0, kz2=0.15, kv=-1.0). Red dashed line indicates 5m setpoint. Flight pattern matches MATLAB simulation setpoint $z_r = -5.0$ m.}
+\caption{\textbf{[OUTDATED PLOT - NEEDS REGENERATION]} Vertical Position (Altitude) vs Time - This plot currently shows Trajectory 2 (3.0m target, achieves 2.78m) due to plotting script error, NOT Trajectory 0 as documented. The 7.3\% altitude undershoot visible here is caused by the inverted controller bug (kv=-1.0). After data regeneration with corrected controller (kv=+1.0) and corrected plotting script (using Trajectory 0), this figure will show proper climb to 5.0m target with <2\% error.}
 \label{fig:altitude_analysis}
 \end{figure}
 

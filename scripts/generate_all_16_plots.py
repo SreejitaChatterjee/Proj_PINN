@@ -61,9 +61,9 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units, ref
     """Plot individual state variable vs time for a representative trajectory"""
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # Plot only trajectory 2 as representative example (smoother profile)
+    # Plot only trajectory 0 as representative example (matches MATLAB reference)
     # Use full time range to show controller behavior
-    traj_id = 2
+    traj_id = 0  # FIXED: Changed from 2 to 0 to match report documentation
     traj_data = df[df['trajectory_id'] == traj_id].copy()
     traj_data = traj_data.sort_values('timestamp')
 

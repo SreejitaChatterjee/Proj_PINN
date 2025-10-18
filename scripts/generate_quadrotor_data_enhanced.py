@@ -49,7 +49,7 @@ class QuadrotorSimulator:
         self.k12 = 1.0   # Yaw angle controller
         self.ki2 = 0.4 * 0.01  # Yaw integral gain
 
-        self.kv = -1.0   # Vertical velocity controller
+        self.kv = 1.0    # Vertical velocity controller (FIXED from -1.0)
         self.kz1 = 2.0   # Altitude P gain
         self.kz2 = 0.1 * 1.5  # Altitude I gain
 
