@@ -131,13 +131,16 @@ def plot_01_complete_analysis(df):
             ax.axhline(true_values[param_idx], color='red', linestyle='--', alpha=0.8)
             ax.set_xlabel('Training Epoch')
 
-        ax.set_ylabel(ylabel, fontsize=10)
-        ax.set_title(f'{category}: {var_name}', fontsize=11, fontweight='bold')
+        ax.set_ylabel(ylabel, fontsize=11, fontweight='bold', color='black')
+        ax.set_title(f'{category}: {var_name}', fontsize=12, fontweight='bold', color='black')
         ax.grid(True, alpha=0.3)
+        ax.tick_params(colors='black', which='both')
 
         if idx < 12:
-            ax.set_xlabel('Time [s]')
+            ax.set_xlabel('Time [s]', fontweight='bold', color='black')
             ax.set_xlim(0, 5)  # Show full trajectory
+        else:
+            ax.set_xlabel('Training Epoch', fontweight='bold', color='black')
 
     plt.tight_layout()
     plt.subplots_adjust(top=0.92)
@@ -191,9 +194,10 @@ def plot_02_key_flight_variables(df):
             elif var_name == 'yaw':
                 ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5)
 
-        ax.set_xlabel('Time [s]', fontsize=12)
-        ax.set_ylabel(ylabel, fontsize=12)
-        ax.set_title(title, fontsize=13, fontweight='bold')
+        ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
+        ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
+        ax.tick_params(colors='black', which='both')
+        ax.set_title(title, fontsize=13, fontweight='bold', color='black')
         ax.grid(True, alpha=0.3)
         ax.set_xlim(0, 5)  # Show full trajectory
 
@@ -241,8 +245,9 @@ def plot_03_physical_parameters(df):
         # Add convergence region - removed green background for clean appearance
         # ax.axvspan(60, 120, alpha=0.1, color='green')
 
-        ax.set_xlabel('Training Epoch', fontsize=12)
-        ax.set_ylabel(f'{name} [{unit}]', fontsize=12)
+        ax.set_xlabel('Training Epoch', fontsize=12, fontweight='bold', color='black')
+        ax.set_ylabel(f'{name} [{unit}]', fontsize=12, fontweight='bold', color='black')
+        ax.tick_params(colors='black', which='both')
         ax.set_title(f'{name} Learning (Perfect Convergence)', fontsize=13, fontweight='bold')
 
         # Position legend to avoid overlap
@@ -288,9 +293,10 @@ def plot_04_control_inputs(df):
                           linewidth=1.5, label=f'Setpoint: {steady_thrust:.3f}N')
                 ax.legend(fontsize=10)
 
-        ax.set_xlabel('Time [s]', fontsize=12)
-        ax.set_ylabel(ylabel, fontsize=12)
-        ax.set_title(title, fontsize=13, fontweight='bold')
+        ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
+        ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
+        ax.tick_params(colors='black', which='both')
+        ax.set_title(title, fontsize=13, fontweight='bold', color='black')
         ax.grid(True, alpha=0.3)
         ax.set_xlim(0, 5)  # Show full trajectory
 

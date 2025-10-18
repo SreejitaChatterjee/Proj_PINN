@@ -3,3 +3,6 @@ __pycache__/
 .claude/
 pip_install.log
 *.log
+
+# Keep PNG files only in designated directories
+/*.png
