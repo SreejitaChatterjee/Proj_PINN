@@ -113,6 +113,8 @@ The system successfully predicts 12 state variables while identifying 4 critical
 
 \subsection{Phase 1: Data Generation \& Preparation}
 
+\textbf{IMPORTANT NOTE:} A critical controller bug was discovered in the altitude controller of the MATLAB simulation (matlab\_reference.m:125). The velocity feedback gain was incorrectly set to $kv = -1.0$ which inverted the control logic. This has been corrected to $kv = +1.0$. All training data in this report was generated with the buggy controller. Future work will regenerate data with the corrected controller for physically realistic quadrotor behavior.
+
 \begin{longtable}{P{0.24\textwidth} P{0.34\textwidth} P{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Output} \\
@@ -569,9 +571,11 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \begin{itemize}
 \item Position proportional gain (kz1): 2.0
 \item Position integral gain (kz2): 0.15
-\item Velocity feedback gain (kv): -1.0
+\item Velocity feedback gain (kv): 1.0 \textbf{(FIXED from -1.0)}
 \item Setpoint: $z_r = -5.0$ m (height = 5.0 m)
 \end{itemize}
+
+\textbf{CRITICAL CONTROLLER FIX:} The original MATLAB simulation contained a sign error in the altitude controller where the velocity feedback gain was set to $kv = -1.0$ instead of the correct value $kv = +1.0$. This error caused inverted control behavior where the controller would decrease thrust when it should increase it, and vice versa. This bug has been identified and corrected in matlab\_reference.m:125. All future data generation will use the corrected controller with proper control authority.
 
 \subsubsection{Thrust Dynamics Behavior}
 The thrust profile for Trajectory 0 exhibits three distinct phases reflecting realistic quadrotor flight physics:

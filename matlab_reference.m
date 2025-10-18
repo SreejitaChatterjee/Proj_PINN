@@ -122,7 +122,7 @@ end
 %---------------------------
 % altitude hold
 zr=-5.0;
-kv=-1.0; kz1=2.0; kz2=0.1*1.5;
+kv=1.0; kz1=2.0; kz2=0.1*1.5;  % FIXED: Changed from -1.0 to +1.0 for proper control
 sumz=sumz+(zr-z);
 vzr=kz1*(zr-z)+kz2*sumz*dt;
 T=kv*(vzr-zdot);
