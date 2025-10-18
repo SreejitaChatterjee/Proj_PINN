@@ -12,16 +12,16 @@ import seaborn as sns
 from matplotlib.patches import Rectangle
 import matplotlib.patches as mpatches
 
-# Set professional style for LaTeX with transparent background
+# Set professional style for LaTeX with visible labels
 plt.rcParams.update({
     'font.size': 12,
     'font.family': 'serif',
     'text.usetex': False,  # Set to True if you have LaTeX installed
     'figure.figsize': (14, 10),
-    'figure.facecolor': 'none',
-    'axes.facecolor': 'none',
-    'savefig.facecolor': 'none',
-    'savefig.transparent': True,
+    'figure.facecolor': 'white',
+    'axes.facecolor': 'white',
+    'savefig.facecolor': 'white',
+    'savefig.transparent': False,
     'axes.grid': True,
     'grid.alpha': 0.3,
     'grid.color': 'lightgray',
@@ -33,7 +33,11 @@ plt.rcParams.update({
     'axes.titlesize': 16,
     'axes.labelsize': 14,
     'axes.spines.top': False,
-    'axes.spines.right': False
+    'axes.spines.right': False,
+    'text.color': 'black',
+    'axes.labelcolor': 'black',
+    'xtick.color': 'black',
+    'ytick.color': 'black'
 })
 
 # Color palette for 10 trajectories
@@ -63,7 +67,6 @@ def load_data():
 def plot_01_complete_analysis(df):
     """01: All outputs complete analysis - 4x4 grid of all 16 outputs"""
     fig, axes = plt.subplots(4, 4, figsize=(20, 16))
-    fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
     fig.suptitle('Complete PINN Analysis: All 16 Outputs vs Time\nPhysics-Informed Neural Network Performance',
                  fontsize=18, fontweight='bold', y=0.95)
 
@@ -131,23 +134,20 @@ def plot_01_complete_analysis(df):
         ax.set_ylabel(ylabel, fontsize=10)
         ax.set_title(f'{category}: {var_name}', fontsize=11, fontweight='bold')
         ax.grid(True, alpha=0.3)
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
 
         if idx < 12:
             ax.set_xlabel('Time [s]')
             ax.set_xlim(0, 5)  # Show full trajectory
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
     plt.subplots_adjust(top=0.92)
-    plt.savefig('01_all_outputs_complete_analysis.png', dpi=300, bbox_inches='tight', transparent=True)
+    plt.savefig('01_all_outputs_complete_analysis.png', dpi=300, bbox_inches='tight')
     plt.close()
     print("Generated: 01_all_outputs_complete_analysis.png")
 
 def plot_02_key_flight_variables(df):
     """02: Key flight variables analysis"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
     fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States vs Reference Setpoints',
                  fontsize=16, fontweight='bold')
 
@@ -195,19 +195,16 @@ def plot_02_key_flight_variables(df):
         ax.set_ylabel(ylabel, fontsize=12)
         ax.set_title(title, fontsize=13, fontweight='bold')
         ax.grid(True, alpha=0.3)
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
         ax.set_xlim(0, 5)  # Show full trajectory
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
-    plt.savefig('02_key_flight_variables.png', dpi=300, bbox_inches='tight', transparent=True)
+    plt.savefig('02_key_flight_variables.png', dpi=300, bbox_inches='tight')
     plt.close()
     print("Generated: 02_key_flight_variables.png")
 
 def plot_03_physical_parameters(df):
     """03: Physical parameters analysis"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
     fig.suptitle('Physical Parameter Identification Results\nPINN Learning of Quadrotor Properties',
                  fontsize=16, fontweight='bold')
 
@@ -251,17 +248,15 @@ def plot_03_physical_parameters(df):
         else:
             ax.legend(fontsize=9, loc='upper right')
         ax.grid(True, alpha=0.3)
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
-    plt.savefig('03_physical_parameters.png', dpi=300, bbox_inches='tight', transparent=True)
+    plt.savefig('03_physical_parameters.png', dpi=300, bbox_inches='tight')
     plt.close()
     print("Generated: 03_physical_parameters.png")
 
 def plot_04_control_inputs(df):
     """04: Control inputs analysis"""
     fig, axes = plt.subplots(2, 2, figsize=(14, 10))
-    fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
     fig.suptitle('Control Input Analysis\nQuadrotor Actuation Commands',
                  fontsize=16, fontweight='bold')
 
@@ -294,19 +289,16 @@ def plot_04_control_inputs(df):
         ax.set_ylabel(ylabel, fontsize=12)
         ax.set_title(title, fontsize=13, fontweight='bold')
         ax.grid(True, alpha=0.3)
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
         ax.set_xlim(0, 5)  # Show full trajectory
-        ax.patch.set_alpha(0.0)  # Make axes background transparent
 
     plt.tight_layout()
-    plt.savefig('04_control_inputs.png', dpi=300, bbox_inches='tight', transparent=True)
+    plt.savefig('04_control_inputs.png', dpi=300, bbox_inches='tight')
     plt.close()
     print("Generated: 04_control_inputs.png")
 
 def plot_05_model_statistics(df):
     """05: Model performance statistics"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.patch.set_alpha(0.0)  # Ensure figure background is transparent
     fig.suptitle('Model Performance Statistics\nPINN Accuracy and Physics Compliance Analysis',
                  fontsize=16, fontweight='bold')
 
@@ -391,13 +383,9 @@ def plot_05_model_statistics(df):
                                       colors=['lightblue', 'lightcoral', 'lightyellow', 'lightpink'])
     ax6.set_title('Physics Compliance (%)', fontweight='bold')
 
-    # Ensure all axes backgrounds are transparent
-    for ax_row in axes:
-        for ax in ax_row:
-            ax.patch.set_alpha(0.0)
 
     plt.tight_layout()
-    plt.savefig('05_model_summary_statistics.png', dpi=300, bbox_inches='tight', transparent=True)
+    plt.savefig('05_model_summary_statistics.png', dpi=300, bbox_inches='tight')
     plt.close()
     print("Generated: 05_model_summary_statistics.png")
 

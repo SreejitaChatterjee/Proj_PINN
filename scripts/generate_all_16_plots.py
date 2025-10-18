@@ -11,18 +11,22 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
 
-# Set style for professional plots with no background
+# Set style for professional plots with visible labels
 plt.rcParams.update({
-    'figure.facecolor': 'none',
-    'axes.facecolor': 'none',
-    'savefig.facecolor': 'none',
-    'savefig.transparent': True,
+    'figure.facecolor': 'white',
+    'axes.facecolor': 'white',
+    'savefig.facecolor': 'white',
+    'savefig.transparent': False,
     'font.size': 12,
     'axes.spines.top': False,
     'axes.spines.right': False,
     'axes.grid': True,
     'grid.alpha': 0.3,
-    'grid.color': 'lightgray'
+    'grid.color': 'lightgray',
+    'text.color': 'black',
+    'axes.labelcolor': 'black',
+    'xtick.color': 'black',
+    'ytick.color': 'black'
 })
 sns.set_palette("husl", 10)  # 10 distinct colors for 10 trajectories
 
@@ -109,7 +113,7 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units, ref
 
     plt.tight_layout()
     plt.savefig(output_dir / f'{output_num:02d}_{variable_name}_time_analysis.png',
-                dpi=300, bbox_inches='tight', transparent=True)
+                dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Generated: {output_num:02d}_{variable_name}_time_analysis.png")
 
@@ -179,7 +183,7 @@ def create_parameter_convergence_plot(param_name, true_value, output_num, title,
 
     plt.tight_layout()
     plt.savefig(output_dir / f'{output_num:02d}_{param_name}_convergence_analysis.png',
-                dpi=300, bbox_inches='tight', transparent=True)
+                dpi=300, bbox_inches='tight')
     plt.close()
     print(f"Generated: {output_num:02d}_{param_name}_convergence_analysis.png")
 
