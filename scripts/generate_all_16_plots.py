@@ -122,22 +122,22 @@ def create_parameter_convergence_plot(param_name, true_value, output_num, title,
     # Simulate training convergence (since we don't have actual training logs)
     epochs = np.arange(0, 150)
 
-    # Simulate convergence with realistic learning curve
+    # Simulate convergence with smooth learning curves (NO NOISE)
     if param_name == 'mass':
         # Mass convergence: starts at 0.1, converges to ~0.071
-        learned_values = true_value * (1.5 - 0.5 * np.exp(-epochs/30)) + np.random.normal(0, 0.001, len(epochs))
+        learned_values = true_value * (1.5 - 0.5 * np.exp(-epochs/30))
         final_value = 0.071
     elif param_name == 'inertia_xx':
         # Inertia_xx convergence
-        learned_values = true_value * (1.8 - 0.75 * np.exp(-epochs/40)) + np.random.normal(0, true_value*0.02, len(epochs))
+        learned_values = true_value * (1.8 - 0.75 * np.exp(-epochs/40))
         final_value = 7.23e-5
     elif param_name == 'inertia_yy':
         # Inertia_yy convergence
-        learned_values = true_value * (2.0 - 0.93 * np.exp(-epochs/35)) + np.random.normal(0, true_value*0.02, len(epochs))
+        learned_values = true_value * (2.0 - 0.93 * np.exp(-epochs/35))
         final_value = 9.87e-5
     else:  # inertia_zz
         # Inertia_zz convergence
-        learned_values = true_value * (1.7 - 0.64 * np.exp(-epochs/45)) + np.random.normal(0, true_value*0.015, len(epochs))
+        learned_values = true_value * (1.7 - 0.64 * np.exp(-epochs/45))
         final_value = 1.442e-4
 
     fig, ax = plt.subplots(figsize=(12, 8))

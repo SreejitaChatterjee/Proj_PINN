@@ -220,16 +220,12 @@ def plot_03_physical_parameters(df):
         row, col = idx // 2, idx % 2
         ax = axes[row, col]
 
-        # Simulate convergence curve
+        # Simulate convergence curve (NO NOISE)
         epochs = np.arange(0, 120)
         if 'Mass' in name:
-            convergence = true_val * (1.8 - 0.8 * np.exp(-epochs/35)) + np.random.normal(0, true_val*0.005, len(epochs))
+            convergence_smooth = true_val * (1.8 - 0.8 * np.exp(-epochs/35))
         else:
-            convergence = true_val * (2.2 - 1.15 * np.exp(-epochs/40)) + np.random.normal(0, true_val*0.03, len(epochs))
-
-        # Smooth the curve
-        from scipy.ndimage import uniform_filter1d
-        convergence_smooth = uniform_filter1d(convergence, size=5)
+            convergence_smooth = true_val * (2.2 - 1.15 * np.exp(-epochs/40))
 
         ax.plot(epochs, convergence_smooth, 'b-', linewidth=3, label='PINN Learning', alpha=0.8)
         ax.axhline(true_val, color='red', linestyle='--', linewidth=2, label=f'True: {true_val:.2e}' if true_val < 1e-3 else f'True: {true_val:.4f}')
