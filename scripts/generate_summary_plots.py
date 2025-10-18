@@ -111,10 +111,7 @@ def plot_01_complete_analysis(df):
                        color='steelblue', alpha=0.9, linewidth=2, label='PINN Output')
 
                 # Add reference lines for attitude and altitude (trajectory 2 setpoints)
-                if var_name == 'thrust':
-                    ax.axhline(0.671, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 0.671N')
-                elif var_name == 'z':
+                if var_name == 'z':
                     ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
                               label='Setpoint: 2.74m')
                 elif var_name == 'roll':
@@ -147,7 +144,7 @@ def plot_01_complete_analysis(df):
             ax.set_xlabel('Time [s]', fontweight='bold', color='black')
             ax.set_xlim(0, 5)  # Show full trajectory
             # Add legend if reference line exists
-            if var_name in ['thrust', 'z', 'roll', 'pitch', 'yaw']:
+            if var_name in ['z', 'roll', 'pitch', 'yaw']:
                 ax.legend(fontsize=9, loc='best')
         else:
             ax.set_xlabel('Training Epoch', fontweight='bold', color='black')
@@ -195,10 +192,7 @@ def plot_02_key_flight_variables(df):
                    color='steelblue', alpha=0.9, linewidth=2.5, label='PINN Output')
 
             # Add reference lines (trajectory 2 setpoints)
-            if var_name == 'thrust':
-                ax.axhline(0.671, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 0.671N')
-            elif var_name == 'z':
+            if var_name == 'z':
                 ax.axhline(2.74, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
                           label='Setpoint: 2.74m')
             elif var_name == 'roll':
@@ -218,7 +212,7 @@ def plot_02_key_flight_variables(df):
         ax.grid(True, alpha=0.3)
         ax.set_xlim(0, 5)  # Show full trajectory
         # Add legend if reference line exists
-        if var_name in ['thrust', 'z', 'roll', 'pitch', 'yaw']:
+        if var_name in ['z', 'roll', 'pitch', 'yaw']:
             ax.legend(fontsize=10, loc='best')
 
     plt.tight_layout()
@@ -303,20 +297,8 @@ def plot_04_control_inputs(df):
         traj_id = 2
         traj_data = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
         if len(traj_data) > 0:
-            # Add PINN Output label for thrust, otherwise no label
-            if var_name == 'thrust':
-                ax.plot(traj_data['timestamp'], traj_data[var_name],
-                       color='steelblue', alpha=0.9, linewidth=2.5, label='PINN Output')
-            else:
-                ax.plot(traj_data['timestamp'], traj_data[var_name],
-                       color='steelblue', alpha=0.9, linewidth=2.5)
-
-            # Add steady-state thrust reference for thrust plot
-            if var_name == 'thrust':
-                steady_thrust = 0.671  # Trajectory 2 steady-state
-                ax.axhline(steady_thrust, color='red', linestyle='--', alpha=0.6,
-                          linewidth=1.5, label=f'Setpoint: {steady_thrust:.3f}N')
-                ax.legend(fontsize=10)
+            ax.plot(traj_data['timestamp'], traj_data[var_name],
+                   color='steelblue', alpha=0.9, linewidth=2.5)
 
         ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
         ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
