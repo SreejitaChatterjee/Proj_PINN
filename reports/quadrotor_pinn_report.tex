@@ -358,7 +358,7 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 \hline
 \textbf{Rotational} & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz} - 2r$ & Cross-coupling + damping \\
 \hline
-\textbf{Translational} & $\dot{w} = -T/m + g \times \cos(\theta) \times \cos(\phi) - 0.1 \times v_z$ & Thrust + gravity + drag \\
+\textbf{Translational} & $\dot{w} = -T \times \cos(\theta) \times \cos(\phi) / m + g - 0.1 \times v_z$ & Thrust projection + gravity + drag \\
 \hline
 \end{longtable}
 
@@ -653,7 +653,7 @@ Individual time-series analysis was performed for all 12 state variables using T
 \item \textbf{Climb phase}: Positive vertical velocity peaks during initial climb (t=0-2s)
 \item \textbf{Deceleration}: Smooth reduction in climb rate as altitude approaches 5m setpoint (t=2-4s)
 \item \textbf{Hover phase}: Near-zero vertical velocity (t=4-5s) confirming altitude hold at 5.0m
-\item Acceleration/deceleration patterns physically consistent with Newton's law: $\dot{w} = -T/m + g\cos\theta\cos\phi - 0.1w$
+\item Acceleration/deceleration patterns physically consistent with Newton's law: $\dot{w} = -T\cos\theta\cos\phi/m + g - 0.1w$
 \end{itemize}
 
 \subsection{Physical Parameter Learning Results}

@@ -112,8 +112,9 @@ class ImprovedQuadrotorPINN(nn.Module):
         q_physics = q + qdot_physics * dt
         r_physics = r + rdot_physics * dt
         
-        # Vertical dynamics
-        wdot_physics = -thrust / self.m + self.g * torch.cos(theta) * torch.cos(phi) - 0.1 * vz
+        # Vertical dynamics (inertial frame)
+        # Correct physics: thrust projection varies with orientation, gravity is constant
+        wdot_physics = -thrust * torch.cos(theta) * torch.cos(phi) / self.m + self.g - 0.1 * vz
         vz_physics = vz + wdot_physics * dt
         
         # Physics loss with stronger weighting
