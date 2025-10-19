@@ -30,32 +30,29 @@ plt.rcParams.update({
 })
 sns.set_palette("husl", 10)  # 10 distinct colors for 10 trajectories
 
+# Get script directory and project root
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent
+
 # Create output directory
-output_dir = Path("../visualizations/detailed")
+output_dir = project_root / "visualizations" / "detailed"
 output_dir.mkdir(exist_ok=True, parents=True)
 
 def load_data():
     """Load training data"""
-    # Try multiple possible paths
-    possible_paths = [
-        '../data/quadrotor_training_data.csv',
-        'data/quadrotor_training_data.csv',
-        'quadrotor_training_data.csv'
-    ]
+    # Use absolute path to data file
+    data_path = project_root / 'data' / 'quadrotor_training_data.csv'
 
-    for csv_path in possible_paths:
-        try:
-            df = pd.read_csv(csv_path)
-            print(f"Loaded data from: {csv_path}")
-            print(f"Total samples: {len(df)}")
-            print(f"Columns: {len(df.columns)}")
-            print(f"Trajectories: {df['trajectory_id'].nunique()}")
-            return df
-        except FileNotFoundError:
-            continue
-
-    print("Error: quadrotor_training_data.csv not found in any expected location!")
-    return None
+    try:
+        df = pd.read_csv(data_path)
+        print(f"Loaded data from: {data_path}")
+        print(f"Total samples: {len(df)}")
+        print(f"Columns: {len(df.columns)}")
+        print(f"Trajectories: {df['trajectory_id'].nunique()}")
+        return df
+    except FileNotFoundError:
+        print(f"Error: Data file not found at {data_path}")
+        return None
 
 def plot_state_variable(df, variable_name, output_num, title, ylabel, units, reference_value=None):
     """Plot individual state variable vs time for a representative trajectory"""

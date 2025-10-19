@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.patches import Rectangle
 import matplotlib.patches as mpatches
+from pathlib import Path
 
 # Set professional style for LaTeX with visible labels
 plt.rcParams.update({
@@ -43,26 +44,23 @@ plt.rcParams.update({
 # Color palette for 10 trajectories
 colors = plt.cm.tab10(np.linspace(0, 1, 10))
 
+# Get script directory and project root
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent
+
 def load_data():
     """Load training data"""
-    # Try multiple possible paths
-    possible_paths = [
-        '../data/quadrotor_training_data.csv',
-        'data/quadrotor_training_data.csv',
-        'quadrotor_training_data.csv'
-    ]
+    # Use absolute path to data file
+    data_path = project_root / 'data' / 'quadrotor_training_data.csv'
 
-    for csv_path in possible_paths:
-        try:
-            df = pd.read_csv(csv_path)
-            print(f"Loaded data from: {csv_path}")
-            print(f"Total samples: {len(df)}, Columns: {len(df.columns)}")
-            return df
-        except FileNotFoundError:
-            continue
-
-    print("Error: quadrotor_training_data.csv not found in any expected location!")
-    return None
+    try:
+        df = pd.read_csv(data_path)
+        print(f"Loaded data from: {data_path}")
+        print(f"Total samples: {len(df)}, Columns: {len(df.columns)}")
+        return df
+    except FileNotFoundError:
+        print(f"Error: Data file not found at {data_path}")
+        return None
 
 def plot_01_complete_analysis(df):
     """01: All outputs complete analysis - 4x4 grid of all 16 outputs"""

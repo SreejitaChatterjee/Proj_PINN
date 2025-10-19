@@ -1,7 +1,12 @@
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
-df = pd.read_csv('../data/quadrotor_training_data.csv')
+# Get the script directory and construct absolute path to data
+script_dir = Path(__file__).resolve().parent
+project_root = script_dir.parent
+data_path = project_root / 'data' / 'quadrotor_training_data.csv'
+df = pd.read_csv(data_path)
 
 print('Thrust statistics by trajectory:')
 for tid in range(10):

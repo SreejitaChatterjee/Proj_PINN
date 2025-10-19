@@ -7,6 +7,8 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
 from torch.utils.data import DataLoader, TensorDataset
+import os
+from pathlib import Path
 
 class QuadrotorPINN(nn.Module):
     """Physics-Informed Neural Network for Quadrotor Dynamics"""
@@ -26,22 +28,40 @@ class QuadrotorPINN(nn.Module):
             layers.append(nn.Linear(hidden_size, hidden_size))
             layers.append(nn.Tanh())
 
-        layers.append(nn.Linear(hidden_size, output_size))
+        layers.append(nn.Linear(hidden_size, 12))  # Only output next states
 
         self.network = nn.Sequential(*layers)
 
-        # Physical parameters (learnable) - NOW INCLUDING kt and kq
+        # Physical parameters (learnable) - ALL 6 PARAMETERS
+        self.m = nn.Parameter(torch.tensor(0.068))
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
         self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
-        self.m = nn.Parameter(torch.tensor(0.068))
-        self.kt = nn.Parameter(torch.tensor(0.01))  # NEW: Thrust coefficient
-        self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # NEW: Torque coefficient
+        self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient (LEARNABLE)
+        self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # Torque coefficient (LEARNABLE)
         self.g = nn.Parameter(torch.tensor(9.81))
-        
+
     def forward(self, x):
-        """Forward pass through network"""
-        return self.network(x)
+        """Forward pass through network - outputs next states + physical parameters"""
+        batch_size = x.shape[0]
+
+        # Get next state predictions from network
+        next_states = self.network(x)
+
+        # Append physical parameters (expanded to batch size)
+        params = torch.stack([
+            self.m.expand(batch_size),
+            self.Jxx.expand(batch_size),
+            self.Jyy.expand(batch_size),
+            self.Jzz.expand(batch_size),
+            self.kt.expand(batch_size),
+            self.kq.expand(batch_size)
+        ], dim=1)
+
+        # Concatenate next states and parameters
+        output = torch.cat([next_states, params], dim=1)
+
+        return output
     
     def physics_loss(self, inputs, outputs, targets):
         """Compute physics-informed loss based on quadrotor dynamics"""
@@ -116,10 +136,10 @@ class QuadrotorDataProcessor:
         input_features = ['thrust', 'z', 'torque_x', 'torque_y', 'torque_z', 
                          'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz']
         
-        # Define output features (next state + physical parameters) - using actual column names  
+        # Define output features (next state + physical parameters) - using actual column names
         output_features = ['thrust', 'z', 'torque_x', 'torque_y', 'torque_z',
                           'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz',
-                          'mass', 'inertia_xx', 'inertia_yy', 'inertia_zz']
+                          'mass', 'inertia_xx', 'inertia_yy', 'inertia_zz', 'kt', 'kq']
         
         sequences_input = []
         sequences_output = []
@@ -277,7 +297,11 @@ class QuadrotorTrainer:
 if __name__ == "__main__":
     # Load data with reduced size to avoid memory issues
     print("Loading data...")
-    df = pd.read_csv('quadrotor_training_data.csv')
+    # Get the script directory and construct absolute path to data
+    script_dir = Path(__file__).resolve().parent
+    project_root = script_dir.parent
+    data_path = project_root / 'data' / 'quadrotor_training_data.csv'
+    df = pd.read_csv(data_path)
     
     # Use only first 3 trajectories to reduce memory usage
     df = df[df['trajectory_id'] < 3].copy()
@@ -313,7 +337,7 @@ if __name__ == "__main__":
     
     # Initialize model
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = QuadrotorPINN(input_size=12, hidden_size=128, output_size=16, num_layers=4)
+    model = QuadrotorPINN(input_size=12, hidden_size=128, output_size=18, num_layers=4)
     
     # Train model
     trainer = QuadrotorTrainer(model, device)
@@ -327,9 +351,11 @@ if __name__ == "__main__":
     print("Model saved as 'quadrotor_pinn_model.pth'")
     
     # Print learned physical parameters
-    print("\nLearned Physical Parameters:")
+    print("\nLearned Physical Parameters (6 total):")
     print(f"Mass: {model.m.item():.6f} kg")
     print(f"Jxx: {model.Jxx.item():.8f} kg*m^2")
-    print(f"Jyy: {model.Jyy.item():.8f} kg*m^2") 
+    print(f"Jyy: {model.Jyy.item():.8f} kg*m^2")
     print(f"Jzz: {model.Jzz.item():.8f} kg*m^2")
+    print(f"kt (thrust coefficient): {model.kt.item():.8f}")
+    print(f"kq (torque coefficient): {model.kq.item():.8f}")
     print(f"Gravity: {model.g.item():.3f} m/s^2")

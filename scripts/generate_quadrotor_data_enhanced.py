@@ -338,8 +338,10 @@ def main():
     # Generate data
     data = generate_diverse_trajectories()
 
-    # Save to CSV
-    output_path = Path('../data/quadrotor_training_data.csv')
+    # Save to CSV - Use absolute path
+    script_dir = Path(__file__).resolve().parent
+    project_root = script_dir.parent
+    output_path = project_root / 'data' / 'quadrotor_training_data.csv'
     output_path.parent.mkdir(exist_ok=True, parents=True)
 
     data.to_csv(output_path, index=False)
