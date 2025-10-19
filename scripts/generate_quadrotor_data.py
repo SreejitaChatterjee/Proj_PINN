@@ -50,7 +50,7 @@ class QuadrotorSimulator:
 
         self.kv = -1.0   # Vertical velocity controller (CORRECT: negative for z-down coordinate system)
         self.kz1 = 2.0   # Altitude P gain
-        self.kz2 = 0.1 * 1.5  # Altitude I gain
+        self.kz2 = 0.22  # Altitude I gain (increased from 0.15 to eliminate steady-state error)
 
         self.th = 1e-7   # Threshold for zero torque
 

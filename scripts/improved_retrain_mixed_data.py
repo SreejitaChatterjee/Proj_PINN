@@ -190,12 +190,19 @@ def train_model(X_train, y_train, device='cpu', epochs=150, model_name="mixed"):
     model = ImprovedQuadrotorPINN(input_size=12, hidden_size=128, output_size=18).to(device)
     trainer = ImprovedTrainer(model, device=device)
 
-    # Training history
+    # Training history (with parameter evolution tracking)
     history = {
         'train_loss': [],
         'physics_loss': [],
         'reg_loss': [],
-        'epoch': []
+        'epoch': [],
+        # Parameter evolution
+        'mass': [],
+        'Jxx': [],
+        'Jyy': [],
+        'Jzz': [],
+        'kt': [],
+        'kq': []
     }
 
     print(f"\nTraining for {epochs} epochs...")
@@ -211,6 +218,21 @@ def train_model(X_train, y_train, device='cpu', epochs=150, model_name="mixed"):
         history['physics_loss'].append(physics_loss)
         history['reg_loss'].append(reg_loss)
         history['epoch'].append(epoch)
+
+        # Track parameter evolution
+        model.eval()
+        with torch.no_grad():
+            # Get predictions on a sample batch to extract current parameter values
+            sample_predictions = model(X_tensor[:100])
+            param_values = sample_predictions[:, 12:].mean(dim=0).cpu().numpy()
+
+            history['mass'].append(param_values[0])
+            history['Jxx'].append(param_values[1])
+            history['Jyy'].append(param_values[2])
+            history['Jzz'].append(param_values[3])
+            history['kt'].append(param_values[4])
+            history['kq'].append(param_values[5])
+        model.train()
 
         if (epoch + 1) % 15 == 0:
             print(f"Epoch {epoch+1:3d}/{epochs}: " +
@@ -517,9 +539,18 @@ def main():
         model_small, X_test_aggressive, y_test_aggressive, device, "Aggressive Test"
     )
 
-    # Save baseline model
-    torch.save(model_small.state_dict(), 'pinn_model_baseline_small_only.pth')
-    print("\n[SAVED] Baseline model: pinn_model_baseline_small_only.pth")
+    # Save baseline model with full checkpoint (includes parameter evolution)
+    checkpoint_small = {
+        'epoch': 50,
+        'model_state_dict': model_small.state_dict(),
+        'training_history': history_small,
+        'evaluation_results': {
+            'small_test': results_small_on_small,
+            'aggressive_test': results_small_on_agg
+        }
+    }
+    torch.save(checkpoint_small, 'pinn_model_baseline_small_only.pth')
+    print("\n[SAVED] Baseline model with history: pinn_model_baseline_small_only.pth")
 
     print("\n" + "="*80)
     print("IMPROVED: Train on Mixed Dataset")
@@ -546,9 +577,18 @@ def main():
         model_mixed, X_test_aggressive, y_test_aggressive, device, "Aggressive Test"
     )
 
-    # Save improved model
-    torch.save(model_mixed.state_dict(), 'pinn_model_improved_mixed.pth')
-    print("\n[SAVED] Improved model: pinn_model_improved_mixed.pth")
+    # Save improved model with full checkpoint (includes parameter evolution)
+    checkpoint_mixed = {
+        'epoch': 75,
+        'model_state_dict': model_mixed.state_dict(),
+        'training_history': history_mixed,
+        'evaluation_results': {
+            'small_test': results_mixed_on_small,
+            'aggressive_test': results_mixed_on_agg
+        }
+    }
+    torch.save(checkpoint_mixed, 'pinn_model_improved_mixed.pth')
+    print("\n[SAVED] Improved model with history: pinn_model_improved_mixed.pth")
 
     # Generate comparison plots
     plot_comparison_results(
