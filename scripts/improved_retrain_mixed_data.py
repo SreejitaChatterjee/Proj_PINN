@@ -499,7 +499,7 @@ def main():
 
     # Paths
     data_path = Path("../data/quadrotor_training_data.csv")
-    aggressive_path = Path("aggressive_test_trajectories.pkl")
+    aggressive_path = Path("../data/aggressive_test_trajectories.pkl")
 
     # Device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
