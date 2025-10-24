@@ -54,15 +54,23 @@ class QuadrotorSimulator:
 
         self.th = 1e-7   # Threshold for zero torque
 
-    def simulate_trajectory(self, phi_ref, theta_ref, psi_ref, z_ref, dt=0.001, tend=5.0):
+    def square_wave(self, t, period, amplitude_low, amplitude_high):
+        """Generate square wave signal"""
+        cycle_position = (t % period) / period
+        if cycle_position < 0.5:
+            return amplitude_low
+        else:
+            return amplitude_high
+
+    def simulate_trajectory(self, phi_config, theta_config, psi_config, z_config, dt=0.001, tend=5.0):
         """
-        Simulate a single trajectory with given reference setpoints
+        Simulate a single trajectory with square wave reference setpoints
 
         Args:
-            phi_ref: Roll angle reference (radians)
-            theta_ref: Pitch angle reference (radians)
-            psi_ref: Yaw angle reference (radians)
-            z_ref: Altitude reference (meters, negative down)
+            phi_config: tuple (period, low_val, high_val) for roll reference (radians)
+            theta_config: tuple (period, low_val, high_val) for pitch reference (radians)
+            psi_config: tuple (period, low_val, high_val) for yaw reference (radians)
+            z_config: tuple (period, low_val, high_val) for altitude reference (meters)
             dt: Time step (seconds)
             tend: End time (seconds)
 
@@ -83,6 +91,13 @@ class QuadrotorSimulator:
 
         num_steps = int(tend / dt)
         for i in range(num_steps):
+            t = i * dt
+
+            # Generate square wave references
+            phi_ref = self.square_wave(t, phi_config[0], phi_config[1], phi_config[2])
+            theta_ref = self.square_wave(t, theta_config[0], theta_config[1], theta_config[2])
+            psi_ref = self.square_wave(t, psi_config[0], psi_config[1], psi_config[2])
+            z_ref = self.square_wave(t, z_config[0], z_config[1], z_config[2])
             # ===== ROLL CONTROLLER =====
             sump += (phi_ref - phi)
             pr = self.k1 * (phi_ref - phi) + self.ki * sump * dt
@@ -199,38 +214,101 @@ def generate_diverse_trajectories():
 
     sim = QuadrotorSimulator()
 
-    # Define 10 diverse trajectory configurations
-    # Format: (phi_ref_deg, theta_ref_deg, psi_ref_deg, z_ref_m, description)
+    # Define 10 diverse trajectory configurations with square wave inputs
+    # Format: dict with (period, low_value, high_value) for each axis
     # Issue #6 fix: Reduced altitude setpoints to limit vz to realistic range (±7 m/s)
     trajectories = [
-        (10, -5, 5, -5.0, "Standard maneuver"),
-        (15, -8, 10, -6.0, "Aggressive roll and descent"),        # Changed from -8.0
-        (5, -3, -5, -3.0, "Gentle maneuver shallow altitude"),
-        (-10, 5, 15, -7.0, "Negative roll descent"),              # Changed from -10.0
-        (20, -10, 8, -6.0, "High roll angle"),
-        (8, -2, -10, -4.0, "Moderate roll low altitude"),
-        (-15, 8, 12, -8.0, "Negative roll high altitude"),        # Changed from -12.0
-        (12, -6, 20, -7.0, "High yaw angle"),
-        (6, -4, -8, -5.0, "Balanced moderate maneuver"),
-        (-8, 3, -15, -7.0, "Negative roll and yaw")               # Changed from -9.0
+        {
+            'phi': (2.0, -10*np.pi/180, 10*np.pi/180),
+            'theta': (2.5, -5*np.pi/180, 5*np.pi/180),
+            'psi': (3.0, -5*np.pi/180, 5*np.pi/180),
+            'z': (2.0, -5.0, -3.0),
+            'desc': "Standard square wave maneuver"
+        },
+        {
+            'phi': (1.5, -15*np.pi/180, 15*np.pi/180),
+            'theta': (2.0, -8*np.pi/180, 8*np.pi/180),
+            'psi': (2.5, -10*np.pi/180, 10*np.pi/180),
+            'z': (1.5, -6.0, -4.0),
+            'desc': "Fast aggressive square waves"
+        },
+        {
+            'phi': (3.0, -5*np.pi/180, 5*np.pi/180),
+            'theta': (3.5, -3*np.pi/180, 3*np.pi/180),
+            'psi': (4.0, -5*np.pi/180, 5*np.pi/180),
+            'z': (3.0, -3.0, -2.0),
+            'desc': "Slow gentle square waves"
+        },
+        {
+            'phi': (2.0, -12*np.pi/180, 8*np.pi/180),
+            'theta': (2.0, -6*np.pi/180, 4*np.pi/180),
+            'psi': (2.5, -12*np.pi/180, 12*np.pi/180),
+            'z': (2.0, -7.0, -5.0),
+            'desc': "Asymmetric square wave maneuvers"
+        },
+        {
+            'phi': (1.8, -20*np.pi/180, 20*np.pi/180),
+            'theta': (2.2, -10*np.pi/180, 10*np.pi/180),
+            'psi': (2.0, -8*np.pi/180, 8*np.pi/180),
+            'z': (1.8, -6.0, -4.0),
+            'desc': "High amplitude square waves"
+        },
+        {
+            'phi': (2.5, -8*np.pi/180, 8*np.pi/180),
+            'theta': (3.0, -4*np.pi/180, 4*np.pi/180),
+            'psi': (3.5, -10*np.pi/180, 10*np.pi/180),
+            'z': (2.5, -4.0, -3.0),
+            'desc': "Medium frequency square waves"
+        },
+        {
+            'phi': (3.5, -6*np.pi/180, 12*np.pi/180),
+            'theta': (3.0, -7*np.pi/180, 5*np.pi/180),
+            'psi': (4.0, -8*np.pi/180, 16*np.pi/180),
+            'z': (3.5, -8.0, -6.0),
+            'desc': "Large asymmetric square waves"
+        },
+        {
+            'phi': (1.2, -18*np.pi/180, 18*np.pi/180),
+            'theta': (1.5, -12*np.pi/180, 12*np.pi/180),
+            'psi': (1.8, -15*np.pi/180, 15*np.pi/180),
+            'z': (1.2, -5.0, -3.0),
+            'desc': "Very fast high amplitude square waves"
+        },
+        {
+            'phi': (4.0, -6*np.pi/180, 6*np.pi/180),
+            'theta': (4.5, -4*np.pi/180, 4*np.pi/180),
+            'psi': (5.0, -8*np.pi/180, 8*np.pi/180),
+            'z': (4.0, -5.0, -4.0),
+            'desc': "Very slow square waves"
+        },
+        {
+            'phi': (2.2, -10*np.pi/180, 10*np.pi/180),
+            'theta': (2.6, -8*np.pi/180, 8*np.pi/180),
+            'psi': (3.0, -14*np.pi/180, 14*np.pi/180),
+            'z': (2.2, -7.0, -5.0),
+            'desc': "Mixed frequency square waves"
+        }
     ]
 
     all_data = []
 
-    print("Generating diverse quadrotor flight trajectories...")
+    print("Generating diverse quadrotor flight trajectories with SQUARE WAVE inputs...")
     print("=" * 60)
 
-    for traj_id, (phi_deg, theta_deg, psi_deg, z_ref, desc) in enumerate(trajectories):
-        # Convert degrees to radians
-        phi_ref = phi_deg * np.pi / 180
-        theta_ref = theta_deg * np.pi / 180
-        psi_ref = psi_deg * np.pi / 180
-
-        print(f"\nTrajectory {traj_id}: {desc}")
-        print(f"  Setpoints: phi={phi_deg}deg, theta={theta_deg}deg, psi={psi_deg}deg, z={z_ref}m")
+    for traj_id, traj_config in enumerate(trajectories):
+        print(f"\nTrajectory {traj_id}: {traj_config['desc']}")
+        print(f"  Roll config: period={traj_config['phi'][0]}s, range=[{traj_config['phi'][1]*180/np.pi:.1f}, {traj_config['phi'][2]*180/np.pi:.1f}]deg")
+        print(f"  Pitch config: period={traj_config['theta'][0]}s, range=[{traj_config['theta'][1]*180/np.pi:.1f}, {traj_config['theta'][2]*180/np.pi:.1f}]deg")
+        print(f"  Yaw config: period={traj_config['psi'][0]}s, range=[{traj_config['psi'][1]*180/np.pi:.1f}, {traj_config['psi'][2]*180/np.pi:.1f}]deg")
+        print(f"  Altitude config: period={traj_config['z'][0]}s, range=[{traj_config['z'][1]:.1f}, {traj_config['z'][2]:.1f}]m")
 
         # Simulate trajectory
-        traj_data = sim.simulate_trajectory(phi_ref, theta_ref, psi_ref, z_ref)
+        traj_data = sim.simulate_trajectory(
+            traj_config['phi'],
+            traj_config['theta'],
+            traj_config['psi'],
+            traj_config['z']
+        )
 
         # Add trajectory ID
         traj_data['trajectory_id'] = traj_id
