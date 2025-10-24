@@ -35,30 +35,31 @@ class EnhancedQuadrotorPINN(nn.Module):
         
         self.network = nn.Sequential(*layers)
         
-        # Physical parameters with tighter bounds
+        # Physical parameters with tighter bounds (6 LEARNABLE)
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
         self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
         self.m = nn.Parameter(torch.tensor(0.068))
         self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient (LEARNABLE)
         self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # Torque coefficient (LEARNABLE)
-        self.g = nn.Parameter(torch.tensor(9.81))
 
-        # True parameter values
+        # Fixed constants (NOT learnable)
+        self.g = 9.81  # Gravity constant (m/s²) - FIXED, not trainable
+
+        # True parameter values (6 learnable parameters only)
         self.true_m = 0.068
         self.true_Jxx = 6.86e-5
         self.true_Jyy = 9.2e-5
         self.true_Jzz = 1.366e-4
         self.true_kt = 0.01
         self.true_kq = 7.8263e-4
-        self.true_g = 9.81
         
     def forward(self, x):
         """Forward pass through network"""
         return self.network(x)
     
     def constrain_parameters(self):
-        """Apply very tight parameter constraints"""
+        """Apply very tight parameter constraints (6 learnable parameters only)"""
         with torch.no_grad():
             # Mass constraints (very tight around true value)
             self.m.data = torch.clamp(self.m.data, 0.060, 0.076)
@@ -72,8 +73,7 @@ class EnhancedQuadrotorPINN(nn.Module):
             self.kt.data = torch.clamp(self.kt.data, 0.008, 0.012)  # Thrust coefficient
             self.kq.data = torch.clamp(self.kq.data, 6e-4, 9e-4)  # Torque coefficient
 
-            # Gravity constraints
-            self.g.data = torch.clamp(self.g.data, 9.5, 10.1)
+            # Note: Gravity (self.g = 9.81) is a fixed constant, not constrained
     
     def direct_parameter_identification_loss(self, inputs, targets):
         """Direct parameter identification from torque/acceleration relationships"""

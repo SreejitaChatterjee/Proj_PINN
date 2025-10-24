@@ -32,14 +32,16 @@ class QuadrotorPINN(nn.Module):
 
         self.network = nn.Sequential(*layers)
 
-        # Physical parameters (learnable) - ALL 6 PARAMETERS
+        # Physical parameters (learnable) - 6 LEARNABLE PARAMETERS
         self.m = nn.Parameter(torch.tensor(0.068))
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
         self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
         self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient (LEARNABLE)
         self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # Torque coefficient (LEARNABLE)
-        self.g = nn.Parameter(torch.tensor(9.81))
+
+        # Fixed constants (NOT learnable)
+        self.g = 9.81  # Gravity constant (m/s²) - FIXED, not trainable
 
     def forward(self, x):
         """Forward pass through network - outputs next states + physical parameters"""

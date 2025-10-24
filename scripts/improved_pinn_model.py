@@ -30,43 +30,43 @@ class ImprovedQuadrotorPINN(nn.Module):
         
         self.network = nn.Sequential(*layers)
         
-        # Physical parameters with better initialization and constraints
+        # Physical parameters with better initialization and constraints (6 LEARNABLE)
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
         self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
         self.m = nn.Parameter(torch.tensor(0.068))
         self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient (LEARNABLE)
         self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # Torque coefficient (LEARNABLE)
-        self.g = nn.Parameter(torch.tensor(9.81))
 
-        # True parameter values for regularization
+        # Fixed constants (NOT learnable)
+        self.g = 9.81  # Gravity constant (m/s²) - FIXED, not trainable
+
+        # True parameter values for regularization (6 learnable parameters only)
         self.true_m = 0.068
         self.true_Jxx = 6.86e-5
         self.true_Jyy = 9.2e-5
         self.true_Jzz = 1.366e-4
         self.true_kt = 0.01
         self.true_kq = 7.8263e-4
-        self.true_g = 9.81
         
     def forward(self, x):
         """Forward pass through network"""
         return self.network(x)
     
     def parameter_regularization_loss(self):
-        """Regularization loss to keep parameters close to true values"""
+        """Regularization loss to keep parameters close to true values (6 learnable parameters only)"""
         reg_loss = (
             torch.pow(self.m - self.true_m, 2) / (self.true_m**2) +
             torch.pow(self.Jxx - self.true_Jxx, 2) / (self.true_Jxx**2) +
             torch.pow(self.Jyy - self.true_Jyy, 2) / (self.true_Jyy**2) +
             torch.pow(self.Jzz - self.true_Jzz, 2) / (self.true_Jzz**2) +
             torch.pow(self.kt - self.true_kt, 2) / (self.true_kt**2) +
-            torch.pow(self.kq - self.true_kq, 2) / (self.true_kq**2) +
-            torch.pow(self.g - self.true_g, 2) / (self.true_g**2)
+            torch.pow(self.kq - self.true_kq, 2) / (self.true_kq**2)
         )
         return reg_loss
     
     def constrain_parameters(self):
-        """Apply parameter constraints"""
+        """Apply parameter constraints (6 learnable parameters only)"""
         with torch.no_grad():
             # Mass constraints (0.05 to 0.1 kg)
             self.m.data = torch.clamp(self.m.data, 0.05, 0.1)
@@ -80,8 +80,7 @@ class ImprovedQuadrotorPINN(nn.Module):
             self.kt.data = torch.clamp(self.kt.data, 1e-4, 0.1)  # Thrust coefficient
             self.kq.data = torch.clamp(self.kq.data, 1e-5, 1e-2)  # Torque coefficient
 
-            # Gravity constraints (8 to 12 m/s^2)
-            self.g.data = torch.clamp(self.g.data, 8.0, 12.0)
+            # Note: Gravity (self.g = 9.81) is a fixed constant, not constrained
     
     def physics_loss(self, inputs, outputs, targets):
         """Enhanced physics-informed loss"""
