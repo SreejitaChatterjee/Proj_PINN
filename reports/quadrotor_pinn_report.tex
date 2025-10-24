@@ -119,7 +119,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \midrule
 \textbf{1. Quadrotor Model Design} & Defined 12-state dynamics encompassing thrust, position, torques, angles, and rates & Physical model foundation with complete state representation \\
 \addlinespace[3pt]
-\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with square wave reference inputs (roll, pitch, yaw, altitude) and PID controllers generating realistic transient responses. Issue \#6 fix: altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s. Square wave periods range from 1.2s to 5.0s with varying amplitudes for rich dynamic behavior & 10 × 5,000 samples = 50,000 comprehensive data points \\
+\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with square wave reference inputs (roll, pitch, yaw, altitude) and PID controllers generating realistic transient responses. Altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s, preventing unrealistic high-speed vertical dynamics. Square wave periods range from 1.2s to 5.0s with varying amplitudes for rich dynamic behavior & 10 × 5,000 samples = 50,000 comprehensive data points \\
 \addlinespace[3pt]
 \textbf{3. Physics Simulation} & Applied Newton-Euler equations with precisely known parameters & Ground truth dynamics dataset for validation \\
 \addlinespace[3pt]
@@ -175,7 +175,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \addlinespace[3pt]
 \textbf{17. Generalization Testing} & Comprehensive hold-out trajectory evaluation on unseen flight patterns & Excellent generalization: $<$10\% accuracy degradation \\
 \addlinespace[3pt]
-\textbf{18. Physics Compliance Check} & Quantitative measurement of constraint satisfaction and physics law adherence & Outstanding compliance: 90-95\% residual reduction \\
+\textbf{18. Physics Compliance Check} & Quantitative measurement of physics loss convergence during training showing strong constraint satisfaction & Effective physics integration: physics loss reduced by 2 orders of magnitude during training \\
 \addlinespace[3pt]
 \textbf{19. Statistical Analysis} & Rigorous confidence interval computation and significance testing & Statistically significant results: 95\% CI validation \\
 \addlinespace[3pt]
@@ -217,15 +217,24 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \textbf{Output} & 128 & 12 & 1,548 & Next state prediction (12 states) \\
 \hline
-\textbf{Physics Params} & - & - & 7 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq, g) \\
+\textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
 \hline
-\textbf{Total} & - & - & \textbf{36,243} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{36,242} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
-\textbf{Note:} The network outputs 12 state variables, which are then concatenated with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq) to form the full 18-dimensional output vector. Gravity (g=9.81 m/s²) is an internal learnable parameter used in physics calculations but is NOT included in the output vector, bringing the total internal learnable parameters to 7 (6 output + 1 internal).
+\textbf{Note:} The network outputs 12 state variables, which are then concatenated with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq) to form the full 18-dimensional output vector. Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
 \subsection{Project Input/Output Specification}
+
+\textbf{Coordinate System Convention:} This project uses the \textbf{NED (North-East-Down) coordinate frame}, where the z-axis points downward (positive down). Therefore:
+\begin{itemize}
+\item $z < 0$: Above ground (negative values indicate altitude)
+\item $z = -5.0$ m corresponds to height $h = 5.0$ m above ground
+\item Vertical velocity $v_z < 0$: Climbing (upward motion)
+\item Vertical velocity $v_z > 0$: Descending (downward motion)
+\item Plots display height $h = -z$ (upward positive) for conventional visualization
+\end{itemize}
 
 \subsubsection{Inputs to PINN Model (12 Variables)}
 \begin{longtable}{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.08\textwidth}|p{0.12\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
@@ -234,7 +243,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 1 & \textbf{thrust} & $T$ & N & Total upward force from 4 motors & [0.0, 2.0] \\
 \hline
-2 & \textbf{z} & $z$ & m & Vertical position (altitude) & [-25.0, 0.0] \\
+2 & \textbf{z} & $z$ & m & Vertical position (NED: down positive, $z<0$ = above ground) & [-25.0, 0.0] \\
 \hline
 3 & \textbf{torque\_x} & $\tau_x$ & N$\cdot$m & Roll torque (about x-axis) & [-0.02, 0.02] \\
 \hline
@@ -257,6 +266,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 12 & \textbf{vz} & $w$ & m/s & Vertical velocity & [-20.0, 20.0] \\
 \hline
 \end{longtable}
+
+\textbf{Note on Angular Acceleration Limits:} The torque ranges (±0.02 N$\cdot$m) combined with inertia values ($\sim$10$^{-4}$ kg$\cdot$m$^2$) result in maximum angular accelerations of approximately 200 rad/s$^2$ ($\approx$11,500°/s$^2$). These values are physically realistic for micro quadrotors similar to the Crazyflie 2.0 platform (68g mass), which are capable of aggressive acrobatic maneuvers. The small inertia due to compact geometry and lightweight construction enables such high angular accelerations.
 
 \subsubsection{Outputs from PINN Model (18 Variables)}
 
@@ -306,9 +317,9 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 16 & \textbf{inertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ & Moment of inertia (z-axis) & $1.366 \times 10^{-4}$ \\
 \hline
-17 & \textbf{kt} & $k_t$ & N/(rad/s)$^2$ & Thrust coefficient & 0.01 \\
+17 & \textbf{kt} & $k_t$ & N/(rad/s)$^{2}$ & Thrust coefficient & 0.01 \\
 \hline
-18 & \textbf{kq} & $k_q$ & N$\cdot$m/(rad/s)$^2$ & Torque coefficient & $7.8263 \times 10^{-4}$ \\
+18 & \textbf{kq} & $k_q$ & (N$\cdot$m)/(rad/s)$^{2}$ & Torque coefficient & $7.8263 \times 10^{-4}$ \\
 \hline
 \end{longtable}
 
@@ -354,8 +365,8 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 \hline
 \end{longtable}
 
-\textbf{Physics Loss Normalization (Issue \#5 Fix):}
-To balance gradient contributions from different physical variables with varying magnitudes, each residual is normalized by its typical scale:
+\textbf{Physics Loss Normalization:}
+To balance gradient contributions from different physical variables with varying magnitudes (addressing numerical instability from large magnitude differences), each residual is normalized by its typical scale:
 \begin{itemize}
 \item Angular rates (p, q, r): normalized by 0.1 rad/s
 \item Vertical velocity (vz): normalized by 5.0 m/s
@@ -369,13 +380,13 @@ Normalized physics loss form: $\mathcal{L}_{physics} = \sum_i \left(\frac{x_{pre
 \hline
 \textbf{Dynamics Type} & \textbf{Implemented Equation} & \textbf{Variables} \\
 \hline
-\textbf{Rotational} & $\dot{p} = t_1 \times q \times r + \tau_x/J_{xx} - 2p$ & Cross-coupling + damping \\
+\textbf{Rotational} & $\dot{p} = t_1 \times q \times r + \tau_x/J_{xx} - c_\omega p$ & Cross-coupling + damping ($c_\omega=2.0$ s$^{-1}$) \\
 \hline
-\textbf{Rotational} & $\dot{q} = t_2 \times p \times r + \tau_y/J_{yy} - 2q$ & Cross-coupling + damping \\
+\textbf{Rotational} & $\dot{q} = t_2 \times p \times r + \tau_y/J_{yy} - c_\omega q$ & Cross-coupling + damping ($c_\omega=2.0$ s$^{-1}$) \\
 \hline
-\textbf{Rotational} & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz} - 2r$ & Cross-coupling + damping \\
+\textbf{Rotational} & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz} - c_\omega r$ & Cross-coupling + damping ($c_\omega=2.0$ s$^{-1}$) \\
 \hline
-\textbf{Translational} & $\dot{w} = -T \times \cos(\theta) \times \cos(\phi) / m + g - 0.1 \times v_z$ & Thrust projection + gravity + drag \\
+\textbf{Translational} & $\dot{w} = -T \times \cos(\theta) \times \cos(\phi) / m + g - c_v v_z$ & Thrust + gravity + drag ($c_v=0.1$ s$^{-1}$) \\
 \hline
 \end{longtable}
 
@@ -470,7 +481,7 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{Aspect} & \textbf{Method} & \textbf{Result Achieved} \\
 \hline
-\textbf{Physics Integration} & Multi-objective loss (data + physics + regularization) & 95\% constraint satisfaction \\
+\textbf{Physics Integration} & Multi-objective loss (data + physics + regularization) & Strong constraint satisfaction evidenced by 2+ order of magnitude physics loss reduction \\
 \hline
 \textbf{Parameter Learning} & nn.Parameters with constraint enforcement & $<$7\% identification error \\
 \hline
@@ -489,7 +500,7 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{Generalization Gap} & 8.7\% average MAE degradation & Excellent unseen data performance \\
 \hline
-\textbf{Physics Compliance} & 90-95\% residual reduction & Strong constraint satisfaction \\
+\textbf{Physics Compliance} & Physics loss convergence (2+ orders of magnitude reduction) & Strong constraint satisfaction during training \\
 \hline
 \textbf{Statistical Confidence} & 95\% CI, all metrics within ±5\% & Statistically significant results \\
 \hline
@@ -501,15 +512,15 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{Component} & \textbf{Specification} \\
 \hline
-\textbf{Training Data} & 50,000 samples, 10 trajectories \\
+\textbf{Dataset Generation} & 50,000 total samples (10 trajectories × 5,000 samples each, 1ms timestep, 5s duration) \\
 \hline
-\textbf{Flight Maneuvers} & Hover, climb, descent, roll, pitch, yaw \\
+\textbf{Training Data Used} & Foundation model: 3 trajectories (15,000 samples) for computational efficiency; Improved/Advanced models: full 10 trajectories (50,000 samples) \\
 \hline
-\textbf{Time Resolution} & 1ms timestep, 5s per trajectory \\
+\textbf{Flight Maneuvers} & Hover, climb, descent, roll, pitch, yaw with square wave references \\
 \hline
 \textbf{Optimization} & Adam optimizer, learning rate 0.001 \\
 \hline
-\textbf{Training Config} & Batch size 64 (basic) / 128 (improved), 50-150 epochs, physics weight 0.1-2.0 \\
+\textbf{Training Config} & Batch size 64 (foundation) / 128 (improved/advanced), 50-150 epochs, physics weight 0.1-2.0 \\
 \hline
 \textbf{Regularization} & Weight decay 1e-5 (improved model), gradient clipping max\_norm=1.0 \\
 \hline
@@ -575,7 +586,7 @@ The training data was generated using a high-fidelity MATLAB nonlinear quadrotor
 \hline
 \textbf{Torque Coefficient (kq)} & $7.8263 \times 10^{-4}$ & Motor torque generation constant \\
 \hline
-\textbf{Arm Length (b)} & 0.0438 m & Distance from center to motor ($0.062/\sqrt{2}$) \\
+\textbf{Arm Length (b)} & 0.0438 m & Distance from center to motor (diagonal arm geometry) \\
 \hline
 \textbf{Gravity (g)} & 9.81 m/s$^2$ & Gravitational acceleration \\
 \hline
@@ -620,7 +631,7 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \begin{itemize}
 \item Position proportional gain (kz1): 2.0
 \item Position integral gain (kz2): 0.22 (increased from 0.15 to eliminate steady-state error)
-\item Velocity feedback gain (kv): -0.4 (Issue \#7 fix: reduced from -1.0 for more realistic response in NED coordinate system)
+\item Velocity feedback gain (kv): -0.4 (reduced from initial -1.0 for more realistic damping response in NED coordinate system, preventing over-damped altitude tracking)
 \item Setpoint: $z_r = -5.0$ m (height = 5.0 m)
 \end{itemize}
 
@@ -733,7 +744,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/02_z_time_analysis.png}
-\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - Square wave tracking between 3.0m and 5.0m altitude setpoints (period: 2.0s, red dashed lines). The plot shows height (h=-z) to match conventional altitude representation. PID altitude controller (kz1=2.0, kz2=0.15, kv=-1.0 for NED coordinates) demonstrates effective tracking of time-varying reference commands with smooth transitions between setpoint levels.}
+\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - Square wave tracking between 3.0m and 5.0m altitude setpoints (period: 2.0s, red dashed lines). The plot shows height (h=-z) to match conventional altitude representation. PID altitude controller (kz1=2.0, kz2=0.22, kv=-0.4 for NED coordinates) demonstrates effective tracking of time-varying reference commands with smooth transitions between setpoint levels.}
 \label{fig:altitude_analysis}
 \end{figure}
 
@@ -761,21 +772,21 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/06_roll_time_analysis.png}
-\caption{Roll Angle vs Time (Trajectory 0) - Square wave tracking between -10.0° and +10.0° setpoints (period: 2.0s, red dashed lines) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). Smooth tracking with minimal oscillation demonstrates effective roll control and proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - 2p$.}
+\caption{Roll Angle vs Time (Trajectory 0) - Square wave tracking between -10.0° and +10.0° setpoints (period: 2.0s, red dashed lines) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). Smooth tracking with minimal oscillation demonstrates effective roll control and proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - c_\omega p$ where $c_\omega = 2.0$ s$^{-1}$.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/07_pitch_time_analysis.png}
-\caption{Pitch Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 2.5s, red dashed lines). Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude through transitions. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - 2q$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
+\caption{Pitch Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 2.5s, red dashed lines). Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude through transitions. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - c_\omega q$ where $c_\omega = 2.0$ s$^{-1}$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/08_yaw_time_analysis.png}
-\caption{Yaw Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 3.0s, red dashed lines) demonstrating directional maneuvers. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with smooth transitions. Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - 2r$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
+\caption{Yaw Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 3.0s, red dashed lines) demonstrating directional maneuvers. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with smooth transitions. Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - c_\omega r$ where $c_\omega = 2.0$ s$^{-1}$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
@@ -871,7 +882,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/05_model_summary_statistics.png}
-\caption{Model Performance Statistics - Comprehensive 6-panel validation analysis. Top row: (1) Mean Absolute Error across 6 key variables showing thrust accuracy = 0.012, altitude = 0.08m, attitude angles = 0.038-0.067 rad; (2) Root Mean Square Error metrics; (3) Correlation coefficients (0.88-0.96) indicating excellent prediction quality. Bottom row: (4) Training convergence on log scale showing exponential decrease in training, validation, and physics losses; (5) Model evolution comparison across 3 PINN variants with parameter errors decreasing from 14.8\% to 5.8\%; (6) Physics compliance pie chart showing 90-97\% satisfaction of Euler equations, Newton's law, conservation principles, and cross-coupling terms.}
+\caption{Model Performance Statistics - Comprehensive 6-panel validation analysis. Top row: (1) Mean Absolute Error across 6 key variables showing thrust accuracy = 0.012, altitude = 0.08m, attitude angles = 0.038-0.067 rad; (2) Root Mean Square Error metrics; (3) Correlation coefficients (0.88-0.96) indicating excellent prediction quality. Bottom row: (4) Training convergence on log scale showing exponential decrease in training, validation, and physics losses; (5) Model evolution comparison across 3 PINN variants with parameter errors decreasing from 14.8\% to 5.8\%; (6) Physics compliance assessment showing strong satisfaction of Euler equations, Newton's law, and cross-coupling terms based on physics loss convergence.}
 \label{fig:performance_statistics}
 \end{figure}
 
@@ -884,7 +895,7 @@ This implementation demonstrates successful integration of physics knowledge wit
 \begin{itemize}
 \item \textbf{Comprehensive State Prediction}: All 12 state variables predicted with high accuracy (correlation $>$ 0.86)
 \item \textbf{Successful Parameter Identification}: All 6 physical parameters (mass, inertia components, thrust coefficient, torque coefficient) learned simultaneously
-\item \textbf{Physics Compliance}: 90-95\% reduction in constraint violations
+\item \textbf{Physics Compliance}: Strong constraint satisfaction demonstrated by physics loss convergence (2+ orders of magnitude reduction)
 \item \textbf{Model Evolution}: Systematic improvement from 14.8\% to 5.8\% average parameter error across three model variants
 \item \textbf{Robust Generalization}: $<$ 10\% accuracy degradation on unseen trajectories
 \end{itemize}
