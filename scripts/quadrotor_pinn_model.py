@@ -114,13 +114,19 @@ class QuadrotorPINN(nn.Module):
         # Correct physics: thrust projection varies with orientation, gravity is constant
         wdot_physics = -thrust * torch.cos(theta) * torch.cos(phi) / self.m + self.g - 0.1 * vz
         vz_physics = vz + wdot_physics * dt
-        
-        # Physics loss
-        physics_loss = torch.mean((p_next - p_physics)**2 + 
-                                 (q_next - q_physics)**2 + 
-                                 (r_next - r_physics)**2 +
-                                 (vz_next - vz_physics)**2)
-        
+
+        # Physics loss with normalization (Issue #5 fix)
+        # Normalize each residual by typical magnitude to balance gradient contributions
+        p_scale = 0.1   # Typical angular rate magnitude (rad/s)
+        q_scale = 0.1
+        r_scale = 0.1
+        vz_scale = 5.0  # Typical vertical velocity magnitude (m/s)
+
+        physics_loss = torch.mean(((p_next - p_physics) / p_scale)**2 +
+                                 ((q_next - q_physics) / q_scale)**2 +
+                                 ((r_next - r_physics) / r_scale)**2 +
+                                 ((vz_next - vz_physics) / vz_scale)**2)
+
         return physics_loss
 
 class QuadrotorDataProcessor:

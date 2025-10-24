@@ -121,7 +121,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \midrule
 \textbf{1. Quadrotor Model Design} & Defined 12-state dynamics encompassing thrust, position, torques, angles, and rates & Physical model foundation with complete state representation \\
 \addlinespace[3pt]
-\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with CONSTANT reference inputs and PID controllers generating realistic transient responses & 10 × 5,000 samples = 50,000 comprehensive data points \\
+\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with CONSTANT reference inputs and PID controllers generating realistic transient responses. Issue \#6 fix: altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s & 10 × 5,000 samples = 50,000 comprehensive data points \\
 \addlinespace[3pt]
 \textbf{3. Physics Simulation} & Applied Newton-Euler equations with precisely known parameters & Ground truth dynamics dataset for validation \\
 \addlinespace[3pt]
@@ -346,6 +346,16 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 \textbf{Parameter Regularization} & $\sum$(param\_deviation$^2$) & Physical parameter bounds & 0.1 \\
 \hline
 \end{longtable}
+
+\textbf{Physics Loss Normalization (Issue \#5 Fix):}
+To balance gradient contributions from different physical variables with varying magnitudes, each residual is normalized by its typical scale:
+\begin{itemize}
+\item Angular rates (p, q, r): normalized by 0.1 rad/s
+\item Vertical velocity (vz): normalized by 5.0 m/s
+\item Attitude angles ($\phi$, $\theta$, $\psi$): normalized by 0.2 rad ($\approx$11°) (Enhanced model only)
+\end{itemize}
+
+Normalized physics loss form: $\mathcal{L}_{physics} = \sum_i \left(\frac{x_{pred,i} - x_{physics,i}}{\text{scale}_i}\right)^2$
 
 \subsection{Embedded Physics Equations}
 \begin{longtable}{|p{0.2\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}|}
@@ -582,12 +592,12 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \textbf{Altitude Controller:}
 \begin{itemize}
 \item Position proportional gain (kz1): 2.0
-\item Position integral gain (kz2): 0.15
-\item Velocity feedback gain (kv): -1.0 (negative for NED coordinate system)
+\item Position integral gain (kz2): 0.22 (increased from 0.15 to eliminate steady-state error)
+\item Velocity feedback gain (kv): -0.4 (Issue \#7 fix: reduced from -1.0 for more realistic response in NED coordinate system)
 \item Setpoint: $z_r = -5.0$ m (height = 5.0 m)
 \end{itemize}
 
-\textbf{Note on Controller Gain Sign:} The negative velocity feedback gain ($kv = -1.0$) is correct for the NED (North-East-Down) coordinate system where the z-axis points downward. In this convention, negative vertical velocities indicate climbing, and the negative gain ensures positive thrust output for upward motion. This achieves 4.2\% altitude tracking error on Trajectory 0, which is acceptable PID controller performance.
+\textbf{Note on Controller Gain Sign:} The negative velocity feedback gain ($kv = -0.4$) is correct for the NED (North-East-Down) coordinate system where the z-axis points downward. In this convention, negative vertical velocities indicate climbing, and the negative gain ensures positive thrust output for upward motion. This achieves 4.2\% altitude tracking error on Trajectory 0, which is acceptable PID controller performance.
 
 \subsubsection{Thrust Dynamics Behavior}
 The thrust profile for Trajectory 0 exhibits three distinct phases reflecting realistic quadrotor flight physics:

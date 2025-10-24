@@ -49,7 +49,7 @@ class QuadrotorSimulator:
         self.k12 = 1.0   # Yaw angle controller
         self.ki2 = 0.4 * 0.01  # Yaw integral gain
 
-        self.kv = -1.0   # Vertical velocity controller (CORRECT: negative for z-down coordinate system)
+        self.kv = -0.4   # Vertical velocity controller (Issue #7 fix: reduced from -1.0 for more realistic response)
         self.kz1 = 2.0   # Altitude P gain
         self.kz2 = 0.22  # Altitude I gain (increased from 0.15 to eliminate steady-state error)
 
@@ -219,6 +219,7 @@ def generate_diverse_trajectories():
 
     # Define 10 diverse trajectory configurations with square wave inputs
     # Format: (period_s, low_value, high_value)
+    # Issue #6 fix: Reduced altitude setpoints to limit vz to realistic range (±7 m/s)
     trajectories = [
         {
             'phi': (2.0, -10*np.pi/180, 10*np.pi/180),
@@ -231,7 +232,7 @@ def generate_diverse_trajectories():
             'phi': (1.5, -15*np.pi/180, 15*np.pi/180),
             'theta': (2.0, -8*np.pi/180, 8*np.pi/180),
             'psi': (2.5, -10*np.pi/180, 10*np.pi/180),
-            'z': (1.5, -8.0, -5.0),
+            'z': (1.5, -6.0, -4.0),  # Changed from -8.0, -5.0
             'desc': "Fast aggressive square waves"
         },
         {
@@ -245,7 +246,7 @@ def generate_diverse_trajectories():
             'phi': (2.0, -12*np.pi/180, 8*np.pi/180),
             'theta': (2.0, -6*np.pi/180, 4*np.pi/180),
             'psi': (2.5, -12*np.pi/180, 12*np.pi/180),
-            'z': (2.0, -10.0, -7.0),
+            'z': (2.0, -7.0, -5.0),  # Changed from -10.0, -7.0
             'desc': "Asymmetric square wave maneuvers"
         },
         {
@@ -266,7 +267,7 @@ def generate_diverse_trajectories():
             'phi': (3.5, -6*np.pi/180, 12*np.pi/180),
             'theta': (3.0, -7*np.pi/180, 5*np.pi/180),
             'psi': (4.0, -8*np.pi/180, 16*np.pi/180),
-            'z': (3.5, -12.0, -9.0),
+            'z': (3.5, -8.0, -6.0),  # Changed from -12.0, -9.0
             'desc': "Large asymmetric square waves"
         },
         {
@@ -287,7 +288,7 @@ def generate_diverse_trajectories():
             'phi': (2.2, -10*np.pi/180, 10*np.pi/180),
             'theta': (2.6, -8*np.pi/180, 8*np.pi/180),
             'psi': (3.0, -14*np.pi/180, 14*np.pi/180),
-            'z': (2.2, -9.0, -6.0),
+            'z': (2.2, -7.0, -5.0),  # Changed from -9.0, -6.0
             'desc': "Mixed frequency square waves"
         }
     ]

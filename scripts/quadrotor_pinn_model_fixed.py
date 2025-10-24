@@ -138,22 +138,30 @@ class QuadrotorPINN(nn.Module):
         theta_physics = theta + thetadot * dt
         psi_physics = psi + psidot * dt
 
-        # Physics loss - WEIGHTED BY IMPORTANCE
+        # Physics loss with proper normalization (Issue #5 fix)
+        # Normalize each residual by typical magnitude to balance gradient contributions
+        angle_scale = 0.2    # Typical attitude angle magnitude (rad, ~11 deg)
+        p_scale = 0.1        # Typical angular rate magnitude (rad/s)
+        q_scale = 0.1
+        r_scale = 0.1
+        vz_scale = 5.0       # Typical vertical velocity magnitude (m/s)
+        z_scale = 5.0        # Typical altitude magnitude (m)
+
         rotational_loss = (
-            torch.mean((p_next - p_physics)**2) * 10.0 +  # High weight on angular rates
-            torch.mean((q_next - q_physics)**2) * 10.0 +
-            torch.mean((r_next - r_physics)**2) * 10.0
+            torch.mean(((p_next - p_physics) / p_scale)**2) +
+            torch.mean(((q_next - q_physics) / q_scale)**2) +
+            torch.mean(((r_next - r_physics) / r_scale)**2)
         )
 
         translational_loss = (
-            torch.mean((vz_next - vz_physics)**2) * 5.0 +  # Vertical velocity
-            torch.mean((z_next - z_physics)**2) * 2.0       # Position
+            torch.mean(((vz_next - vz_physics) / vz_scale)**2) +
+            torch.mean(((z_next - z_physics) / z_scale)**2)
         )
 
         attitude_loss = (
-            torch.mean((phi_next - phi_physics)**2) * 1.0 +
-            torch.mean((theta_next - theta_physics)**2) * 1.0 +
-            torch.mean((psi_next - psi_physics)**2) * 0.5
+            torch.mean(((phi_next - phi_physics) / angle_scale)**2) +
+            torch.mean(((theta_next - theta_physics) / angle_scale)**2) +
+            torch.mean(((psi_next - psi_physics) / angle_scale)**2)
         )
 
         physics_loss = rotational_loss + translational_loss + attitude_loss

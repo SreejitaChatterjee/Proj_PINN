@@ -48,7 +48,7 @@ class QuadrotorSimulator:
         self.k12 = 1.0   # Yaw angle controller
         self.ki2 = 0.4 * 0.01  # Yaw integral gain
 
-        self.kv = -1.0   # Vertical velocity controller (CORRECT: negative for z-down coordinate system)
+        self.kv = -0.4   # Vertical velocity controller (Issue #7 fix: reduced from -1.0 for more realistic response)
         self.kz1 = 2.0   # Altitude P gain
         self.kz2 = 0.22  # Altitude I gain (increased from 0.15 to eliminate steady-state error)
 
@@ -201,17 +201,18 @@ def generate_diverse_trajectories():
 
     # Define 10 diverse trajectory configurations
     # Format: (phi_ref_deg, theta_ref_deg, psi_ref_deg, z_ref_m, description)
+    # Issue #6 fix: Reduced altitude setpoints to limit vz to realistic range (±7 m/s)
     trajectories = [
         (10, -5, 5, -5.0, "Standard maneuver"),
-        (15, -8, 10, -8.0, "Aggressive roll and deep descent"),
+        (15, -8, 10, -6.0, "Aggressive roll and descent"),        # Changed from -8.0
         (5, -3, -5, -3.0, "Gentle maneuver shallow altitude"),
-        (-10, 5, 15, -10.0, "Negative roll deep descent"),
+        (-10, 5, 15, -7.0, "Negative roll descent"),              # Changed from -10.0
         (20, -10, 8, -6.0, "High roll angle"),
         (8, -2, -10, -4.0, "Moderate roll low altitude"),
-        (-15, 8, 12, -12.0, "Negative roll high altitude"),
+        (-15, 8, 12, -8.0, "Negative roll high altitude"),        # Changed from -12.0
         (12, -6, 20, -7.0, "High yaw angle"),
         (6, -4, -8, -5.0, "Balanced moderate maneuver"),
-        (-8, 3, -15, -9.0, "Negative roll and yaw")
+        (-8, 3, -15, -7.0, "Negative roll and yaw")               # Changed from -9.0
     ]
 
     all_data = []

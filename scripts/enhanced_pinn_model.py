@@ -164,18 +164,25 @@ class EnhancedQuadrotorPINN(nn.Module):
         # Correct physics: thrust projection varies with orientation, gravity is constant
         wdot_physics = -thrust * torch.cos(theta) * torch.cos(phi) / self.m + self.g - 0.1 * vz
         vz_physics = vz + wdot_physics * dt
-        
-        # Comprehensive physics loss
+
+        # Comprehensive physics loss with normalization (Issue #5 fix)
+        # Normalize each residual by typical magnitude to balance gradient contributions
+        angle_scale = 0.2    # Typical attitude angle magnitude (rad, ~11 deg)
+        p_scale = 0.1        # Typical angular rate magnitude (rad/s)
+        q_scale = 0.1
+        r_scale = 0.1
+        vz_scale = 5.0       # Typical vertical velocity magnitude (m/s)
+
         physics_loss = (
-            torch.mean((phi_next - phi_physics)**2) +
-            torch.mean((theta_next - theta_physics)**2) +
-            torch.mean((psi_next - psi_physics)**2) +
-            torch.mean((p_next - p_physics)**2) + 
-            torch.mean((q_next - q_physics)**2) + 
-            torch.mean((r_next - r_physics)**2) +
-            torch.mean((vz_next - vz_physics)**2)
+            torch.mean(((phi_next - phi_physics) / angle_scale)**2) +
+            torch.mean(((theta_next - theta_physics) / angle_scale)**2) +
+            torch.mean(((psi_next - psi_physics) / angle_scale)**2) +
+            torch.mean(((p_next - p_physics) / p_scale)**2) +
+            torch.mean(((q_next - q_physics) / q_scale)**2) +
+            torch.mean(((r_next - r_physics) / r_scale)**2) +
+            torch.mean(((vz_next - vz_physics) / vz_scale)**2)
         )
-        
+
         return physics_loss
     
     def parameter_regularization_loss(self):
