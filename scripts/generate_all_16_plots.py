@@ -54,7 +54,7 @@ def load_data():
         print(f"Error: Data file not found at {data_path}")
         return None
 
-def plot_state_variable(df, variable_name, output_num, title, ylabel, units, reference_value=None):
+def plot_state_variable(df, variable_name, output_num, title, ylabel, units, reference_range=None):
     """Plot individual state variable vs time for a representative trajectory"""
     fig, ax = plt.subplots(figsize=(12, 8))
 
@@ -81,14 +81,34 @@ def plot_state_variable(df, variable_name, output_num, title, ylabel, units, ref
     ax.plot(traj_data['timestamp'], plot_data,
             linewidth=2.5, alpha=0.9, color='steelblue', label='PINN Trajectory')
 
-    # Add reference line if provided (from MATLAB setpoints)
-    if reference_value is not None:
-        ax.axhline(y=reference_value, color='red', linestyle='--', linewidth=2,
-                   label=f'Reference: {reference_value:.2f}', alpha=0.8)
+    # Add reference lines for square wave setpoints
+    if reference_range is not None:
+        if isinstance(reference_range, tuple) and len(reference_range) == 2:
+            # Square wave with low and high values
+            low, high = reference_range
+            # Format range display based on symmetry
+            if abs(low + high) < 0.01:  # Symmetric around zero (e.g., ±10°)
+                ax.axhline(y=low, color='red', linestyle='--', linewidth=1.5,
+                           label=f'Setpoint Range: ±{abs(high):.1f}{units}', alpha=0.7)
+                ax.axhline(y=high, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+            else:  # Non-symmetric range (e.g., 3.0m to 5.0m)
+                ax.axhline(y=low, color='red', linestyle='--', linewidth=1.5,
+                           label=f'Setpoint Range: {low:.1f} to {high:.1f}{units}', alpha=0.7)
+                ax.axhline(y=high, color='red', linestyle='--', linewidth=1.5, alpha=0.7)
+        else:
+            # Single reference value (for rates and hover thrust)
+            ax.axhline(y=reference_range, color='red', linestyle='--', linewidth=2,
+                       label=f'Reference: {reference_range:.2f}', alpha=0.8)
 
     ax.set_xlabel('Time (s)', fontsize=14, fontweight='bold')
     ax.set_ylabel(f'{ylabel} [{units}]', fontsize=14, fontweight='bold')
-    ax.set_title(f'{title}\nPINN Prediction vs Reference Setpoint',
+
+    # Create appropriate title based on whether we have square wave or single setpoint
+    if reference_range is not None and isinstance(reference_range, tuple):
+        title_suffix = 'PINN Prediction vs Square Wave Setpoints'
+    else:
+        title_suffix = 'PINN Prediction vs Reference Setpoint'
+    ax.set_title(f'{title}\n{title_suffix}',
                 fontsize=16, fontweight='bold', pad=20)
 
     ax.grid(True, alpha=0.3)
@@ -194,27 +214,28 @@ def main():
     if df is None:
         return
 
-    # State variables (12 plots) - time series with actual setpoints for trajectory 2
-    # Reference values determined from steady-state convergence of trajectory 2
+    # State variables (12 plots) - time series with square wave setpoints for trajectory 0
+    # Reference ranges from generate_quadrotor_data.py trajectory 0 configuration
+    # Format: (low, high) for square waves, single value for steady-state targets
     state_variables = [
-        ('thrust', 'Thrust Force', 'N', 0.671),  # Steady-state thrust
-        ('z', 'Altitude', 'm', 2.74),  # Converges to ~2.74m height
-        ('torque_x', 'Roll Torque', 'N⋅m', None),
-        ('torque_y', 'Pitch Torque', 'N⋅m', None),
-        ('torque_z', 'Yaw Torque', 'N⋅m', None),
-        ('roll', 'Roll Angle (φ)', 'rad', 5.0),  # Converges to ~5°
-        ('pitch', 'Pitch Angle (θ)', 'rad', -3.0),  # Converges to ~-3°
-        ('yaw', 'Yaw Angle (ψ)', 'rad', -5.0),  # Converges to ~-5°
-        ('p', 'Roll Rate', 'rad/s', 0.0),  # Should converge to zero
-        ('q', 'Pitch Rate', 'rad/s', 0.0),  # Should converge to zero
-        ('r', 'Yaw Rate', 'rad/s', 0.0),  # Should converge to zero
-        ('vz', 'Vertical Velocity', 'm/s', 0.0)  # Should converge to zero (hovering)
+        ('thrust', 'Thrust Force', 'N', 0.667),  # Hover thrust = m*g = 0.068*9.81 (approx constant)
+        ('z', 'Altitude', 'm', (3.0, 5.0)),  # Square wave: -5.0m to -3.0m NED = 3.0m to 5.0m height
+        ('torque_x', 'Roll Torque', 'N⋅m', None),  # Control signal - no fixed setpoint
+        ('torque_y', 'Pitch Torque', 'N⋅m', None),  # Control signal - no fixed setpoint
+        ('torque_z', 'Yaw Torque', 'N⋅m', None),  # Control signal - no fixed setpoint
+        ('roll', 'Roll Angle (φ)', 'rad', (-10.0, 10.0)),  # Square wave: -10° to +10°
+        ('pitch', 'Pitch Angle (θ)', 'rad', (-5.0, 5.0)),  # Square wave: -5° to +5°
+        ('yaw', 'Yaw Angle (ψ)', 'rad', (-5.0, 5.0)),  # Square wave: -5° to +5°
+        ('p', 'Roll Rate', 'rad/s', 0.0),  # Target: zero (steady tracking)
+        ('q', 'Pitch Rate', 'rad/s', 0.0),  # Target: zero (steady tracking)
+        ('r', 'Yaw Rate', 'rad/s', 0.0),  # Target: zero (steady tracking)
+        ('vz', 'Vertical Velocity', 'm/s', 0.0)  # Target: zero (hovering at altitude)
     ]
 
     print("\nGenerating State Variable Time-Series Plots:")
-    for i, (var_name, title, units, ref_val) in enumerate(state_variables, 1):
+    for i, (var_name, title, units, ref_range) in enumerate(state_variables, 1):
         if var_name in df.columns:
-            plot_state_variable(df, var_name, i, title, title, units, ref_val)
+            plot_state_variable(df, var_name, i, title, title, units, ref_range)
         else:
             print(f"Warning: {var_name} not found in dataset")
 

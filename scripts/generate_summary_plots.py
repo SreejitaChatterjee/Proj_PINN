@@ -65,7 +65,7 @@ def load_data():
 def plot_01_complete_analysis(df):
     """01: All outputs complete analysis - 4x4 grid of all 16 outputs"""
     fig, axes = plt.subplots(4, 4, figsize=(20, 16))
-    fig.suptitle('Complete PINN Analysis: All 16 Outputs vs Time\nPhysics-Informed Neural Network Performance',
+    fig.suptitle('Complete PINN Analysis: All 16 Outputs vs Time\nPhysics-Informed Neural Network Performance (Square Wave Tracking)',
                  fontsize=18, fontweight='bold', y=0.95, color='black')
 
     # Define all 16 outputs with their properties
@@ -108,23 +108,31 @@ def plot_01_complete_analysis(df):
                 ax.plot(traj_data['timestamp'], plot_data,
                        color='steelblue', alpha=0.9, linewidth=2, label='PINN Output')
 
-                # Add reference lines for attitude and altitude (trajectory 0 setpoints - matches MATLAB)
+                # Add reference lines for square wave setpoints (trajectory 0 configuration)
                 if var_name == 'z':
-                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 5.0m')
+                    # Square wave: 3.0m to 5.0m height
+                    ax.axhline(3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                              label='Square Wave Range: 3.0-5.0m')
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
                 elif var_name == 'thrust':
                     hover_thrust = 0.068 * 9.81  # m*g
                     ax.axhline(hover_thrust, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label=f'Hover: {hover_thrust:.3f}N')
+                              label=f'Hover Reference: {hover_thrust:.3f}N')
                 elif var_name == 'roll':
-                    ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 10.0°')
+                    # Square wave: -10° to +10°
+                    ax.axhline(-10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                              label='Square Wave Range: ±10°')
+                    ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
                 elif var_name == 'pitch':
-                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: -5.0°')
+                    # Square wave: -5° to +5°
+                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                              label='Square Wave Range: ±5°')
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
                 elif var_name == 'yaw':
-                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                              label='Setpoint: 5.0°')
+                    # Square wave: -5° to +5°
+                    ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                              label='Square Wave Range: ±5°')
+                    ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
         elif idx >= 12:  # Physical parameters - show convergence
             # Simulate parameter convergence
             epochs = np.arange(0, 100)
@@ -160,7 +168,7 @@ def plot_01_complete_analysis(df):
 def plot_02_key_flight_variables(df):
     """02: Key flight variables analysis"""
     fig, axes = plt.subplots(2, 3, figsize=(18, 12))
-    fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States vs Reference Setpoints',
+    fig.suptitle('Key Flight Variables Analysis\nCritical Quadrotor States vs Square Wave Setpoints',
                  fontsize=16, fontweight='bold', color='black')
 
     key_vars = [
@@ -193,23 +201,31 @@ def plot_02_key_flight_variables(df):
             ax.plot(traj_data['timestamp'], plot_data,
                    color='steelblue', alpha=0.9, linewidth=2.5, label='PINN Output')
 
-            # Add reference lines (trajectory 0 setpoints - matches MATLAB)
+            # Add reference lines for square wave setpoints (trajectory 0 configuration)
             if var_name == 'z':
-                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 5.0m')
+                # Square wave: 3.0m to 5.0m height
+                ax.axhline(3.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                          label='Square Wave Range: 3.0-5.0m')
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
             elif var_name == 'thrust':
                 hover_thrust = 0.068 * 9.81  # m*g
                 ax.axhline(hover_thrust, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label=f'Hover: {hover_thrust:.3f}N')
+                          label=f'Hover Reference: {hover_thrust:.3f}N')
             elif var_name == 'roll':
-                ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 10.0°')
+                # Square wave: -10° to +10°
+                ax.axhline(-10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                          label='Square Wave Range: ±10°')
+                ax.axhline(10.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
             elif var_name == 'pitch':
-                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: -5.0°')
+                # Square wave: -5° to +5°
+                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                          label='Square Wave Range: ±5°')
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
             elif var_name == 'yaw':
-                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.5,
-                          label='Setpoint: 5.0°')
+                # Square wave: -5° to +5°
+                ax.axhline(-5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2,
+                          label='Square Wave Range: ±5°')
+                ax.axhline(5.0, color='red', linestyle='--', alpha=0.6, linewidth=1.2)
 
         ax.set_xlabel('Time [s]', fontsize=12, fontweight='bold', color='black')
         ax.set_ylabel(ylabel, fontsize=12, fontweight='bold', color='black')
