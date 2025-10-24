@@ -32,16 +32,20 @@ class ImprovedQuadrotorPINN(nn.Module):
         
         # Physical parameters with better initialization and constraints
         self.Jxx = nn.Parameter(torch.tensor(6.86e-5))
-        self.Jyy = nn.Parameter(torch.tensor(9.2e-5))  
+        self.Jyy = nn.Parameter(torch.tensor(9.2e-5))
         self.Jzz = nn.Parameter(torch.tensor(1.366e-4))
         self.m = nn.Parameter(torch.tensor(0.068))
+        self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient (LEARNABLE)
+        self.kq = nn.Parameter(torch.tensor(7.8263e-4))  # Torque coefficient (LEARNABLE)
         self.g = nn.Parameter(torch.tensor(9.81))
-        
+
         # True parameter values for regularization
         self.true_m = 0.068
         self.true_Jxx = 6.86e-5
         self.true_Jyy = 9.2e-5
         self.true_Jzz = 1.366e-4
+        self.true_kt = 0.01
+        self.true_kq = 7.8263e-4
         self.true_g = 9.81
         
     def forward(self, x):
@@ -55,6 +59,8 @@ class ImprovedQuadrotorPINN(nn.Module):
             torch.pow(self.Jxx - self.true_Jxx, 2) / (self.true_Jxx**2) +
             torch.pow(self.Jyy - self.true_Jyy, 2) / (self.true_Jyy**2) +
             torch.pow(self.Jzz - self.true_Jzz, 2) / (self.true_Jzz**2) +
+            torch.pow(self.kt - self.true_kt, 2) / (self.true_kt**2) +
+            torch.pow(self.kq - self.true_kq, 2) / (self.true_kq**2) +
             torch.pow(self.g - self.true_g, 2) / (self.true_g**2)
         )
         return reg_loss
@@ -64,12 +70,16 @@ class ImprovedQuadrotorPINN(nn.Module):
         with torch.no_grad():
             # Mass constraints (0.05 to 0.1 kg)
             self.m.data = torch.clamp(self.m.data, 0.05, 0.1)
-            
+
             # Inertia constraints (reasonable ranges)
             self.Jxx.data = torch.clamp(self.Jxx.data, 1e-5, 1e-3)
             self.Jyy.data = torch.clamp(self.Jyy.data, 1e-5, 1e-3)
             self.Jzz.data = torch.clamp(self.Jzz.data, 1e-5, 1e-3)
-            
+
+            # Motor coefficient constraints
+            self.kt.data = torch.clamp(self.kt.data, 1e-4, 0.1)  # Thrust coefficient
+            self.kq.data = torch.clamp(self.kq.data, 1e-5, 1e-2)  # Torque coefficient
+
             # Gravity constraints (8 to 12 m/s^2)
             self.g.data = torch.clamp(self.g.data, 8.0, 12.0)
     
