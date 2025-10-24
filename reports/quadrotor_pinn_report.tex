@@ -532,7 +532,39 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 
 \textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
 
-\textbf{Important Distinction - Reference vs. Response:} The square wave signals are \textit{reference setpoints} (desired values) for the PID controller, NOT the actual system trajectories. The actual attitude angles and altitude follow smooth, continuous paths as the quadrotor physically tracks these step-change references. Plots show both: (1) red dashed lines indicating square wave setpoints, and (2) blue curves showing the smooth system response. The smooth response is physically correct - quadrotors cannot instantaneously change angles or altitude. This tracking behavior validates realistic controller performance with rise times, overshoot, and settling characteristics.
+\textbf{\textcolor{red}{CRITICAL: Why Plots Show Smooth Curves, NOT Square Waves}}
+
+\fcolorbox{red}{yellow!20}{%
+\begin{minipage}{0.95\textwidth}
+\vspace{0.2cm}
+\textbf{IMPORTANT - Understanding Plot Interpretation:}
+
+\textbf{You will see SMOOTH CURVES in all trajectory plots (Figures 1-12), NOT square waves. This is physically CORRECT!}
+
+\begin{itemize}
+\item \textbf{Square Waves} = Reference SETPOINTS (red dashed lines) = What the controller is COMMANDED to achieve
+\item \textbf{Smooth Curves} = Actual system RESPONSE (blue curves) = What the quadrotor PHYSICALLY does
+\end{itemize}
+
+\textbf{Why the response MUST be smooth:}
+\begin{enumerate}
+\item \textbf{Physical impossibility}: A quadrotor with mass and inertia CANNOT instantaneously change angles or altitude (would require infinite force/torque)
+\item \textbf{Newton's Laws}: $F = ma$ requires finite acceleration time. Mass resists instantaneous velocity changes.
+\item \textbf{Controller dynamics}: PID controllers produce smooth tracking with rise time ($\sim$0.5s), overshoot, and settling behavior
+\item \textbf{This validates realism}: The smooth curves demonstrate physically accurate dynamics, not simulation errors
+\end{enumerate}
+
+\textbf{Visual Guide:}
+\begin{itemize}
+\item \textbf{Red dashed horizontal lines} = Square wave setpoint levels (step commands)
+\item \textbf{Blue solid curves} = Smooth physical response tracking those setpoints
+\item \textbf{Transitions between setpoints} = Rise time, overshoot, settling (realistic controller behavior)
+\end{itemize}
+\vspace{0.2cm}
+\end{minipage}%
+}
+
+\vspace{0.5cm}
 
 \textbf{Square Wave Implementation:}
 \begin{itemize}
@@ -737,6 +769,22 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \newpage
 \section{Visual Results}
 
+\textbf{\textcolor{red}{REMINDER: All trajectory plots (Figures 1-12) show SMOOTH CURVES, NOT square waves!}}
+
+\fcolorbox{red}{yellow!10}{%
+\begin{minipage}{0.95\textwidth}
+\textbf{Plot Interpretation Guide:}
+\begin{itemize}
+\item \textbf{Blue solid curves} = Actual smooth physical response (this is what you'll see in most of each plot)
+\item \textbf{Red dashed lines} = Square wave reference setpoints (step commands)
+\item The smooth curves are CORRECT - physical systems with mass/inertia cannot follow step inputs instantaneously
+\end{itemize}
+See Section 4.11 for detailed explanation of reference vs. response distinction.
+\end{minipage}%
+}
+
+\vspace{0.5cm}
+
 \subsection{Individual Output Analysis (Figures 1-16)}
 
 \subsubsection{State Variable Time-Series Analysis}
@@ -744,21 +792,21 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/01_thrust_time_analysis.png}
-\caption{Thrust Force vs Time (Trajectory 0) - Three-phase thrust profile demonstrating physically realistic quadrotor dynamics: climb phase at 1.334N (t = 0-2s), transition phase with controlled deceleration (t = 2-4s), and steady hover at 0.667N = m×g (t = 4-5s). Red dashed reference line shows hover thrust equilibrium. This behavior validates Newton's second law implementation in the PINN model.}
+\caption{Thrust Force vs Time (Trajectory 0) - \textbf{Blue curve shows smooth thrust response} tracking square wave altitude commands. Three-phase thrust profile demonstrating physically realistic quadrotor dynamics: climb phase at 1.334N (t = 0-2s), transition phase with controlled deceleration (t = 2-4s), and steady hover at 0.667N = m×g (t = 4-5s). Red dashed reference line shows hover thrust equilibrium. \textbf{Note: Smooth curve is physically correct - thrust cannot change instantaneously due to motor/controller dynamics.}}
 \label{fig:thrust_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/02_z_time_analysis.png}
-\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - Square wave tracking between 3.0m and 5.0m altitude setpoints (period: 2.0s, red dashed lines). The plot shows height (h=-z) to match conventional altitude representation. PID altitude controller (kz1=2.0, kz2=0.22, kv=-0.4 for NED coordinates) demonstrates effective tracking of time-varying reference commands with smooth transitions between setpoint levels.}
+\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - \textbf{Blue curve shows smooth altitude response} tracking square wave setpoints between 3.0m and 5.0m (period: 2.0s, red dashed lines). The plot shows height (h=-z) to match conventional altitude representation. PID altitude controller (kz1=2.0, kz2=0.22, kv=-0.4 for NED coordinates) demonstrates effective tracking of time-varying reference commands with smooth transitions between setpoint levels. \textbf{Smooth tracking is physically correct - quadrotor with mass cannot teleport between altitudes.}}
 \label{fig:altitude_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/03_torque_x_time_analysis.png}
-\caption{Roll Torque vs Time - Control moments about x-axis showing banking maneuvers and stabilization.}
+\caption{Roll Torque vs Time (Trajectory 0) - \textbf{Control torque commands} about x-axis showing banking maneuvers and stabilization. Note: Torque commands can have sharp transitions because actuator dynamics are not modeled in simulation (see Section 3.2 note on simulation limitations). Real systems would show smoother torque profiles due to motor time constants.}
 \label{fig:roll_torque_analysis}
 \end{figure}
 
@@ -779,21 +827,21 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/06_roll_time_analysis.png}
-\caption{Roll Angle vs Time (Trajectory 0) - Square wave tracking between -10.0° and +10.0° setpoints (period: 2.0s, red dashed lines) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). Smooth tracking with minimal oscillation demonstrates effective roll control and proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - c_\omega p$ where $c_\omega = 2.0$ s$^{-1}$.}
+\caption{Roll Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth roll angle response} tracking square wave setpoints between -10.0° and +10.0° (period: 2.0s, red dashed lines) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). \textbf{Smooth tracking with rise time and settling demonstrates realistic physics} - rotational inertia prevents instantaneous angle changes. Proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - c_\omega p$ where $c_\omega = 2.0$ s$^{-1}$.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/07_pitch_time_analysis.png}
-\caption{Pitch Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 2.5s, red dashed lines). Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude through transitions. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - c_\omega q$ where $c_\omega = 2.0$ s$^{-1}$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
+\caption{Pitch Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth pitch response} tracking square wave setpoints between -5.0° and +5.0° (period: 2.5s, red dashed lines). Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude through smooth transitions. \textbf{Smooth curves demonstrate realistic inertial dynamics} - not instantaneous square wave following. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - c_\omega q$ where $c_\omega = 2.0$ s$^{-1}$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/08_yaw_time_analysis.png}
-\caption{Yaw Angle vs Time (Trajectory 0) - Square wave tracking between -5.0° and +5.0° setpoints (period: 3.0s, red dashed lines) demonstrating directional maneuvers. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with smooth transitions. Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - c_\omega r$ where $c_\omega = 2.0$ s$^{-1}$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
+\caption{Yaw Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth yaw response} tracking square wave setpoints between -5.0° and +5.0° (period: 3.0s, red dashed lines) demonstrating directional maneuvers. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with physically realistic smooth transitions (not instantaneous square waves). Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - c_\omega r$ where $c_\omega = 2.0$ s$^{-1}$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
@@ -821,7 +869,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/12_vz_time_analysis.png}
-\caption{Vertical Velocity vs Time - Climb/descent rates across different flight maneuvers and transitions.}
+\caption{Vertical Velocity vs Time (Trajectory 0) - \textbf{Smooth velocity profile} showing climb/descent rates during altitude tracking. Velocity changes are smooth due to mass inertia - the quadrotor accelerates and decelerates realistically rather than instantaneously jumping between velocity levels. This demonstrates correct Newtonian dynamics: $\dot{w} = -T\cos\theta\cos\phi/m + g - 0.1w$.}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
