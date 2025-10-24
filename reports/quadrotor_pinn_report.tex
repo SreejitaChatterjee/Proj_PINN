@@ -783,6 +783,32 @@ See Section 4.11 for detailed explanation of reference vs. response distinction.
 \end{minipage}%
 }
 
+\vspace{0.3cm}
+
+\textbf{\textcolor{red}{WARNING: Physical Realism Limitations}}
+
+\fcolorbox{orange}{orange!10}{%
+\begin{minipage}{0.95\textwidth}
+\textbf{Known Issues in Training Data:}
+
+The following plots contain unrealistic dynamics due to missing actuator models and aggressive control:
+\begin{itemize}
+\item \textbf{Figure 1 (Thrust)}: Sharp transitions at 481.64 N/s (real motors: 50-100 N/s)
+\item \textbf{Figures 3-5 (Torques)}: Instantaneous steps (real systems have rate limits)
+\item \textbf{Figure 12 (Vertical Velocity)}: Peaks at -5.24 m/s (excessive for 2m altitude changes)
+\end{itemize}
+
+\textbf{These limitations arise from:}
+\begin{enumerate}
+\item No motor dynamics (time constants, slew rate limits)
+\item Aggressive PID gains (1.01g vertical accelerations)
+\item No control input filtering
+\end{enumerate}
+
+See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative analysis, root causes, impact on PINN training, and detailed improvement plan.
+\end{minipage}%
+}
+
 \vspace{0.5cm}
 
 \subsection{Individual Output Analysis (Figures 1-16)}
@@ -965,24 +991,79 @@ This implementation demonstrates successful integration of physics knowledge wit
 
 The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. The learned parameters include mass, inertia tensor components, and motor coefficients (kt, kq), demonstrating that PINNs\index{PINNs} can effectively extract physical properties from trajectory data while maintaining physics consistency through embedded Newton-Euler dynamics.
 
+\subsection{Physical Realism Concerns and Known Issues}
+
+\textbf{Quantitative Analysis of Simulation Limitations (Trajectory 0):}
+
+The training data exhibits several physical realism issues due to missing actuator dynamics and aggressive controller tuning. Quantitative analysis reveals:
+
+\begin{longtable}{|p{0.25\textwidth}|p{0.25\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Issue} & \textbf{Measured Value} & \textbf{Physical Reality} \\
+\hline
+\textbf{Vertical Velocity Peak} & -5.24 m/s & Excessive for tracking 3-5m altitude changes (2m over 2s should yield $\sim$1-2 m/s average) \\
+\hline
+\textbf{Thrust Slew Rate} & 481.64 N/s & Unrealistic - real brushless motors limited to $\sim$50-100 N/s due to electrical/mechanical time constants \\
+\hline
+\textbf{Vertical Acceleration} & 9.91 m/s$^2$ (1.01g) & At physical limit - indicates aggressive control authority, minimal safety margin \\
+\hline
+\textbf{Torque Transitions} & Instantaneous steps up to 0.029 N$\cdot$m & Real actuators have rate limits; PID output should be filtered \\
+\hline
+\textbf{Angular Rate Discontinuities} & Sharp changes in p, q, r & Violates smooth Euler equation integration \\
+\hline
+\end{longtable}
+
+\textbf{Root Causes:}
+\begin{enumerate}
+\item \textbf{Missing Motor Dynamics}: No first-order lag $\dot{T} = (T_{cmd} - T)/\tau_m$ where $\tau_m \approx 50$ms
+\item \textbf{Aggressive Controller Gains}: PID gains (kz1=2.0, kv=-0.4) produce high control authority
+\item \textbf{No Actuator Saturation Rate Limits}: Control commands applied instantaneously without slew rate constraints
+\item \textbf{No Control Input Filtering}: Real systems low-pass filter PID output to prevent actuator damage
+\end{enumerate}
+
+\textbf{Impact on PINN Training:}
+\begin{itemize}
+\item Training data contains unrealistic transients that cannot occur in real quadrotors
+\item Physics loss may not adequately penalize these discontinuities (normalized residuals may mask sharp changes)
+\item Learned dynamics may not generalize well to real hardware with proper actuator constraints
+\item Parameter identification (especially inertias) may be biased by unrealistic acceleration profiles
+\end{itemize}
+
 \subsection{Limitations and Future Work}
 
 \textbf{Current Limitations:}
 \begin{itemize}
-\item \textbf{Actuator Dynamics Not Modeled}: Training data does not include motor time constants, bandwidth limitations, or first-order lag effects. Control outputs (thrust, torques) are applied instantaneously, resulting in sharp transitions. Real systems exhibit smoother profiles due to electrical/mechanical time constants (50-100ms).
+\item \textbf{Actuator Dynamics Not Modeled}: Training data does not include motor time constants, bandwidth limitations, or first-order lag effects. Control outputs (thrust, torques) are applied instantaneously, resulting in sharp transitions measured at 481.64 N/s thrust slew rate (real systems: 50-100 N/s).
+\item \textbf{Overly Aggressive Controller}: Vertical velocities reach -5.24 m/s and accelerations reach 1.01g, indicating controller gains that would be unsafe on real hardware.
 \item \textbf{Simplified Aerodynamics}: Only linear drag terms modeled; no blade flapping, ground effect, or complex aerodynamic interactions.
 \item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are idealized simulations showing expected patterns, not actual noisy training curves. Final values are from real training.
 \item \textbf{Limited Operating Envelope}: Training data focuses on small-angle attitudes (±45°); aggressive maneuvers beyond this range not explored.
 \end{itemize}
 
-\textbf{Future Work Directions:}
+\textbf{Future Work Directions (Prioritized by Impact):}
+\begin{enumerate}
+\item \textbf{Add Motor Dynamics Model}: Implement first-order lag $\dot{T} = (T_{cmd} - T)/\tau_m$ with $\tau_m = 50$ms and slew rate limits of 50-100 N/s. This will eliminate unrealistic 481.64 N/s thrust changes.
+\item \textbf{Reduce Controller Aggressiveness}: Tune PID gains to limit vertical velocities to $<$3 m/s and accelerations to $<$0.5g. Current 1.01g accelerations are unsafe for real deployment.
+\item \textbf{Add Control Input Filtering}: Low-pass filter PID outputs with cutoff frequency $\sim$20 Hz to smooth torque commands and prevent sharp discontinuities visible in Figures 3-5.
+\item \textbf{Implement Actuator Rate Limits}: Add $d\tau/dt$ constraints ($<$0.5 N$\cdot$m/s) to prevent instantaneous torque steps that violate real actuator physics.
+\item \textbf{Enhance Physics Loss}: Add penalty terms for:
+   \begin{itemize}
+   \item Control input derivatives: $\lambda_{ctrl} \|\dot{T}\|^2 + \|\dot{\tau}\|^2$
+   \item State derivative smoothness: $\lambda_{smooth} \|\ddot{x}\|^2$
+   \item Physical acceleration limits: penalty for $|\ddot{z}| > 0.5g$
+   \end{itemize}
+\item \textbf{Validate Against Real Hardware}: Test learned dynamics on Crazyflie 2.0 with proper motor dynamics to quantify sim-to-real gap caused by current unrealistic transients.
+\item \textbf{Add Measurement Noise}: Include sensor noise and IMU dynamics for robustness testing.
+\item \textbf{Extend Operating Envelope}: Gradually increase to aggressive maneuvers after fixing baseline realism issues.
+\end{enumerate}
+
+\textbf{Expected Improvements from Priority 1-4:}
 \begin{itemize}
-\item Incorporate first-order motor dynamics: $\dot{T} = (T_{cmd} - T)/\tau_m$ with time constant $\tau_m \approx 50$ms
-\item Add measurement noise and sensor dynamics for robustness testing
-\item Extend to aggressive maneuvers (flips, large-angle attitudes)
-\item Implement online parameter adaptation for real-time system identification
-\item Validate on experimental hardware (e.g., Crazyflie 2.0 platform)
-\item Explore physics-informed uncertainty quantification
+\item Thrust slew rate: 481.64 N/s $\rightarrow$ $<$100 N/s (4.8× reduction)
+\item Vertical velocity: -5.24 m/s $\rightarrow$ $<$3 m/s (1.7× reduction)
+\item Torque smoothness: Eliminate discontinuities, continuous differentiable profiles
+\item Better parameter identification: Inertia estimation less biased by unrealistic accelerations
+\item Improved sim-to-real transfer: Training data more representative of real quadrotor behavior
 \end{itemize}
 
 \newpage
