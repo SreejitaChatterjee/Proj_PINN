@@ -201,10 +201,69 @@ class EnhancedQuadrotorPINN(nn.Module):
             100 * torch.pow((self.Jyy - self.true_Jyy) / self.true_Jyy, 2) +
             100 * torch.pow((self.Jzz - self.true_Jzz) / self.true_Jzz, 2) +
             100 * torch.pow((self.kt - self.true_kt) / self.true_kt, 2) +
-            100 * torch.pow((self.kq - self.true_kq) / self.true_kq, 2) +
-            100 * torch.pow((self.g - self.true_g) / self.true_g, 2)
+            100 * torch.pow((self.kq - self.true_kq) / self.true_kq, 2)
+            # Note: g is fixed constant, not regularized
         )
         return reg_loss
+
+    def state_derivative_constraints_loss(self, inputs, outputs):
+        """
+        Anomaly #4 & #5 fix: Penalize unrealistic state derivatives
+        Ensures smooth state transitions without discontinuities
+        """
+        dt = 0.001
+
+        # Extract current and next states
+        phi = inputs[:, 5]
+        theta = inputs[:, 6]
+        psi = inputs[:, 7]
+        p = inputs[:, 8]
+        q = inputs[:, 9]
+        r = inputs[:, 10]
+        vz = inputs[:, 11]
+
+        phi_next = outputs[:, 5]
+        theta_next = outputs[:, 6]
+        psi_next = outputs[:, 7]
+        p_next = outputs[:, 8]
+        q_next = outputs[:, 9]
+        r_next = outputs[:, 10]
+        vz_next = outputs[:, 11]
+
+        # Compute state derivatives (rates of change)
+        phi_dot = (phi_next - phi) / dt
+        theta_dot = (theta_next - theta) / dt
+        psi_dot = (psi_next - psi) / dt
+        p_dot = (p_next - p) / dt
+        q_dot = (q_next - q) / dt
+        r_dot = (r_next - r) / dt
+        vz_dot = (vz_next - vz) / dt  # Vertical acceleration
+
+        # Physical constraints on maximum derivatives (based on realistic quadrotor limits)
+        # Anomaly #4 fix: Angular rates should not change instantaneously
+        max_angular_accel = 20.0  # rad/s² (realistic limit for quadrotor)
+        max_angle_rate = 3.0      # rad/s (realistic max angle rate)
+        max_vertical_accel = 2.0 * self.g  # m/s² (2g limit for vertical acceleration)
+        max_vertical_velocity_change = 10.0  # m/s per time step (prevent excessive vz)
+
+        # Soft constraints using squared penalties (allows some flexibility)
+        derivative_loss = (
+            # Angular acceleration constraints (Anomaly #4 fix)
+            torch.mean(torch.relu(torch.abs(p_dot) - max_angular_accel) ** 2) +
+            torch.mean(torch.relu(torch.abs(q_dot) - max_angular_accel) ** 2) +
+            torch.mean(torch.relu(torch.abs(r_dot) - max_angular_accel) ** 2) +
+
+            # Angle rate constraints (Anomaly #4 fix)
+            torch.mean(torch.relu(torch.abs(phi_dot) - max_angle_rate) ** 2) +
+            torch.mean(torch.relu(torch.abs(theta_dot) - max_angle_rate) ** 2) +
+            torch.mean(torch.relu(torch.abs(psi_dot) - max_angle_rate) ** 2) +
+
+            # Vertical dynamics constraints (Anomaly #6 fix)
+            torch.mean(torch.relu(torch.abs(vz_dot) - max_vertical_accel) ** 2) +
+            torch.mean(torch.relu(torch.abs(vz_next) - max_vertical_velocity_change) ** 2)
+        )
+
+        return derivative_loss
 
 class EnhancedTrainer:
     """Enhanced trainer with direct parameter identification"""
@@ -221,59 +280,71 @@ class EnhancedTrainer:
         self.physics_losses = []
         self.param_reg_losses = []
         self.direct_id_losses = []
+        self.derivative_losses = []  # Track derivative constraint losses
         
-    def train_epoch(self, train_loader, physics_weight=5.0, reg_weight=2.0, direct_id_weight=10.0):
-        """Enhanced training with direct parameter identification"""
+    def train_epoch(self, train_loader, physics_weight=15.0, reg_weight=2.0, direct_id_weight=10.0, derivative_weight=8.0):
+        """
+        Enhanced training with direct parameter identification and derivative constraints
+        Anomaly #5 fix: Increased physics_weight from 5.0 to 15.0 (3x increase)
+        """
         self.model.train()
         total_loss = 0
         total_physics_loss = 0
         total_reg_loss = 0
         total_id_loss = 0
-        
+        total_derivative_loss = 0
+
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = data.to(self.device), target.to(self.device)
-            
+
             self.optimizer.zero_grad()
-            
+
             output = self.model(data)
-            
+
             # Data loss
             data_loss = self.criterion(output, target)
-            
+
             # Enhanced physics loss
             physics_loss = self.model.enhanced_physics_loss(data, output, target)
-            
+
             # Direct parameter identification loss
             direct_id_loss = self.model.direct_parameter_identification_loss(data, target)
-            
+
             # Parameter regularization loss
             reg_loss = self.model.parameter_regularization_loss()
-            
+
+            # Anomaly #4 & #5 fix: State derivative constraints
+            derivative_loss = self.model.state_derivative_constraints_loss(data, output)
+
             # Combined loss with strong physics enforcement
-            loss = (data_loss + 
-                   physics_weight * physics_loss + 
+            # Anomaly #5 fix: physics_weight increased to 15.0 (was 5.0)
+            loss = (data_loss +
+                   physics_weight * physics_loss +
                    reg_weight * reg_loss +
-                   direct_id_weight * direct_id_loss)
-            
+                   direct_id_weight * direct_id_loss +
+                   derivative_weight * derivative_loss)  # New term
+
             loss.backward()
-            
+
             # Gradient clipping for stability
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)
-            
+
             self.optimizer.step()
-            
+
             # Apply parameter constraints
             self.model.constrain_parameters()
-            
+
             total_loss += loss.item()
             total_physics_loss += physics_loss.item()
             total_reg_loss += reg_loss.item()
             total_id_loss += direct_id_loss.item()
-            
-        return (total_loss / len(train_loader), 
+            total_derivative_loss += derivative_loss.item()
+
+        return (total_loss / len(train_loader),
                 total_physics_loss / len(train_loader),
                 total_reg_loss / len(train_loader),
-                total_id_loss / len(train_loader))
+                total_id_loss / len(train_loader),
+                total_derivative_loss / len(train_loader))
     
     def validate(self, val_loader):
         """Validate model"""
@@ -290,11 +361,12 @@ class EnhancedTrainer:
         return total_loss / len(val_loader)
     
     def train(self, train_loader, val_loader, epochs=150):
-        """Enhanced training loop with direct identification"""
-        print("Starting enhanced training with direct parameter identification...")
-        
+        """Enhanced training loop with direct identification and derivative constraints"""
+        print("Starting enhanced training with direct parameter identification and derivative constraints...")
+        print("Anomaly fixes: Increased physics_weight=15.0, added derivative_weight=8.0")
+
         for epoch in range(epochs):
-            train_loss, physics_loss, reg_loss, id_loss = self.train_epoch(train_loader)
+            train_loss, physics_loss, reg_loss, id_loss, derivative_loss = self.train_epoch(train_loader)
             val_loss = self.validate(val_loader)
             
             self.train_losses.append(train_loss)
@@ -302,10 +374,11 @@ class EnhancedTrainer:
             self.physics_losses.append(physics_loss)
             self.param_reg_losses.append(reg_loss)
             self.direct_id_losses.append(id_loss)
-            
+            self.derivative_losses.append(derivative_loss)
+
             if epoch % 10 == 0:
                 print(f'Epoch {epoch:03d}: Train: {train_loss:.4f}, Val: {val_loss:.6f}, '
-                      f'Physics: {physics_loss:.4f}, Reg: {reg_loss:.4f}, ID: {id_loss:.4f}')
+                      f'Physics: {physics_loss:.4f}, Reg: {reg_loss:.4f}, ID: {id_loss:.4f}, Deriv: {derivative_loss:.4f}')
                 
                 # Print current parameters every 20 epochs
                 if epoch % 20 == 0:

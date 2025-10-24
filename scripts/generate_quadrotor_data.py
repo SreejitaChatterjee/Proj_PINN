@@ -35,24 +35,39 @@ class QuadrotorSimulator:
         self.Tmax = Tmax
         self.Tmin = 0.1 * self.m * self.g
 
-        # Controller gains
-        self.k2 = 0.1    # Roll rate controller
-        self.k1 = 1.0    # Roll angle controller
-        self.ki = 0.4 * 0.01  # Roll integral gain
+        # Controller gains (TUNED for smoother, more realistic response)
+        # Anomaly #2 fix: Reduced gains to prevent spiky torque behavior
+        self.k2 = 0.05   # Roll rate controller (reduced from 0.1)
+        self.k1 = 0.8    # Roll angle controller (reduced from 1.0)
+        self.ki = 0.2 * 0.01  # Roll integral gain (reduced from 0.4*0.01)
 
-        self.k21 = 0.1   # Pitch rate controller
-        self.k11 = 1.0   # Pitch angle controller
-        self.ki1 = 0.4 * 0.01  # Pitch integral gain
+        self.k21 = 0.05  # Pitch rate controller (reduced from 0.1)
+        self.k11 = 0.8   # Pitch angle controller (reduced from 1.0)
+        self.ki1 = 0.2 * 0.01  # Pitch integral gain (reduced from 0.4*0.01)
 
-        self.k22 = 0.1   # Yaw rate controller
-        self.k12 = 1.0   # Yaw angle controller
-        self.ki2 = 0.4 * 0.01  # Yaw integral gain
+        self.k22 = 0.05  # Yaw rate controller (reduced from 0.1)
+        self.k12 = 0.8   # Yaw angle controller (reduced from 1.0)
+        self.ki2 = 0.2 * 0.01  # Yaw integral gain (reduced from 0.4*0.01)
 
-        self.kv = -0.4   # Vertical velocity controller (Issue #7 fix: reduced from -1.0 for more realistic response)
-        self.kz1 = 2.0   # Altitude P gain
-        self.kz2 = 0.22  # Altitude I gain (increased from 0.15 to eliminate steady-state error)
+        # Anomaly #6 fix: Significantly reduced vertical velocity controller gain
+        self.kv = -0.25  # Vertical velocity controller (reduced from -0.4)
+        self.kz1 = 1.5   # Altitude P gain (reduced from 2.0)
+        self.kz2 = 0.15  # Altitude I gain (reduced from 0.22)
 
         self.th = 1e-7   # Threshold for zero torque
+
+        # Anomaly #2 & #3 fix: Motor dynamics - time constants for realistic actuator response
+        # Typical quadrotor motor time constant is 50-100ms
+        self.motor_time_constant = 0.08  # seconds (80ms motor spin-up time)
+
+        # Anomaly #2 & #3 fix: Slew rate limits (maximum rate of change)
+        # Prevent instantaneous jumps in thrust and torques
+        self.thrust_slew_rate = 15.0  # N/s (thrust can change max 15 N per second)
+        self.torque_slew_rate = 0.5   # N·m/s (torque can change max 0.5 N·m per second)
+
+        # Anomaly #1 & #4 fix: Reference trajectory filter
+        # Low-pass filter time constant for smooth setpoint transitions
+        self.ref_filter_time_constant = 0.15  # seconds (150ms rise time)
 
     def square_wave(self, t, period, amplitude_low, amplitude_high):
         """Generate square wave signal"""
@@ -61,6 +76,60 @@ class QuadrotorSimulator:
             return amplitude_low
         else:
             return amplitude_high
+
+    def low_pass_filter(self, current_value, target_value, time_constant, dt):
+        """
+        First-order low-pass filter for smooth transitions
+        Anomaly #1 & #4 fix: Prevents discontinuous reference changes
+
+        Args:
+            current_value: Current filtered value
+            target_value: Target (desired) value
+            time_constant: Filter time constant (tau)
+            dt: Time step
+
+        Returns:
+            Updated filtered value
+        """
+        alpha = dt / (time_constant + dt)
+        return current_value + alpha * (target_value - current_value)
+
+    def apply_slew_rate_limit(self, current_value, target_value, max_rate, dt):
+        """
+        Apply slew rate limiting to prevent instantaneous changes
+        Anomaly #2 & #3 fix: Limits rate of change for thrust and torques
+
+        Args:
+            current_value: Current value
+            target_value: Desired value
+            max_rate: Maximum rate of change (units/second)
+            dt: Time step
+
+        Returns:
+            Rate-limited value
+        """
+        max_change = max_rate * dt
+        change = target_value - current_value
+        if abs(change) > max_change:
+            return current_value + np.sign(change) * max_change
+        return target_value
+
+    def motor_dynamics(self, current_actuator, command_actuator, time_constant, dt):
+        """
+        First-order motor dynamics model
+        Anomaly #3 fix: Realistic motor spin-up/spin-down behavior
+
+        Args:
+            current_actuator: Current actuator output
+            command_actuator: Commanded actuator value
+            time_constant: Motor time constant
+            dt: Time step
+
+        Returns:
+            Updated actuator output with motor lag
+        """
+        alpha = dt / (time_constant + dt)
+        return current_actuator + alpha * (command_actuator - current_actuator)
 
     def simulate_trajectory(self, phi_config, theta_config, psi_config, z_config, dt=0.001, tend=5.0):
         """
@@ -86,6 +155,20 @@ class QuadrotorSimulator:
         # Integral terms
         sump, sumt, sumpsi, sumz = 0.0, 0.0, 0.0, 0.0
 
+        # Anomaly #1 & #4 fix: Initialize filtered reference values
+        # Start with initial setpoint values
+        phi_ref_filtered = phi_config[1]
+        theta_ref_filtered = theta_config[1]
+        psi_ref_filtered = psi_config[1]
+        z_ref_filtered = z_config[1]
+
+        # Anomaly #2 & #3 fix: Initialize actual motor outputs (with dynamics)
+        # Start with hovering thrust to prevent immediate crash
+        T_actual = self.m * self.g  # Hovering thrust
+        tx_actual = 0.0
+        ty_actual = 0.0
+        tz_actual = 0.0
+
         # Storage
         data = []
 
@@ -93,45 +176,70 @@ class QuadrotorSimulator:
         for i in range(num_steps):
             t = i * dt
 
-            # Generate square wave references
-            phi_ref = self.square_wave(t, phi_config[0], phi_config[1], phi_config[2])
-            theta_ref = self.square_wave(t, theta_config[0], theta_config[1], theta_config[2])
-            psi_ref = self.square_wave(t, psi_config[0], psi_config[1], psi_config[2])
-            z_ref = self.square_wave(t, z_config[0], z_config[1], z_config[2])
+            # Generate raw square wave references
+            phi_ref_raw = self.square_wave(t, phi_config[0], phi_config[1], phi_config[2])
+            theta_ref_raw = self.square_wave(t, theta_config[0], theta_config[1], theta_config[2])
+            psi_ref_raw = self.square_wave(t, psi_config[0], psi_config[1], psi_config[2])
+            z_ref_raw = self.square_wave(t, z_config[0], z_config[1], z_config[2])
+
+            # Anomaly #1 & #4 fix: Apply low-pass filter for smooth reference transitions
+            phi_ref_filtered = self.low_pass_filter(phi_ref_filtered, phi_ref_raw,
+                                                     self.ref_filter_time_constant, dt)
+            theta_ref_filtered = self.low_pass_filter(theta_ref_filtered, theta_ref_raw,
+                                                       self.ref_filter_time_constant, dt)
+            psi_ref_filtered = self.low_pass_filter(psi_ref_filtered, psi_ref_raw,
+                                                     self.ref_filter_time_constant, dt)
+            z_ref_filtered = self.low_pass_filter(z_ref_filtered, z_ref_raw,
+                                                   self.ref_filter_time_constant, dt)
+
             # ===== ROLL CONTROLLER =====
-            sump += (phi_ref - phi)
-            pr = self.k1 * (phi_ref - phi) + self.ki * sump * dt
-            tx = self.k2 * (pr - p)
-            tx = np.clip(tx, -self.txymax, self.txymax)
-            if abs(tx) < self.th:
-                tx = 0.0
+            sump += (phi_ref_filtered - phi)
+            pr = self.k1 * (phi_ref_filtered - phi) + self.ki * sump * dt
+            tx_cmd = self.k2 * (pr - p)
+            tx_cmd = np.clip(tx_cmd, -self.txymax, self.txymax)
+            if abs(tx_cmd) < self.th:
+                tx_cmd = 0.0
 
             # ===== PITCH CONTROLLER =====
-            sumt += (theta_ref - theta)
-            qr = self.k11 * (theta_ref - theta) + self.ki1 * sumt * dt
-            ty = self.k21 * (qr - q)
-            ty = np.clip(ty, -self.txymax, self.txymax)
-            if abs(ty) < self.th:
-                ty = 0.0
+            sumt += (theta_ref_filtered - theta)
+            qr = self.k11 * (theta_ref_filtered - theta) + self.ki1 * sumt * dt
+            ty_cmd = self.k21 * (qr - q)
+            ty_cmd = np.clip(ty_cmd, -self.txymax, self.txymax)
+            if abs(ty_cmd) < self.th:
+                ty_cmd = 0.0
 
             # ===== YAW CONTROLLER =====
-            sumpsi += (psi_ref - psi)
-            rref = self.k12 * (psi_ref - psi) + self.ki2 * sumpsi * dt
-            tz = self.k22 * (rref - r)
-            tz = np.clip(tz, -self.tzmax, self.tzmax)
-            if abs(tz) < self.th:
-                tz = 0.0
+            sumpsi += (psi_ref_filtered - psi)
+            rref = self.k12 * (psi_ref_filtered - psi) + self.ki2 * sumpsi * dt
+            tz_cmd = self.k22 * (rref - r)
+            tz_cmd = np.clip(tz_cmd, -self.tzmax, self.tzmax)
+            if abs(tz_cmd) < self.th:
+                tz_cmd = 0.0
 
             # ===== ALTITUDE CONTROLLER =====
-            sumz += (z_ref - z)
-            vzr = self.kz1 * (z_ref - z) + self.kz2 * sumz * dt
-            T = self.kv * (vzr - w)  # Note: w is vertical velocity in body frame
-            T = np.clip(T, self.Tmin, self.Tmax)
+            sumz += (z_ref_filtered - z)
+            vzr = self.kz1 * (z_ref_filtered - z) + self.kz2 * sumz * dt
+            T_cmd = self.kv * (vzr - w)  # Note: w is vertical velocity in body frame
+            T_cmd = np.clip(T_cmd, self.Tmin, self.Tmax)
+
+            # Anomaly #2 & #3 fix: Apply motor dynamics and slew rate limits
+            # First apply slew rate limits to prevent instantaneous changes
+            T_slew = self.apply_slew_rate_limit(T_actual, T_cmd, self.thrust_slew_rate, dt)
+            tx_slew = self.apply_slew_rate_limit(tx_actual, tx_cmd, self.torque_slew_rate, dt)
+            ty_slew = self.apply_slew_rate_limit(ty_actual, ty_cmd, self.torque_slew_rate, dt)
+            tz_slew = self.apply_slew_rate_limit(tz_actual, tz_cmd, self.torque_slew_rate, dt)
+
+            # Then apply motor time constant (first-order lag)
+            T_actual = self.motor_dynamics(T_actual, T_slew, self.motor_time_constant, dt)
+            tx_actual = self.motor_dynamics(tx_actual, tx_slew, self.motor_time_constant, dt)
+            ty_actual = self.motor_dynamics(ty_actual, ty_slew, self.motor_time_constant, dt)
+            tz_actual = self.motor_dynamics(tz_actual, tz_slew, self.motor_time_constant, dt)
 
             # ===== ROTATIONAL DYNAMICS =====
-            pdot = self.t1 * q * r + tx / self.Jxx - 2 * p
-            qdot = self.t2 * p * r + ty / self.Jyy - 2 * q
-            rdot = self.t3 * p * q + tz / self.Jzz - 2 * r
+            # Use actual motor outputs (with dynamics) instead of commanded values
+            pdot = self.t1 * q * r + tx_actual / self.Jxx - 2 * p
+            qdot = self.t2 * p * r + ty_actual / self.Jyy - 2 * q
+            rdot = self.t3 * p * q + tz_actual / self.Jzz - 2 * r
 
             p += pdot * dt
             q += qdot * dt
@@ -151,7 +259,8 @@ class QuadrotorSimulator:
             psi = np.arctan2(np.sin(psi), np.cos(psi))
 
             # ===== TRANSLATIONAL DYNAMICS =====
-            fz = -T
+            # Use actual thrust (with motor dynamics) instead of commanded thrust
+            fz = -T_actual
             fx, fy = 0.0, 0.0
 
             udot = r * v - q * w + fx / self.m - self.g * np.sin(theta) - 0.1 * u
@@ -182,13 +291,14 @@ class QuadrotorSimulator:
                 break
 
             # Store data (including kt and kq for PINN learning)
+            # Store ACTUAL motor outputs (with dynamics), not commanded values
             data.append({
                 'timestamp': i * dt,
-                'thrust': T,
+                'thrust': T_actual,
                 'z': z,
-                'torque_x': tx,
-                'torque_y': ty,
-                'torque_z': tz,
+                'torque_x': tx_actual,
+                'torque_y': ty_actual,
+                'torque_z': tz_actual,
                 'roll': phi,
                 'pitch': theta,
                 'yaw': psi,
