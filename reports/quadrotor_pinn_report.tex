@@ -269,6 +269,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{Note on Angular Acceleration Limits:} The torque ranges (±0.02 N$\cdot$m) combined with inertia values ($\sim$10$^{-4}$ kg$\cdot$m$^2$) result in maximum angular accelerations of approximately 200 rad/s$^2$ ($\approx$11,500°/s$^2$). These values are physically realistic for micro quadrotors similar to the Crazyflie 2.0 platform (68g mass), which are capable of aggressive acrobatic maneuvers. The small inertia due to compact geometry and lightweight construction enables such high angular accelerations.
 
+\textbf{Important Note on Simulation Limitations:} The training data generation does not model actuator dynamics (motor time constants, bandwidth limitations, or first-order lag). Control outputs (thrust, torques) are applied instantaneously to the system dynamics, resulting in sharp, step-like transitions in control plots. Real quadrotor systems exhibit smoother control profiles due to motor electrical/mechanical time constants (typically 50-100ms). This simplification focuses the PINN on learning core rigid-body dynamics rather than actuator-level details. Future work should incorporate motor dynamics for higher-fidelity simulation.
+
 \subsubsection{Outputs from PINN Model (18 Variables)}
 
 \textbf{Predicted Next States (12 Variables):}
@@ -530,6 +532,8 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 
 \textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
 
+\textbf{Important Distinction - Reference vs. Response:} The square wave signals are \textit{reference setpoints} (desired values) for the PID controller, NOT the actual system trajectories. The actual attitude angles and altitude follow smooth, continuous paths as the quadrotor physically tracks these step-change references. Plots show both: (1) red dashed lines indicating square wave setpoints, and (2) blue curves showing the smooth system response. The smooth response is physically correct - quadrotors cannot instantaneously change angles or altitude. This tracking behavior validates realistic controller performance with rise times, overshoot, and settling characteristics.
+
 \textbf{Square Wave Implementation:}
 \begin{itemize}
 \item Each reference signal oscillates between a low and high value with a specified period
@@ -703,6 +707,9 @@ Individual time-series analysis was performed for all 12 state variables using T
 \end{itemize}
 
 \subsection{Physical Parameter Learning Results}
+
+\textbf{Important Note on Convergence Visualization:} The parameter convergence plots (Figures 13-16) represent \textit{idealized simulation curves} demonstrating expected learning behavior, NOT actual recorded training data. These visualizations illustrate typical exponential convergence patterns toward true parameter values. Actual training would show more noise and oscillation. The final parameter values and errors reported in tables are from actual trained models.
+
 Training convergence analysis for all 6 physical parameters shows successful identification:
 
 \textbf{Mass Parameter Evolution:}
@@ -823,28 +830,28 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/13_mass_convergence_analysis.png}
-\caption{Mass Parameter Learning Convergence - PINN identification of vehicle mass with 4.4\% final error, convergence achieved at epoch 48.}
+\caption{Mass Parameter Learning Convergence (Idealized Simulation) - Illustrative convergence curve showing typical learning behavior for vehicle mass identification with 4.4\% final error achieved at epoch 48 in actual training.}
 \label{fig:mass_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/14_inertia_xx_convergence_analysis.png}
-\caption{X-axis Moment of Inertia Learning - Parameter convergence with 5.4\% error, stable identification achieved at epoch 62.}
+\caption{X-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence showing typical learning pattern with 5.4\% final error, stable identification achieved at epoch 62 in actual training.}
 \label{fig:jxx_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/15_inertia_yy_convergence_analysis.png}
-\caption{Y-axis Moment of Inertia Learning - PINN parameter identification with 7.3\% final error, convergence at epoch 58.}
+\caption{Y-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence demonstrating expected learning behavior with 7.3\% final error, convergence at epoch 58 in actual training.}
 \label{fig:jyy_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/16_inertia_zz_convergence_analysis.png}
-\caption{Z-axis Moment of Inertia Learning - Physical parameter convergence analysis showing 5.6\% identification error, stable at epoch 55.}
+\caption{Z-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence analysis showing typical learning pattern with 5.6\% identification error, stable at epoch 55 in actual training.}
 \label{fig:jzz_convergence}
 \end{figure}
 
@@ -868,7 +875,7 @@ All parameter learning curves demonstrate stable convergence with minimal oscill
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/03_physical_parameters.png}
-\caption{Physical Parameter Identification Analysis - Learning convergence curves for all 6 physical parameters (mass, Jxx, Jyy, Jzz, kt, kq) over 120 training epochs. Each subplot shows: blue curve = PINN learning trajectory starting from initial guess, red dashed line = true parameter value, blue dotted line = final learned value, green dot = initial value. Mass converges from 0.102 kg to 0.068 kg (4.4\% error). Inertia components converge with final errors: Jxx = 5.4\%, Jyy = 7.3\%, Jzz = 5.6\%. Motor coefficients kt and kq also demonstrate convergence. All curves demonstrate smooth, stable convergence without oscillations, validating the physics-informed parameter identification approach.}
+\caption{Physical Parameter Identification Analysis (Idealized Simulations) - Illustrative learning convergence curves for all 6 physical parameters (mass, Jxx, Jyy, Jzz, kt, kq) demonstrating typical training behavior over 120 epochs. Each subplot shows: blue curve = idealized PINN learning trajectory starting from initial guess, red dashed line = true parameter value, blue dotted line = final learned value from actual training, green dot = initial value. Final errors from actual trained models: Mass = 4.4\%, Jxx = 5.4\%, Jyy = 7.3\%, Jzz = 5.6\%, kt = 2.0\%, kq = 1.8\%. Note: These curves represent idealized convergence patterns; actual training exhibits more variation.}
 \label{fig:parameter_analysis}
 \end{figure}
 
@@ -909,6 +916,26 @@ This implementation demonstrates successful integration of physics knowledge wit
 \end{itemize}
 
 The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. The learned parameters include mass, inertia tensor components, and motor coefficients (kt, kq), demonstrating that PINNs\index{PINNs} can effectively extract physical properties from trajectory data while maintaining physics consistency through embedded Newton-Euler dynamics.
+
+\subsection{Limitations and Future Work}
+
+\textbf{Current Limitations:}
+\begin{itemize}
+\item \textbf{Actuator Dynamics Not Modeled}: Training data does not include motor time constants, bandwidth limitations, or first-order lag effects. Control outputs (thrust, torques) are applied instantaneously, resulting in sharp transitions. Real systems exhibit smoother profiles due to electrical/mechanical time constants (50-100ms).
+\item \textbf{Simplified Aerodynamics}: Only linear drag terms modeled; no blade flapping, ground effect, or complex aerodynamic interactions.
+\item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are idealized simulations showing expected patterns, not actual noisy training curves. Final values are from real training.
+\item \textbf{Limited Operating Envelope}: Training data focuses on small-angle attitudes (±45°); aggressive maneuvers beyond this range not explored.
+\end{itemize}
+
+\textbf{Future Work Directions:}
+\begin{itemize}
+\item Incorporate first-order motor dynamics: $\dot{T} = (T_{cmd} - T)/\tau_m$ with time constant $\tau_m \approx 50$ms
+\item Add measurement noise and sensor dynamics for robustness testing
+\item Extend to aggressive maneuvers (flips, large-angle attitudes)
+\item Implement online parameter adaptation for real-time system identification
+\item Validate on experimental hardware (e.g., Crazyflie 2.0 platform)
+\item Explore physics-informed uncertainty quantification
+\end{itemize}
 
 \newpage
 % \printindex
