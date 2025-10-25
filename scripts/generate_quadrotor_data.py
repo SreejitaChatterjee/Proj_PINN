@@ -67,7 +67,8 @@ class QuadrotorSimulator:
 
         # Anomaly #1 & #4 fix: Reference trajectory filter
         # Low-pass filter time constant for smooth setpoint transitions
-        self.ref_filter_time_constant = 0.15  # seconds (150ms rise time)
+        # Increased from 0.15s to reduce shakiness in response
+        self.ref_filter_time_constant = 0.25  # seconds (250ms rise time)
 
     def square_wave(self, t, period, amplitude_low, amplitude_high):
         """Generate square wave signal"""

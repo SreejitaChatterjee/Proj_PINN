@@ -34,14 +34,16 @@ class QuadrotorPINN(nn.Module):
 
         self.network = nn.Sequential(*layers)
 
-        # Physical parameters (learnable) - ALL 6 PARAMETERS with better initialization
+        # Physical parameters (learnable) - 6 PARAMETERS with better initialization
         self.m = nn.Parameter(torch.tensor(0.1))  # Start higher, will decrease
         self.Jxx = nn.Parameter(torch.tensor(1e-4))  # Start near expected value
         self.Jyy = nn.Parameter(torch.tensor(1e-4))
         self.Jzz = nn.Parameter(torch.tensor(1.5e-4))
         self.kt = nn.Parameter(torch.tensor(0.01))  # Thrust coefficient
         self.kq = nn.Parameter(torch.tensor(8e-4))  # Torque coefficient
-        self.g = nn.Parameter(torch.tensor(9.81))
+
+        # Fixed physical constant (NOT learnable)
+        self.g = 9.81  # Gravity is a known constant
 
     def forward(self, x):
         """Forward pass through network - outputs next states + physical parameters"""
@@ -429,9 +431,9 @@ if __name__ == "__main__":
     print(f"Using device: {device}")
     model = QuadrotorPINN(input_size=12, hidden_size=256, output_size=18, num_layers=5)
 
-    # Train model with HIGHER physics weight
+    # Train model with HIGHER physics weight for parameter consistency
     trainer = QuadrotorTrainer(model, device)
-    trainer.train(train_loader, val_loader, epochs=150, physics_weight=2.0)
+    trainer.train(train_loader, val_loader, epochs=150, physics_weight=5.0)
 
     # Plot results
     trainer.plot_losses()
@@ -442,7 +444,7 @@ if __name__ == "__main__":
 
     # Print learned physical parameters
     print("\n" + "="*60)
-    print("LEARNED PHYSICAL PARAMETERS (ALL 6):")
+    print("LEARNED PHYSICAL PARAMETERS (6 learnable):")
     print("="*60)
     print(f"Mass:         {model.m.item():.6f} kg      (True: 0.068 kg,    Error: {abs(model.m.item()-0.068)/0.068*100:.2f}%)")
     print(f"Jxx:          {model.Jxx.item():.8f} kg*m^2 (True: 6.86e-5,    Error: {abs(model.Jxx.item()-6.86e-5)/6.86e-5*100:.2f}%)")
@@ -450,5 +452,5 @@ if __name__ == "__main__":
     print(f"Jzz:          {model.Jzz.item():.8f} kg*m^2 (True: 1.366e-4,   Error: {abs(model.Jzz.item()-1.366e-4)/1.366e-4*100:.2f}%)")
     print(f"kt:           {model.kt.item():.8f}        (True: 0.01,       Error: {abs(model.kt.item()-0.01)/0.01*100:.2f}%)")
     print(f"kq:           {model.kq.item():.8f}        (True: 7.8263e-4,  Error: {abs(model.kq.item()-7.8263e-4)/7.8263e-4*100:.2f}%)")
-    print(f"Gravity:      {model.g.item():.3f} m/s^2")
+    print(f"Gravity:      {model.g:.3f} m/s^2 (FIXED - not learnable)")
     print("="*60)

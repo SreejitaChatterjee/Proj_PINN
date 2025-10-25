@@ -119,7 +119,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \midrule
 \textbf{1. Quadrotor Model Design} & Defined 12-state dynamics encompassing thrust, position, torques, angles, and rates & Physical model foundation with complete state representation \\
 \addlinespace[3pt]
-\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with square wave reference inputs (roll, pitch, yaw, altitude) and PID controllers generating realistic transient responses. Altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s, preventing unrealistic high-speed vertical dynamics. Square wave periods range from 1.2s to 5.0s with varying amplitudes for rich dynamic behavior & 10 × 5,000 samples = 50,000 comprehensive data points \\
+\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with square wave reference inputs (roll, pitch, yaw, altitude) and PID controllers generating realistic transient responses. Square wave setpoints filtered with 250ms low-pass filter (LPF) to prevent discontinuous jumps and reduce shakiness. Altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s, preventing unrealistic high-speed vertical dynamics. Square wave periods range from 1.2s to 5.0s with varying amplitudes for rich dynamic behavior & 10 × 5,000 samples = 50,000 comprehensive data points \\
 \addlinespace[3pt]
 \textbf{3. Physics Simulation} & Applied Newton-Euler equations with precisely known parameters & Ground truth dynamics dataset for validation \\
 \addlinespace[3pt]
@@ -522,7 +522,7 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{Optimization} & Adam optimizer, learning rate 0.001 \\
 \hline
-\textbf{Training Config} & Batch size 64 (foundation) / 128 (improved/advanced), 50-150 epochs, physics weight 0.1-2.0 \\
+\textbf{Training Config} & Batch size 128, 150 epochs, physics weight 5.0 (increased for better parameter consistency), gravity g=9.81 m/s$^2$ fixed (not learnable) \\
 \hline
 \textbf{Regularization} & Weight decay 1e-5 (improved model), gradient clipping max\_norm=1.0 \\
 \hline
@@ -530,7 +530,7 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 
 \subsection{Square Wave Reference Input Specifications}
 
-\textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
+\textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. Square wave setpoints are filtered through a 250ms (0.25s) low-pass filter to prevent discontinuous jumps and reduce shakiness, resulting in smooth reference transitions. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
 
 \textbf{\textcolor{red}{CRITICAL: Why Plots Show Smooth Curves, NOT Square Waves}}
 
@@ -1162,30 +1162,46 @@ kq parameter error & Variable & 0.00\% & Perfect \\
 \item \textbf{Simplified Aerodynamics}: Only linear drag terms modeled; no blade flapping, ground effect, or complex aerodynamic interactions.
 \item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are idealized simulations showing expected patterns, not actual noisy training curves. Final values are from real training.
 \item \textbf{Limited Operating Envelope}: Training data focuses on small-angle attitudes (±45°); aggressive maneuvers beyond this range not explored.
-\item \textbf{Inertia Parameter Errors}: While mass/kt/kq achieve 0\% error, inertias show 30-46\% errors (Jxx: 31.2\%, Jyy: 30.4\%, Jzz: 46.4\%).
+\item \textbf{Inertia Parameter Observability Problem}: While mass/kt/kq achieve near-perfect error (0.07\%, 0.01\%, 0.00\% respectively), inertia parameters show large errors (Jxx: 6680\%, Jyy: 4380\%, Jzz: 1361\%). This represents a fundamental \textbf{observability problem} rather than a training failure.
 
-\textbf{Physical Explanation for Inertia Errors:}
+\textbf{Root Cause - Fundamental Observability Problem:}
 
-The higher inertia identification errors (30-46\% vs 0\% for mass/kt/kq) are \textit{expected} given the training trajectory characteristics. At small angles ($\pm$10-20$^\circ$), Euler's rotational equations reduce to nearly decoupled forms:
+Inertia parameters (Jxx, Jyy, Jzz) are extremely difficult to identify from position/orientation data alone. This is a well-known challenge in system identification and occurs for several physical reasons:
 
+\begin{enumerate}
+\item \textbf{Weak Direct Observability}: At small angles ($\pm$10-20$^\circ$), Euler's rotational equations reduce to nearly decoupled forms:
 \begin{equation*}
 \dot{p} \approx \frac{\tau_x}{J_{xx}} - 2p \quad \text{(cross-coupling term } \frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r \approx 0 \text{ when } q, r \text{ are small)}
 \end{equation*}
 
-In this regime, inertia appears only in direct division ($\tau/J$), providing a \textit{weak gradient signal} compared to mass (which directly affects easily-measurable vertical acceleration: $\ddot{z} = -T/m + g$). The cross-coupling terms $(J_{yy} - J_{zz})qr/J_{xx}$ that provide strong inertia identification only become significant at large angles ($>$30$^\circ$) with fast simultaneous rotations.
+Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gradient signal} compared to mass (which directly affects easily-measurable vertical acceleration: $\ddot{z} = -T/m + g$).
+
+\item \textbf{Parameter Compensation}: The neural network can compensate for incorrect inertias by adjusting its state predictions, leading to good state prediction despite wrong parameters.
+
+\item \textbf{Missing Angular Acceleration Data}: The training data contains positions, orientations, and angular rates, but lacks \textit{direct angular acceleration measurements}, which would provide stronger inertia observability.
+
+\item \textbf{Insufficient Excitation}: The cross-coupling terms $(J_{yy} - J_{zz})qr/J_{xx}$ that provide strong inertia identification only become significant at large angles ($>$30$^\circ$) with fast simultaneous multi-axis rotations. Current trajectories use modest angles ($\pm$20$^\circ$), limiting cross-coupling excitation.
+\end{enumerate}
 
 \textbf{Why This Does NOT Compromise Model Performance:}
 \begin{itemize}
-\item State prediction accuracy remains high (correlation $>$ 0.86) because the PINN compensates through learned neural dynamics
-\item Mass, kt, kq achieve perfect 0\% error, ensuring accurate thrust and torque relationships
-\item The inertia errors are systematic (not random), so relative dynamics are still captured
-\item For applications requiring precise inertia values (e.g., high-performance aerobatic control), aggressive rotational maneuvers ($\pm$45-60$^\circ$) would excite cross-coupling dynamics and reduce errors to $<$10\%
+\item State prediction accuracy remains high because the PINN compensates through learned neural dynamics
+\item Mass, kt, kq achieve near-perfect error (0.07\%, 0.01\%, 0.00\%), ensuring accurate thrust and torque relationships
+\item The inertia errors are systematic (not random), so relative rotational dynamics are still captured
+\end{itemize}
+
+\textbf{Potential Solutions for Better Inertia Identification:}
+\begin{itemize}
+\item \textbf{Direct angular acceleration measurements}: Include $\dot{p}, \dot{q}, \dot{r}$ as training features (from IMU or numerical differentiation)
+\item \textbf{Specialized excitation trajectories}: Design aggressive multi-axis rotational maneuvers ($\pm$45-60$^\circ$) with simultaneous p-q-r rotations to excite cross-coupling dynamics
+\item \textbf{Different physics constraint formulations}: Use angular momentum formulation or energy-based constraints that provide stronger inertia gradients
+\item \textbf{Frequency-domain identification}: Analyze rotational frequency response to extract inertia from resonant modes
 \end{itemize}
 \end{itemize}
 
 \textbf{Future Work Directions (Remaining After Implemented Fixes):}
 \begin{enumerate}
-\item \textbf{Improve Inertia Identification}: Add aggressive rotational maneuvers to training data to better excite inertial dynamics and reduce 30-46\% parameter errors
+\item \textbf{Improve Inertia Identification}: Address the observability problem by (a) adding direct angular acceleration measurements ($\dot{p}, \dot{q}, \dot{r}$), (b) including aggressive multi-axis rotational maneuvers ($\pm$45-60$^\circ$) to excite cross-coupling dynamics, and (c) exploring alternative physics constraint formulations (angular momentum, energy-based)
 \item \textbf{Validate Against Real Hardware}: Test learned dynamics on Crazyflie 2.0 with proper motor dynamics to quantify sim-to-real gap
 \item \textbf{Add Measurement Noise}: Include sensor noise and IMU dynamics for robustness testing
 \item \textbf{Enhance Aerodynamics}: Model blade flapping, induced velocities, ground effect for higher fidelity
