@@ -843,84 +843,84 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/01_thrust_time_analysis.png}
-\caption{Thrust Force vs Time (Trajectory 0) - \textbf{Blue curve shows smooth thrust response} tracking square wave altitude commands. Three-phase thrust profile demonstrating physically realistic quadrotor dynamics: climb phase at 1.334N (t = 0-2s), transition phase with controlled deceleration (t = 2-4s), and steady hover at 0.667N = m×g (t = 4-5s). Red dashed reference line shows hover thrust equilibrium. \textbf{Note: Smooth curve is physically correct - thrust cannot change instantaneously due to motor/controller dynamics.}}
+\caption{Thrust Force vs Time - Smooth thrust response tracking altitude commands. Three-phase profile: climb at 1.334N (0-2s), transition (2-4s), hover at 0.667N (4-5s).}
 \label{fig:thrust_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/02_z_time_analysis.png}
-\caption{Vertical Position (Altitude) vs Time (Trajectory 0) - \textbf{Blue curve shows smooth altitude response} tracking square wave setpoints between 3.0m and 5.0m (period: 2.0s, red dashed lines). The plot shows height (h=-z) to match conventional altitude representation. PID altitude controller (kz1=2.0, kz2=0.22, kv=-0.4 for NED coordinates) demonstrates effective tracking of time-varying reference commands with smooth transitions between setpoint levels. \textbf{Smooth tracking is physically correct - quadrotor with mass cannot teleport between altitudes.}}
+\caption{Altitude vs Time - Tracking square wave setpoints between 3.0-5.0m (period: 2.0s). Height plotted as h=-z for conventional representation.}
 \label{fig:altitude_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/03_torque_x_time_analysis.png}
-\caption{Roll Torque vs Time (Trajectory 0) - \textbf{Control torque commands} about x-axis showing banking maneuvers and stabilization. Note: Torque commands can have sharp transitions because actuator dynamics are not modeled in simulation (see Section 3.2 note on simulation limitations). Real systems would show smoother torque profiles due to motor time constants.}
+\caption{Roll Torque vs Time - Control torque about x-axis for banking maneuvers and stabilization.}
 \label{fig:roll_torque_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/04_torque_y_time_analysis.png}
-\caption{Pitch Torque vs Time - Control moments about y-axis for forward/backward motion control.}
+\caption{Pitch Torque vs Time - Control torque about y-axis.}
 \label{fig:pitch_torque_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/05_torque_z_time_analysis.png}
-\caption{Yaw Torque vs Time - Control moments about z-axis for directional control and heading changes.}
+\caption{Yaw Torque vs Time - Control torque about z-axis.}
 \label{fig:yaw_torque_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/06_roll_time_analysis.png}
-\caption{Roll Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth roll angle response} tracking square wave setpoints between -10.0° and +10.0° (period: 2.0s, red dashed lines) using cascaded PID control (outer loop k1=1.0, ki=0.004; inner loop k2=0.1). Attitude displayed in degrees after conversion from radians ($\phi_{deg} = \phi_{rad} \times 180/\pi$). \textbf{Smooth tracking with rise time and settling demonstrates realistic physics} - rotational inertia prevents instantaneous angle changes. Proper Euler equation implementation: $\dot{p} = (J_{yy}-J_{zz})qr/J_{xx} + \tau_x/J_{xx} - c_\omega p$ where $c_\omega = 2.0$ s$^{-1}$.}
+\caption{Roll Angle vs Time - Tracking square wave setpoints between ±10° (period: 2.0s) with cascaded PID control.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/07_pitch_time_analysis.png}
-\caption{Pitch Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth pitch response} tracking square wave setpoints between -5.0° and +5.0° (period: 2.5s, red dashed lines). Cascaded PID controller (k11=1.0, ki1=0.004, k21=0.1) maintains stable pitch attitude through smooth transitions. \textbf{Smooth curves demonstrate realistic inertial dynamics} - not instantaneous square wave following. Cross-coupling with roll and yaw visible through Euler equation: $\dot{q} = (J_{zz}-J_{xx})pr/J_{yy} + \tau_y/J_{yy} - c_\omega q$ where $c_\omega = 2.0$ s$^{-1}$. Smooth response validates PINN's ability to learn coupled rotational dynamics.}
+\caption{Pitch Angle vs Time - Tracking square wave setpoints between ±5° (period: 2.5s) with cascaded PID control.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/08_yaw_time_analysis.png}
-\caption{Yaw Angle vs Time (Trajectory 0) - \textbf{Blue curve shows smooth yaw response} tracking square wave setpoints between -5.0° and +5.0° (period: 3.0s, red dashed lines) demonstrating directional maneuvers. PID controller (k12=1.0, ki2=0.004, k22=0.1) regulates yaw with physically realistic smooth transitions (not instantaneous square waves). Yaw dynamics governed by: $\dot{r} = (J_{xx}-J_{yy})pq/J_{zz} + \tau_z/J_{zz} - c_\omega r$ where $c_\omega = 2.0$ s$^{-1}$. Independent yaw control during simultaneous roll and pitch maneuvers validates proper implementation of decoupled heading control.}
+\caption{Yaw Angle vs Time - Tracking square wave setpoints between ±5° (period: 3.0s) with PID control.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/09_p_time_analysis.png}
-\caption{Roll Rate vs Time - Angular velocity about x-axis showing dynamic response characteristics.}
+\caption{Roll Rate vs Time - Angular velocity about x-axis.}
 \label{fig:roll_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/10_q_time_analysis.png}
-\caption{Pitch Rate vs Time - Angular velocity about y-axis demonstrating pitch dynamics control.}
+\caption{Pitch Rate vs Time - Angular velocity about y-axis.}
 \label{fig:pitch_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/11_r_time_analysis.png}
-\caption{Yaw Rate vs Time - Angular velocity about z-axis showing turning rate control performance.}
+\caption{Yaw Rate vs Time - Angular velocity about z-axis.}
 \label{fig:yaw_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/12_vz_time_analysis.png}
-\caption{Vertical Velocity vs Time (Trajectory 0) - \textbf{Smooth velocity profile} showing climb/descent rates during altitude tracking. Velocity changes are smooth due to mass inertia - the quadrotor accelerates and decelerates realistically rather than instantaneously jumping between velocity levels. This demonstrates correct Newtonian dynamics: $\dot{w} = -T\cos\theta\cos\phi/m + g - 0.1w$.}
+\caption{Vertical Velocity vs Time - Smooth velocity profile during altitude tracking showing climb/descent rates.}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
@@ -929,42 +929,42 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_m_convergence.png}
-\caption{Mass Parameter Learning Convergence (ACTUAL TRAINING DATA) - Real noisy training curve from 150-epoch run with physics\_weight=5.0, showing rapid convergence to true value of 0.068 kg with final error of 0.07\%. The noise in the training curve is typical of stochastic gradient descent optimization.}
+\caption{Mass Convergence - Actual training data showing 0.07\% error (0.068 kg true vs 0.0679 kg learned).}
 \label{fig:mass_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_kt_convergence.png}
-\caption{Thrust Coefficient (kt) Learning Convergence (ACTUAL TRAINING DATA) - Real training curve demonstrating excellent convergence to the true thrust coefficient value of 0.01. Final error is only 0.01\%, showing that kt is highly observable from vertical motion and altitude tracking data. This parameter directly affects thrust force generation: $T = k_t \cdot \omega^2$.}
+\caption{Thrust Coefficient (kt) Convergence - Actual training data showing 0.01\% error.}
 \label{fig:kt_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_kq_convergence.png}
-\caption{Torque Coefficient (kq) Learning Convergence (ACTUAL TRAINING DATA) - Real training curve showing near-perfect convergence with 0.00\% final error. The torque coefficient is highly observable from rotational dynamics and attitude control data. This parameter governs torque generation: $\tau = k_q \cdot \omega^2$, directly affecting roll/pitch/yaw control authority.}
+\caption{Torque Coefficient (kq) Convergence - Actual training data showing 0.00\% error (near-perfect).}
 \label{fig:kq_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jxx_convergence.png}
-\caption{X-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve showing the fundamental observability problem. Despite 150 epochs of training, Jxx converges to $4.65 \times 10^{-3}$ kg·m² instead of true value $6.86 \times 10^{-5}$ kg·m², resulting in 6680\% error. The parameter settles to an incorrect value early and remains stable, indicating the neural network has found a compensating solution. See Section 7.5 for detailed analysis.}
+\caption{Jxx Convergence - Actual training data showing 6680\% error ($6.86 \times 10^{-5}$ true vs $4.65 \times 10^{-3}$ kg·m² learned). Observability problem detailed in Section 7.5.}
 \label{fig:jxx_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jyy_convergence.png}
-\caption{Y-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve demonstrating observability challenges for Jyy. The parameter converges to $4.12 \times 10^{-3}$ kg·m² versus true value $9.20 \times 10^{-5}$ kg·m², yielding 4380\% error. Similar to Jxx, the parameter stabilizes at an incorrect value, indicating limited observability in the training data (see Section 7.5).}
+\caption{Jyy Convergence - Actual training data showing 4380\% error ($9.20 \times 10^{-5}$ true vs $4.12 \times 10^{-3}$ kg·m² learned). See Section 7.5.}
 \label{fig:jyy_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jzz_convergence.png}
-\caption{Z-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve for Jzz showing better but still problematic convergence. Final value $1.99 \times 10^{-3}$ kg·m² versus true $1.37 \times 10^{-4}$ kg·m² gives 1361\% error - better than Jxx/Jyy but still indicates observability issues. The parameter shows more variation during training compared to Jxx/Jyy, suggesting partial observability through yaw dynamics (see Section 7.5).}
+\caption{Jzz Convergence - Actual training data showing 1361\% error ($1.37 \times 10^{-4}$ true vs $1.99 \times 10^{-3}$ kg·m² learned). Better than Jxx/Jyy but still problematic. See Section 7.5.}
 \label{fig:jzz_convergence}
 \end{figure}
 
@@ -974,35 +974,35 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/01_all_outputs_complete_analysis.png}
-\caption{Complete PINN Analysis - Visualization of all 18 outputs for Trajectory 0 tracking square wave setpoint commands. State variables (thrust, altitude, torques, attitudes, angular rates, vertical velocity) shown with reference setpoint ranges. Physical parameter convergence (mass, Jxx, Jyy, Jzz, kt, kq) displayed during training. Red dashed lines indicate square wave setpoint ranges: altitude = 3.0-5.0m, roll = ±10.0°, pitch = ±5.0°, yaw = ±5.0°, hover thrust = 0.667N. All plots demonstrate excellent PINN tracking accuracy of time-varying commands and physics compliance.}
+\caption{Complete PINN Analysis - All 18 outputs for Trajectory 0 tracking square wave commands. State variables and parameter convergence shown.}
 \label{fig:complete_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/02_key_flight_variables.png}
-\caption{Key Flight Variables Analysis - Detailed view of 6 critical quadrotor states from Trajectory 0 tracking square wave commands (altitude, thrust, roll, pitch, vertical velocity, yaw). Top row: altitude tracking between 3.0-5.0m, thrust evolution maintaining hover around 0.667N, and roll control between ±10°. Bottom row: pitch control between ±5°, vertical velocity dynamics during altitude transitions, and yaw control between ±5°. All plots include reference setpoint ranges (red dashed lines) demonstrating accurate tracking of time-varying commands over 5-second flight duration.}
+\caption{Key Flight Variables - 6 critical states: altitude, thrust, roll, pitch, vertical velocity, and yaw tracking square wave commands.}
 \label{fig:key_variables}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/03_physical_parameters.png}
-\caption{Physical Parameter Identification Analysis (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curves showing expected learning behavior. \textbf{For actual training curves, see Figures 13-18 (individual parameter convergence plots with real data).} \textbf{ACTUAL RESULTS from final model (150 epochs, physics\_weight=5.0):} Mass = 0.07\%, kt = 0.01\%, kq = 0.00\% (near-perfect identification); Jxx = 6680\%, Jyy = 4380\%, Jzz = 1361\% (observability problem - see Section 7.5 for detailed analysis). These idealized curves do NOT reflect the actual observability challenges with inertia parameters.}
+\caption{Physical Parameter Identification (IDEALIZED - NOT ACTUAL DATA) - Hypothetical curves. \textbf{Actual results:} Mass/kt/kq < 0.1\% error; Jxx/Jyy/Jzz have 1300-6700\% errors (observability problem). See Figures 13-18 for real training curves and Section 7.5 for analysis.}
 \label{fig:parameter_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/04_control_inputs.png}
-\caption{Control Input Analysis - Complete control authority demonstration for Trajectory 0 tracking square wave setpoints over 5-second flight. Top left: Thrust force maintaining hover around 0.667N with variations for altitude changes. Top right: Roll torque commands for tracking ±10° square wave setpoints. Bottom left: Pitch torque for ±5° square wave tracking. Bottom right: Yaw torque for ±5° heading control. All control inputs remain well within physical actuator limits, demonstrating realistic controller behavior and smooth command profiles during setpoint transitions without saturation or oscillation.}
+\caption{Control Inputs - Thrust and three-axis torques (roll/pitch/yaw) tracking square wave setpoints.}
 \label{fig:control_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/05_model_summary_statistics.png}
-\caption{Model Performance Statistics - Comprehensive 6-panel validation analysis. Top row: (1) Mean Absolute Error across 6 key variables showing thrust accuracy = 0.012, altitude = 0.08m, attitude angles = 0.038-0.067 rad; (2) Root Mean Square Error metrics; (3) Correlation coefficients (0.88-0.96) indicating excellent prediction quality. Bottom row: (4) Training convergence on log scale showing exponential decrease in training, validation, and physics losses; (5) Model evolution comparison across 3 PINN variants with parameter errors decreasing from 14.8\% to 5.8\%; (6) Physics compliance assessment showing strong satisfaction of Euler equations, Newton's law, and cross-coupling terms based on physics loss convergence.}
+\caption{Model Performance Statistics - 6-panel analysis: MAE, RMSE, correlation (0.88-0.96), training convergence, model evolution, and physics compliance metrics.}
 \label{fig:performance_statistics}
 \end{figure}
 
