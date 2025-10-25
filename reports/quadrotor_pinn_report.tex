@@ -928,29 +928,43 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../visualizations/detailed/13_mass_convergence_analysis.png}
-\caption{Mass Parameter Learning Convergence (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve showing expected learning pattern. \textbf{ACTUAL RESULT: 0.07\% error from final model (150 epochs, physics\_weight=5.0)}.}
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_m_convergence.png}
+\caption{Mass Parameter Learning Convergence (ACTUAL TRAINING DATA) - Real noisy training curve from 150-epoch run with physics\_weight=5.0, showing rapid convergence to true value of 0.068 kg with final error of 0.07\%. The noise in the training curve is typical of stochastic gradient descent optimization.}
 \label{fig:mass_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../visualizations/detailed/14_inertia_xx_convergence_analysis.png}
-\caption{X-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 6680\% error due to fundamental observability problem (see Section 7.5)}.}
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_kt_convergence.png}
+\caption{Thrust Coefficient (kt) Learning Convergence (ACTUAL TRAINING DATA) - Real training curve demonstrating excellent convergence to the true thrust coefficient value of 0.01. Final error is only 0.01\%, showing that kt is highly observable from vertical motion and altitude tracking data. This parameter directly affects thrust force generation: $T = k_t \cdot \omega^2$.}
+\label{fig:kt_convergence}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_kq_convergence.png}
+\caption{Torque Coefficient (kq) Learning Convergence (ACTUAL TRAINING DATA) - Real training curve showing near-perfect convergence with 0.00\% final error. The torque coefficient is highly observable from rotational dynamics and attitude control data. This parameter governs torque generation: $\tau = k_q \cdot \omega^2$, directly affecting roll/pitch/yaw control authority.}
+\label{fig:kq_convergence}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jxx_convergence.png}
+\caption{X-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve showing the fundamental observability problem. Despite 150 epochs of training, Jxx converges to $4.65 \times 10^{-3}$ kg·m² instead of true value $6.86 \times 10^{-5}$ kg·m², resulting in 6680\% error. The parameter settles to an incorrect value early and remains stable, indicating the neural network has found a compensating solution. See Section 7.5 for detailed analysis.}
 \label{fig:jxx_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../visualizations/detailed/15_inertia_yy_convergence_analysis.png}
-\caption{Y-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 4380\% error due to fundamental observability problem (see Section 7.5)}.}
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jyy_convergence.png}
+\caption{Y-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve demonstrating observability challenges for Jyy. The parameter converges to $4.12 \times 10^{-3}$ kg·m² versus true value $9.20 \times 10^{-5}$ kg·m², yielding 4380\% error. Similar to Jxx, the parameter stabilizes at an incorrect value, indicating limited observability in the training data (see Section 7.5).}
 \label{fig:jyy_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../visualizations/detailed/16_inertia_zz_convergence_analysis.png}
-\caption{Z-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 1361\% error due to fundamental observability problem (see Section 7.5)}.}
+\includegraphics[width=0.9\textwidth]{../visualizations/detailed/actual_jzz_convergence.png}
+\caption{Z-axis Moment of Inertia Learning (ACTUAL TRAINING DATA) - Real training curve for Jzz showing better but still problematic convergence. Final value $1.99 \times 10^{-3}$ kg·m² versus true $1.37 \times 10^{-4}$ kg·m² gives 1361\% error - better than Jxx/Jyy but still indicates observability issues. The parameter shows more variation during training compared to Jxx/Jyy, suggesting partial observability through yaw dynamics (see Section 7.5).}
 \label{fig:jzz_convergence}
 \end{figure}
 
@@ -974,7 +988,7 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/03_physical_parameters.png}
-\caption{Physical Parameter Identification Analysis (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curves showing expected learning behavior. \textbf{ACTUAL RESULTS from final model (150 epochs, physics\_weight=5.0):} Mass = 0.07\%, kt = 0.01\%, kq = 0.00\% (near-perfect identification); Jxx = 6680\%, Jyy = 4380\%, Jzz = 1361\% (observability problem - see Section 7.5 for detailed analysis). These idealized curves do NOT reflect the actual observability challenges with inertia parameters.}
+\caption{Physical Parameter Identification Analysis (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curves showing expected learning behavior. \textbf{For actual training curves, see Figures 13-18 (individual parameter convergence plots with real data).} \textbf{ACTUAL RESULTS from final model (150 epochs, physics\_weight=5.0):} Mass = 0.07\%, kt = 0.01\%, kq = 0.00\% (near-perfect identification); Jxx = 6680\%, Jyy = 4380\%, Jzz = 1361\% (observability problem - see Section 7.5 for detailed analysis). These idealized curves do NOT reflect the actual observability challenges with inertia parameters.}
 \label{fig:parameter_analysis}
 \end{figure}
 
