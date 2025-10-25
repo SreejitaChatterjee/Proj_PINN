@@ -269,7 +269,15 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{Note on Angular Acceleration Limits:} The torque ranges (±0.02 N$\cdot$m) combined with inertia values ($\sim$10$^{-4}$ kg$\cdot$m$^2$) result in maximum angular accelerations of approximately 200 rad/s$^2$ ($\approx$11,500°/s$^2$). These values are physically realistic for micro quadrotors similar to the Crazyflie 2.0 platform (68g mass), which are capable of aggressive acrobatic maneuvers. The small inertia due to compact geometry and lightweight construction enables such high angular accelerations.
 
-\textbf{Important Note on Simulation Limitations:} The training data generation does not model actuator dynamics (motor time constants, bandwidth limitations, or first-order lag). Control outputs (thrust, torques) are applied instantaneously to the system dynamics, resulting in sharp, step-like transitions in control plots. Real quadrotor systems exhibit smoother control profiles due to motor electrical/mechanical time constants (typically 50-100ms). This simplification focuses the PINN on learning core rigid-body dynamics rather than actuator-level details. Future work should incorporate motor dynamics for higher-fidelity simulation.
+\textbf{Important Note on Motor Dynamics:} The current training data (used for all results in this report) INCLUDES realistic motor dynamics:
+\begin{itemize}
+\item Motor time constant: 80ms (first-order lag modeling motor spin-up/spin-down)
+\item Thrust slew rate limit: 15 N/s (prevents instantaneous jumps)
+\item Torque slew rate limit: 0.5 N$\cdot$m/s
+\item Reference signal low-pass filter: 250ms time constant (smooth setpoint transitions)
+\end{itemize}
+
+These dynamics ensure physically realistic actuator behavior, preventing the sharp step-like transitions that would occur with instantaneous control. All parameter identification results (Section 4.2) are based on this corrected, realistic data.
 
 \subsubsection{Outputs from PINN Model (18 Variables)}
 
@@ -447,36 +455,43 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \end{longtable}
 
 \subsection{Parameter Identification Results (6 Variables)}
-\begin{longtable}{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.15\textwidth}|}
+\textbf{IMPORTANT NOTE:} This table shows ACTUAL RESULTS from the final trained model (150 epochs, physics\_weight=5.0, gravity fixed as constant).
+
+\begin{longtable}{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.20\textwidth}|}
 \hline
-\textbf{Parameter} & \textbf{True Value} & \textbf{Predicted Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Convergence Epoch} \\
+\textbf{Parameter} & \textbf{True Value} & \textbf{Predicted Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
 \hline
-\textbf{Mass} & 0.068 kg & 0.071 kg & 0.003 kg & 4.4\% & 48 \\
+\textbf{Mass} & 0.068 kg & 0.0680 kg & 0.00005 kg & \textcolor{blue}{\textbf{0.07\%}} & \textcolor{green}{Excellent} \\
 \hline
-\textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $7.23 \times 10^{-5}$ kg$\cdot$m$^2$ & $3.7 \times 10^{-6}$ kg$\cdot$m$^2$ & 5.4\% & 62 \\
+\textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $4.65 \times 10^{-3}$ kg$\cdot$m$^2$ & $4.58 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{6680\%}} & \textcolor{red}{Observability Problem*} \\
 \hline
-\textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $9.87 \times 10^{-5}$ kg$\cdot$m$^2$ & $6.7 \times 10^{-6}$ kg$\cdot$m$^2$ & 7.3\% & 58 \\
+\textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $4.12 \times 10^{-3}$ kg$\cdot$m$^2$ & $4.03 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{4380\%}} & \textcolor{red}{Observability Problem*} \\
 \hline
-\textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.442 \times 10^{-4}$ kg$\cdot$m$^2$ & $7.6 \times 10^{-6}$ kg$\cdot$m$^2$ & 5.6\% & 55 \\
+\textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 \times 10^{-3}$ kg$\cdot$m$^2$ & $1.86 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{1361\%}} & \textcolor{red}{Observability Problem*} \\
 \hline
-\textbf{kt} & 0.01 & 0.0102 & 0.0002 & 2.0\% & 45 \\
+\textbf{kt} & 0.01 & 0.009999 & $1 \times 10^{-6}$ & \textcolor{blue}{\textbf{0.01\%}} & \textcolor{green}{Excellent} \\
 \hline
-\textbf{kq} & $7.8263 \times 10^{-4}$ & $7.97 \times 10^{-4}$ & $1.4 \times 10^{-5}$ & 1.8\% & 52 \\
+\textbf{kq} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & $0$ & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
+\hline
+\textbf{Gravity} & $9.81$ m/s$^2$ & $9.81$ m/s$^2$ & 0 & \textbf{N/A} & \textcolor{green}{Fixed Constant} \\
 \hline
 \end{longtable}
 
+\textbf{*Observability Problem:} Inertia parameters show large errors due to fundamental observability limitations (see Section 7.5 for detailed analysis). Mass, kt, kq achieve near-perfect identification.
+
 \subsection{Model Comparison}
-\begin{longtable}{|p{0.2\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|}
+
+\textbf{NOTE:} The "Parameter Error" column shows \textit{average error for successfully identified parameters only} (mass, kt, kq). Inertia parameters are excluded due to observability problem (see Section 7.5).
+
+\begin{longtable}{|p{0.2\textwidth}|p{0.18\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|}
 \hline
-\textbf{Model Variant} & \textbf{Parameter Error} & \textbf{Training Epochs} & \textbf{Final Loss} & \textbf{Physics Compliance} \\
+\textbf{Model Variant} & \textbf{Avg Error (mass/kt/kq only)} & \textbf{Training Epochs} & \textbf{Physics Weight} & \textbf{Key Achievement} \\
 \hline
-\textbf{Foundation PINN} & 14.8\% & 127 & 0.0087 & 23.7\% contribution \\
-\hline
-\textbf{Improved PINN} & 8.9\% & 98 & 0.0034 & 41.2\% contribution \\
-\hline
-\textbf{Advanced PINN} & 5.8\% & 82 & 0.0019 & 52.3\% contribution \\
+\textbf{Final PINN (Current)} & \textbf{0.03\%} (mass/kt/kq) & 150 & 5.0 & Fixed gravity constant, near-perfect mass/kt/kq identification \\
 \hline
 \end{longtable}
+
+\textbf{Inertia Parameter Status:} Jxx/Jyy/Jzz show 1300-6700\% errors due to fundamental observability problem (weak signal from small-angle trajectories, missing angular acceleration data). See Section 7.5 for detailed analysis and solutions.
 
 \subsection{Key Implementation Techniques}
 \begin{longtable}{|p{0.18\textwidth}|p{0.38\textwidth}|p{0.28\textwidth}|}
@@ -740,7 +755,17 @@ Individual time-series analysis was performed for all 12 state variables using T
 
 \subsection{Physical Parameter Learning Results}
 
-\textbf{Important Note on Convergence Visualization:} The parameter convergence plots (Figures 13-16) represent \textit{idealized simulation curves} demonstrating expected learning behavior, NOT actual recorded training data. These visualizations illustrate typical exponential convergence patterns toward true parameter values. Actual training would show more noise and oscillation. The final parameter values and errors reported in tables are from actual trained models.
+\textbf{\textcolor{red}{CRITICAL NOTE on Convergence Visualization:}} The parameter convergence plots (Figures 13-16) represent \textit{idealized conceptual curves showing EXPECTED learning behavior}, NOT actual recorded training data from the final model. These are illustrative visualizations showing what parameter convergence would look like under ideal conditions.
+
+\textbf{Actual Results:} The real trained model (150 epochs, physics\_weight=5.0) achieved:
+\begin{itemize}
+\item Mass: \textcolor{green}{\textbf{0.07\%}} error (near-perfect)
+\item kt: \textcolor{green}{\textbf{0.01\%}} error (near-perfect)
+\item kq: \textcolor{green}{\textbf{0.00\%}} error (perfect)
+\item Jxx/Jyy/Jzz: \textcolor{red}{\textbf{1300-6700\%}} errors (observability problem - see Section 7.5)
+\end{itemize}
+
+The idealized plots below show outdated hypothetical convergence patterns and do not reflect the actual observability challenges encountered with inertia parameters.
 
 Training convergence analysis for all 6 physical parameters shows successful identification:
 
@@ -904,28 +929,28 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/13_mass_convergence_analysis.png}
-\caption{Mass Parameter Learning Convergence (Idealized Simulation) - Illustrative convergence curve showing typical learning behavior for vehicle mass identification with 4.4\% final error achieved at epoch 48 in actual training.}
+\caption{Mass Parameter Learning Convergence (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve showing expected learning pattern. \textbf{ACTUAL RESULT: 0.07\% error from final model (150 epochs, physics\_weight=5.0)}.}
 \label{fig:mass_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/14_inertia_xx_convergence_analysis.png}
-\caption{X-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence showing typical learning pattern with 5.4\% final error, stable identification achieved at epoch 62 in actual training.}
+\caption{X-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 6680\% error due to fundamental observability problem (see Section 7.5)}.}
 \label{fig:jxx_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/15_inertia_yy_convergence_analysis.png}
-\caption{Y-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence demonstrating expected learning behavior with 7.3\% final error, convergence at epoch 58 in actual training.}
+\caption{Y-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 4380\% error due to fundamental observability problem (see Section 7.5)}.}
 \label{fig:jyy_convergence}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../visualizations/detailed/16_inertia_zz_convergence_analysis.png}
-\caption{Z-axis Moment of Inertia Learning (Idealized Simulation) - Illustrative convergence analysis showing typical learning pattern with 5.6\% identification error, stable at epoch 55 in actual training.}
+\caption{Z-axis Moment of Inertia Learning (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curve. \textbf{ACTUAL RESULT: 1361\% error due to fundamental observability problem (see Section 7.5)}.}
 \label{fig:jzz_convergence}
 \end{figure}
 
@@ -949,7 +974,7 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.95\textwidth]{../scripts/03_physical_parameters.png}
-\caption{Physical Parameter Identification Analysis (Idealized Simulations) - Illustrative learning convergence curves for all 6 physical parameters (mass, Jxx, Jyy, Jzz, kt, kq) demonstrating typical training behavior over 120 epochs. Each subplot shows: blue curve = idealized PINN learning trajectory starting from initial guess, red dashed line = true parameter value, blue dotted line = final learned value from actual training, green dot = initial value. Final errors from actual trained models: Mass = 4.4\%, Jxx = 5.4\%, Jyy = 7.3\%, Jzz = 5.6\%, kt = 2.0\%, kq = 1.8\%. Note: These curves represent idealized convergence patterns; actual training exhibits more variation.}
+\caption{Physical Parameter Identification Analysis (IDEALIZED - NOT ACTUAL DATA) - Hypothetical convergence curves showing expected learning behavior. \textbf{ACTUAL RESULTS from final model (150 epochs, physics\_weight=5.0):} Mass = 0.07\%, kt = 0.01\%, kq = 0.00\% (near-perfect identification); Jxx = 6680\%, Jyy = 4380\%, Jzz = 1361\% (observability problem - see Section 7.5 for detailed analysis). These idealized curves do NOT reflect the actual observability challenges with inertia parameters.}
 \label{fig:parameter_analysis}
 \end{figure}
 
@@ -1160,7 +1185,7 @@ kq parameter error & Variable & 0.00\% & Perfect \\
 \textbf{Remaining Limitations After Fixes:}
 \begin{itemize}
 \item \textbf{Simplified Aerodynamics}: Only linear drag terms modeled; no blade flapping, ground effect, or complex aerodynamic interactions.
-\item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are idealized simulations showing expected patterns, not actual noisy training curves. Final values are from real training.
+\item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are hypothetical curves showing expected learning patterns under ideal conditions, NOT actual recorded training data. These plots contain OUTDATED error values (4-7\%) that do not match actual results (0.07\% for mass, 6680\% for Jxx). See Section 4.2 for actual final parameter errors.
 \item \textbf{Limited Operating Envelope}: Training data focuses on small-angle attitudes (±45°); aggressive maneuvers beyond this range not explored.
 \item \textbf{Inertia Parameter Observability Problem}: While mass/kt/kq achieve near-perfect error (0.07\%, 0.01\%, 0.00\% respectively), inertia parameters show large errors (Jxx: 6680\%, Jyy: 4380\%, Jzz: 1361\%). This represents a fundamental \textbf{observability problem} rather than a training failure.
 
