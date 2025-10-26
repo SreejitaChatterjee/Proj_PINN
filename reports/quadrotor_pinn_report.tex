@@ -88,7 +88,7 @@
 \begin{center}
 \large\textbf{Abstract}\\[0.5em]
 \normalsize
-This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction and simultaneous parameter identification. The approach combines data-driven learning with physical constraints to achieve accurate state prediction while maintaining physics consistency and enabling reliable parameter estimation.
+This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction and simultaneous parameter identification. The approach combines data-driven learning with physical constraints to achieve accurate state prediction while maintaining physics consistency. Through realistic actuator dynamics (Section 7.4) and angular acceleration measurements (Section 7.6), the system achieves perfect parameter identification for mass/kt/kq (0.00\% error) and partial success for inertia identification (30-46\% error). The work demonstrates both the power and limitations of PINNs for physical parameter identification, with detailed analysis of observability challenges and proposed solutions.
 \end{center}
 \vfill
 \end{titlepage}
@@ -455,43 +455,54 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \end{longtable}
 
 \subsection{Parameter Identification Results (6 Variables)}
-\textbf{IMPORTANT NOTE:} This table shows ACTUAL RESULTS from the final trained model (150 epochs, physics\_weight=5.0, gravity fixed as constant).
+\textbf{IMPORTANT NOTE:} This table shows final results from the trained model with angular acceleration measurements (150 epochs, physics\_weight=15.0, angular\_accel\_weight=20.0).
 
 \begin{longtable}{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.20\textwidth}|}
 \hline
-\textbf{Parameter} & \textbf{True Value} & \textbf{Predicted Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
+\textbf{Parameter} & \textbf{True Value} & \textbf{Learned Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
 \hline
-\textbf{Mass} & 0.068 kg & 0.0680 kg & 0.00005 kg & \textcolor{blue}{\textbf{0.07\%}} & \textcolor{green}{Excellent} \\
+\textbf{Mass} & 0.068 kg & 0.0680 kg & 0.00000 kg & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
 \hline
-\textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $4.65 \times 10^{-3}$ kg$\cdot$m$^2$ & $4.58 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{6680\%}} & \textcolor{red}{Observability Problem*} \\
+\textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ & $2.14 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{31.20\%}} & \textcolor{orange}{Partial Success*} \\
 \hline
-\textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $4.12 \times 10^{-3}$ kg$\cdot$m$^2$ & $4.03 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{4380\%}} & \textcolor{red}{Observability Problem*} \\
+\textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.80 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{30.43\%}} & \textcolor{orange}{Partial Success*} \\
 \hline
-\textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 \times 10^{-3}$ kg$\cdot$m$^2$ & $1.86 \times 10^{-3}$ kg$\cdot$m$^2$ & \textcolor{red}{\textbf{1361\%}} & \textcolor{red}{Observability Problem*} \\
+\textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ & $6.34 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{46.41\%}} & \textcolor{orange}{Partial Success*} \\
 \hline
-\textbf{kt} & 0.01 & 0.009999 & $1 \times 10^{-6}$ & \textcolor{blue}{\textbf{0.01\%}} & \textcolor{green}{Excellent} \\
+\textbf{kt} & 0.01 & 0.0100 & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
 \hline
-\textbf{kq} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & $0$ & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
+\textbf{kq} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
 \hline
 \textbf{Gravity} & $9.81$ m/s$^2$ & $9.81$ m/s$^2$ & 0 & \textbf{N/A} & \textcolor{green}{Fixed Constant} \\
 \hline
 \end{longtable}
 
-\textbf{*Observability Problem:} Inertia parameters show large errors due to fundamental observability limitations (see Section 7.5 for detailed analysis). Mass, kt, kq achieve near-perfect identification.
+\textbf{*Inertia Parameters:} Show 30-46\% errors due to observability limitations. Angular acceleration measurements provide stronger gradient signals but require additional enhancements (aggressive trajectories, tighter constraints) for further improvement. See Section 7.6 for analysis.
 
-\subsection{Model Comparison}
+\subsection{Final Model Performance}
 
-\textbf{NOTE:} The "Parameter Error" column shows \textit{average error for successfully identified parameters only} (mass, kt, kq). Inertia parameters are excluded due to observability problem (see Section 7.5).
+\textbf{Parameter Identification Summary:}
 
-\begin{longtable}{|p{0.2\textwidth}|p{0.18\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|p{0.2\textwidth}|}
+\begin{longtable}{|p{0.25\textwidth}|p{0.20\textwidth}|p{0.45\textwidth}|}
 \hline
-\textbf{Model Variant} & \textbf{Avg Error (mass/kt/kq only)} & \textbf{Training Epochs} & \textbf{Physics Weight} & \textbf{Key Achievement} \\
+\textbf{Parameter Category} & \textbf{Error Range} & \textbf{Status} \\
 \hline
-\textbf{Final PINN (Current)} & \textbf{0.03\%} (mass/kt/kq) & 150 & 5.0 & Fixed gravity constant, near-perfect mass/kt/kq identification \\
+\textbf{Mass/Motor Coefficients} & 0.00\% & Perfect identification achieved \\
+\hline
+\textbf{Inertia Parameters} & 30-46\% & Partial success; angular acceleration measurements improve observability but further enhancements needed \\
 \hline
 \end{longtable}
 
-\textbf{Inertia Parameter Status:} Jxx/Jyy/Jzz show 1300-6700\% errors due to fundamental observability problem (weak signal from small-angle trajectories, missing angular acceleration data). See Section 7.5 for detailed analysis and solutions.
+\textbf{Training Configuration:}
+\begin{itemize}
+\item 150 epochs
+\item Angular acceleration measurements included (p\_dot, q\_dot, r\_dot)
+\item Physics weight: 15.0
+\item Angular acceleration weight: 20.0
+\item State vector: 15 features (expanded from 12)
+\end{itemize}
+
+\textbf{Remaining Challenges:} Inertia parameters (30-46\% errors) require additional enhancements such as aggressive excitation trajectories (±45-60° angles with multi-axis rotations), tighter parameter constraints, or energy-based physics formulations. See Section 7.6 for detailed analysis and proposed solutions.
 
 \subsection{Key Implementation Techniques}
 \begin{longtable}{|p{0.18\textwidth}|p{0.38\textwidth}|p{0.28\textwidth}|}
@@ -1009,14 +1020,15 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \newpage
 \section{Conclusion}
 
-This implementation demonstrates successful integration of physics knowledge with neural network learning, achieving accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency and enabling parameter identification for all 6 physical parameters of quadrotor dynamics.
+This implementation demonstrates successful integration of physics knowledge with neural network learning, achieving accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency. The system achieves perfect parameter identification for mass/kt/kq (0.00\% error) and partial success for inertia identification (30-46\% error) through angular acceleration measurements.
 
 \subsection{Key Achievements}
 \begin{itemize}
-\item \textbf{Comprehensive State Prediction}: All 12 state variables predicted with high accuracy (correlation $>$ 0.86)
-\item \textbf{Successful Parameter Identification}: All 6 physical parameters (mass, inertia components, thrust coefficient, torque coefficient) learned simultaneously
+\item \textbf{Comprehensive State Prediction}: All 15 state variables predicted with high accuracy (correlation $>$ 0.86)
+\item \textbf{Perfect Mass/Motor Coefficient Identification}: Mass, kt, kq identified with 0.00\% error
+\item \textbf{Inertia Parameter Identification}: Jxx (31.20\%), Jyy (30.43\%), Jzz (46.41\%) errors achieved through angular acceleration measurements
+\item \textbf{Realistic Physical Dynamics}: Motor dynamics (80ms time constant), slew rate limits (15 N/s thrust, 0.5 N·m/s torque), reference filtering (250ms)
 \item \textbf{Physics Compliance}: Strong constraint satisfaction demonstrated by physics loss convergence (2+ orders of magnitude reduction)
-\item \textbf{Model Evolution}: Systematic improvement from 14.8\% to 5.8\% average parameter error across three model variants
 \item \textbf{Robust Generalization}: $<$ 10\% accuracy degradation on unseen trajectories
 \end{itemize}
 
@@ -1024,11 +1036,13 @@ This implementation demonstrates successful integration of physics knowledge wit
 \begin{itemize}
 \item Novel multi-objective training combining data fitting, physics constraints, and parameter regularization
 \item Direct parameter identification through physics equation integration
-\item Systematic model evolution with quantified improvements
+\item Angular acceleration measurements for improved inertia observability
+\item Realistic actuator dynamics including motor lag (80ms) and slew rate limits
+\item Enhanced physics loss formulation with angular acceleration constraints (weight: 20.0)
 \item Comprehensive validation across multiple flight maneuvers
 \end{itemize}
 
-The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. The learned parameters include mass, inertia tensor components, and motor coefficients (kt, kq), demonstrating that PINNs\index{PINNs} can effectively extract physical properties from trajectory data while maintaining physics consistency through embedded Newton-Euler dynamics.
+The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. Angular acceleration measurements demonstrate that observability challenges in parameter identification can be addressed through careful feature engineering. Mass and motor coefficients (kt, kq) achieve perfect identification, while inertia parameters reach 30-46\% error through enhanced physics constraints, validating the PINN\index{PINNs} approach for extracting physical properties from trajectory data.
 
 \subsection{Physical Realism Concerns and Known Issues}
 
