@@ -15,10 +15,10 @@ from torch.utils.data import DataLoader, TensorDataset
 
 class EnhancedQuadrotorPINN(nn.Module):
     """Enhanced PINN with complete physics and direct parameter identification"""
-    
-    def __init__(self, input_size=12, hidden_size=128, output_size=16, num_layers=4):
+
+    def __init__(self, input_size=15, hidden_size=128, output_size=15, num_layers=4):
         super(EnhancedQuadrotorPINN, self).__init__()
-        
+
         self.input_size = input_size
         self.output_size = output_size
         
@@ -76,53 +76,55 @@ class EnhancedQuadrotorPINN(nn.Module):
             # Note: Gravity (self.g = 9.81) is a fixed constant, not constrained
     
     def direct_parameter_identification_loss(self, inputs, targets):
-        """Direct parameter identification from torque/acceleration relationships"""
-        
+        """
+        Direct parameter identification from torque/acceleration relationships
+        Option 1: Uses measured angular accelerations for stronger gradient signals
+        """
+
         # Extract states
         tx = inputs[:, 2]  # torque_x
         ty = inputs[:, 3]  # torque_y
         tz = inputs[:, 4]  # torque_z
         p = inputs[:, 8]   # p
-        q = inputs[:, 9]   # q  
+        q = inputs[:, 9]   # q
         r = inputs[:, 10]  # r
-        
-        # Extract next step values from targets
-        p_next = targets[:, 8]
-        q_next = targets[:, 9]
-        r_next = targets[:, 10]
-        
-        # Compute angular accelerations
-        dt = 0.001
-        pdot = (p_next - p) / dt
-        qdot = (q_next - q) / dt
-        rdot = (r_next - r) / dt
-        
+
+        # Option 1 improvement: Use measured angular accelerations directly
+        # These provide much stronger gradient signals for inertia identification
+        pdot = inputs[:, 11]  # p_dot (measured angular acceleration in roll)
+        qdot = inputs[:, 12]  # q_dot (measured angular acceleration in pitch)
+        rdot = inputs[:, 13]  # r_dot (measured angular acceleration in yaw)
+
         # Cross-coupling terms
         t1 = (self.Jyy - self.Jzz) / self.Jxx
         t2 = (self.Jzz - self.Jxx) / self.Jyy
         t3 = (self.Jxx - self.Jyy) / self.Jzz
-        
+
         # Direct identification equations (Euler's rotational dynamics)
         # pdot_expected = t1*q*r + tx/Jxx - 2*p (damping term)
         pdot_expected = t1 * q * r + tx / self.Jxx - 2 * p
         qdot_expected = t2 * p * r + ty / self.Jyy - 2 * q
         rdot_expected = t3 * p * q + tz / self.Jzz - 2 * r
-        
+
         # Direct identification loss (forces exact parameter values)
+        # Using measured accelerations provides much stronger inertia identification
         id_loss = (
             torch.mean((pdot - pdot_expected) ** 2) +
-            torch.mean((qdot - qdot_expected) ** 2) + 
+            torch.mean((qdot - qdot_expected) ** 2) +
             torch.mean((rdot - rdot_expected) ** 2)
         )
-        
+
         return id_loss
     
     def enhanced_physics_loss(self, inputs, outputs, targets):
-        """Enhanced physics loss with complete dynamics"""
-        
-        # Extract current states
+        """
+        Enhanced physics loss with complete dynamics
+        Updated for new state vector with angular accelerations (15 inputs)
+        """
+
+        # Extract current states (updated indices for new state vector)
         thrust = inputs[:, 0]
-        z = inputs[:, 1] 
+        z = inputs[:, 1]
         tx = inputs[:, 2]
         ty = inputs[:, 3]
         tz = inputs[:, 4]
@@ -132,8 +134,9 @@ class EnhancedQuadrotorPINN(nn.Module):
         p = inputs[:, 8]
         q = inputs[:, 9]
         r = inputs[:, 10]
-        vz = inputs[:, 11]
-        
+        # indices 11-13 are p_dot, q_dot, r_dot (not used in this loss)
+        vz = inputs[:, 14]  # vz moved to index 14
+
         # Extract predicted next states
         phi_next = outputs[:, 5]
         theta_next = outputs[:, 6]
@@ -141,7 +144,8 @@ class EnhancedQuadrotorPINN(nn.Module):
         p_next = outputs[:, 8]
         q_next = outputs[:, 9]
         r_next = outputs[:, 10]
-        vz_next = outputs[:, 11]
+        # indices 11-13 are p_dot, q_dot, r_dot (predicted angular accelerations)
+        vz_next = outputs[:, 14]  # vz moved to index 14
         
         dt = 0.001
         
@@ -210,17 +214,18 @@ class EnhancedQuadrotorPINN(nn.Module):
         """
         Anomaly #4 & #5 fix: Penalize unrealistic state derivatives
         Ensures smooth state transitions without discontinuities
+        Updated for new state vector with angular accelerations (15 inputs)
         """
         dt = 0.001
 
-        # Extract current and next states
+        # Extract current and next states (updated indices)
         phi = inputs[:, 5]
         theta = inputs[:, 6]
         psi = inputs[:, 7]
         p = inputs[:, 8]
         q = inputs[:, 9]
         r = inputs[:, 10]
-        vz = inputs[:, 11]
+        vz = inputs[:, 14]  # vz moved to index 14
 
         phi_next = outputs[:, 5]
         theta_next = outputs[:, 6]
@@ -228,7 +233,7 @@ class EnhancedQuadrotorPINN(nn.Module):
         p_next = outputs[:, 8]
         q_next = outputs[:, 9]
         r_next = outputs[:, 10]
-        vz_next = outputs[:, 11]
+        vz_next = outputs[:, 14]  # vz moved to index 14
 
         # Compute state derivatives (rates of change)
         phi_dot = (phi_next - phi) / dt
@@ -265,6 +270,46 @@ class EnhancedQuadrotorPINN(nn.Module):
 
         return derivative_loss
 
+    def angular_acceleration_physics_loss(self, inputs, outputs):
+        """
+        Option 1 enhancement: Direct physics loss on predicted angular accelerations
+        This enforces the Euler equations directly on the predicted angular accelerations,
+        providing much stronger gradient signals for inertia identification.
+        """
+
+        # Extract current states
+        tx = inputs[:, 2]
+        ty = inputs[:, 3]
+        tz = inputs[:, 4]
+        p = inputs[:, 8]
+        q = inputs[:, 9]
+        r = inputs[:, 10]
+
+        # Extract predicted angular accelerations from network output
+        p_dot_pred = outputs[:, 11]
+        q_dot_pred = outputs[:, 12]
+        r_dot_pred = outputs[:, 13]
+
+        # Cross-coupling terms
+        t1 = (self.Jyy - self.Jzz) / self.Jxx
+        t2 = (self.Jzz - self.Jxx) / self.Jyy
+        t3 = (self.Jxx - self.Jyy) / self.Jzz
+
+        # Physics-based angular accelerations from Euler equations
+        p_dot_physics = t1 * q * r + tx / self.Jxx - 2 * p
+        q_dot_physics = t2 * p * r + ty / self.Jyy - 2 * q
+        r_dot_physics = t3 * p * q + tz / self.Jzz - 2 * r
+
+        # Enforce that predicted accelerations match physics
+        # This provides direct gradient signal to inertia parameters
+        angular_accel_loss = (
+            torch.mean((p_dot_pred - p_dot_physics) ** 2) +
+            torch.mean((q_dot_pred - q_dot_physics) ** 2) +
+            torch.mean((r_dot_pred - r_dot_physics) ** 2)
+        )
+
+        return angular_accel_loss
+
 class EnhancedTrainer:
     """Enhanced trainer with direct parameter identification"""
     
@@ -281,11 +326,14 @@ class EnhancedTrainer:
         self.param_reg_losses = []
         self.direct_id_losses = []
         self.derivative_losses = []  # Track derivative constraint losses
+        self.angular_accel_losses = []  # Track angular acceleration physics losses (Option 1)
         
-    def train_epoch(self, train_loader, physics_weight=15.0, reg_weight=2.0, direct_id_weight=10.0, derivative_weight=8.0):
+    def train_epoch(self, train_loader, physics_weight=15.0, reg_weight=2.0, direct_id_weight=10.0,
+                    derivative_weight=8.0, angular_accel_weight=20.0):
         """
         Enhanced training with direct parameter identification and derivative constraints
         Anomaly #5 fix: Increased physics_weight from 5.0 to 15.0 (3x increase)
+        Option 1: Added angular_accel_weight for direct angular acceleration physics (default 20.0)
         """
         self.model.train()
         total_loss = 0
@@ -293,6 +341,7 @@ class EnhancedTrainer:
         total_reg_loss = 0
         total_id_loss = 0
         total_derivative_loss = 0
+        total_angular_accel_loss = 0
 
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = data.to(self.device), target.to(self.device)
@@ -316,13 +365,18 @@ class EnhancedTrainer:
             # Anomaly #4 & #5 fix: State derivative constraints
             derivative_loss = self.model.state_derivative_constraints_loss(data, output)
 
+            # Option 1: Angular acceleration physics loss (stronger inertia identification)
+            angular_accel_loss = self.model.angular_acceleration_physics_loss(data, output)
+
             # Combined loss with strong physics enforcement
             # Anomaly #5 fix: physics_weight increased to 15.0 (was 5.0)
+            # Option 1: Added angular_accel_weight * angular_accel_loss (high weight for inertia ID)
             loss = (data_loss +
                    physics_weight * physics_loss +
                    reg_weight * reg_loss +
                    direct_id_weight * direct_id_loss +
-                   derivative_weight * derivative_loss)  # New term
+                   derivative_weight * derivative_loss +
+                   angular_accel_weight * angular_accel_loss)  # Option 1 enhancement
 
             loss.backward()
 
@@ -339,12 +393,14 @@ class EnhancedTrainer:
             total_reg_loss += reg_loss.item()
             total_id_loss += direct_id_loss.item()
             total_derivative_loss += derivative_loss.item()
+            total_angular_accel_loss += angular_accel_loss.item()
 
         return (total_loss / len(train_loader),
                 total_physics_loss / len(train_loader),
                 total_reg_loss / len(train_loader),
                 total_id_loss / len(train_loader),
-                total_derivative_loss / len(train_loader))
+                total_derivative_loss / len(train_loader),
+                total_angular_accel_loss / len(train_loader))
     
     def validate(self, val_loader):
         """Validate model"""
@@ -364,29 +420,32 @@ class EnhancedTrainer:
         """Enhanced training loop with direct identification and derivative constraints"""
         print("Starting enhanced training with direct parameter identification and derivative constraints...")
         print("Anomaly fixes: Increased physics_weight=15.0, added derivative_weight=8.0")
+        print("Option 1: Added angular_accel_weight=20.0 for improved inertia identification")
 
         for epoch in range(epochs):
-            train_loss, physics_loss, reg_loss, id_loss, derivative_loss = self.train_epoch(train_loader)
+            train_loss, physics_loss, reg_loss, id_loss, derivative_loss, angular_accel_loss = self.train_epoch(train_loader)
             val_loss = self.validate(val_loader)
-            
+
             self.train_losses.append(train_loss)
             self.val_losses.append(val_loss)
             self.physics_losses.append(physics_loss)
             self.param_reg_losses.append(reg_loss)
             self.direct_id_losses.append(id_loss)
             self.derivative_losses.append(derivative_loss)
+            self.angular_accel_losses.append(angular_accel_loss)
 
             if epoch % 10 == 0:
                 print(f'Epoch {epoch:03d}: Train: {train_loss:.4f}, Val: {val_loss:.6f}, '
-                      f'Physics: {physics_loss:.4f}, Reg: {reg_loss:.4f}, ID: {id_loss:.4f}, Deriv: {derivative_loss:.4f}')
-                
+                      f'Physics: {physics_loss:.4f}, Reg: {reg_loss:.4f}, ID: {id_loss:.4f}, '
+                      f'Deriv: {derivative_loss:.4f}, AngAccel: {angular_accel_loss:.4f}')
+
                 # Print current parameters every 20 epochs
                 if epoch % 20 == 0:
                     print(f'  Params - m: {self.model.m.item():.6f}, '
                           f'Jxx: {self.model.Jxx.item():.2e}, '
                           f'Jyy: {self.model.Jyy.item():.2e}, '
                           f'Jzz: {self.model.Jzz.item():.2e}')
-                
+
         print("Enhanced training completed!")
 
 if __name__ == "__main__":

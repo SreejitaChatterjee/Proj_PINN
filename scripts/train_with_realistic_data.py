@@ -28,8 +28,10 @@ def load_and_prepare_data(data_path):
     print(f"  Vertical velocity range: [{df['vz'].min():.3f}, {df['vz'].max():.3f}] m/s")
 
     # Select input and output columns
+    # Option 1: Include angular accelerations for improved inertia identification
     input_cols = ['thrust', 'z', 'torque_x', 'torque_y', 'torque_z',
-                  'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz']
+                  'roll', 'pitch', 'yaw', 'p', 'q', 'r',
+                  'p_dot', 'q_dot', 'r_dot', 'vz']  # Added p_dot, q_dot, r_dot
     output_cols = input_cols  # Same columns for next state prediction
 
     # Create sequential data (t -> t+1)
@@ -84,6 +86,10 @@ def main():
     print("  5. State derivative constraints in physics loss")
     print("  6. Increased physics loss weight (5.0 -> 15.0, 3x increase)")
     print("  7. Realistic vertical velocity control")
+    print("\nOPTION 1 ENHANCEMENT (Improved Inertia Identification):")
+    print("  • Angular accelerations (p_dot, q_dot, r_dot) included in state vector")
+    print("  • Direct physics loss on angular accelerations (weight: 20.0)")
+    print("  • Stronger gradient signals for inertia parameter identification")
     print("=" * 80)
     print()
 
@@ -104,10 +110,11 @@ def main():
 
     # Create model
     print("Initializing enhanced PINN model...")
+    print("  Option 1: Including angular accelerations (15 inputs/outputs)")
     model = EnhancedQuadrotorPINN(
-        input_size=12,
+        input_size=15,  # Updated from 12 to include p_dot, q_dot, r_dot
         hidden_size=128,
-        output_size=12,
+        output_size=15,  # Updated from 12 to include p_dot, q_dot, r_dot
         num_layers=4
     )
     print(f"  Model parameters: {sum(p.numel() for p in model.parameters())}")
@@ -121,8 +128,9 @@ def main():
     # Train model
     print("Starting training with enhanced physics constraints...")
     print("  Physics weight: 15.0 (increased from 5.0)")
-    print("  Derivative constraint weight: 8.0 (NEW)")
+    print("  Derivative constraint weight: 8.0")
     print("  Direct identification weight: 10.0")
+    print("  Angular acceleration weight: 20.0 (Option 1 - NEW)")
     print("  Regularization weight: 2.0")
     print()
 
