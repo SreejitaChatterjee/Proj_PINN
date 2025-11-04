@@ -17,3 +17,11 @@ pip_install.log
 *.fls
 *.synctex.gz
 reports/nul
+
+# Temporary output files
+training_output*.txt
+nul
+*.tmp
+
+# Large generated visualizations (keep only key plots)
+visualizations/detailed/*_time_analysis.png
