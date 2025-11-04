@@ -2,6 +2,7 @@
 import torch
 import pandas as pd
 import numpy as np
+import joblib
 from pathlib import Path
 from pinn_model import QuadrotorPINN
 from plot_utils import PlotGenerator
@@ -25,6 +26,11 @@ def evaluate_model(model_path, data_path, output_dir='results'):
     model.load_state_dict(torch.load(model_path))
     model.eval()
 
+    # Load scalers
+    scaler_path = model_path.parent / 'scalers.pkl'
+    scalers = joblib.load(scaler_path)
+    scaler_X, scaler_y = scalers['scaler_X'], scalers['scaler_y']
+
     df = pd.read_csv(data_path)
     states = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz']
 
@@ -32,10 +38,14 @@ def evaluate_model(model_path, data_path, output_dir='results'):
     predictions = []
     with torch.no_grad():
         for idx in range(len(df) - 1):
-            input_data = torch.FloatTensor(df.iloc[idx][['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz',
-                                                          'thrust', 'torque_x', 'torque_y', 'torque_z',
-                                                          'p_dot', 'q_dot', 'r_dot']].values)
-            pred = model(input_data.unsqueeze(0)).squeeze(0)[:8].numpy()
+            input_data = df.iloc[idx][['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz',
+                                        'thrust', 'torque_x', 'torque_y', 'torque_z',
+                                        'p_dot', 'q_dot', 'r_dot']].values
+            # Apply input scaling
+            input_scaled = scaler_X.transform(input_data.reshape(1, -1))
+            pred_scaled = model(torch.FloatTensor(input_scaled)).squeeze(0)[:8].numpy()
+            # Inverse transform predictions
+            pred = scaler_y.inverse_transform(pred_scaled.reshape(1, -1)).flatten()
             predictions.append(pred)
 
     df_pred = pd.DataFrame(predictions, columns=states)

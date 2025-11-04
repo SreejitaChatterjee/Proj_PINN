@@ -4,6 +4,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 import pandas as pd
 import numpy as np
+import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 from pathlib import Path
@@ -89,11 +90,12 @@ def prepare_data(csv_path, test_size=0.2):
     X_val, y_val = scaler_X.transform(X_val), scaler_y.transform(y_val)
 
     return (DataLoader(TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)), batch_size=64, shuffle=True),
-            DataLoader(TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)), batch_size=64))
+            DataLoader(TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)), batch_size=64),
+            scaler_X, scaler_y)
 
 if __name__ == "__main__":
     data_path = Path(__file__).parent.parent / 'data' / 'quadrotor_training_data.csv'
-    train_loader, val_loader = prepare_data(data_path)
+    train_loader, val_loader, scaler_X, scaler_y = prepare_data(data_path)
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = QuadrotorPINN()
@@ -103,7 +105,13 @@ if __name__ == "__main__":
     save_path = Path(__file__).parent.parent / 'models' / 'quadrotor_pinn.pth'
     save_path.parent.mkdir(exist_ok=True)
     torch.save(model.state_dict(), save_path)
+
+    # Save scalers for evaluation
+    scaler_path = save_path.parent / 'scalers.pkl'
+    joblib.dump({'scaler_X': scaler_X, 'scaler_y': scaler_y}, scaler_path)
+
     print(f"\nModel saved to {save_path}")
+    print(f"Scalers saved to {scaler_path}")
     print("\nFinal parameters:")
     for k, v in model.params.items():
         print(f"{k}: {v.item():.6e} (true: {model.true_params[k]:.6e}, error: {abs(v.item()-model.true_params[k])/model.true_params[k]*100:.1f}%)")

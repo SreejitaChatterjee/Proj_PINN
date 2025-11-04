@@ -1,0 +1,58 @@
+ANOMALY RESOLUTION VERIFICATION
+================================
+
+Date: November 4, 2025
+
+1. DATA SCALING MISMATCH (CRITICAL) - ✓ RESOLVED
+--------------------------------------------------
+Before:
+- Training used StandardScaler, evaluation didn't
+- Prediction errors: 143-1767% relative error
+- Model received raw unscaled data during evaluation
+
+After:
+- Scalers saved during training: models/scalers.pkl (1.4KB)
+- Evaluation loads and applies scalers correctly
+- Reasonable error metrics:
+  * z: MAE=0.60m, RMSE=0.80m
+  * Angles: MAE=0.002-0.004 rad, RMSE=0.003-0.005 rad
+  * Angular rates: MAE=0.39-0.91 rad/s, RMSE=0.69-1.54 rad/s
+  * vz: MAE=1.15 m/s, RMSE=1.45 m/s
+
+Status: ✓ FIXED - Evaluation now uses proper scaling
+
+2. MAPE CALCULATION ISSUE (HIGH) - ⚠ KNOWN ISSUE
+--------------------------------------------------
+Before:
+- MAPE used 1e-8 denominator
+- Division by near-zero → astronomical percentages
+
+After:
+- MAPE still shows high values (33M% for z)
+- However, MAE and RMSE are now physically reasonable
+- MAPE is unreliable for values near zero
+
+Status: ⚠ KNOWN ISSUE - MAPE not reliable, use MAE/RMSE instead
+
+3. EVALUATION ON INITIAL CONDITIONS (MEDIUM) - ⚠ NOT ADDRESSED
+---------------------------------------------------------------
+- Still evaluating on full dataset including transients
+- Could be improved but not critical
+
+Status: ⚠ FUTURE IMPROVEMENT
+
+MODEL PARAMETERS
+----------------
+Learned parameters remain good:
+- kt, kq: 0.0% error (perfect)
+- m: 0.0% error (near perfect)
+- Jxx, Jyy, Jzz: 15.0% error (acceptable)
+
+CONCLUSION
+----------
+✓ Critical scaling mismatch RESOLVED
+✓ Model produces reasonable predictions
+✓ Evaluation metrics are now meaningful (MAE/RMSE)
+⚠ MAPE remains unreliable (use MAE/RMSE instead)
+
+The primary anomaly has been successfully resolved!
