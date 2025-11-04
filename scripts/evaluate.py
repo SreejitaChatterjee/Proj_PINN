@@ -26,13 +26,13 @@ def evaluate_model(model_path, data_path, output_dir='results'):
     model.eval()
 
     df = pd.read_csv(data_path)
-    states = ['z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz']
+    states = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz']
 
     # Compute predictions
     predictions = []
     with torch.no_grad():
         for idx in range(len(df) - 1):
-            input_data = torch.FloatTensor(df.iloc[idx][['z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz',
+            input_data = torch.FloatTensor(df.iloc[idx][['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz',
                                                           'thrust', 'torque_x', 'torque_y', 'torque_z',
                                                           'p_dot', 'q_dot', 'r_dot']].values)
             pred = model(input_data.unsqueeze(0)).squeeze(0)[:8].numpy()

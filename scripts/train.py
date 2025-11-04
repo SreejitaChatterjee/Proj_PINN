@@ -70,16 +70,17 @@ class Trainer:
 
 def prepare_data(csv_path, test_size=0.2):
     df = pd.read_csv(csv_path)
-    features = ['z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z', 'p_dot', 'q_dot', 'r_dot']
+    features = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z', 'p_dot', 'q_dot', 'r_dot']
 
     X, y = [], []
     for traj_id in df['trajectory_id'].unique():
         traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
-        for i in range(len(traj) - 1):
-            X.append(traj[features].iloc[i].values)
-            y.append(traj[features[:8]].iloc[i+1].values)  # Next states only
+        # Vectorized: convert to numpy once, then slice
+        traj_data = traj[features].values
+        X.append(traj_data[:-1])  # All but last
+        y.append(traj_data[1:, :8])  # All but first, only first 8 features
 
-    X, y = np.array(X), np.array(y)
+    X, y = np.vstack(X), np.vstack(y)
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
     X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
@@ -99,7 +100,10 @@ if __name__ == "__main__":
     trainer = Trainer(model, device)
     trainer.train(train_loader, val_loader, epochs=150)
 
-    torch.save(model.state_dict(), 'models/quadrotor_pinn.pth')
+    save_path = Path(__file__).parent.parent / 'models' / 'quadrotor_pinn.pth'
+    save_path.parent.mkdir(exist_ok=True)
+    torch.save(model.state_dict(), save_path)
+    print(f"\nModel saved to {save_path}")
     print("\nFinal parameters:")
     for k, v in model.params.items():
         print(f"{k}: {v.item():.6e} (true: {model.true_params[k]:.6e}, error: {abs(v.item()-model.true_params[k])/model.true_params[k]*100:.1f}%)")

@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 
 class QuadrotorPINN(nn.Module):
-    def __init__(self, input_size=15, hidden_size=128, output_size=15, num_layers=4):
+    def __init__(self, input_size=15, hidden_size=128, output_size=8, num_layers=4):
         super().__init__()
         layers = [nn.Linear(input_size, hidden_size), nn.Tanh()]
         layers.extend([layer for _ in range(num_layers - 2)
