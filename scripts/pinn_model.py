@@ -50,9 +50,11 @@ class QuadrotorPINN(nn.Module):
         J = self.params
         t1, t2, t3 = (J['Jyy'] - J['Jzz'])/J['Jxx'], (J['Jzz'] - J['Jxx'])/J['Jyy'], (J['Jxx'] - J['Jyy'])/J['Jzz']
 
-        pdot = t1*q*r + tx/J['Jxx'] - 2*p
-        qdot = t2*p*r + ty/J['Jyy'] - 2*q
-        rdot = t3*p*q + tz/J['Jzz'] - 2*r
+        # PHYSICS FIX: Removed artificial damping terms (-2*p, -2*q, -2*r)
+        # Real Euler rotation equations have no viscous damping
+        pdot = t1*q*r + tx/J['Jxx']
+        qdot = t2*p*r + ty/J['Jyy']
+        rdot = t3*p*q + tz/J['Jzz']
 
         # Kinematics
         phi_dot = p + torch.sin(phi)*torch.tan(theta)*q + torch.cos(phi)*torch.tan(theta)*r
@@ -60,7 +62,9 @@ class QuadrotorPINN(nn.Module):
         psi_dot = torch.sin(phi)*q/torch.cos(theta) + torch.cos(phi)*r/torch.cos(theta)
 
         # Vertical dynamics
-        wdot = -thrust*torch.cos(theta)*torch.cos(phi)/J['m'] + self.g - 0.1*vz
+        # PHYSICS FIX: Changed to quadratic drag (more realistic than linear)
+        drag_coeff = 0.05
+        wdot = -thrust*torch.cos(theta)*torch.cos(phi)/J['m'] + self.g - drag_coeff*vz*torch.abs(vz)
 
         # Physics predictions
         p_pred, q_pred, r_pred = p + pdot*dt, q + qdot*dt, r + rdot*dt

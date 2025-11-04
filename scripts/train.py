@@ -71,6 +71,8 @@ class Trainer:
 
 def prepare_data(csv_path, test_size=0.2):
     df = pd.read_csv(csv_path)
+    # Rename columns to match expected names (data generator uses roll/pitch/yaw)
+    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
     features = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z', 'p_dot', 'q_dot', 'r_dot']
 
     X, y = [], []

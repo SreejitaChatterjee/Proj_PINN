@@ -32,6 +32,8 @@ def evaluate_model(model_path, data_path, output_dir='results'):
     scaler_X, scaler_y = scalers['scaler_X'], scalers['scaler_y']
 
     df = pd.read_csv(data_path)
+    # Rename columns to match expected names (data generator uses roll/pitch/yaw)
+    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
     states = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz']
 
     # Compute predictions

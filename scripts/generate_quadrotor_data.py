@@ -238,9 +238,11 @@ class QuadrotorSimulator:
 
             # ===== ROTATIONAL DYNAMICS =====
             # Use actual motor outputs (with dynamics) instead of commanded values
-            pdot = self.t1 * q * r + tx_actual / self.Jxx - 2 * p
-            qdot = self.t2 * p * r + ty_actual / self.Jyy - 2 * q
-            rdot = self.t3 * p * q + tz_actual / self.Jzz - 2 * r
+            # PHYSICS FIX: Removed artificial damping terms (-2*p, -2*q, -2*r)
+            # Real Euler rotation equations have no viscous damping
+            pdot = self.t1 * q * r + tx_actual / self.Jxx
+            qdot = self.t2 * p * r + ty_actual / self.Jyy
+            rdot = self.t3 * p * q + tz_actual / self.Jzz
 
             p += pdot * dt
             q += qdot * dt
@@ -264,9 +266,12 @@ class QuadrotorSimulator:
             fz = -T_actual
             fx, fy = 0.0, 0.0
 
-            udot = r * v - q * w + fx / self.m - self.g * np.sin(theta) - 0.1 * u
-            vdot = p * w - r * u + fy / self.m + self.g * np.cos(theta) * np.sin(phi) - 0.1 * v
-            wdot = q * u - p * v + fz / self.m + self.g * np.cos(theta) * np.cos(phi) - 0.1 * w
+            # PHYSICS FIX: Changed to quadratic drag (more realistic than linear)
+            # Drag coefficient: 0.05 kg/m (tuned for small quadrotor)
+            drag_coeff = 0.05
+            udot = r * v - q * w + fx / self.m - self.g * np.sin(theta) - drag_coeff * u * np.abs(u)
+            vdot = p * w - r * u + fy / self.m + self.g * np.cos(theta) * np.sin(phi) - drag_coeff * v * np.abs(v)
+            wdot = q * u - p * v + fz / self.m + self.g * np.cos(theta) * np.cos(phi) - drag_coeff * w * np.abs(w)
 
             u += udot * dt
             v += vdot * dt
