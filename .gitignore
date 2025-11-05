@@ -1,27 +1,60 @@
+# Python
 __pycache__/
 *.pyc
-.claude/
-pip_install.log
-*.log
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
 
-# Keep PNG files only in designated directories
-/*.png
+# IDE
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+pip_install.log
+
+# Temporary files
+nul
+*.tmp
+training_output*.txt
+training_log*.txt
 
 # LaTeX auxiliary files
 *.aux
 *.idx
 *.out
 *.toc
-*.log
 *.fdb_latexmk
 *.fls
 *.synctex.gz
-reports/nul
+*.bbl
+*.blg
+*.nav
+*.snm
+*.vrb
 
-# Temporary output files
-training_output*.txt
-nul
-*.tmp
+# Keep PNG files only in designated directories
+/*.png
 
-# Large generated visualizations (keep only key plots)
-visualizations/detailed/*_time_analysis.png
+# Prevent duplicate visualization directories
+/visualizations/
+/scripts/results/
+
+# Old/archived models
+/models/enhanced_*.pth
+/models/*_old.pth
+/models/*_backup.pth
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
