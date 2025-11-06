@@ -161,7 +161,8 @@ OUTPUT (18): [T, z, τx, τy, τz, φ, θ, ψ, p, q, r, w]t+1
 - `docs/physics/` - Physics fix documentation
 - `docs/anomalies/` - Anomaly analysis
 - `docs/progress/` - Progress reports
-- `reports/quadrotor_pinn_report.tex` - Complete technical report
+- `reports/quadrotor_pinn_report.tex` - Complete technical report (updated Nov 2025)
+- `LATEX_REPORT_UPDATE_SUMMARY.md` - LaTeX report update documentation
 
 ---
 
@@ -250,10 +251,11 @@ python scripts/evaluate.py
 ## **Repository Status**
 
 **Latest Commits:**
+- `7ed272d` - Update LaTeX report to reflect real physics implementation
+- `c43f36f` - Update PROJECT_SUMMARY.md to reflect current implementation
 - `909e3ac` - Reorganize repository structure for clarity
 - `4cbccd4` - Remove unphysical terms and implement real quadrotor dynamics
 - `9cb9aa1` - Add regenerated evaluation visualizations with correct scaling
-- `33e6571` - Fix critical data scaling mismatch in evaluation pipeline
 
 **Branch:** main
 **Status:** ✅ All changes pushed and organized
@@ -262,8 +264,28 @@ python scripts/evaluate.py
 **Repository Structure:** Clean and professional! ✅
 **Physics:** 100% real, no artificial terms! ✅
 **Hardware-Ready:** Model suitable for deployment! ✅
+**LaTeX Report:** ✅ Source updated (PDF pending plot alignment)
 
 ---
 
-**Last Updated:** November 5, 2025
+---
+
+## **LaTeX Report Status** (Updated Nov 6, 2025)
+
+**Report Source:** ✅ Fully updated to reflect real physics
+- Abstract highlights real physics implementation and square wave references
+- Dataset & Training section corrected (49,382 samples, real dynamics)
+- Results tables updated with current performance metrics (14-27% improvements)
+- Parameter identification table shows 0% error for kt/kq/m, 15% for inertias
+- New section documenting physics improvements (removed artificial damping, quadratic drag)
+- All image paths fixed to match reorganized repository structure
+
+**PDF Compilation:** ⚠️ Blocked on missing plot files
+- LaTeX expects 12+ plots (thrust, torques, convergence)
+- Currently have 8 state prediction plots in `results/detailed/`
+- See `LATEX_REPORT_UPDATE_SUMMARY.md` for resolution options
+
+---
+
+**Last Updated:** November 6, 2025
 **Generated with:** [Claude Code](https://claude.com/claude-code)
