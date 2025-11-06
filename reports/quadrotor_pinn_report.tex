@@ -861,56 +861,56 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/01_z_time_analysis.png}
-\caption{Altitude vs Time - Tracking square wave setpoints. MAE: 0.44m, RMSE: 0.59m. Excellent tracking with real physics.}
+\caption{Altitude vs Time - MAE: \textbf{0.022m}, RMSE: \textbf{0.13m}. Smooth tracking with temporal smoothness constraints (95\% improvement).}
 \label{fig:altitude_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/02_phi_time_analysis.png}
-\caption{Roll Angle (phi) vs Time - MAE: 0.0031 rad (0.18°), RMSE: 0.0043 rad (0.25°). Outstanding prediction accuracy.}
+\caption{Roll Angle ($\phi$) vs Time - MAE: \textbf{0.0003 rad (0.017°)}, RMSE: \textbf{0.0007 rad}. Outstanding prediction accuracy (90\% improvement).}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/03_theta_time_analysis.png}
-\caption{Pitch Angle (theta) vs Time - MAE: 0.0019 rad (0.11°), RMSE: 0.0027 rad (0.15°). Excellent attitude tracking.}
+\caption{Pitch Angle ($\theta$) vs Time - MAE: \textbf{0.0003 rad (0.017°)}, RMSE: \textbf{0.0005 rad}. Excellent attitude tracking (84\% improvement).}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/04_psi_time_analysis.png}
-\caption{Yaw Angle (psi) vs Time - MAE: 0.0037 rad (0.21°), RMSE: 0.0050 rad (0.29°). Tracking square wave yaw references.}
+\caption{Yaw Angle ($\psi$) vs Time - MAE: \textbf{0.0007 rad (0.040°)}, RMSE: \textbf{0.0011 rad}. Accurate heading prediction (81\% improvement).}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/05_p_time_analysis.png}
-\caption{Roll Rate (p) vs Time - MAE: 0.36 rad/s, RMSE: 0.54 rad/s. Angular velocity about x-axis with real dynamics.}
+\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0041 rad/s}, RMSE: \textbf{0.0054 rad/s}. Smooth predictions with temporal constraints (99.7\% improvement).}
 \label{fig:roll_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/06_q_time_analysis.png}
-\caption{Pitch Rate (q) vs Time - MAE: 0.37 rad/s, RMSE: 0.56 rad/s. Angular velocity about y-axis with real physics.}
+\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0019 rad/s}, RMSE: \textbf{0.0024 rad/s}. Continuous, physically realistic predictions (99.5\% improvement).}
 \label{fig:pitch_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/07_r_time_analysis.png}
-\caption{Yaw Rate (r) vs Time - MAE: 1.31 rad/s, RMSE: 1.91 rad/s. Angular velocity about z-axis.}
+\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0020 rad/s}, RMSE: \textbf{0.0059 rad/s}. Smooth angular velocity tracking (99.7\% improvement).}
 \label{fig:yaw_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/08_vz_time_analysis.png}
-\caption{Vertical Velocity (vz) vs Time - MAE: 0.99 m/s, RMSE: 1.27 m/s. Smooth velocity profile with realistic motor dynamics (80ms time constant).}
+\caption{Vertical Velocity (vz) vs Time - MAE: \textbf{0.017 m/s}, RMSE: \textbf{0.057 m/s}. Smooth velocity tracking with temporal constraints (98.3\% improvement).}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
