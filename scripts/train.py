@@ -16,11 +16,11 @@ class Trainer:
         self.device = device
         self.optimizer = optim.Adam(model.parameters(), lr=lr)
         self.criterion = torch.nn.MSELoss()
-        self.history = {'train': [], 'val': [], 'physics': [], 'reg': []}
+        self.history = {'train': [], 'val': [], 'physics': [], 'temporal': [], 'reg': []}
 
-    def train_epoch(self, loader, weights={'physics': 20.0, 'reg': 1.0}):
+    def train_epoch(self, loader, weights={'physics': 20.0, 'temporal': 5.0, 'reg': 1.0}):
         self.model.train()
-        losses = {'total': 0, 'physics': 0, 'reg': 0}
+        losses = {'total': 0, 'physics': 0, 'temporal': 0, 'reg': 0}
 
         for data, target in loader:
             data, target = data.to(self.device), target.to(self.device)
@@ -29,9 +29,10 @@ class Trainer:
             output = self.model(data)
             data_loss = self.criterion(output, target)
             physics_loss = self.model.physics_loss(data, output)
+            temporal_loss = self.model.temporal_smoothness_loss(data, output)
             reg_loss = self.model.regularization_loss()
 
-            loss = data_loss + weights['physics']*physics_loss + weights['reg']*reg_loss
+            loss = data_loss + weights['physics']*physics_loss + weights['temporal']*temporal_loss + weights['reg']*reg_loss
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
             self.optimizer.step()
@@ -39,6 +40,7 @@ class Trainer:
 
             losses['total'] += loss.item()
             losses['physics'] += physics_loss.item()
+            losses['temporal'] += temporal_loss.item()
             losses['reg'] += reg_loss.item()
 
         return {k: v/len(loader) for k, v in losses.items()}
@@ -53,7 +55,7 @@ class Trainer:
         return total_loss / len(loader)
 
     def train(self, train_loader, val_loader, epochs=150, weights=None):
-        weights = weights or {'physics': 20.0, 'reg': 1.0}
+        weights = weights or {'physics': 20.0, 'temporal': 5.0, 'reg': 1.0}
         print(f"Training for {epochs} epochs with weights: {weights}")
 
         for epoch in range(epochs):
@@ -65,7 +67,7 @@ class Trainer:
 
             if epoch % 10 == 0:
                 print(f"Epoch {epoch:03d}: Train={losses['total']:.4f}, Val={val_loss:.6f}, "
-                      f"Physics={losses['physics']:.4f}, Reg={losses['reg']:.4f}")
+                      f"Physics={losses['physics']:.4f}, Temporal={losses['temporal']:.4f}, Reg={losses['reg']:.4f}")
                 if epoch % 20 == 0:
                     print(f"  Params: " + ", ".join(f"{k}={v.item():.2e}" for k, v in self.model.params.items()))
 

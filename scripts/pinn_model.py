@@ -87,6 +87,51 @@ class QuadrotorPINN(nn.Module):
             ((z_next - z_pred)/scales['z'])**2
         ]).mean()
 
+    def temporal_smoothness_loss(self, inputs, outputs, dt=0.001):
+        """
+        Penalize unrealistic state changes between timesteps.
+        Enforces physical limits on acceleration and jerk.
+        """
+        # Extract current and next states
+        z, phi, theta, psi, p, q, r, vz = inputs[:, :8].T
+        z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
+
+        # Compute state changes (velocities/accelerations)
+        dz = (z_next - z) / dt
+        dphi = (phi_next - phi) / dt
+        dtheta = (theta_next - theta) / dt
+        dpsi = (psi_next - psi) / dt
+        dp = (p_next - p) / dt
+        dq = (q_next - q) / dt
+        dr = (r_next - r) / dt
+        dvz = (vz_next - vz) / dt
+
+        # Physical limits for quadrotors (based on realistic capabilities)
+        # These are soft constraints - violated predictions incur quadratic penalty
+        limits = {
+            'dz': 5.0,        # Max vertical velocity 5 m/s
+            'dphi': 3.0,      # Max roll rate 3 rad/s (~172 deg/s)
+            'dtheta': 3.0,    # Max pitch rate 3 rad/s
+            'dpsi': 2.0,      # Max yaw rate 2 rad/s (~115 deg/s)
+            'dp': 50.0,       # Max roll angular acceleration 50 rad/s^2
+            'dq': 50.0,       # Max pitch angular acceleration 50 rad/s^2
+            'dr': 30.0,       # Max yaw angular acceleration 30 rad/s^2
+            'dvz': 20.0       # Max vertical acceleration 20 m/s^2 (~2g)
+        }
+
+        # Smooth L2 penalty (soft constraints)
+        loss = 0.0
+        loss += torch.relu(torch.abs(dz - vz) - limits['dz']).pow(2).mean()  # dz should equal vz
+        loss += torch.relu(torch.abs(dphi) - limits['dphi']).pow(2).mean()
+        loss += torch.relu(torch.abs(dtheta) - limits['dtheta']).pow(2).mean()
+        loss += torch.relu(torch.abs(dpsi) - limits['dpsi']).pow(2).mean()
+        loss += torch.relu(torch.abs(dp) - limits['dp']).pow(2).mean()
+        loss += torch.relu(torch.abs(dq) - limits['dq']).pow(2).mean()
+        loss += torch.relu(torch.abs(dr) - limits['dr']).pow(2).mean()
+        loss += torch.relu(torch.abs(dvz) - limits['dvz']).pow(2).mean()
+
+        return loss
+
     def regularization_loss(self):
         return 100 * sum((self.params[k] - self.true_params[k])**2 / self.true_params[k]**2
                         for k in self.params)
