@@ -88,7 +88,7 @@
 \begin{center}
 \large\textbf{Abstract}\\[0.5em]
 \normalsize
-This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Critical improvements include: (1) removal of all artificial damping terms from rotational dynamics, (2) implementation of quadratic aerodynamic drag, (3) realistic motor dynamics with time constants and slew rate limits, and (4) proper data scaling in evaluation pipeline. The system achieves excellent results: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable), with state prediction MAE of 0.44m for altitude and 0.0019-0.0037 rad for angles. The model is now suitable for real hardware deployment with no unphysical terms.
+This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Key features include: (1) no artificial damping terms in rotational dynamics, (2) quadratic aerodynamic drag, (3) realistic motor dynamics with time constants and slew rate limits, and (4) proper data scaling throughout the pipeline. The system achieves excellent results: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable), with state prediction MAE of 0.44m for altitude and 0.0019-0.0037 rad for angles. The model is suitable for real hardware deployment with no unphysical terms.
 \end{center}
 \vfill
 \end{titlepage}
@@ -430,21 +430,21 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{State Variable} & \textbf{MAE} & \textbf{RMSE} & \textbf{Performance Notes} \\
 \hline
-\textbf{Altitude (z)} & 0.44 m & 0.59 m & \textbf{27\% improvement} with real physics. Excellent tracking of filtered square wave references. \\
+\textbf{Altitude (z)} & 0.44 m & 0.59 m & Excellent tracking of filtered square wave references with real physics. \\
 \hline
-\textbf{Roll ($\phi$)} & 0.0031 rad (0.18°) & 0.0043 rad (0.25°) & \textbf{21\% improvement}. Best angle prediction with realistic dynamics. \\
+\textbf{Roll ($\phi$)} & 0.0031 rad (0.18°) & 0.0043 rad (0.25°) & Outstanding angle prediction with realistic dynamics. \\
 \hline
-\textbf{Pitch ($\theta$)} & 0.0019 rad (0.11°) & 0.0027 rad (0.15°) & \textbf{14\% improvement}. Outstanding attitude tracking accuracy. \\
+\textbf{Pitch ($\theta$)} & 0.0019 rad (0.11°) & 0.0027 rad (0.15°) & Excellent attitude tracking accuracy. \\
 \hline
-\textbf{Yaw ($\psi$)} & 0.0037 rad (0.21°) & 0.0050 rad (0.29°) & Similar performance. Accurate heading prediction across maneuvers. \\
+\textbf{Yaw ($\psi$)} & 0.0037 rad (0.21°) & 0.0050 rad (0.29°) & Accurate heading prediction across maneuvers. \\
 \hline
-\textbf{Roll Rate (p)} & 1.31 rad/s & 2.17 rad/s & Higher variability reflects real dynamics without artificial damping (expected). \\
+\textbf{Roll Rate (p)} & 1.31 rad/s & 2.17 rad/s & Higher variability reflects real dynamics without artificial damping. \\
 \hline
-\textbf{Pitch Rate (q)} & 0.36 rad/s & 0.72 rad/s & Good tracking. Realistic angular rate dynamics. \\
+\textbf{Pitch Rate (q)} & 0.36 rad/s & 0.72 rad/s & Good tracking with realistic angular rate dynamics. \\
 \hline
-\textbf{Yaw Rate (r)} & 0.61 rad/s & 1.07 rad/s & Acceptable. Model shows honest predictions without unphysical stabilization. \\
+\textbf{Yaw Rate (r)} & 0.61 rad/s & 1.07 rad/s & Acceptable performance without unphysical stabilization. \\
 \hline
-\textbf{Vertical Vel ($v_z$)} & 0.99 m/s & 1.27 m/s & \textbf{14\% improvement}. Quadratic drag matches real aerodynamics better. \\
+\textbf{Vertical Vel ($v_z$)} & 0.99 m/s & 1.27 m/s & Good tracking with quadratic drag modeling real aerodynamics. \\
 \hline
 \end{longtable}
 
@@ -861,21 +861,21 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/01_z_time_analysis.png}
-\caption{Altitude vs Time - Tracking square wave setpoints. MAE: 0.44m, RMSE: 0.59m. 27\% improvement with real physics.}
+\caption{Altitude vs Time - Tracking square wave setpoints. MAE: 0.44m, RMSE: 0.59m. Excellent tracking with real physics.}
 \label{fig:altitude_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/02_phi_time_analysis.png}
-\caption{Roll Angle (phi) vs Time - MAE: 0.0031 rad (0.18°), RMSE: 0.0043 rad (0.25°). 21\% improvement with real physics.}
+\caption{Roll Angle (phi) vs Time - MAE: 0.0031 rad (0.18°), RMSE: 0.0043 rad (0.25°). Outstanding prediction accuracy.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/03_theta_time_analysis.png}
-\caption{Pitch Angle (theta) vs Time - MAE: 0.0019 rad (0.11°), RMSE: 0.0027 rad (0.15°). 14\% improvement with real physics.}
+\caption{Pitch Angle (theta) vs Time - MAE: 0.0019 rad (0.11°), RMSE: 0.0027 rad (0.15°). Excellent attitude tracking.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
@@ -950,9 +950,9 @@ This implementation demonstrates successful integration of physics knowledge wit
 
 The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. Angular acceleration measurements and systematic constraint refinement demonstrate that observability challenges in parameter identification can be addressed through careful feature engineering and physics loss rebalancing, achieving 5.00\% error for all inertia parameters and perfect identification for mass/motor coefficients.
 
-\subsection{Physical Realism Improvements}
+\subsection{Physics Implementation and Real Dynamics}
 
-\textbf{All 7 critical anomalies have been comprehensively addressed through systematic implementation of realistic actuator dynamics, controller tuning, and enhanced physics constraints.}
+\textbf{This section documents the comprehensive implementation of realistic actuator dynamics, controller tuning, and physics constraints that ensure the model represents real quadrotor behavior.}
 
 \subsubsection{Simulation-Level Fixes (generate\_quadrotor\_data.py)}
 
@@ -976,9 +976,9 @@ The physics-informed approach successfully combines domain knowledge with machin
 \item \textbf{Implementation}: Two-stage filtering: (1) slew rate limiter, (2) first-order motor lag
 \item \textbf{Result}:
    \begin{itemize}
-   \item Measured thrust rate: 0.19 N/s (well within 15 N/s limit, 2535$\times$ improvement)
+   \item Measured thrust rate: 0.19 N/s (well within 15 N/s limit)
    \item Measured torque rate: 0.006 N$\cdot$m/s (well within 0.5 N$\cdot$m/s limit)
-   \item Eliminates square-wave thrust profile, produces smooth realistic control signals
+   \item Produces smooth realistic control signals
    \end{itemize}
 \end{itemize}
 
@@ -996,7 +996,7 @@ The physics-informed approach successfully combines domain knowledge with machin
    \item Velocity gain: kv = -0.4 $\rightarrow$ -0.25 (37.5\% reduction)
    \item Integral gain: kz2 = 0.22 $\rightarrow$ 0.15
    \end{itemize}
-\item \textbf{Result}: Vertical velocity range reduced from [-5.24, 5.44] m/s to [-3.24, 5.44] m/s (38\% improvement on descent rate)
+\item \textbf{Result}: Vertical velocity range within safe operational limits ([-3.24, 5.44] m/s)
 \end{itemize}
 
 \subsubsection{PINN Model-Level Fixes (enhanced\_pinn\_model.py)}
@@ -1005,7 +1005,7 @@ The physics-informed approach successfully combines domain knowledge with machin
 \begin{itemize}
 \item \textbf{Physics Loss Weight}: Increased 3$\times$ from 5.0 to 15.0
 \item \textbf{Rationale}: Stronger enforcement of Newton-Euler dynamics prevents unphysical state transitions
-\item \textbf{Impact}: Physics loss reduced from 22,207 to 21,752 (better constraint satisfaction)
+\item \textbf{Impact}: Physics loss at 21,752 showing good constraint satisfaction
 \end{itemize}
 
 \textbf{Fix \#4 \& \#5: State Derivative Constraints}
@@ -1019,7 +1019,7 @@ The physics-informed approach successfully combines domain knowledge with machin
    \item Vertical velocity change: max 10 m/s per time step
    \end{itemize}
 \item \textbf{Weight}: $\lambda_{deriv} = 8.0$ (NEW)
-\item \textbf{Result}: Derivative loss reduced from 1,933,702 to 1,442 (99.93\% reduction over 150 epochs)
+\item \textbf{Result}: Derivative loss at 1,442 after 150 epochs of training
 \end{itemize}
 
 \textbf{Fix \#7: Parameter Initialization and Constraints}
@@ -1030,39 +1030,14 @@ The physics-informed approach successfully combines domain knowledge with machin
 \item \textbf{Result}: Mass, kt, kq achieved 0\% error (perfect convergence)
 \end{itemize}
 
-\subsubsection{Quantitative Validation of Fixes}
-
-\begin{longtable}{|p{0.22\textwidth}|p{0.22\textwidth}|p{0.22\textwidth}|p{0.22\textwidth}|}
-\hline
-\textbf{Metric} & \textbf{Before Fix} & \textbf{After Fix} & \textbf{Improvement} \\
-\hline
-Thrust slew rate & 481.64 N/s & 0.19 N/s & 2535$\times$ (99.96\%) \\
-\hline
-Torque slew rate & Instantaneous & 0.006 N$\cdot$m/s & Finite rate achieved \\
-\hline
-Vertical velocity (descent) & -5.24 m/s & -3.24 m/s & 38\% reduction \\
-\hline
-Angular rate discontinuities & Sharp steps & Smooth curves & Eliminated \\
-\hline
-Derivative constraint loss & 1,933,702 & 1,442 & 99.93\% reduction \\
-\hline
-Physics loss & 22,207 & 21,752 & 2.0\% improvement \\
-\hline
-Mass parameter error & Variable & 0.00\% & Perfect \\
-\hline
-kt parameter error & Variable & 0.00\% & Perfect \\
-\hline
-kq parameter error & Variable & 0.00\% & Perfect \\
-\hline
-\end{longtable}
+\subsubsection{Implementation Results}
 
 \textbf{Key Achievements:}
 \begin{itemize}
-\item \textbf{All 7 Anomalies Resolved}: Comprehensive fix implementation eliminates all identified physical realism issues
-\item \textbf{2535$\times$ Thrust Rate Improvement}: From unrealistic 481.64 N/s to physically accurate 0.19 N/s
-\item \textbf{Smooth Dynamics}: Control signals and state trajectories now exhibit realistic continuity
+\item \textbf{Realistic Actuator Dynamics}: Thrust slew rate at 0.19 N/s, torque rate at 0.006 N$\cdot$m/s (within physical limits)
+\item \textbf{Smooth Dynamics}: Control signals and state trajectories exhibit realistic continuity
 \item \textbf{Perfect Parameter Convergence}: Mass and motor coefficients (kt, kq) achieve 0\% error
-\item \textbf{Enhanced Physics Compliance}: 99.93\% reduction in derivative constraint violations
+\item \textbf{Strong Physics Compliance}: Derivative constraint loss at 1,442, physics loss at 21,752
 \item \textbf{Realistic Flight Envelope}: Vertical velocities within safe operational limits ($<$3.5 m/s)
 \end{itemize}
 
@@ -1122,7 +1097,7 @@ Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gra
 
 \textbf{Future Work Directions (Remaining After Implemented Fixes):}
 \begin{enumerate}
-\item \textbf{Improve Inertia Identification}: Address the observability problem by (a) adding direct angular acceleration measurements ($\dot{p}, \dot{q}, \dot{r}$), (b) including aggressive multi-axis rotational maneuvers ($\pm$45-60$^\circ$) to excite cross-coupling dynamics, and (c) exploring alternative physics constraint formulations (angular momentum, energy-based)
+\item \textbf{Future: Inertia Identification Enhancement}: The observability problem could be addressed by (a) adding direct angular acceleration measurements ($\dot{p}, \dot{q}, \dot{r}$), (b) including aggressive multi-axis rotational maneuvers ($\pm$45-60$^\circ$) to excite cross-coupling dynamics, and (c) exploring alternative physics constraint formulations (angular momentum, energy-based)
 \item \textbf{Validate Against Real Hardware}: Test learned dynamics on Crazyflie 2.0 with proper motor dynamics to quantify sim-to-real gap
 \item \textbf{Add Measurement Noise}: Include sensor noise and IMU dynamics for robustness testing
 \item \textbf{Enhance Aerodynamics}: Model blade flapping, induced velocities, ground effect for higher fidelity
@@ -1299,7 +1274,7 @@ Code review of \texttt{enhanced\_pinn\_model.py} revealed \textbf{missing altitu
 \begin{enumerate}
 \item No altitude kinematic equation: \texttt{z\_physics = z + vz * dt}
 \item No altitude term in physics loss function
-\item No \texttt{z\_dot ≈ vz} constraint in derivative loss
+\item No \texttt{z\_dot} $\approx$ \texttt{vz} constraint in derivative loss
 \end{enumerate}
 
 The PINN had zero physics-based guidance for altitude - it could predict arbitrary values without penalty.
@@ -1337,9 +1312,9 @@ After fixing altitude kinematics, all inertias converged to constraint boundarie
 \hline
 \textbf{Altitude (z)} & \textbf{3.331m ± 2.343m} & \textbf{0.498m ± 0.377m} & \textbf{-85\%} \\
 Vertical Velocity (vz) & 0.292 m/s ± 0.203 m/s & 0.184 m/s ± 0.172 m/s & -37\% \\
-Roll (φ) & 0.267° ± 0.203° & 0.332° ± 0.265° & +24\% \\
-Pitch (θ) & 0.191° ± 0.134° & 0.177° ± 0.126° & -7\% \\
-Yaw (ψ) & 0.279° ± 0.266° & 0.284° ± 0.242° & +2\% \\
+Roll ($\phi$) & 0.267° ± 0.203° & 0.332° ± 0.265° & +24\% \\
+Pitch ($\theta$) & 0.191° ± 0.134° & 0.177° ± 0.126° & -7\% \\
+Yaw ($\psi$) & 0.279° ± 0.266° & 0.284° ± 0.242° & +2\% \\
 Roll Rate (p) & 0.0115 ± 0.0085 rad/s & 0.0144 ± 0.0101 rad/s & +25\% \\
 Pitch Rate (q) & 0.0079 ± 0.0050 rad/s & 0.0093 ± 0.0060 rad/s & +18\% \\
 Yaw Rate (r) & 0.0093 ± 0.0067 rad/s & 0.0090 ± 0.0073 rad/s & -3\% \\
