@@ -108,17 +108,17 @@ class QuadrotorPINN(nn.Module):
         dr = (r_next - r) / dt
         dvz = (vz_next - vz) / dt
 
-        # Physical limits for quadrotors (based on realistic smooth flight)
-        # TIGHTENED: Reduced angular acceleration limits for smooth predictions
+        # Physical limits for quadrotors (based on realistic dynamic flight)
+        # BALANCED: Allow realistic transient dynamics while preventing extreme values
         limits = {
             'dz': 5.0,        # Max vertical velocity 5 m/s
             'dphi': 3.0,      # Max roll rate 3 rad/s (~172 deg/s)
             'dtheta': 3.0,    # Max pitch rate 3 rad/s
             'dpsi': 2.0,      # Max yaw rate 2 rad/s (~115 deg/s)
-            'dp': 15.0,       # Max roll angular acceleration 15 rad/s^2 (TIGHTENED from 50)
-            'dq': 15.0,       # Max pitch angular acceleration 15 rad/s^2 (TIGHTENED from 50)
-            'dr': 10.0,       # Max yaw angular acceleration 10 rad/s^2 (TIGHTENED from 30)
-            'dvz': 15.0       # Max vertical acceleration 15 m/s^2 (TIGHTENED from 20)
+            'dp': 35.0,       # Max roll angular acceleration 35 rad/s^2 (allows realistic transients)
+            'dq': 35.0,       # Max pitch angular acceleration 35 rad/s^2 (allows realistic transients)
+            'dr': 20.0,       # Max yaw angular acceleration 20 rad/s^2 (allows realistic transients)
+            'dvz': 15.0       # Max vertical acceleration 15 m/s^2
         }
 
         # Smooth L2 penalty (soft constraints)

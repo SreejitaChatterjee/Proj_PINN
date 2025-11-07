@@ -80,7 +80,7 @@ class Trainer:
         return total_loss / len(loader)
 
     def train(self, train_loader, val_loader, epochs=250, weights=None):
-        weights = weights or {'physics': 10.0, 'temporal': 20.0, 'stability': 5.0, 'reg': 1.0}
+        weights = weights or {'physics': 10.0, 'temporal': 12.0, 'stability': 5.0, 'reg': 1.0}
         print(f"Training for {epochs} epochs with IMPROVED architecture:")
         print(f"  - Model: 256 neurons, 5 layers, dropout=0.1")
         print(f"  - Loss weights: {weights}")
