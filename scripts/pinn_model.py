@@ -3,11 +3,13 @@ import torch
 import torch.nn as nn
 
 class QuadrotorPINN(nn.Module):
-    def __init__(self, input_size=15, hidden_size=128, output_size=8, num_layers=4):
+    def __init__(self, input_size=12, hidden_size=256, output_size=8, num_layers=5, dropout=0.1):
         super().__init__()
-        layers = [nn.Linear(input_size, hidden_size), nn.Tanh()]
-        layers.extend([layer for _ in range(num_layers - 2)
-                      for layer in (nn.Linear(hidden_size, hidden_size), nn.Tanh())])
+        # Increased capacity: 128->256 neurons, 4->5 layers
+        # Added dropout for robustness against compounding errors
+        layers = [nn.Linear(input_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)]
+        for _ in range(num_layers - 2):
+            layers.extend([nn.Linear(hidden_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)])
         layers.append(nn.Linear(hidden_size, output_size))
         self.network = nn.Sequential(*layers)
 
@@ -41,7 +43,7 @@ class QuadrotorPINN(nn.Module):
                 self.params[k].clamp_(lo, hi)
 
     def physics_loss(self, inputs, outputs, dt=0.001):
-        # Extract states
+        # Extract states (8) and controls (4) - NO acceleration inputs
         z, phi, theta, psi, p, q, r, vz = inputs[:, :8].T
         thrust, tx, ty, tz = inputs[:, 8:12].T
         z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
@@ -106,17 +108,17 @@ class QuadrotorPINN(nn.Module):
         dr = (r_next - r) / dt
         dvz = (vz_next - vz) / dt
 
-        # Physical limits for quadrotors (based on realistic capabilities)
-        # These are soft constraints - violated predictions incur quadratic penalty
+        # Physical limits for quadrotors (based on realistic smooth flight)
+        # TIGHTENED: Reduced angular acceleration limits for smooth predictions
         limits = {
             'dz': 5.0,        # Max vertical velocity 5 m/s
             'dphi': 3.0,      # Max roll rate 3 rad/s (~172 deg/s)
             'dtheta': 3.0,    # Max pitch rate 3 rad/s
             'dpsi': 2.0,      # Max yaw rate 2 rad/s (~115 deg/s)
-            'dp': 50.0,       # Max roll angular acceleration 50 rad/s^2
-            'dq': 50.0,       # Max pitch angular acceleration 50 rad/s^2
-            'dr': 30.0,       # Max yaw angular acceleration 30 rad/s^2
-            'dvz': 20.0       # Max vertical acceleration 20 m/s^2 (~2g)
+            'dp': 15.0,       # Max roll angular acceleration 15 rad/s^2 (TIGHTENED from 50)
+            'dq': 15.0,       # Max pitch angular acceleration 15 rad/s^2 (TIGHTENED from 50)
+            'dr': 10.0,       # Max yaw angular acceleration 10 rad/s^2 (TIGHTENED from 30)
+            'dvz': 15.0       # Max vertical acceleration 15 m/s^2 (TIGHTENED from 20)
         }
 
         # Smooth L2 penalty (soft constraints)
@@ -129,6 +131,36 @@ class QuadrotorPINN(nn.Module):
         loss += torch.relu(torch.abs(dq) - limits['dq']).pow(2).mean()
         loss += torch.relu(torch.abs(dr) - limits['dr']).pow(2).mean()
         loss += torch.relu(torch.abs(dvz) - limits['dvz']).pow(2).mean()
+
+        return loss
+
+    def stability_loss(self, inputs, outputs):
+        """
+        Penalize predictions that would cause instability in autoregressive rollout.
+        Encourages predictions to stay close to physically reasonable state space.
+        """
+        # Extract predicted states
+        z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
+
+        # Soft constraints on state magnitudes to prevent divergence
+        state_bounds = {
+            'z': 25.0,      # Altitude limit (meters)
+            'phi': 0.5,     # Roll limit (rad, ~28 deg)
+            'theta': 0.5,   # Pitch limit (rad, ~28 deg)
+            'p': 5.0,       # Roll rate limit (rad/s)
+            'q': 5.0,       # Pitch rate limit (rad/s)
+            'r': 3.0,       # Yaw rate limit (rad/s)
+            'vz': 10.0      # Vertical velocity limit (m/s)
+        }
+
+        loss = 0.0
+        loss += torch.relu(torch.abs(z_next) - state_bounds['z']).pow(2).mean()
+        loss += torch.relu(torch.abs(phi_next) - state_bounds['phi']).pow(2).mean()
+        loss += torch.relu(torch.abs(theta_next) - state_bounds['theta']).pow(2).mean()
+        loss += torch.relu(torch.abs(p_next) - state_bounds['p']).pow(2).mean()
+        loss += torch.relu(torch.abs(q_next) - state_bounds['q']).pow(2).mean()
+        loss += torch.relu(torch.abs(r_next) - state_bounds['r']).pow(2).mean()
+        loss += torch.relu(torch.abs(vz_next) - state_bounds['vz']).pow(2).mean()
 
         return loss
 
