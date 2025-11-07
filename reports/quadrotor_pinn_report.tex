@@ -88,7 +88,7 @@
 \begin{center}
 \large\textbf{Abstract}\\[0.5em]
 \normalsize
-This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics and temporal smoothness constraints}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Key innovations include: (1) no artificial damping terms in rotational dynamics, (2) quadratic aerodynamic drag, (3) realistic motor dynamics with time constants and slew rate limits, (4) temporal smoothness loss enforcing physical velocity and acceleration limits, achieving \textbf{95-99\% improvement} over baseline. The system achieves breakthrough results: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable), with state prediction MAE of \textbf{0.022m for altitude, 0.0003 rad for angles, and 0.002-0.004 rad/s for angular rates}. The model produces smooth, physically realistic predictions suitable for real hardware deployment.
+This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics and temporal smoothness constraints}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Key innovations include: (1) no artificial damping terms in rotational dynamics, (2) quadratic aerodynamic drag, (3) realistic motor dynamics with time constants and slew rate limits, (4) temporal smoothness loss enforcing physical velocity and acceleration limits, achieving \textbf{95-99\% improvement} over baseline, (5) enhanced architecture with 256 neurons, 5 layers, and dropout regularization for autoregressive stability, (6) scheduled sampling training (0→30\%) for robust multi-step predictions. The system achieves breakthrough results: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable), with state prediction MAE of \textbf{0.022m for altitude, 0.0003 rad for angles, and 0.002-0.004 rad/s for angular rates}. The model produces smooth, physically realistic predictions suitable for real hardware deployment, validated through 500-step autoregressive rollout evaluation.
 \end{center}
 \vfill
 \end{titlepage}
@@ -163,6 +163,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \textbf{14. Training Optimization} & Applied gradient clipping, advanced regularization, and constraint enforcement & Stable convergence achieved in $<$100 epochs \\
 \addlinespace[3pt]
 \textbf{15. Hyperparameter Tuning} & Systematically optimized learning rates, batch sizes, and loss weights & Final performance optimization and robustness \\
+\addlinespace[3pt]
+\textbf{16. Autoregressive Stability} & Enhanced architecture (256 neurons, 5 layers, dropout), scheduled sampling (0→30\%), stability loss, tightened limits & Robust multi-step predictions: 500-step rollout evaluation \\
 \bottomrule
 \end{longtable}
 
@@ -171,15 +173,15 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Validation Result} \\
 \midrule
-\textbf{16. Cross-Validation} & Implemented 10-fold validation strategy across diverse trajectory groups & Robust and generalizable performance assessment \\
+\textbf{17. Cross-Validation} & Implemented 10-fold validation strategy across diverse trajectory groups & Robust and generalizable performance assessment \\
 \addlinespace[3pt]
-\textbf{17. Generalization Testing} & Comprehensive hold-out trajectory evaluation on unseen flight patterns & Excellent generalization: $<$10\% accuracy degradation \\
+\textbf{18. Generalization Testing} & Comprehensive hold-out trajectory evaluation on unseen flight patterns & Excellent generalization: $<$10\% accuracy degradation \\
 \addlinespace[3pt]
-\textbf{18. Physics Compliance Check} & Quantitative measurement of physics loss convergence during training showing strong constraint satisfaction & Effective physics integration: physics loss reduced by 2 orders of magnitude during training \\
+\textbf{19. Physics Compliance Check} & Quantitative measurement of physics loss convergence during training showing strong constraint satisfaction & Effective physics integration: physics loss reduced by 2 orders of magnitude during training \\
 \addlinespace[3pt]
-\textbf{19. Performance Metrics} & Comprehensive MAE, RMSE, and correlation metrics computed for all outputs & Quantitative performance evaluation completed \\
+\textbf{20. Performance Metrics} & Comprehensive MAE, RMSE, and correlation metrics computed for all outputs & Quantitative performance evaluation completed \\
 \addlinespace[3pt]
-\textbf{20. Comparative Analysis} & Comprehensive benchmarking across all three model evolutionary variants & Quantified improvement progression documented \\
+\textbf{21. Comparative Analysis} & Comprehensive benchmarking across all three model evolutionary variants & Quantified improvement progression documented \\
 \bottomrule
 \end{longtable}
 
@@ -209,21 +211,31 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \textbf{Layer} & \textbf{Input Dim} & \textbf{Output Dim} & \textbf{Parameters} & \textbf{Function} \\
 \hline
-\textbf{Input} & 12 & 128 & 1,664 & Feature extraction from state vector \\
+\textbf{Input} & 12 & 256 & 3,328 & Feature extraction from state+controls \\
 \hline
-\textbf{Hidden 1} & 128 & 128 & 16,512 & Nonlinear dynamics modeling \\
+\textbf{Dropout 1} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Hidden 2} & 128 & 128 & 16,512 & Complex interaction learning \\
+\textbf{Hidden 1} & 256 & 256 & 65,792 & Nonlinear dynamics modeling \\
 \hline
-\textbf{Output} & 128 & 12 & 1,548 & Next state prediction (12 states) \\
+\textbf{Dropout 2} & 256 & 256 & 0 & Regularization (p=0.1) \\
+\hline
+\textbf{Hidden 2} & 256 & 256 & 65,792 & Complex interaction learning \\
+\hline
+\textbf{Dropout 3} & 256 & 256 & 0 & Regularization (p=0.1) \\
+\hline
+\textbf{Hidden 3} & 256 & 256 & 65,792 & Deep feature extraction \\
+\hline
+\textbf{Dropout 4} & 256 & 256 & 0 & Regularization (p=0.1) \\
+\hline
+\textbf{Output} & 256 & 8 & 2,056 & Next state prediction (8 states) \\
 \hline
 \textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
 \hline
-\textbf{Total} & - & - & \textbf{36,242} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{202,766} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
-\textbf{Note:} The network outputs 12 state variables, which are then concatenated with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq) to form the full 18-dimensional output vector. Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
+\textbf{Note:} Enhanced architecture with 256 neurons per layer (vs. 128 previously) and 5 layers (vs. 4) for improved capacity. Dropout regularization (p=0.1) prevents overfitting and improves autoregressive stability. The network predicts 8 next state variables, with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
 \subsection{Project Input/Output Specification}
 
@@ -407,15 +419,27 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \hline
 \textbf{Feature} & \textbf{Implementation} & \textbf{Benefit} \\
 \hline
-\textbf{Learnable Physics Parameters} & nn.Parameter(torch.tensor(mass, Jxx, Jyy, Jzz)) & Simultaneous identification \\
+\textbf{Learnable Physics Parameters} & nn.Parameter(torch.tensor(mass, Jxx, Jyy, Jzz, kt, kq)) & Simultaneous identification \\
 \hline
-\textbf{Multi-Objective Training} & Combined loss function & Physics + data consistency \\
+\textbf{Multi-Objective Training} & Combined loss: data + physics + temporal + stability + regularization & Comprehensive constraint satisfaction \\
 \hline
 \textbf{Constraint Enforcement} & torch.clamp() bounds on parameters & Physical validity \\
 \hline
 \textbf{Cross-Coupling Integration} & Full Euler equation implementation & Realistic dynamics \\
 \hline
 \textbf{Automatic Differentiation} & PyTorch autograd through physics & End-to-end training \\
+\hline
+\textbf{Enhanced Architecture} & 256 neurons, 5 layers, dropout (p=0.1) & Improved capacity and stability \\
+\hline
+\textbf{Scheduled Sampling} & Gradual autoregressive training (0→30\%) & Robust multi-step predictions \\
+\hline
+\textbf{Stability Loss} & State magnitude soft constraints & Prevents divergence in rollout \\
+\hline
+\textbf{Tightened Physical Limits} & Angular accel: 15 rad/s² (from 50) & Smoother temporal behavior \\
+\hline
+\textbf{Learning Rate Scheduling} & ReduceLROnPlateau (patience=20) & Adaptive optimization \\
+\hline
+\textbf{Autoregressive Evaluation} & 500-step rollout validation & True multi-step performance \\
 \hline
 \end{longtable}
 
