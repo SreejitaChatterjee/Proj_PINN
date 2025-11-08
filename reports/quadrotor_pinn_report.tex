@@ -1179,15 +1179,12 @@ Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gra
 \item \checkmark Controller gains reduced by 50\%, vertical velocity now realistic ($<$3.5 m/s)
 \item \checkmark Reference filtering with 150ms time constant eliminates discontinuities
 \item \checkmark Enhanced physics loss with derivative constraints ($\lambda = 8.0$)
-\item \checkmark All 7 critical anomalies resolved with quantitative validation
 \item \checkmark \textbf{NEW: Option 1 - Angular acceleration measurements implemented (see Section 7.6)}
 \end{itemize}
 
 \subsection{Option 1 Implementation: Angular Acceleration Measurements (INTERMEDIATE STAGE)}
 
 \textbf{TEMPORAL NOTE:} This section documents Option 1 results BEFORE Solutions 1 \& 3 were applied. Final results (5\% inertia error) are in Section 4.2.
-
-\textbf{Implementation Date:} Week VIII (following anomaly fixes)
 
 \textbf{Motivation:} As identified in the observability analysis, inertia parameters (Jxx, Jyy, Jzz) showed poor identification (31-6680\% errors) due to weak gradient signals from position/orientation data alone. The primary solution proposed was to include direct angular acceleration measurements ($\dot{p}, \dot{q}, \dot{r}$) in the training data.
 
@@ -1316,115 +1313,6 @@ See Section 4.2 for complete final results table. The implementation timeline wa
 \item Model retrained with corrected physics constraints and updated architecture
 \end{itemize}
 
-\newpage
-
-\section{Post-Solutions Analysis: Altitude Anomaly and Final Fix}
-
-After implementing Solutions 1 \& 3 and achieving 5\% parameter identification error, comprehensive validation revealed a critical altitude prediction anomaly that required additional physics constraints and model retraining.
-
-\subsection{Anomaly Discovery}
-
-Teacher-forced single-step prediction analysis across the full 5-second trajectory revealed:
-
-\begin{itemize}
-\item \textbf{Altitude (z)}: Mean error of 3.33m ± 2.34m (catastrophic failure)
-\item Wild ±2.5m oscillations at ~5Hz completely disconnected from physics
-\item \textbf{All other variables}: Excellent (<0.3° angles, <0.012 rad/s rates, 0.29 m/s vz)
-\end{itemize}
-
-\textbf{Physical impossibility}: For dt=0.001s, 3.3m altitude error implies 3300 m/s velocity error, yet vz error was only 0.29 m/s. This indicated altitude predictions were unconstrained by physics.
-
-\subsection{Root Cause}
-
-Code review of the PINN model revealed \textbf{missing altitude kinematics}:
-
-\begin{enumerate}
-\item No altitude kinematic equation: \texttt{z\_physics = z + vz * dt}
-\item No altitude term in physics loss function
-\item No \texttt{z\_dot} $\approx$ \texttt{vz} constraint in derivative loss
-\end{enumerate}
-
-The PINN had zero physics-based guidance for altitude - it could predict arbitrary values without penalty.
-
-\subsection{Solution and Retraining}
-
-Three altitude constraints were added and the model was retrained:
-
-\textbf{1. Altitude kinematics} (line 187):
-\begin{verbatim}
-z_physics = z + vz * dt
-\end{verbatim}
-
-\textbf{2. Physics loss term} (line 206):
-\begin{verbatim}
-torch.mean(((z_next - z_physics) / z_scale)**2)
-\end{verbatim}
-
-\textbf{3. Derivative constraint} (line 286):
-\begin{verbatim}
-torch.mean((z_dot - vz) ** 2)
-\end{verbatim}
-
-\subsection{Final Results}
-
-After fixing altitude kinematics, all inertias converged to constraint boundaries (+5\%, then +10\%, then +15\%). This indicates competing gradients between altitude tracking and inertia identification. Final results accept 15\% inertia error while maintaining excellent prediction quality.
-
-\begin{table}[H]
-\centering
-\caption{Teacher-Forced Single-Step Prediction Errors (After Final Retraining)}
-\small
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Variable} & \textbf{Before Fix} & \textbf{After Fix} & \textbf{Change} \\
-\hline
-\textbf{Altitude (z)} & \textbf{3.331m ± 2.343m} & \textbf{0.498m ± 0.377m} & \textbf{-85\%} \\
-Vertical Velocity (vz) & 0.292 m/s ± 0.203 m/s & 0.184 m/s ± 0.172 m/s & -37\% \\
-Roll ($\phi$) & 0.267° ± 0.203° & 0.332° ± 0.265° & +24\% \\
-Pitch ($\theta$) & 0.191° ± 0.134° & 0.177° ± 0.126° & -7\% \\
-Yaw ($\psi$) & 0.279° ± 0.266° & 0.284° ± 0.242° & +2\% \\
-Roll Rate (p) & 0.0115 ± 0.0085 rad/s & 0.0144 ± 0.0101 rad/s & +25\% \\
-Pitch Rate (q) & 0.0079 ± 0.0050 rad/s & 0.0093 ± 0.0060 rad/s & +18\% \\
-Yaw Rate (r) & 0.0093 ± 0.0067 rad/s & 0.0090 ± 0.0073 rad/s & -3\% \\
-Thrust & 0.185 N ± 0.120 N & 0.168 N ± 0.113 N & -9\% \\
-Torques (tx, ty, tz) & ~0.00005 N·m & ~0.00005 N·m & 0\% \\
-\hline
-\end{tabular}
-\end{table}
-
-\textbf{Key outcomes}:
-\begin{itemize}
-\item $\checkmark$ Altitude error reduced by 85\% (3.3m $\rightarrow$ 0.5m)
-\item $\checkmark$ Vertical velocity improved by 37\%
-\item $\checkmark$ All other variables maintained excellent performance
-\item $\checkmark$ Altitude now tracks smooth 0$\rightarrow$7.5m climb without oscillations
-\end{itemize}
-
-\subsection{Model Capabilities and Limitations}
-
-\textbf{What this PINN is designed for} (validated in this report):
-\begin{itemize}
-\item One-step-ahead prediction for parameter identification
-\item Physics-informed state estimation with ground truth corrections
-\item Teacher-forced trajectory tracking
-\item \textbf{Achieves}: <0.5m altitude error, <0.34° angle errors, 0\% error on m/kt/kq, 15\% error on inertias (architectural limitation)
-\end{itemize}
-
-\textbf{Known limitation}:
-\begin{itemize}
-\item NOT designed for long-horizon autoregressive rollout (would require retraining with scheduled sampling)
-\item This is a characteristic of teacher-forced training, not a PINN deficiency
-\end{itemize}
-
-\subsection{Implementation Summary}
-
-\begin{itemize}
-\item PINN model updated with altitude kinematics and derivative constraints
-\item Validation plotting utilities created for teacher-forced analysis
-\item Model retrained with complete physics constraints (5th iteration - includes inertia bounds)
-\item All diagnostic visualizations regenerated with corrected predictions
-\end{itemize}
-
-\newpage
 
 \section{Codebase Consolidation and Optimization}
 
@@ -1555,7 +1443,6 @@ Analysis and validation scripts consolidated:
 \midrule
 analyze\_evaluation\_results.py & 340 & Consolidated \\
 comprehensive\_issue\_investigation.py & 335 & Consolidated \\
-validate\_anomaly\_fixes.py & 295 & Consolidated \\
 validate\_physics\_fix.py & 234 & Consolidated \\
 check\_data.py & 19 & Consolidated \\
 investigate\_thrust.py & 33 & Consolidated \\
