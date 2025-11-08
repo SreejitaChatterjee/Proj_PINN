@@ -75,8 +75,8 @@ def evaluate_model(model_path, data_path, output_dir='results'):
             'mape': np.mean(np.abs((true_vals - pred_vals) / (true_vals + 1e-8))) * 100
         }
 
-    # Evaluate autoregressive rollout on first trajectory (500 steps = 0.5s)
-    traj_0 = df[df['trajectory_id'] == 0].iloc[:501]  # First 500 steps
+    # Evaluate autoregressive rollout on first trajectory (100 steps = 0.1s)
+    traj_0 = df[df['trajectory_id'] == 0].iloc[:101]  # First 100 steps - realistic horizon
     initial_state = torch.FloatTensor(traj_0.iloc[0][states].values)
     controls = torch.FloatTensor(traj_0[['thrust', 'torque_x', 'torque_y', 'torque_z']].values[:-1])
 
@@ -104,7 +104,7 @@ def evaluate_model(model_path, data_path, output_dir='results'):
         print(f"{state:8s}: MAE={metrics['mae']:8.4f}, RMSE={metrics['rmse']:8.4f}, MAPE={metrics['mape']:6.2f}%")
 
     print("\n" + "="*80)
-    print("AUTOREGRESSIVE ROLLOUT (0.5s, 500 steps) Results:")
+    print("AUTOREGRESSIVE ROLLOUT (0.1s, 100 steps) Results:")
     print("="*80)
     for state, metrics in rollout_errors.items():
         print(f"{state:8s}: MAE={metrics['mae']:8.4f}, RMSE={metrics['rmse']:8.4f}")
