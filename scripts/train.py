@@ -109,32 +109,143 @@ class Trainer:
                 if epoch % 30 == 0:
                     print(f"  Params: " + ", ".join(f"{k}={v.item():.2e}" for k, v in self.model.params.items()))
 
-def prepare_data(csv_path, test_size=0.2):
+def create_sequences(traj_data, seq_len=10):
+    """
+    Create sliding window sequences from trajectory data.
+
+    Args:
+        traj_data: (T, 12) array with [states(8) + controls(4)]
+        seq_len: sequence length for LSTM (default 10)
+
+    Returns:
+        X_seq: (T-1, seq_len, 8) - state sequences
+        X_ctrl: (T-1, 4) - current controls
+        y: (T-1, 8) - next states
+    """
+    T = len(traj_data)
+    X_seq, X_ctrl, y = [], [], []
+
+    for i in range(T - 1):
+        # State sequence: states from (i-seq_len+1) to i (inclusive)
+        start_idx = max(0, i - seq_len + 1)
+        state_window = traj_data[start_idx:i+1, :8]  # Get states only
+
+        # Pad with first state if at trajectory start
+        if len(state_window) < seq_len:
+            padding = np.tile(traj_data[0:1, :8], (seq_len - len(state_window), 1))
+            state_window = np.vstack([padding, state_window])
+
+        X_seq.append(state_window)
+        X_ctrl.append(traj_data[i, 8:])  # Current controls
+        y.append(traj_data[i+1, :8])  # Next state
+
+    return np.array(X_seq), np.array(X_ctrl), np.array(y)
+
+def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
+    """
+    Prepare data for training.
+
+    Args:
+        csv_path: path to CSV file
+        test_size: fraction of data for testing
+        use_sequences: if True, create sequence data for LSTM
+        seq_len: sequence length for LSTM
+
+    Returns:
+        If use_sequences=False (original):
+            train_loader, val_loader, scaler_X, scaler_y
+        If use_sequences=True (hybrid PINN+LSTM):
+            train_loader, val_loader, scaler_seq, scaler_ctrl, scaler_y
+    """
     df = pd.read_csv(csv_path)
     # Rename columns to match expected names (data generator uses roll/pitch/yaw)
     df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    # FIXED: Removed p_dot, q_dot, r_dot - these are NOT valid inputs (cannot be measured in real deployment)
     features = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z']
 
-    X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
-        # Vectorized: convert to numpy once, then slice
-        traj_data = traj[features].values
-        X.append(traj_data[:-1])  # All but last
-        y.append(traj_data[1:, :8])  # All but first, only first 8 features
+    if not use_sequences:
+        # Original single-timestep preparation
+        X, y = [], []
+        for traj_id in df['trajectory_id'].unique():
+            traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
+            traj_data = traj[features].values
+            X.append(traj_data[:-1])  # All but last
+            y.append(traj_data[1:, :8])  # All but first, only first 8 features
 
-    X, y = np.vstack(X), np.vstack(y)
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+        X, y = np.vstack(X), np.vstack(y)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
+        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
 
-    scaler_X, scaler_y = StandardScaler(), StandardScaler()
-    X_train, y_train = scaler_X.fit_transform(X_train), scaler_y.fit_transform(y_train)
-    X_val, y_val = scaler_X.transform(X_val), scaler_y.transform(y_val)
+        scaler_X, scaler_y = StandardScaler(), StandardScaler()
+        X_train, y_train = scaler_X.fit_transform(X_train), scaler_y.fit_transform(y_train)
+        X_val, y_val = scaler_X.transform(X_val), scaler_y.transform(y_val)
 
-    return (DataLoader(TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)), batch_size=64, shuffle=True),
-            DataLoader(TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)), batch_size=64),
-            scaler_X, scaler_y)
+        return (DataLoader(TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)), batch_size=64, shuffle=True),
+                DataLoader(TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)), batch_size=64),
+                scaler_X, scaler_y)
+
+    else:
+        # Sequence-based preparation for hybrid PINN+LSTM
+        X_seq_all, X_ctrl_all, y_all = [], [], []
+
+        for traj_id in df['trajectory_id'].unique():
+            traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
+            traj_data = traj[features].values
+
+            X_seq, X_ctrl, y = create_sequences(traj_data, seq_len)
+            X_seq_all.append(X_seq)
+            X_ctrl_all.append(X_ctrl)
+            y_all.append(y)
+
+        X_seq_all = np.vstack(X_seq_all)  # (N, seq_len, 8)
+        X_ctrl_all = np.vstack(X_ctrl_all)  # (N, 4)
+        y_all = np.vstack(y_all)  # (N, 8)
+
+        # Split into train/val
+        indices = np.arange(len(X_seq_all))
+        train_idx, test_idx = train_test_split(indices, test_size=test_size, random_state=42)
+        train_idx, val_idx = train_test_split(train_idx, test_size=0.2, random_state=42)
+
+        X_seq_train, X_ctrl_train, y_train = X_seq_all[train_idx], X_ctrl_all[train_idx], y_all[train_idx]
+        X_seq_val, X_ctrl_val, y_val = X_seq_all[val_idx], X_ctrl_all[val_idx], y_all[val_idx]
+
+        # Normalize: fit scalers on flattened training data
+        scaler_seq = StandardScaler()
+        scaler_ctrl = StandardScaler()
+        scaler_y = StandardScaler()
+
+        # Reshape for scaling: (N*seq_len, 8) for sequences
+        N_train, seq_len_dim, state_dim = X_seq_train.shape
+        X_seq_train_flat = X_seq_train.reshape(-1, state_dim)
+        scaler_seq.fit(X_seq_train_flat)
+        X_seq_train_scaled = scaler_seq.transform(X_seq_train_flat).reshape(N_train, seq_len_dim, state_dim)
+
+        N_val = X_seq_val.shape[0]
+        X_seq_val_flat = X_seq_val.reshape(-1, state_dim)
+        X_seq_val_scaled = scaler_seq.transform(X_seq_val_flat).reshape(N_val, seq_len_dim, state_dim)
+
+        # Scale controls and targets
+        X_ctrl_train = scaler_ctrl.fit_transform(X_ctrl_train)
+        X_ctrl_val = scaler_ctrl.transform(X_ctrl_val)
+        y_train = scaler_y.fit_transform(y_train)
+        y_val = scaler_y.transform(y_val)
+
+        # Create DataLoaders with tuple datasets (seq, ctrl, target)
+        train_dataset = [(torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
+                         for seq, ctrl, tgt in zip(X_seq_train_scaled, X_ctrl_train, y_train)]
+        val_dataset = [(torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
+                       for seq, ctrl, tgt in zip(X_seq_val_scaled, X_ctrl_val, y_val)]
+
+        # Custom collate function to handle tuple data
+        def collate_fn(batch):
+            seqs = torch.stack([item[0] for item in batch])
+            ctrls = torch.stack([item[1] for item in batch])
+            targets = torch.stack([item[2] for item in batch])
+            return seqs, ctrls, targets
+
+        train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, collate_fn=collate_fn)
+        val_loader = DataLoader(val_dataset, batch_size=64, collate_fn=collate_fn)
+
+        return train_loader, val_loader, scaler_seq, scaler_ctrl, scaler_y
 
 if __name__ == "__main__":
     data_path = Path(__file__).parent.parent / 'data' / 'quadrotor_training_data.csv'
