@@ -1,0 +1,361 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(presentation_physics_reference.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def)
+No file presentation_physics_reference.aux.
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+Overfull \hbox (6.29375pt too wide) in paragraph at lines 22--22
+[]\T1/lmr/bx/n/17.28 Physics Laws & Equa-tions Used in PINN Physics Layer 
+
+Underfull \hbox (badness 1810) in paragraph at lines 30--30
+[]|\T1/lmr/bx/n/12 Roll An-gu-lar Ac-
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--33
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 1515) in paragraph at lines 38--38
+[]|\T1/lmr/bx/n/12 Yaw An-gu-lar Ac-
+
+Underfull \hbox (badness 10000) in paragraph at lines 40--41
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--55
+[]|\T1/lmr/m/n/12 Nonlinear cou-
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--59
+[]|\T1/lmr/m/n/12 Nonlinear cou-
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
+
+
+Underfull \hbox (badness 4872) in paragraph at lines 72--72
+[]|\T1/lmr/bx/n/12 Vertical Ac-cel-er-a-
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+[]|\T1/lmr/m/n/12 Quadratic aero-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\T1/lmr/m/n/12 Simple in-te-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+\T1/lmr/m/n/12 gra-tion (NED
+
+Underfull \hbox (badness 4205) in paragraph at lines 92--92
+[]|$\OT1/lmr/m/n/12 6\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 86 \OMS/lmsy/m/n/12 ^^B 
+\OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--94
+[]|$\OT1/lmr/m/n/12 9\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 2 \OMS/lmsy/m/n/12 ^^B \
+OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--98
+[]|\T1/lmr/m/n/12 0.01
+
+Overfull \hbox (6.51723pt too wide) in paragraph at lines 100--100
+\T1/lmr/m/n/12 N\TS1/lmr/m/n/12 ·\T1/lmr/m/n/12 m/(rad/s)\TS1/lmr/m/n/12 ²| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
+[]|\T1/lmr/m/n/12 Fixed con-stant (NOT
+
+Underfull \hbox (badness 1776) in paragraph at lines 104--104
+[]|\T1/lmr/m/n/12 Drag Co-ef-fi-
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+[]|\T1/lmr/m/n/12 Fit pre-
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+\T1/lmr/m/n/12 dic-tions to
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\T1/lmr/m/n/12 Enforce
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\T1/lmr/m/n/12 Newton-
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\T1/lmr/m/n/12 Euler equa-
+
+Underfull \hbox (badness 3009) in paragraph at lines 118--118
+[]|\T1/lmr/m/n/12 Energy con-
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = [] [](\OMS/lmsy/m/n/12 j\OML/lmm/m/i
+t/12 x[]\OMS/lmsy/m/n/12 j ^^@
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|\T1/lmr/m/n/12 Bounded
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--134
+[]|\T1/lmr/bx/n/12 No Ar-ti-fi-cial
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--146
+[]|\T1/lmr/bx/n/12 6 Learn-able Pa-
+
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
+[]|\T1/lmr/m/n/12 Simultaneously iden-ti-fies mass, in-er-tia ten-sor
+
+Underfull \hbox (badness 2626) in paragraph at lines 147--148
+\T1/lmr/m/n/12 ($\OML/lmm/m/it/12 J[]; J[]; J[]$\T1/lmr/m/n/12 ), and mo-tor co
+-ef-fi-cients ($\OML/lmm/m/it/12 k[]; k[]$\T1/lmr/m/n/12 ) dur-ing
+[2{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{
+C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--157
+[]|\T1/lmr/bx/n/12 Normalization
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd) [3]
+[4] (presentation_physics_reference.aux) )
+(see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
+Output written on presentation_physics_reference.pdf (4 pages, 195771 bytes).
+Transcript written on presentation_physics_reference.log.
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(presentation_physics_reference.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (presentation_physics_reference.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+Overfull \hbox (6.29375pt too wide) in paragraph at lines 22--22
+[]\T1/lmr/bx/n/17.28 Physics Laws & Equa-tions Used in PINN Physics Layer 
+
+Underfull \hbox (badness 1810) in paragraph at lines 30--30
+[]|\T1/lmr/bx/n/12 Roll An-gu-lar Ac-
+
+Underfull \hbox (badness 10000) in paragraph at lines 32--33
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 10000) in paragraph at lines 36--37
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 1515) in paragraph at lines 38--38
+[]|\T1/lmr/bx/n/12 Yaw An-gu-lar Ac-
+
+Underfull \hbox (badness 10000) in paragraph at lines 40--41
+[]|\T1/lmr/m/n/12 Cross-coupling,
+
+Underfull \hbox (badness 10000) in paragraph at lines 54--55
+[]|\T1/lmr/m/n/12 Nonlinear cou-
+
+Underfull \hbox (badness 10000) in paragraph at lines 58--59
+[]|\T1/lmr/m/n/12 Nonlinear cou-
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
+
+
+Underfull \hbox (badness 4872) in paragraph at lines 72--72
+[]|\T1/lmr/bx/n/12 Vertical Ac-cel-er-a-
+
+Underfull \hbox (badness 10000) in paragraph at lines 74--75
+[]|\T1/lmr/m/n/12 Quadratic aero-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+[]|\T1/lmr/m/n/12 Simple in-te-
+
+Underfull \hbox (badness 10000) in paragraph at lines 78--79
+\T1/lmr/m/n/12 gra-tion (NED
+
+Underfull \hbox (badness 4205) in paragraph at lines 92--92
+[]|$\OT1/lmr/m/n/12 6\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 86 \OMS/lmsy/m/n/12 ^^B 
+\OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--94
+[]|$\OT1/lmr/m/n/12 9\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 2 \OMS/lmsy/m/n/12 ^^B \
+OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--98
+[]|\T1/lmr/m/n/12 0.01
+
+Overfull \hbox (6.51723pt too wide) in paragraph at lines 100--100
+\T1/lmr/m/n/12 N\TS1/lmr/m/n/12 ·\T1/lmr/m/n/12 m/(rad/s)\TS1/lmr/m/n/12 ²| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 102--103
+[]|\T1/lmr/m/n/12 Fixed con-stant (NOT
+
+Underfull \hbox (badness 1776) in paragraph at lines 104--104
+[]|\T1/lmr/m/n/12 Drag Co-ef-fi-
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+[]|\T1/lmr/m/n/12 Fit pre-
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+\T1/lmr/m/n/12 dic-tions to
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+[]|\T1/lmr/m/n/12 Enforce
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\T1/lmr/m/n/12 Newton-
+
+Underfull \hbox (badness 10000) in paragraph at lines 116--116
+\T1/lmr/m/n/12 Euler equa-
+
+Underfull \hbox (badness 3009) in paragraph at lines 118--118
+[]|\T1/lmr/m/n/12 Energy con-
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = [] [](\OMS/lmsy/m/n/12 j\OML/lmm/m/i
+t/12 x[]\OMS/lmsy/m/n/12 j ^^@
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|\T1/lmr/m/n/12 Bounded
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--134
+[]|\T1/lmr/bx/n/12 No Ar-ti-fi-cial
+
+Underfull \hbox (badness 10000) in paragraph at lines 146--146
+[]|\T1/lmr/bx/n/12 6 Learn-able Pa-
+
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
+[]|\T1/lmr/m/n/12 Simultaneously iden-ti-fies mass, in-er-tia ten-sor
+
+Underfull \hbox (badness 2626) in paragraph at lines 147--148
+\T1/lmr/m/n/12 ($\OML/lmm/m/it/12 J[]; J[]; J[]$\T1/lmr/m/n/12 ), and mo-tor co
+-ef-fi-cients ($\OML/lmm/m/it/12 k[]; k[]$\T1/lmr/m/n/12 ) dur-ing
+[2{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{
+C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
+
+Underfull \hbox (badness 10000) in paragraph at lines 157--157
+[]|\T1/lmr/bx/n/12 Normalization
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd) [3]
+[4] (presentation_physics_reference.aux) )
+(see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
+Output written on presentation_physics_reference.pdf (4 pages, 195771 bytes).
+Transcript written on presentation_physics_reference.log.

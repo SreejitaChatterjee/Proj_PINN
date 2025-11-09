@@ -1,0 +1,652 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(complete_physics_equations.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (complete_physics_equations.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+Underfull \hbox (badness 10000) in paragraph at lines 34--36
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 34--36
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:243 
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--36
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 34--36
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:108| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--41
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 39--41
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:244 
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--41
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 39--41
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:109| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--46
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 44--46
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:245 
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--46
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 44--46
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:110| 
+
+Underfull \hbox (badness 4805) in paragraph at lines 60--60
+[]|$[] \OT1/lmr/m/n/10.95 = \OML/lmm/m/it/10.95 p \OT1/lmr/m/n/10.95 + [](\OML/
+lmm/m/it/10.95 ^^^\OT1/lmr/m/n/10.95 ) [](\OML/lmm/m/it/10.95 ^^R\OT1/lmr/m/n/1
+0.95 ) \OMS/lmsy/m/n/10.95 ^^A \OML/lmm/m/it/10.95 q \OT1/lmr/m/n/10.95 +
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--63
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 61--63
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:251 
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--63
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 61--63
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:113| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--68
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 66--68
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:252 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--68
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 66--68
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:114| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--73
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 71--73
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:253 
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--73
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 71--73
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:115| 
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 76.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 76.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--84
+[]|\T1/lmr/bx/n/10.95 Velocity Com-po-
+
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
+[]|\T1/lmr/m/n/10.95 X-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--90
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 88--90
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:272 
+
+Underfull \hbox (badness 1565) in paragraph at lines 88--90
+\T1/lmr/m/n/10.95 (Full 3D dy-nam-ics in data
+
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
+[]|\T1/lmr/m/n/10.95 Y-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 93--95
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 93--95
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:273 
+
+Underfull \hbox (badness 1565) in paragraph at lines 93--95
+\T1/lmr/m/n/10.95 (Full 3D dy-nam-ics in data
+
+Underfull \hbox (badness 10000) in paragraph at lines 96--96
+[]|\T1/lmr/m/n/10.95 Z-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--100
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 98--100
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:274 
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--100
+\T1/lmr/bx/n/10.95 PINN (sim-pli-fied):
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 98--100
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:119| 
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}] [2]
+Overfull \hbox (4.2978pt too wide) detected at line 168
+[]\OML/lmm/m/it/10.95 y[]\OT1/lmr/m/n/10.95 (\OML/lmm/m/it/10.95 t \OT1/lmr/m/n
+/10.95 + ^^A\OML/lmm/m/it/10.95 t\OT1/lmr/m/n/10.95 ) = []
+
+Underfull \hbox (badness 10000) in paragraph at lines 187--188
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (51.99315pt too wide) in paragraph at lines 187--188
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:224
+
+Underfull \hbox (badness 10000) in paragraph at lines 189--189
+[]|\T1/lmr/m/n/10.95 Roll/Pitch Torque
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (57.74188pt too wide) in paragraph at lines 192--193
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:200,
+
+Underfull \hbox (badness 1354) in paragraph at lines 195--195
+[]|$\OML/lmm/m/it/10.95 ^^\[] \OT1/lmr/m/n/10.95 = \OMS/lmsy/m/n/10.95 ^^F\OT1/
+lmr/m/n/10.95 2\OML/lmm/m/it/10.95 k[]n[]$ \T1/lmr/m/n/10.95 where $\OML/lmm/m/
+it/10.95 n[] \OT1/lmr/m/n/10.95 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 196--197
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (51.99315pt too wide) in paragraph at lines 196--197
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:216
+[3{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.en
+c}{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+[4]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 368.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 368.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 387--389
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 387--389
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:59
+
+Underfull \hbox (badness 10000) in paragraph at lines 390--390
+[]|$\OT1/lmr/m/n/10.95 6\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 86 \OMS/lmsy/m/
+n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 391--393
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 391--393
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:56
+
+Underfull \hbox (badness 10000) in paragraph at lines 394--394
+[]|$\OT1/lmr/m/n/10.95 9\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 2 \OMS/lmsy/m/n
+/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 395--397
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 395--397
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:57
+
+Underfull \hbox (badness 10000) in paragraph at lines 398--398
+[]|$\OT1/lmr/m/n/10.95 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 366 \OMS/lmsy/m
+/n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 399--401
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 399--401
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:58
+
+Underfull \hbox (badness 10000) in paragraph at lines 402--402
+[]|\T1/lmr/m/n/10.95 0.01
+
+Underfull \hbox (badness 10000) in paragraph at lines 403--405
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 403--405
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:60
+
+Underfull \hbox (badness 10000) in paragraph at lines 403--405
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 403--405
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:20| 
+
+Underfull \hbox (badness 1622) in paragraph at lines 406--406
+[]|$\OT1/lmr/m/n/10.95 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 8263 \OMS/lmsy/
+m/n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 407--409
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 407--409
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:61
+
+Underfull \hbox (badness 10000) in paragraph at lines 407--409
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 407--409
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:21| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--413
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 411--413
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:64 
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--413
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 411--413
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:23| 
+
+Overfull \hbox (14.20207pt too wide) in alignment at lines 382--414
+ [] [] [] [] [] 
+[5] [6]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 492.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 492.
+
+[7] (complete_physics_equations.aux) )
+(see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on complete_physics_equations.pdf (7 pages, 283812 bytes).
+Transcript written on complete_physics_equations.log.
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(complete_physics_equations.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\size11.clo))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (complete_physics_equations.aux)
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+Underfull \hbox (badness 10000) in paragraph at lines 34--36
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 34--36
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:243 
+
+Underfull \hbox (badness 10000) in paragraph at lines 34--36
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 34--36
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:108| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--41
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 39--41
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:244 
+
+Underfull \hbox (badness 10000) in paragraph at lines 39--41
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 39--41
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:109| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--46
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 44--46
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:245 
+
+Underfull \hbox (badness 10000) in paragraph at lines 44--46
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 44--46
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:110| 
+
+Underfull \hbox (badness 4805) in paragraph at lines 60--60
+[]|$[] \OT1/lmr/m/n/10.95 = \OML/lmm/m/it/10.95 p \OT1/lmr/m/n/10.95 + [](\OML/
+lmm/m/it/10.95 ^^^\OT1/lmr/m/n/10.95 ) [](\OML/lmm/m/it/10.95 ^^R\OT1/lmr/m/n/1
+0.95 ) \OMS/lmsy/m/n/10.95 ^^A \OML/lmm/m/it/10.95 q \OT1/lmr/m/n/10.95 +
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--63
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 61--63
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:251 
+
+Underfull \hbox (badness 10000) in paragraph at lines 61--63
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 61--63
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:113| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--68
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 66--68
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:252 
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--68
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 66--68
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:114| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--73
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 71--73
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:253 
+
+Underfull \hbox (badness 10000) in paragraph at lines 71--73
+\T1/lmr/bx/n/10.95 PINN Loss:
+
+Overfull \hbox (3.80266pt too wide) in paragraph at lines 71--73
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:115| 
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 76.
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 76.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 84--84
+[]|\T1/lmr/bx/n/10.95 Velocity Com-po-
+
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
+[]|\T1/lmr/m/n/10.95 X-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--90
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 88--90
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:272 
+
+Underfull \hbox (badness 1565) in paragraph at lines 88--90
+\T1/lmr/m/n/10.95 (Full 3D dy-nam-ics in data
+
+Underfull \hbox (badness 10000) in paragraph at lines 91--91
+[]|\T1/lmr/m/n/10.95 Y-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 93--95
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 93--95
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:273 
+
+Underfull \hbox (badness 1565) in paragraph at lines 93--95
+\T1/lmr/m/n/10.95 (Full 3D dy-nam-ics in data
+
+Underfull \hbox (badness 10000) in paragraph at lines 96--96
+[]|\T1/lmr/m/n/10.95 Z-axis ac-cel-er-a-tion
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--100
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 98--100
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:274 
+
+Underfull \hbox (badness 10000) in paragraph at lines 98--100
+\T1/lmr/bx/n/10.95 PINN (sim-pli-fied):
+
+Overfull \hbox (27.8979pt too wide) in paragraph at lines 98--100
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:119| 
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}] [2]
+Overfull \hbox (4.2978pt too wide) detected at line 168
+[]\OML/lmm/m/it/10.95 y[]\OT1/lmr/m/n/10.95 (\OML/lmm/m/it/10.95 t \OT1/lmr/m/n
+/10.95 + ^^A\OML/lmm/m/it/10.95 t\OT1/lmr/m/n/10.95 ) = []
+
+Underfull \hbox (badness 10000) in paragraph at lines 187--188
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (51.99315pt too wide) in paragraph at lines 187--188
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:224
+
+Underfull \hbox (badness 10000) in paragraph at lines 189--189
+[]|\T1/lmr/m/n/10.95 Roll/Pitch Torque
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (57.74188pt too wide) in paragraph at lines 192--193
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:200,
+
+Underfull \hbox (badness 1354) in paragraph at lines 195--195
+[]|$\OML/lmm/m/it/10.95 ^^\[] \OT1/lmr/m/n/10.95 = \OMS/lmsy/m/n/10.95 ^^F\OT1/
+lmr/m/n/10.95 2\OML/lmm/m/it/10.95 k[]n[]$ \T1/lmr/m/n/10.95 where $\OML/lmm/m/
+it/10.95 n[] \OT1/lmr/m/n/10.95 =
+
+Underfull \hbox (badness 10000) in paragraph at lines 196--197
+[]|\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (51.99315pt too wide) in paragraph at lines 196--197
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:216
+[3{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.en
+c}{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+[4]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 368.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 368.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 387--389
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 387--389
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:59
+
+Underfull \hbox (badness 10000) in paragraph at lines 390--390
+[]|$\OT1/lmr/m/n/10.95 6\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 86 \OMS/lmsy/m/
+n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 391--393
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 391--393
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:56
+
+Underfull \hbox (badness 10000) in paragraph at lines 394--394
+[]|$\OT1/lmr/m/n/10.95 9\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 2 \OMS/lmsy/m/n
+/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 395--397
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 395--397
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:57
+
+Underfull \hbox (badness 10000) in paragraph at lines 398--398
+[]|$\OT1/lmr/m/n/10.95 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 366 \OMS/lmsy/m
+/n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 399--401
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 399--401
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:58
+
+Underfull \hbox (badness 10000) in paragraph at lines 402--402
+[]|\T1/lmr/m/n/10.95 0.01
+
+Underfull \hbox (badness 10000) in paragraph at lines 403--405
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 403--405
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:60
+
+Underfull \hbox (badness 10000) in paragraph at lines 403--405
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 403--405
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:20| 
+
+Underfull \hbox (badness 1622) in paragraph at lines 406--406
+[]|$\OT1/lmr/m/n/10.95 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 8263 \OMS/lmsy/
+m/n/10.95 ^^B \OT1/lmr/m/n/10.95 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 407--409
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 407--409
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:61
+
+Underfull \hbox (badness 10000) in paragraph at lines 407--409
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 407--409
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:21| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--413
+[]|\T1/lmr/bx/n/10.95 PINN:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 411--413
+\T1/lmtt/m/n/10.95 pinn_model_optimized_v2.py:64 
+
+Underfull \hbox (badness 10000) in paragraph at lines 411--413
+\T1/lmr/bx/n/10.95 Data Gen:
+
+Overfull \hbox (22.14917pt too wide) in paragraph at lines 411--413
+\T1/lmtt/m/n/10.95 generate_quadrotor_data.py:23| 
+
+Overfull \hbox (14.20207pt too wide) in alignment at lines 382--414
+ [] [] [] [] [] 
+[5] [6]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 492.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 492.
+
+[7] (complete_physics_equations.aux) )
+(see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pro
+grams/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej/AppData/Local/Prog
+rams/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
+Output written on complete_physics_equations.pdf (7 pages, 283812 bytes).
+Transcript written on complete_physics_equations.log.
