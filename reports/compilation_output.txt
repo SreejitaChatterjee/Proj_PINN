@@ -127,7 +127,7 @@ Overfull \hbox (169.62154pt too wide) in paragraph at lines 115--116
  [][] 
 [5{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.en
 c}] [6 <./pinn_schematics.pdf>] [7]
-Overfull \hbox (169.62154pt too wide) in paragraph at lines 146--147
+Overfull \hbox (84.81076pt too wide) in paragraph at lines 146--147
  [][] 
 [8 <./pinn_schematics.pdf>] [9] [10] [11]
 Underfull \hbox (badness 10000) in paragraph at lines 230--230
@@ -838,5 +838,5 @@ j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (79 pages, 6124388 bytes).
+Output written on quadrotor_pinn_report.pdf (79 pages, 6124457 bytes).
 Transcript written on quadrotor_pinn_report.log.

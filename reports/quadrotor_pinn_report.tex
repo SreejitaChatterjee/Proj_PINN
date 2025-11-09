@@ -140,14 +140,14 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textit{Note: All visualization plots (Figures 1-12) correctly display Trajectory 0 data with square wave reference inputs. The PID controller demonstrates good tracking performance with typical transient response times under 0.5s.}
 
-\vspace{1em}
+\vspace{2em}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.4\textwidth,page=2,trim=0 1.5cm 0 0,clip]{pinn_schematics.pdf}
+\includegraphics[width=1.2\textwidth,page=2,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
 \caption{Complete Data Flow Pipeline: From data generation through training to evaluation. The pipeline includes trajectory generation (10 sequences, 49,382 samples), an 80/20 train-test split, curriculum learning over 250 epochs, and holdout evaluation achieving 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon).}
 \label{fig:data_flow}
 \end{figure}
-\vspace{1em}
+\vspace{2em}
 
 \subsection{Phase 2: PINN Architecture Development}
 
