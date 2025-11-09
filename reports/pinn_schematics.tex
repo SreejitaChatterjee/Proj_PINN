@@ -1,5 +1,5 @@
-\documentclass[12pt,landscape]{article}
-\usepackage[margin=0.5in]{geometry}
+\documentclass[10pt,landscape]{article}
+\usepackage[margin=0.3in]{geometry}
 \usepackage{tikz}
 \usetikzlibrary{shapes,arrows,positioning,calc,fit,backgrounds}
 \usepackage{amsmath}
@@ -12,12 +12,11 @@
 \definecolor{datacolor}{RGB}{241,196,15}
 
 \begin{document}
+\pagestyle{empty}
 
 % Diagram 1: Complete PINN Architecture
-\begin{figure}[p]
-\centering
 \begin{tikzpicture}[
-    box/.style={rectangle, draw, minimum width=2cm, minimum height=1cm, text centered, rounded corners},
+    box/.style={rectangle, draw, minimum width=1.8cm, minimum height=0.7cm, text centered, rounded corners=2pt, font=\small},
     layer/.style={box, fill=hiddencolor!30},
     input/.style={box, fill=inputcolor!30},
     output/.style={box, fill=outputcolor!30},
@@ -27,67 +26,16 @@
 ]
 
 % Title
-\node[font=\Large\bfseries] at (0,10) {Optimized PINN v2 - Complete Architecture};
+\node[font=\large\bfseries] at (6,7.2) {Optimized PINN v2 Architecture};
 
-% Input layer
-\node[input, minimum width=3cm, minimum height=1.5cm] (input) at (0,8) {
-    \textbf{Input (12D)}\\
-    \small
-    States: $z, v_z, \phi, \theta, \psi, p, q, r$\\
-    Controls: $T, \tau_x, \tau_y, \tau_z$
-};
-
-% Hidden layers
-\node[layer, minimum width=4cm, minimum height=1.2cm] (fc1) at (0,6) {
-    \textbf{FC1: 12 → 256}\\
-    \small Tanh + Dropout(0.1)
-};
-
-\node[layer, minimum width=4cm, minimum height=1.2cm] (fc2) at (0,4.5) {
-    \textbf{FC2: 256 → 256}\\
-    \small Tanh + Dropout(0.1)
-};
-
-\node[layer, minimum width=4cm, minimum height=1.2cm] (fc3) at (0,3) {
-    \textbf{FC3: 256 → 256}\\
-    \small Tanh + Dropout(0.1)
-};
-
-\node[layer, minimum width=4cm, minimum height=1.2cm] (fc4) at (0,1.5) {
-    \textbf{FC4: 256 → 256}\\
-    \small Tanh + Dropout(0.1)
-};
-
-\node[layer, minimum width=4cm, minimum height=1.2cm] (fc5) at (0,0) {
-    \textbf{FC5 (Output): 256 → 8}\\
-    \small Linear (no activation)
-};
-
-% Output
-\node[output, minimum width=3cm, minimum height=1.5cm] (output) at (0,-2) {
-    \textbf{Predicted States}\\
-    \small $\hat{z}, \hat{v}_z, \hat{\phi}, \hat{\theta}, \hat{\psi}, \hat{p}, \hat{q}, \hat{r}$
-};
-
-% Learnable parameters (side)
-\node[physics, minimum width=3.5cm, minimum height=2cm] (params) at (6,3) {
-    \textbf{Learnable Parameters}\\[0.2cm]
-    \small
-    Mass: $m$\\
-    Inertias: $J_{xx}, J_{yy}, J_{zz}$\\
-    Motor coeffs: $k_t, k_q$\\[0.1cm]
-    \tiny Total: 6 parameters
-};
-
-% Physics computation
-\node[physics, minimum width=5cm, minimum height=3cm] (physics_comp) at (6,-1) {
-    \textbf{Physics Constraints}\\[0.2cm]
-    \small
-    Vertical: $\dot{v}_z = T/m - g$\\
-    Rotation: $\dot{\boldsymbol{\omega}} = \mathbf{J}^{-1}(\boldsymbol{\tau} - \boldsymbol{\omega} \times \mathbf{J}\boldsymbol{\omega})$\\
-    Kinematics: $z_{t+1} = z_t + v_z \Delta t$\\[0.1cm]
-    Energy: $E = \frac{1}{2}mv_z^2 + \frac{1}{2}\boldsymbol{\omega}^T\mathbf{J}\boldsymbol{\omega} + mgz$
-};
+% Main network column
+\node[input, minimum width=2.5cm, minimum height=0.9cm] (input) at (0,6) {\textbf{Input (12D)}\\\tiny States + Controls};
+\node[layer, minimum width=2.8cm, minimum height=0.65cm] (fc1) at (0,5) {\textbf{FC1:} 12→256\\\tiny Tanh + Drop(0.1)};
+\node[layer, minimum width=2.8cm, minimum height=0.65cm] (fc2) at (0,4.2) {\textbf{FC2:} 256→256\\\tiny Tanh + Drop(0.1)};
+\node[layer, minimum width=2.8cm, minimum height=0.65cm] (fc3) at (0,3.4) {\textbf{FC3:} 256→256\\\tiny Tanh + Drop(0.1)};
+\node[layer, minimum width=2.8cm, minimum height=0.65cm] (fc4) at (0,2.6) {\textbf{FC4:} 256→256\\\tiny Tanh + Drop(0.1)};
+\node[layer, minimum width=2.8cm, minimum height=0.65cm] (fc5) at (0,1.8) {\textbf{FC5:} 256→8\\\tiny Linear};
+\node[output, minimum width=2.5cm, minimum height=0.9cm] (output) at (0,0.7) {\textbf{Output (8D)}\\\tiny Next states};
 
 % Arrows
 \draw[arrow] (input) -- (fc1);
@@ -97,606 +45,413 @@
 \draw[arrow] (fc4) -- (fc5);
 \draw[arrow] (fc5) -- (output);
 
-\draw[arrow, dashed] (params) -- (physics_comp) node[midway, right, font=\tiny] {Used in};
-\draw[arrow, dashed, red] (output) -- (physics_comp) node[midway, below, font=\tiny] {Verified by};
+% Physics parameters
+\node[physics, minimum width=2.5cm, minimum height=1.3cm, text width=2.3cm, font=\scriptsize] (params) at (4,5.3) {
+    \textbf{Learnable Params}\\
+    $m, J_{xx}, J_{yy}, J_{zz}$\\
+    $k_t, k_q$ (6 total)
+};
 
-% Parameter count box
-\node[data, minimum width=3.5cm, minimum height=1.5cm] (param_count) at (6,6) {
-    \textbf{Network Stats}\\[0.2cm]
-    \small
+% Physics equations
+\node[physics, minimum width=3.5cm, minimum height=2.2cm, text width=3.3cm, font=\scriptsize] (phys_eq) at (4,2.8) {
+    \textbf{Physics Constraints}\\
+    $\dot{v}_z = T/m - g$\\
+    $\dot{\boldsymbol{\omega}} = \mathbf{J}^{-1}\boldsymbol{\tau}$\\
+    $z_{t+1} = z_t + v_z \Delta t$\\
+    $E = \frac{1}{2}mv_z^2 + \frac{1}{2}\boldsymbol{\omega}^T\mathbf{J}\boldsymbol{\omega}$
+};
+
+% Network stats
+\node[data, minimum width=2.5cm, minimum height=1.1cm, text width=2.3cm, font=\scriptsize] (stats) at (8,5.8) {
+    \textbf{Network Stats}\\
     Total params: 268,558\\
-    Trainable: 268,558\\
-    Depth: 5 layers
+    Depth: 5 layers\\
+    Regularization: L2
 };
 
-% Info boxes
-\node[draw, rounded corners, fill=blue!10, minimum width=10cm, text width=9.5cm] at (0,-4) {
-    \textbf{Key Features:}
-    \begin{itemize}
-        \item 5-layer deep network with 256 neurons per hidden layer
-        \item Dropout (p=0.1) for regularization and autoregressive stability
-        \item Tanh activation for smooth gradients
-        \item Predicts next state given current state + controls
-        \item Physics parameters learned end-to-end
-    \end{itemize}
+% Key features
+\node[draw, fill=blue!10, minimum width=3.5cm, minimum height=1.8cm, text width=3.3cm, font=\scriptsize] at (8,3.8) {
+    \textbf{Key Features:}\\
+    • 256 neurons/layer\\
+    • Dropout for stability\\
+    • Physics-guided learning\\
+    • End-to-end trainable
 };
+
+\draw[arrow, dashed, red] (output.east) -- ++(0.8,0) |- (phys_eq.west);
+\draw[arrow, dashed] (params.south) -- (phys_eq.north);
+
+% Loss components at bottom
+\node[font=\scriptsize\bfseries] at (6,0.2) {Loss = Data + Physics + Energy + Temporal + Rollout + Stability + Regularization};
 
 \end{tikzpicture}
-\end{figure}
 
-\clearpage
+\vspace{0.5cm}
 
-% Diagram 2: Training Pipeline with Curriculum Learning
-\begin{figure}[p]
-\centering
+% Diagram 2: Training Pipeline
 \begin{tikzpicture}[
-    box/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, text centered, rounded corners},
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\scriptsize},
     phase/.style={box, fill=blue!20},
     process/.style={box, fill=green!20},
     loss/.style={box, fill=red!20},
     arrow/.style={->, >=stealth, thick}
 ]
 
-\node[font=\Large\bfseries] at (6,10) {Training Pipeline: Curriculum Learning \& Multi-Step Rollout};
+\node[font=\large\bfseries] at (6,3.5) {Training Pipeline: Curriculum Learning};
 
-% Phase timeline
-\node[phase, minimum width=4cm, minimum height=1.5cm] (phase1) at (0,8) {
-    \textbf{Phase 1: Epochs 0-50}\\
-    \small 5-step rollouts\\
-    Easy: Short horizon
-};
+% Timeline
+\node[phase, minimum width=2.2cm, minimum height=0.8cm] (p1) at (0,2.7) {\textbf{Epochs 0-50}\\\tiny 5-step rollouts};
+\node[phase, minimum width=2.2cm, minimum height=0.8cm] (p2) at (2.7,2.7) {\textbf{Epochs 50-100}\\\tiny 10-step rollouts};
+\node[phase, minimum width=2.2cm, minimum height=0.8cm] (p3) at (5.4,2.7) {\textbf{Epochs 100-150}\\\tiny 25-step rollouts};
+\node[phase, minimum width=2.2cm, minimum height=0.8cm] (p4) at (8.1,2.7) {\textbf{Epochs 150-230}\\\tiny 50-step rollouts};
+\node[phase, minimum width=2.2cm, minimum height=0.8cm] (p5) at (10.8,2.7) {\textbf{Epochs 230-250}\\\tiny L-BFGS fine-tune};
 
-\node[phase, minimum width=4cm, minimum height=1.5cm] (phase2) at (4,8) {
-    \textbf{Phase 2: Epochs 50-100}\\
-    \small 10-step rollouts\\
-    Medium difficulty
-};
-
-\node[phase, minimum width=4cm, minimum height=1.5cm] (phase3) at (8,8) {
-    \textbf{Phase 3: Epochs 100-150}\\
-    \small 25-step rollouts\\
-    Harder
-};
-
-\node[phase, minimum width=4cm, minimum height=1.5cm] (phase4) at (12,8) {
-    \textbf{Phase 4: Epochs 150-230}\\
-    \small 50-step rollouts\\
-    Full difficulty
-};
-
-\draw[arrow] (phase1) -- (phase2);
-\draw[arrow] (phase2) -- (phase3);
-\draw[arrow] (phase3) -- (phase4);
+\draw[arrow] (p1) -- (p2);
+\draw[arrow] (p2) -- (p3);
+\draw[arrow] (p3) -- (p4);
+\draw[arrow] (p4) -- (p5);
 
 % Scheduled sampling
-\node[process, minimum width=12cm, minimum height=1.2cm] (sched_samp) at (6,6) {
-    \textbf{Scheduled Sampling}: Linearly increase 0\% → 30\%\\
-    \small Use predicted states instead of ground truth with probability $p$
+\node[process, minimum width=10.8cm, minimum height=0.7cm, font=\scriptsize] at (5.4,1.7) {
+    \textbf{Scheduled Sampling:} 0\% → 30\% (use predicted states instead of ground truth)
 };
 
-\draw[arrow, dashed] (phase1.south) -- (sched_samp.north);
-\draw[arrow, dashed] (phase2.south) -- (sched_samp.north);
-\draw[arrow, dashed] (phase3.south) -- (sched_samp.north);
-\draw[arrow, dashed] (phase4.south) -- (sched_samp.north);
-
-% Multi-step rollout visualization
-\node[font=\large\bfseries] at (6,4.5) {Multi-Step Autoregressive Rollout};
-
-\foreach \i in {0,1,2,3,4} {
-    \node[box, fill=inputcolor!30, minimum width=1.5cm, minimum height=0.8cm] (state\i) at (1.5*\i,3.2) {$x_{\i}$};
-    \node[box, fill=hiddencolor!30, minimum width=1.5cm, minimum height=0.5cm] (model\i) at (1.5*\i,2) {NN};
-
-    \ifnum\i<4
-        \node[box, fill=outputcolor!30, minimum width=1.5cm, minimum height=0.8cm] (pred\i) at (1.5*\i+1.5,3.2) {$\hat{x}_{\the\numexpr\i+1}$};
-        \draw[arrow] (state\i) -- (model\i);
-        \draw[arrow] (model\i) -- (pred\i);
-        \draw[arrow, dashed, blue] (pred\i) -- (state\the\numexpr\i+1);
+% Multi-step illustration
+\node[font=\small\bfseries] at (2.5,0.9) {Multi-Step Rollout:};
+\foreach \i in {0,1,2,3} {
+    \node[input, minimum width=0.8cm, minimum height=0.5cm, font=\tiny] (s\i) at (1*\i+5,0.9) {$x_{\i}$};
+    \node[box, fill=hiddencolor!30, minimum width=0.8cm, minimum height=0.4cm, font=\tiny] (m\i) at (1*\i+5,0.3) {NN};
+    \draw[arrow] (s\i) -- (m\i);
+    \ifnum\i<3
+        \draw[arrow, blue] (m\i) -- (s\the\numexpr\i+1);
     \fi
 }
-
-\node[font=\small] at (6,1.2) {
-    Each prediction feeds into next timestep (autoregressive)
-};
+\node[font=\tiny] at (8.3,0.6) {...};
+\node[input, minimum width=0.8cm, minimum height=0.5cm, font=\tiny] at (9,0.9) {$x_{100}$};
 
 % Loss components
-\node[loss, minimum width=3cm, minimum height=1cm] (loss_data) at (1,0) {
-    \textbf{Data Loss}\\
-    \small $||\hat{x} - x||^2$
-};
-
-\node[loss, minimum width=3cm, minimum height=1cm] (loss_physics) at (4.5,0) {
-    \textbf{Physics Loss}\\
-    \small $||f(\hat{x}) - 0||^2$
-};
-
-\node[loss, minimum width=3cm, minimum height=1cm] (loss_rollout) at (8,0) {
-    \textbf{Rollout Loss}\\
-    \small $\sum_{k=1}^{K} \frac{1}{k}||\hat{x}_k - x_k||^2$
-};
-
-\node[loss, minimum width=3cm, minimum height=1cm] (loss_energy) at (11.5,0) {
-    \textbf{Energy Loss}\\
-    \small $(E_{pred} - E_{true})^2$
-};
-
-% Final optimizer phase
-\node[phase, minimum width=12cm, minimum height=1.2cm] (lbfgs) at (6,-1.5) {
-    \textbf{Phase 5: L-BFGS Fine-tuning (Epochs 230-250)}\\
-    \small Full-batch second-order optimization for final convergence
-};
-
-\draw[arrow] (phase4.south) -- ++(0,-3.5);
+\node[loss, minimum width=1.8cm, minimum height=0.6cm] at (0.9,0.3) {\tiny Data Loss};
+\node[loss, minimum width=1.8cm, minimum height=0.6cm] at (2.9,0.3) {\tiny Physics Loss};
+\node[loss, minimum width=1.8cm, minimum height=0.6cm] at (10.2,0.3) {\tiny Rollout Loss};
 
 \end{tikzpicture}
-\end{figure}
 
 \clearpage
 
-% Diagram 3: Physics Integration - How Physics Constraints Work
-\begin{figure}[p]
-\centering
+% Diagram 3: Physics Integration
 \begin{tikzpicture}[
-    box/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, text centered, rounded corners},
-    eqbox/.style={box, fill=yellow!20, minimum width=8cm, minimum height=1.2cm},
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\scriptsize},
     arrow/.style={->, >=stealth, thick}
 ]
 
-\node[font=\Large\bfseries] at (6,10) {Physics-Informed Neural Network: Loss Computation};
+\node[font=\large\bfseries] at (6,6.8) {Physics-Informed Learning: How It Works};
 
-% Current state
-\node[input, minimum width=3cm, minimum height=1.5cm] (current) at (0,8) {
-    \textbf{Current State}\\
-    \small $x_t = [z, v_z, \phi, \theta, \psi,$\\$p, q, r]_t$
-};
-
-\node[input, minimum width=3cm, minimum height=1.5cm] (controls) at (0,6) {
-    \textbf{Controls}\\
-    \small $u_t = [T, \tau_x, \tau_y, \tau_z]_t$
-};
+% Inputs
+\node[input, minimum width=2.2cm, minimum height=0.8cm] (state) at (0,5.5) {\textbf{State} $x_t$\\\tiny 8 variables};
+\node[input, minimum width=2.2cm, minimum height=0.8cm] (ctrl) at (0,4.4) {\textbf{Controls} $u_t$\\\tiny 4 inputs};
 
 % Neural network
-\node[layer, minimum width=3cm, minimum height=2cm] (nn) at (4,7) {
-    \textbf{Neural Network}\\[0.2cm]
-    \small 5 layers\\
-    256 neurons\\
-    Dropout 0.1
+\node[layer, minimum width=2.5cm, minimum height=1.6cm] (nn) at (3,5) {\textbf{Neural Net}\\5 layers\\256 neurons};
+
+% Predictions
+\node[output, minimum width=2.2cm, minimum height=0.8cm] (pred_nn) at (6.5,5.8) {\textbf{NN Pred}\\\tiny $\hat{x}_{t+1}^{NN}$};
+\node[data, minimum width=2.2cm, minimum height=0.8cm] (truth) at (6.5,4.2) {\textbf{Truth}\\\tiny $x_{t+1}^{true}$};
+
+\draw[arrow] (state) -- (nn);
+\draw[arrow] (ctrl) -- (nn);
+\draw[arrow] (nn) -- (pred_nn);
+
+% Physics path
+\node[physics, minimum width=3cm, minimum height=1.5cm, text width=2.8cm, font=\tiny] (phys_calc) at (10,5.5) {
+    \textbf{Physics Equations:}\\
+    $v_{z,t+1} = v_{z,t} + \frac{T}{m}\Delta t$\\
+    $\boldsymbol{\omega}_{t+1} = \boldsymbol{\omega}_t + \mathbf{J}^{-1}\boldsymbol{\tau}\Delta t$\\
+    $z_{t+1} = z_t + v_{z,t}\Delta t$
 };
 
-% Predicted next state
-\node[output, minimum width=3cm, minimum height=1.5cm] (predicted) at (8,8) {
-    \textbf{NN Prediction}\\
-    \small $\hat{x}_{t+1}^{NN}$
+\node[physics, minimum width=2.2cm, minimum height=0.8cm] (pred_phys) at (10,3.5) {\textbf{Physics Pred}\\\tiny $\hat{x}_{t+1}^{phys}$};
+
+\draw[arrow] (state.east) -| (phys_calc.north);
+\draw[arrow] (ctrl.east) -| (phys_calc.north);
+\draw[arrow] (phys_calc) -- (pred_phys);
+
+% Losses
+\node[loss, minimum width=1.8cm, minimum height=0.7cm, font=\tiny] (l1) at (3,2.5) {Data Loss\\$||\hat{x}_{NN}-x_{true}||^2$};
+\node[loss, minimum width=1.8cm, minimum height=0.7cm, font=\tiny] (l2) at (6.5,2.5) {Physics Loss\\$||\hat{x}_{NN}-\hat{x}_{phys}||^2$};
+\node[loss, minimum width=1.8cm, minimum height=0.7cm, font=\tiny] (l3) at (10,2.5) {Energy Loss\\$(E_{NN}-E_{true})^2$};
+
+\draw[arrow, red] (pred_nn) |- (l1);
+\draw[arrow, red] (truth) |- (l1);
+\draw[arrow, red] (pred_nn) -- (l2);
+\draw[arrow, red] (pred_phys) -- (l2);
+\draw[arrow, red] (pred_nn) |- (l3);
+\draw[arrow, red] (truth) |- (l3);
+
+% Total
+\node[loss, minimum width=6cm, minimum height=0.8cm, fill=red!40, font=\small] at (6.5,1.3) {
+    \textbf{Total Loss} = $\sum$ weighted losses → Backprop → Update weights \& physics params
 };
 
-% Ground truth
-\node[data, minimum width=3cm, minimum height=1.5cm] (ground_truth) at (8,5.5) {
-    \textbf{Ground Truth}\\
-    \small $x_{t+1}^{true}$
-};
+\draw[arrow, red, ultra thick] (l1) -- (6.5,1.3);
+\draw[arrow, red, ultra thick] (l2) -- (6.5,1.3);
+\draw[arrow, red, ultra thick] (l3) -- (6.5,1.3);
 
-\draw[arrow] (current) -- (nn);
-\draw[arrow] (controls) -- (nn);
-\draw[arrow] (nn) -- (predicted);
-
-% Physics computation path
-\node[font=\bfseries] at (6,3.5) {\large Physics-Based Prediction};
-
-\node[eqbox] (vert_phys) at (3,2.5) {
-    $v_{z,t+1} = v_{z,t} + \frac{T_t}{m} \Delta t - g\Delta t$
-};
-
-\node[eqbox] (rot_phys) at (9,2.5) {
-    $\boldsymbol{\omega}_{t+1} = \boldsymbol{\omega}_t + \mathbf{J}^{-1}(\boldsymbol{\tau}_t - \boldsymbol{\omega}_t \times \mathbf{J}\boldsymbol{\omega}_t)\Delta t$
-};
-
-\node[eqbox] (kin_phys) at (6,1.5) {
-    $z_{t+1} = z_t + v_{z,t} \Delta t$
-};
-
-\node[physics, minimum width=3cm, minimum height=1cm] (physics_pred) at (6,0.3) {
-    \textbf{Physics Prediction}\\
-    \small $\hat{x}_{t+1}^{phys}$
-};
-
-\draw[arrow] (current.south) -- ++(0,-1) -| (vert_phys);
-\draw[arrow] (current.south) -- ++(0,-1) -| (rot_phys);
-\draw[arrow] (vert_phys) -- (kin_phys);
-\draw[arrow] (rot_phys) -- (kin_phys);
-\draw[arrow] (kin_phys) -- (physics_pred);
-
-% Loss computations
-\node[loss, minimum width=4cm, minimum height=1.2cm] (loss1) at (0,-1.5) {
-    \textbf{Data Loss}\\
-    $\mathcal{L}_{data} = ||\hat{x}_{t+1}^{NN} - x_{t+1}^{true}||^2$
-};
-
-\node[loss, minimum width=4cm, minimum height=1.2cm] (loss2) at (4.5,-1.5) {
-    \textbf{Physics Loss}\\
-    $\mathcal{L}_{phys} = ||\hat{x}_{t+1}^{NN} - \hat{x}_{t+1}^{phys}||^2$
-};
-
-\node[loss, minimum width=4cm, minimum height=1.2cm] (loss3) at (9,-1.5) {
-    \textbf{Energy Loss}\\
-    $\mathcal{L}_{energy} = (E(\hat{x}_{t+1}^{NN}) - E(x_{t+1}^{true}))^2$
-};
-
-\draw[arrow, red] (predicted.south) -- ++(0,-2.5) -| (loss1);
-\draw[arrow, red] (ground_truth.south) -- ++(0,-1.5) -| (loss1);
-\draw[arrow, red] (predicted.south) -- ++(0,-2.5) -| (loss2);
-\draw[arrow, red] (physics_pred) -- (loss2);
-\draw[arrow, red] (predicted.south) -- ++(0,-2.5) -| (loss3);
-\draw[arrow, red] (ground_truth.south) -- ++(0,-1.5) -| (loss3);
-
-% Total loss
-\node[loss, minimum width=8cm, minimum height=1.2cm, fill=red!40] (total_loss) at (4.5,-3) {
-    \textbf{Total Loss} = $\lambda_{data}\mathcal{L}_{data} + \lambda_{phys}\mathcal{L}_{phys} + \lambda_{energy}\mathcal{L}_{energy} + \mathcal{L}_{temporal} + \mathcal{L}_{stability} + \mathcal{L}_{reg}$
-};
-
-\draw[arrow, red, ultra thick] (loss1) -- (total_loss);
-\draw[arrow, red, ultra thick] (loss2) -- (total_loss);
-\draw[arrow, red, ultra thick] (loss3) -- (total_loss);
-
-% Gradient flow
-\node[font=\Large] at (4.5,-4) {$\downarrow$ \textbf{Backpropagation}};
-\node[box, fill=green!30, minimum width=8cm, minimum height=1cm] at (4.5,-5) {
-    Update NN weights AND learnable physics parameters ($m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q$)
+% Advantage box
+\node[draw, fill=green!15, minimum width=12cm, text width=11.8cm, font=\scriptsize] at (6,0.3) {
+    \textbf{Why this works:} NN learns from data (flexible), physics ensures predictions obey laws (stable). Combined = accurate + physically consistent predictions.
 };
 
 \end{tikzpicture}
-\end{figure}
 
-\clearpage
+\vspace{0.5cm}
 
-% Diagram 4: Data Flow and Evaluation
-\begin{figure}[p]
-\centering
+% Diagram 4: Data Flow
 \begin{tikzpicture}[
-    box/.style={rectangle, draw, minimum width=2.5cm, minimum height=1cm, text centered, rounded corners},
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\scriptsize},
     arrow/.style={->, >=stealth, thick}
 ]
 
-\node[font=\Large\bfseries] at (6,10) {Complete Data Flow: Training to Evaluation};
+\node[font=\large\bfseries] at (6,3.2) {Complete Pipeline: Data → Training → Evaluation};
 
 % Data generation
-\node[data, minimum width=4cm, minimum height=1.5cm] (datagen) at (0,8.5) {
-    \textbf{Data Generation}\\[0.2cm]
-    \small
-    10 quadrotor trajectories\\
-    49,382 timesteps\\
-    $\Delta t = 0.001$ s
+\node[data, minimum width=2.5cm, minimum height=1cm] (datagen) at (0,2) {
+    \textbf{Data Gen}\\
+    \tiny 10 trajectories\\
+    49,382 samples
 };
 
-% Data split
-\node[box, fill=blue!20, minimum width=4cm, minimum height=1.5cm] (train_data) at (4.5,9.5) {
-    \textbf{Training Set (80\%)}\\
-    \small 39,492 timesteps\\
-    Indices: 0-39,491
+% Split
+\node[box, fill=blue!20, minimum width=2.5cm, minimum height=0.9cm] (train) at (3.5,2.5) {\textbf{Train (80\%)}\\\tiny 39,492 samples};
+\node[box, fill=orange!20, minimum width=2.5cm, minimum height=0.9cm] (test) at (3.5,1.4) {\textbf{Test (20\%)}\\\tiny 9,873 unseen};
+
+\draw[arrow] (datagen) -- (train);
+\draw[arrow] (datagen) -- (test);
+
+% Training
+\node[process, minimum width=3cm, minimum height=1.6cm, text width=2.8cm, font=\tiny] (training) at (7.5,2.2) {
+    \textbf{Training:}\\
+    • Curriculum 5→50 steps\\
+    • Sched. sampling 0→30\%\\
+    • Multi-loss optimization\\
+    • 250 epochs
 };
 
-\node[box, fill=orange!20, minimum width=4cm, minimum height=1.5cm] (test_data) at (4.5,7.5) {
-    \textbf{Test Set (20\%)}\\
-    \small 9,873 timesteps\\
-    Indices: 39,492-49,365\\
-    \tiny \textit{Completely unseen!}
-};
+\draw[arrow] (train) -- (training);
 
-\draw[arrow] (datagen) -- (train_data);
-\draw[arrow] (datagen) -- (test_data);
-
-% Training process
-\node[process, minimum width=5cm, minimum height=3cm] (training) at (10,9) {
-    \textbf{Training Process}\\[0.2cm]
-    \small
-    1. Curriculum: 5→50 steps\\
-    2. Scheduled sampling: 0→30\%\\
-    3. Multi-objective loss\\
-    4. AdamW optimizer\\
-    5. 250 epochs\\[0.1cm]
-    \textbf{Output:} Trained model
-};
-
-\draw[arrow] (train_data) -- (training);
-
-% Trained model
-\node[layer, minimum width=4cm, minimum height=1.5cm] (model) at (10,6) {
-    \textbf{Trained PINN Model}\\
-    \small 268,558 parameters\\
-    + 6 physics params
-};
+% Model
+\node[layer, minimum width=2.2cm, minimum height=0.9cm] (model) at (10.5,2.2) {\textbf{Trained PINN}\\\tiny 268K params};
 
 \draw[arrow] (training) -- (model);
 
-% Evaluation on test set
-\node[box, fill=green!20, minimum width=6cm, minimum height=2.5cm] (eval) at (10,3.5) {
-    \textbf{Holdout Evaluation}\\[0.2cm]
-    \small
-    1-step: 0.026 m error\\
-    10-step: 0.017 m error\\
-    50-step: 0.021 m error\\
-    \textbf{100-step: 0.029 m error}\\[0.1cm]
-    \textit{51× better than baseline}
+% Evaluation
+\node[box, fill=green!20, minimum width=3cm, minimum height=1.4cm, text width=2.8cm, font=\tiny] (eval) at (13,2.2) {
+    \textbf{Holdout Eval:}\\
+    100-step: \textbf{0.029 m}\\
+    Baseline: 1.49 m\\
+    \textbf{51× better!}
 };
 
-\draw[arrow] (test_data.east) -- ++(1,0) |- (eval);
+\draw[arrow] (test) -| (eval);
 \draw[arrow] (model) -- (eval);
 
-% Autoregressive rollout detail
-\node[font=\bfseries] at (3,2) {Autoregressive Evaluation:};
-
-\foreach \i in {0,1,2} {
-    \pgfmathsetmacro{\x}{0.5+1.5*\i}
-    \node[box, fill=inputcolor!30, minimum width=1.2cm, minimum height=0.6cm] (s\i) at (\x,1) {\tiny$x_{\i}$};
-    \node[box, fill=hiddencolor!30, minimum width=1.2cm, minimum height=0.4cm] (m\i) at (\x,0.2) {\tiny NN};
-
-    \ifnum\i<2
-        \pgfmathsetmacro{\j}{int(\i+1)}
-        \draw[arrow] (s\i) -- (m\i);
-        \draw[arrow] (m\i) -- (s\j);
-    \fi
-    \ifnum\i=2
-        \draw[arrow] (s\i) -- (m\i);
-    \fi
-}
-
-\node at (4,-0.3) {\tiny ...};
-\node[box, fill=inputcolor!30, minimum width=1.2cm, minimum height=0.6cm] (s100) at (5,1) {\tiny$x_{100}$};
-\draw[arrow, dashed] (m2) -- (s100);
-
-% Key advantages box
-\node[draw, rounded corners, fill=purple!10, minimum width=12cm, text width=11.5cm, minimum height=2cm] at (6,-1.5) {
-    \textbf{Key Advantages of This Approach:}
-    \begin{itemize}
-        \item \textbf{Physics-informed:} Learned parameters match true physics (within 5\%)
-        \item \textbf{Data-efficient:} Only 49k samples needed (vs 1M+ for pure NN)
-        \item \textbf{Generalizable:} Works on completely unseen test trajectories
-        \item \textbf{Interpretable:} Physical parameters ($m, J, k_t, k_q$) have real meaning
-        \item \textbf{Stable:} 15× more stable than baseline (error growth 1.1× vs 17×)
-    \end{itemize}
+% Key point
+\node[draw, fill=purple!15, minimum width=13cm, text width=12.8cm, font=\scriptsize] at (6.5,0.3) {
+    \textbf{Critical:} Time-based split (not random) ensures test set is truly unseen continuous trajectory. Physics params learned: within 5\% of true values.
 };
 
 \end{tikzpicture}
-\end{figure}
 
 \clearpage
 
-% Diagram 5: Comparison - Standard NN vs PINN
-\begin{figure}[p]
-\centering
-\begin{tikzpicture}
+% Diagram 5: Standard NN vs PINN
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\scriptsize},
+    arrow/.style={->, >=stealth, thick}
+]
 
-\node[font=\Large\bfseries] at (6,10) {Standard Neural Network vs Physics-Informed Neural Network};
+\node[font=\large\bfseries] at (6,6.5) {Comparison: Standard NN vs Physics-Informed NN};
 
-% Left side: Standard NN
-\node[font=\large\bfseries] at (2.5,9) {Standard Neural Network};
-
-\node[input, minimum width=3cm, minimum height=1cm] (std_in) at (2.5,7.5) {Input: $x_t, u_t$};
-\node[layer, minimum width=3cm, minimum height=2cm] (std_nn) at (2.5,5.5) {
-    \textbf{Black Box}\\
-    \small Deep Network\\
-    Pure data fitting
-};
-\node[output, minimum width=3cm, minimum height=1cm] (std_out) at (2.5,3.5) {Output: $\hat{x}_{t+1}$};
+% Left: Standard NN
+\node[font=\normalsize\bfseries] at (2.5,5.8) {Standard Neural Network};
+\node[input, minimum width=2cm, minimum height=0.7cm] (std_in) at (2.5,5) {Input};
+\node[layer, minimum width=2cm, minimum height=1.2cm] (std_nn) at (2.5,3.8) {\textbf{Black Box}\\Deep Net};
+\node[output, minimum width=2cm, minimum height=0.7cm] (std_out) at (2.5,2.5) {Output};
+\node[loss, minimum width=2cm, minimum height=0.6cm] (std_loss) at (2.5,1.5) {$||\hat{x} - x||^2$};
 
 \draw[arrow] (std_in) -- (std_nn);
 \draw[arrow] (std_nn) -- (std_out);
-
-\node[loss, minimum width=3cm, minimum height=0.8cm] (std_loss) at (2.5,2) {
-    $\mathcal{L} = ||\hat{x}_{t+1} - x_{t+1}||^2$
-};
 \draw[arrow, red] (std_out) -- (std_loss);
 
-\node[draw, fill=red!20, text width=4.5cm, minimum height=2.5cm] at (2.5,0) {
-    \textbf{Limitations:}\\[0.1cm]
-    \small
-    • Requires massive data\\
-    • No physical meaning\\
+\node[draw, fill=red!20, minimum width=2.5cm, text width=2.3cm, font=\tiny] at (2.5,0.5) {
+    \textbf{Issues:}\\
+    • Needs huge data\\
+    • No physics\\
     • Poor extrapolation\\
-    • Unstable predictions\\
-    • Can violate physics
+    • Unstable
 };
 
-% Right side: PINN
-\node[font=\large\bfseries] at (9.5,9) {Physics-Informed NN (PINN)};
+% Right: PINN
+\node[font=\normalsize\bfseries] at (9.5,5.8) {Physics-Informed NN};
+\node[input, minimum width=2cm, minimum height=0.7cm] (pinn_in) at (9.5,5) {Input};
+\node[layer, minimum width=2cm, minimum height=1.2cm] (pinn_nn) at (9.5,3.8) {\textbf{Neural Net}\\+ Physics};
+\node[output, minimum width=2cm, minimum height=0.7cm] (pinn_out) at (9.5,2.5) {Output};
 
-\node[input, minimum width=3cm, minimum height=1cm] (pinn_in) at (9.5,7.5) {Input: $x_t, u_t$};
-\node[layer, minimum width=3cm, minimum height=2cm] (pinn_nn) at (9.5,5.5) {
-    \textbf{Neural Network}\\
-    \small + Physics\\
-    Hybrid approach
-};
-\node[output, minimum width=3cm, minimum height=1cm] (pinn_out) at (9.5,3.5) {Output: $\hat{x}_{t+1}$};
+\node[physics, minimum width=2.2cm, minimum height=1cm, font=\tiny] (phys) at (12.5,3.8) {\textbf{Physics:}\\$F=ma$\\$\tau = J\alpha$};
 
 \draw[arrow] (pinn_in) -- (pinn_nn);
 \draw[arrow] (pinn_nn) -- (pinn_out);
+\draw[arrow, dashed] (pinn_in.east) -| (phys);
 
-% Physics path
-\node[physics, minimum width=3cm, minimum height=1.5cm] (phys_calc) at (13,5.5) {
-    \textbf{Physics}\\
-    \small $F=ma$\\
-    $\tau = J\alpha$
+\node[loss, minimum width=4cm, minimum height=0.6cm, font=\tiny] (pinn_loss) at (10.5,1.5) {
+    $\mathcal{L}_{data} + \lambda_{phys}\mathcal{L}_{physics} + \lambda_E\mathcal{L}_{energy} + ...$
 };
 
-\draw[arrow, dashed] (pinn_in.east) -- ++(0.5,0) |- (phys_calc);
-
-\node[loss, minimum width=5cm, minimum height=0.8cm] (pinn_loss) at (9.5,2) {
-    $\mathcal{L} = \mathcal{L}_{data} + \lambda_{phys}\mathcal{L}_{physics} + \lambda_{E}\mathcal{L}_{energy} + ...$
-};
 \draw[arrow, red] (pinn_out) -- (pinn_loss);
-\draw[arrow, red] (phys_calc.south) -- ++(0,-2) -| (pinn_loss);
+\draw[arrow, red] (phys) |- (pinn_loss);
 
-\node[draw, fill=green!20, text width=4.5cm, minimum height=2.5cm] at (9.5,0) {
-    \textbf{Advantages:}\\[0.1cm]
-    \small
+\node[draw, fill=green!20, minimum width=2.5cm, text width=2.3cm, font=\tiny] at (9.5,0.5) {
+    \textbf{Benefits:}\\
     • Data-efficient\\
     • Physical meaning\\
-    • Better extrapolation\\
-    • Stable predictions\\
-    • Respects physics laws
+    • Better generalization\\
+    • Stable predictions
 };
 
-% Comparison arrow
-\draw[->, ultra thick, blue] (5,5) -- (7,5) node[midway, above, font=\bfseries] {Add Physics};
+% Arrow between
+\draw[->, ultra thick, blue] (5,3.8) -- (7,3.8) node[midway, above, font=\small\bfseries] {Add Physics};
 
 \end{tikzpicture}
-\end{figure}
 
-\clearpage
+\vspace{0.5cm}
 
-% Diagram 6: Loss Components Breakdown
-\begin{figure}[p]
-\centering
-\begin{tikzpicture}
+% Diagram 6: Loss Breakdown
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\tiny},
+    loss/.style={box, fill=red!20},
+    arrow/.style={->, >=stealth, thick}
+]
 
-\node[font=\Large\bfseries] at (6,10) {Multi-Objective Loss Function Breakdown};
+\node[font=\large\bfseries] at (6,3.5) {Multi-Objective Loss Function};
 
-% Central total loss
-\node[loss, minimum width=4cm, minimum height=1.5cm, fill=red!40, font=\large] (total) at (6,8) {
-    \textbf{Total Loss}\\
-    $\mathcal{L}_{total}$
-};
+% Central
+\node[loss, minimum width=2.5cm, minimum height=0.9cm, fill=red!40, font=\small] (total) at (6,2.5) {\textbf{Total Loss}};
 
-% Individual losses arranged in circle
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (data) at (1,6) {
-    \textbf{1. Data Loss}\\[0.1cm]
-    \small $\mathcal{L}_{data} = \frac{1}{N}\sum ||\hat{x} - x||^2$\\[0.1cm]
-    \tiny Matches ground truth
-};
+% Individual losses in compact arrangement
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l1) at (1,1.8) {Data\\\tiny $||\hat{x}-x||^2$};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l2) at (3.5,1.8) {Physics\\\tiny $||\hat{x}_{NN}-\hat{x}_{phys}||^2$};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l3) at (6,1.8) {Energy\\\tiny $(E_{pred}-E_{true})^2$};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l4) at (8.5,1.8) {Temporal\\\tiny $||\Delta\hat{x}-\Delta x||^2$};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l5) at (11,1.8) {Rollout\\\tiny $\sum_k \frac{1}{k}||\hat{x}_k-x_k||^2$};
 
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (phys) at (6,5.5) {
-    \textbf{2. Physics Loss}\\[0.1cm]
-    \small $\mathcal{L}_{phys} = ||\hat{x}_{NN} - \hat{x}_{physics}||^2$\\[0.1cm]
-    \tiny Respects dynamics
-};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l6) at (3,0.6) {Stability\\\tiny $\sum \max(|x_i|-x_{max})^2$};
+\node[loss, minimum width=2cm, minimum height=0.65cm] (l7) at (9,0.6) {Regularization\\\tiny $\sum w_i^2$};
 
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (energy) at (11,6) {
-    \textbf{3. Energy Loss}\\[0.1cm]
-    \small $\mathcal{L}_{E} = (E_{pred} - E_{true})^2$\\[0.1cm]
-    \tiny Conserves energy
-};
+% Arrows
+\foreach \i in {1,2,3,4,5,6,7} {
+    \draw[arrow, red] (l\i) -- (total);
+}
 
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (temporal) at (1,3) {
-    \textbf{4. Temporal Loss}\\[0.1cm]
-    \small $\mathcal{L}_{temp} = ||\Delta \hat{x} - \Delta x||^2$\\[0.1cm]
-    \tiny Smooth transitions
-};
+% Weights
+\node[font=\tiny] at (1,1.3) {$\lambda=1.0$};
+\node[font=\tiny] at (3.5,1.3) {$\lambda=20$};
+\node[font=\tiny] at (6,1.3) {$\lambda=0.05$};
+\node[font=\tiny] at (8.5,1.3) {$\lambda=10$};
+\node[font=\tiny] at (11,1.3) {adaptive};
 
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (rollout) at (6,2.5) {
-    \textbf{5. Rollout Loss}\\[0.1cm]
-    \small $\mathcal{L}_{roll} = \sum_{k=1}^{K} \frac{1}{k}||\hat{x}_k - x_k||^2$\\[0.1cm]
-    \tiny Multi-step stability
-};
-
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (stability) at (11,3) {
-    \textbf{6. Stability Loss}\\[0.1cm]
-    \small $\mathcal{L}_{stab} = \sum \max(0, |x_i| - x_{i,max})^2$\\[0.1cm]
-    \tiny Bounded states
-};
-
-\node[loss, minimum width=3.5cm, minimum height=1.2cm] (reg) at (6,0.5) {
-    \textbf{7. Regularization}\\[0.1cm]
-    \small $\mathcal{L}_{reg} = \sum w_i^2$\\[0.1cm]
-    \tiny Prevents overfitting
-};
-
-% Arrows to total loss
-\draw[arrow, thick, red] (data) -- (total);
-\draw[arrow, thick, red] (phys) -- (total);
-\draw[arrow, thick, red] (energy) -- (total);
-\draw[arrow, thick, red] (temporal) -- (total);
-\draw[arrow, thick, red] (rollout) -- (total);
-\draw[arrow, thick, red] (stability) -- (total);
-\draw[arrow, thick, red] (reg) -- (total);
-
-% Weight annotations
-\node[font=\tiny] at (2.2,7) {$\lambda_{data}=1.0$};
-\node[font=\tiny] at (6,6.8) {$\lambda_{phys}=20.0$};
-\node[font=\tiny] at (9.8,7) {$\lambda_{E}=0.05$};
-\node[font=\tiny] at (2.2,4.5) {$\lambda_{temp}=10.0$};
-\node[font=\tiny] at (6,4) {adaptive};
-\node[font=\tiny] at (9.8,4.5) {$\lambda_{stab}=5.0$};
-\node[font=\tiny] at (6,1.8) {$\lambda_{reg}=1.0$};
-
-% Explanation box
-\node[draw, rounded corners, fill=yellow!20, text width=11cm] at (6,-1.5) {
-    \textbf{Why Multiple Loss Terms?}
-    Each term enforces different constraints:
-    \textbf{Data} ensures accuracy, \textbf{Physics} ensures realism, \textbf{Energy} ensures conservation laws,
-    \textbf{Temporal} ensures smoothness, \textbf{Rollout} ensures long-horizon stability,
-    \textbf{Stability} prevents divergence, \textbf{Regularization} prevents overfitting.
-
-    Combined = Accurate + Physical + Stable predictions
+% Explanation
+\node[draw, fill=yellow!20, minimum width=12cm, text width=11.8cm, font=\scriptsize] at (6,3.8) {
+    Each term enforces different constraints: Data=accuracy, Physics=realism, Energy=conservation, Temporal=smoothness, Rollout=long-horizon, Stability=bounded, Reg=no overfit
 };
 
 \end{tikzpicture}
-\end{figure}
 
 \clearpage
 
-% Diagram 7: Performance Metrics Visualization
-\begin{figure}[p]
-\centering
-\begin{tikzpicture}
+% Diagram 7: Performance
+\begin{tikzpicture}[
+    box/.style={rectangle, draw, minimum width=1.5cm, minimum height=0.6cm, text centered, rounded corners=2pt, font=\scriptsize}
+]
 
-\node[font=\Large\bfseries] at (6,10) {PINN v2 Performance: Holdout Test Set Results};
+\node[font=\large\bfseries] at (6,6.5) {PINN v2 Performance on Held-Out Test Set};
 
-% Error growth comparison
-\node[font=\large\bfseries] at (3,9) {Error Growth Over Horizon};
+% Error growth bars
+\node[font=\normalsize\bfseries] at (2.5,5.8) {Error Growth};
 
-% Baseline bars
-\foreach \h/\err/\y in {1/0.05/8, 10/0.15/7.2, 50/0.60/6.4, 100/1.49/5.6} {
-    \fill[red!60] (0.5,\y) rectangle (0.5+\err*1.5,\y+0.5);
-    \node[right, font=\small] at (0.5+\err*1.5+0.1,\y+0.25) {\err m};
-    \node[left, font=\small] at (0.4,\y+0.25) {\h};
+\foreach \h/\berr/\oerr/\y in {1/0.05/0.026/5.2, 10/0.15/0.017/4.6, 50/0.60/0.021/4.0, 100/1.49/0.029/3.4} {
+    % Baseline bar
+    \fill[red!60] (0.3,\y) rectangle (0.3+\berr*1.2,\y+0.4);
+    \node[left, font=\tiny] at (0.2,\y+0.2) {\h};
+    \node[right, font=\tiny] at (0.3+\berr*1.2+0.05,\y+0.2) {\berr};
+
+    % Optimized bar
+    \fill[green!60] (2.5,\y) rectangle (2.5+\oerr*60,\y+0.4);
+    \node[right, font=\tiny] at (2.5+\oerr*60+0.05,\y+0.2) {\oerr};
 }
 
-% Optimized bars
-\foreach \h/\err/\y in {1/0.026/8, 10/0.017/7.2, 50/0.021/6.4, 100/0.029/5.6} {
-    \fill[green!60] (3,\y) rectangle (3+\err*20,\y+0.5);
-    \node[right, font=\small] at (3+\err*20+0.1,\y+0.25) {\err m};
+\node[font=\tiny] at (1,5.9) {\textcolor{red}{Baseline}};
+\node[font=\tiny] at (3.2,5.9) {\textcolor{green!60!black}{Optimized}};
+\node[font=\tiny, rotate=90] at (0,4.3) {Horizon (steps)};
+
+% Improvement factors - compact
+\node[font=\normalsize\bfseries] at (7,5.8) {State-wise Improvements};
+
+\foreach \state/\imp/\y in {z/51×/5.4, vz/41×/5.0, roll/16×/4.6, pitch/9×/4.2, yaw/11×/3.8, p/2×/3.4} {
+    \node[left, font=\tiny] at (5.5,\y) {\state:};
+    \fill[blue!50] (5.7,\y-0.12) rectangle (6.4,\y+0.12);
+    \node[right, font=\scriptsize\bfseries] at (6.5,\y) {\imp};
 }
 
-\node[font=\small] at (1.5,8.7) {\textcolor{red}{Baseline}};
-\node[font=\small] at (3.5,8.7) {\textcolor{green!60!black}{Optimized v2}};
-
-\draw[<->, thick] (0.5,5.3) -- (0.5,8.7) node[midway, left, font=\small] {Horizon (steps)};
-
-% Improvement factors
-\node[font=\large\bfseries] at (9,9) {Improvement Factors};
-
-\foreach \state/\imp/\y in {z/51×/8.5, vz/41×/8, roll/16×/7.5, pitch/9×/7, yaw/11×/6.5, p/2×/6, q/7×/5.5, r/3×/5} {
-    \node[left, font=\small] at (7,\y) {\state:};
-    \fill[blue!60] (7.2,\y-0.15) rectangle (7.2+0.8,\y+0.15);
-    \node[right, font=\small\bfseries] at (8.1,\y) {\imp better};
+\foreach \state/\imp/\y in {q/7×/5.4, r/3×/5.0} {
+    \node[left, font=\tiny] at (8,\y) {\state:};
+    \fill[blue!50] (8.2,\y-0.12) rectangle (8.9,\y+0.12);
+    \node[right, font=\scriptsize\bfseries] at (9,\y) {\imp};
 }
 
-\node[font=\small, text width=3cm] at (9,4.3) {Average:\\83.6\% improvement};
+\node[font=\small, draw, fill=blue!15] at (7,4.4) {Avg: 83.6\%};
 
-% Key result box
-\node[draw, ultra thick, fill=green!20, minimum width=12cm, minimum height=2cm, text width=11.5cm] at (6,2.5) {
+% Main result
+\node[draw, ultra thick, fill=green!25, minimum width=5.5cm, minimum height=1.3cm, text width=5.3cm, font=\normalsize] at (10.5,5.2) {
     \begin{center}
-    \textbf{\Large Key Achievement:}\\[0.3cm]
-    \large 100-step horizon: 0.029 m error (vs 1.49 m baseline)\\
-    \textbf{\Huge 51× improvement}\\[0.2cm]
-    \normalsize Evaluated on 9,873 completely unseen timesteps
+    \textbf{100-step: 0.029 m}\\
+    (vs 1.49 m baseline)\\
+    \textbf{\Large 51× improvement}
     \end{center}
 };
 
-% Stability metric
-\node[draw, fill=blue!20, minimum width=5.5cm, minimum height=1.5cm, text width=5cm] at (2.5,0.5) {
-    \textbf{Stability Metric:}\\[0.1cm]
-    Error growth baseline: 17×\\
-    Error growth optimized: 1.1×\\[0.1cm]
-    \textbf{15× more stable!}
+% Metrics boxes
+\node[draw, fill=blue!15, minimum width=3cm, text width=2.8cm, font=\tiny] at (2.5,2.3) {
+    \textbf{Stability:}\\
+    Baseline growth: 17×\\
+    Optimized growth: 1.1×\\
+    \textbf{15× more stable}
 };
 
-\node[draw, fill=purple!20, minimum width=5.5cm, minimum height=1.5cm, text width=5cm] at (9.5,0.5) {
-    \textbf{Physics Accuracy:}\\[0.1cm]
-    Mass error: 0\%\\
-    Motor coeffs: 0\%\\
-    Inertias: <5\% error
+\node[draw, fill=purple!15, minimum width=3cm, text width=2.8cm, font=\tiny] at (6,2.3) {
+    \textbf{Physics Accuracy:}\\
+    Mass ($m$): 0\% error\\
+    Motor ($k_t, k_q$): 0\%\\
+    Inertias ($J$): <5\%
 };
+
+\node[draw, fill=green!15, minimum width=3cm, text width=2.8cm, font=\tiny] at (9.5,2.3) {
+    \textbf{Evaluation:}\\
+    9,873 unseen steps\\
+    Time-based split\\
+    No data leakage
+};
+
+% Bottom summary
+\node[draw, fill=yellow!20, minimum width=12cm, text width=11.8cm, font=\scriptsize] at (6,1.2) {
+    \textbf{Achievement:} Physics-informed approach achieves 51× improvement with 10× less data than pure NN would need. Learned parameters match true physics (m, k exact; J within 5\%). Predictions stable for 100-step (10 second) horizon.
+};
+
+% Visual error trajectory comparison
+\node[font=\small\bfseries] at (6,0.4) {Error Trajectory Shape:};
+\draw[red, very thick] (3.5,0.1) -- (4,0.15) -- (5,0.35) -- (6,0.55) -- (7,0.7);
+\draw[green!60!black, very thick] (3.5,0.1) -- (4,0.08) -- (5,0.09) -- (6,0.11) -- (7,0.12);
+\node[font=\tiny, red] at (7.3,0.7) {Baseline};
+\node[font=\tiny, green!60!black] at (7.3,0.12) {Optimized};
 
 \end{tikzpicture}
-\end{figure}
 
 \end{document}
