@@ -34,8 +34,7 @@ For additional information on amsmath, use the `?' option.
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
 ) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
-tex.def)
-No file presentation_physics_reference.aux.
+tex.def) (presentation_physics_reference.aux)
 *geometry* driver: auto-detecting
 *geometry* detected driver: pdftex
 
@@ -51,118 +50,182 @@ ii
 Overfull \hbox (6.29375pt too wide) in paragraph at lines 22--22
 []\T1/lmr/bx/n/17.28 Physics Laws & Equa-tions Used in PINN Physics Layer 
 
-Underfull \hbox (badness 1810) in paragraph at lines 30--30
-[]|\T1/lmr/bx/n/12 Roll An-gu-lar Ac-
+Overfull \hbox (4.7004pt too wide) in alignment at lines 26--48
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--33
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Overfull \hbox (4.7004pt too wide) in alignment at lines 54--76
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Underfull \hbox (badness 10000) in paragraph at lines 84--84
+[]|\T1/lmr/bx/n/12 Vertical Ac-cel.
 
-Underfull \hbox (badness 1515) in paragraph at lines 38--38
-[]|\T1/lmr/bx/n/12 Yaw An-gu-lar Ac-
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
+[]|\T1/lmr/m/n/12 Quadratic
 
-Underfull \hbox (badness 10000) in paragraph at lines 40--41
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Underfull \hbox (badness 10000) in paragraph at lines 93--95
+\T1/lmr/m/n/12 PINN: (im-
 
-Underfull \hbox (badness 10000) in paragraph at lines 54--55
-[]|\T1/lmr/m/n/12 Nonlinear cou-
+Overfull \hbox (4.7004pt too wide) in alignment at lines 80--96
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 58--59
-[]|\T1/lmr/m/n/12 Nonlinear cou-
+Overfull \hbox (7.46603pt too wide) in paragraph at lines 104--104
+[]|\T1/lmr/bx/n/12 Parameter| 
 
-LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
-
+Underfull \hbox (badness 1577) in paragraph at lines 110--110
+[]|\T1/lmr/m/n/12 Roll In-er-
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
-
-
-Underfull \hbox (badness 4872) in paragraph at lines 72--72
-[]|\T1/lmr/bx/n/12 Vertical Ac-cel-er-a-
-
-Underfull \hbox (badness 10000) in paragraph at lines 74--75
-[]|\T1/lmr/m/n/12 Quadratic aero-
-
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
-[]|\T1/lmr/m/n/12 Simple in-te-
-
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
-\T1/lmr/m/n/12 gra-tion (NED
-
-Underfull \hbox (badness 4205) in paragraph at lines 92--92
-[]|$\OT1/lmr/m/n/12 6\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 86 \OMS/lmsy/m/n/12 ^^B 
-\OT1/lmr/m/n/12 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 94--94
+Underfull \hbox (badness 1189) in paragraph at lines 114--114
 []|$\OT1/lmr/m/n/12 9\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 2 \OMS/lmsy/m/n/12 ^^B \
 OT1/lmr/m/n/12 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 98--98
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+[]|$\OT1/lmr/m/n/12 1\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 366 \OMS/lmsy/m/n/12 ^^B
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+\OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|\T1/lmr/m/n/12 Thrust
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
 []|\T1/lmr/m/n/12 0.01
 
-Overfull \hbox (6.51723pt too wide) in paragraph at lines 100--100
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|\T1/lmr/m/n/12 Torque
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|$\OT1/lmr/m/n/12 7\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 8263 \OMS/lmsy/m/n/12 ^^
+B
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+\OT1/lmr/m/n/12 10[]$
+
+Overfull \hbox (15.57161pt too wide) in paragraph at lines 126--126
 \T1/lmr/m/n/12 N\TS1/lmr/m/n/12 ·\T1/lmr/m/n/12 m/(rad/s)\TS1/lmr/m/n/12 ²| 
 
-Underfull \hbox (badness 10000) in paragraph at lines 102--103
-[]|\T1/lmr/m/n/12 Fixed con-stant (NOT
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|\T1/lmr/m/n/12 Motor torque con-
 
-Underfull \hbox (badness 1776) in paragraph at lines 104--104
-[]|\T1/lmr/m/n/12 Drag Co-ef-fi-
+Underfull \hbox (badness 4303) in paragraph at lines 134--134
+[]|\T1/lmr/m/n/12 Drag Co-
+
+Overfull \hbox (17.10039pt too wide) in alignment at lines 102--138
+ [] [] [] [] [] 
 [1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
 eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
 ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
 ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 114--114
-[]|\T1/lmr/m/n/12 Fit pre-
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
+[]|\T1/lmr/m/n/12 Training scripts
 
-Underfull \hbox (badness 10000) in paragraph at lines 114--114
-\T1/lmr/m/n/12 dic-tions to
+Underfull \hbox (badness 7504) in paragraph at lines 149--149
+[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = \OMS/lmsy/m/n/12 k[] ^^@
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-[]|\T1/lmr/m/n/12 Enforce
+Underfull \hbox (badness 10000) in paragraph at lines 149--149
+[]|\T1/lmr/m/n/12 Newton-
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-\T1/lmr/m/n/12 Newton-
+Underfull \hbox (badness 10000) in paragraph at lines 150--151
+[]|\T1/lmr/m/n/12 PINN:
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-\T1/lmr/m/n/12 Euler equa-
+Underfull \hbox (badness 10000) in paragraph at lines 150--151
+\T1/lmr/m/n/12 physics_loss()
 
-Underfull \hbox (badness 3009) in paragraph at lines 118--118
-[]|\T1/lmr/m/n/12 Energy con-
+Overfull \hbox (8.08688pt too wide) in paragraph at lines 152--152
+[]|\T1/lmr/m/n/12 Conservation| 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
-[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = [] [](\OMS/lmsy/m/n/12 j\OML/lmm/m/i
-t/12 x[]\OMS/lmsy/m/n/12 j ^^@
+Underfull \hbox (badness 10000) in paragraph at lines 153--154
+[]|\T1/lmr/m/n/12 PINN: en-
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
-[]|\T1/lmr/m/n/12 Bounded
+Overfull \hbox (29.8056pt too wide) in paragraph at lines 153--154
+\T1/lmr/m/n/12 ergy_consistency_loss()
 
-Underfull \hbox (badness 10000) in paragraph at lines 134--134
+Overfull \hbox (1.62495pt too wide) in paragraph at lines 155--155
+[]|\T1/lmr/m/n/12 Smoothness| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--157
+[]|\T1/lmr/m/n/12 PINN: tem-po-
+
+Overfull \hbox (22.36469pt too wide) in paragraph at lines 156--157
+\T1/lmr/m/n/12 ral_smoothness_loss()
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
+[]|\T1/lmr/m/n/12 PINN: sta-bil-
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
+\T1/lmr/m/n/12 ity_loss() line
+
+Overfull \hbox (17.10728pt too wide) in alignment at lines 142--164
+ [] [] [] [] [] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--171
+[]|\T1/lmr/bx/n/12 Implemented
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
 []|\T1/lmr/bx/n/12 No Ar-ti-fi-cial
 
-Underfull \hbox (badness 10000) in paragraph at lines 146--146
-[]|\T1/lmr/bx/n/12 6 Learn-able Pa-
+Underfull \hbox (badness 10000) in paragraph at lines 173--173
+[]|\T1/lmr/m/n/12 Removed un-phys-i-cal damp-ing terms
 
-Underfull \hbox (badness 10000) in paragraph at lines 147--148
-[]|\T1/lmr/m/n/12 Simultaneously iden-ti-fies mass, in-er-tia ten-sor
+Underfull \hbox (badness 10000) in paragraph at lines 184--185
+\T1/lmr/m/n/12 tor_dynamics()
 
-Underfull \hbox (badness 2626) in paragraph at lines 147--148
-\T1/lmr/m/n/12 ($\OML/lmm/m/it/12 J[]; J[]; J[]$\T1/lmr/m/n/12 ), and mo-tor co
--ef-fi-cients ($\OML/lmm/m/it/12 k[]; k[]$\T1/lmr/m/n/12 ) dur-ing
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\T1/lmr/bx/n/12 Temporal
+
+Underfull \hbox (badness 1360) in paragraph at lines 187--187
+\T1/lmr/m/n/12 tion lim-its, achiev-ing 95-99% im-prove-
+
+Underfull \hbox (badness 10000) in paragraph at lines 188--189
+[]|\T1/lmr/m/n/12 PINN: tem-po-
+
+Overfull \hbox (26.89879pt too wide) in paragraph at lines 188--189
+\T1/lmr/m/n/12 ral_smoothness_loss()
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+[]|\T1/lmr/m/n/12 PINN: params
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+\T1/lmr/m/n/12 dict line
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+\T1/lmr/m/n/12 55-62, con-
+
+Overfull \hbox (13.6514pt too wide) in paragraph at lines 192--193
+\T1/lmr/m/n/12 strain_parameters()
 [2{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{
 C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
 
-Underfull \hbox (badness 10000) in paragraph at lines 157--157
-[]|\T1/lmr/bx/n/12 Normalization
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+LaTeX Warning: Command \textdegree invalid in math mode on input line 204.
 
 
-LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+LaTeX Warning: Command \textdegree invalid in math mode on input line 204.
 
+
+Underfull \hbox (badness 4316) in paragraph at lines 205--206
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--207
+[]|\T1/lmr/m/n/12 Angular rates
+
+Underfull \hbox (badness 4316) in paragraph at lines 208--209
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 5316) in paragraph at lines 210--210
+[]|\T1/lmr/m/n/12 Vertical ve-loc-ity
+
+Underfull \hbox (badness 10000) in paragraph at lines 210--210
+[]|\T1/lmr/m/n/12 Realistic climb/descent
+
+Underfull \hbox (badness 4316) in paragraph at lines 211--212
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 4316) in paragraph at lines 214--215
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Overfull \hbox (4.7004pt too wide) in alignment at lines 200--216
+ [] [] [] [] 
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd) [3]
 [4] (presentation_physics_reference.aux) )
 (see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
@@ -177,7 +240,7 @@ ograms/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/sreej/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Pro
 grams/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
-Output written on presentation_physics_reference.pdf (4 pages, 195771 bytes).
+Output written on presentation_physics_reference.pdf (4 pages, 196706 bytes).
 Transcript written on presentation_physics_reference.log.
 This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
  restricted \write18 enabled.
@@ -231,118 +294,182 @@ ii
 Overfull \hbox (6.29375pt too wide) in paragraph at lines 22--22
 []\T1/lmr/bx/n/17.28 Physics Laws & Equa-tions Used in PINN Physics Layer 
 
-Underfull \hbox (badness 1810) in paragraph at lines 30--30
-[]|\T1/lmr/bx/n/12 Roll An-gu-lar Ac-
+Overfull \hbox (4.7004pt too wide) in alignment at lines 26--48
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--33
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Overfull \hbox (4.7004pt too wide) in alignment at lines 54--76
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 36--37
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Underfull \hbox (badness 10000) in paragraph at lines 84--84
+[]|\T1/lmr/bx/n/12 Vertical Ac-cel.
 
-Underfull \hbox (badness 1515) in paragraph at lines 38--38
-[]|\T1/lmr/bx/n/12 Yaw An-gu-lar Ac-
+Underfull \hbox (badness 10000) in paragraph at lines 86--86
+[]|\T1/lmr/m/n/12 Quadratic
 
-Underfull \hbox (badness 10000) in paragraph at lines 40--41
-[]|\T1/lmr/m/n/12 Cross-coupling,
+Underfull \hbox (badness 10000) in paragraph at lines 93--95
+\T1/lmr/m/n/12 PINN: (im-
 
-Underfull \hbox (badness 10000) in paragraph at lines 54--55
-[]|\T1/lmr/m/n/12 Nonlinear cou-
+Overfull \hbox (4.7004pt too wide) in alignment at lines 80--96
+ [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 58--59
-[]|\T1/lmr/m/n/12 Nonlinear cou-
+Overfull \hbox (7.46603pt too wide) in paragraph at lines 104--104
+[]|\T1/lmr/bx/n/12 Parameter| 
 
-LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
-
+Underfull \hbox (badness 1577) in paragraph at lines 110--110
+[]|\T1/lmr/m/n/12 Roll In-er-
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 62.
-
-
-Underfull \hbox (badness 4872) in paragraph at lines 72--72
-[]|\T1/lmr/bx/n/12 Vertical Ac-cel-er-a-
-
-Underfull \hbox (badness 10000) in paragraph at lines 74--75
-[]|\T1/lmr/m/n/12 Quadratic aero-
-
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
-[]|\T1/lmr/m/n/12 Simple in-te-
-
-Underfull \hbox (badness 10000) in paragraph at lines 78--79
-\T1/lmr/m/n/12 gra-tion (NED
-
-Underfull \hbox (badness 4205) in paragraph at lines 92--92
-[]|$\OT1/lmr/m/n/12 6\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 86 \OMS/lmsy/m/n/12 ^^B 
-\OT1/lmr/m/n/12 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 94--94
+Underfull \hbox (badness 1189) in paragraph at lines 114--114
 []|$\OT1/lmr/m/n/12 9\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 2 \OMS/lmsy/m/n/12 ^^B \
 OT1/lmr/m/n/12 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 98--98
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+[]|$\OT1/lmr/m/n/12 1\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 366 \OMS/lmsy/m/n/12 ^^B
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+\OT1/lmr/m/n/12 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|\T1/lmr/m/n/12 Thrust
+
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
 []|\T1/lmr/m/n/12 0.01
 
-Overfull \hbox (6.51723pt too wide) in paragraph at lines 100--100
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|\T1/lmr/m/n/12 Torque
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|$\OT1/lmr/m/n/12 7\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 8263 \OMS/lmsy/m/n/12 ^^
+B
+
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+\OT1/lmr/m/n/12 10[]$
+
+Overfull \hbox (15.57161pt too wide) in paragraph at lines 126--126
 \T1/lmr/m/n/12 N\TS1/lmr/m/n/12 ·\T1/lmr/m/n/12 m/(rad/s)\TS1/lmr/m/n/12 ²| 
 
-Underfull \hbox (badness 10000) in paragraph at lines 102--103
-[]|\T1/lmr/m/n/12 Fixed con-stant (NOT
+Underfull \hbox (badness 10000) in paragraph at lines 126--126
+[]|\T1/lmr/m/n/12 Motor torque con-
 
-Underfull \hbox (badness 1776) in paragraph at lines 104--104
-[]|\T1/lmr/m/n/12 Drag Co-ef-fi-
+Underfull \hbox (badness 4303) in paragraph at lines 134--134
+[]|\T1/lmr/m/n/12 Drag Co-
+
+Overfull \hbox (17.10039pt too wide) in alignment at lines 102--138
+ [] [] [] [] [] 
 [1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
 eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
 AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}{C:/Users/sreej/AppD
 ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.enc}{C:/Users/sreej/AppD
 ata/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]
-Underfull \hbox (badness 10000) in paragraph at lines 114--114
-[]|\T1/lmr/m/n/12 Fit pre-
+Underfull \hbox (badness 10000) in paragraph at lines 147--148
+[]|\T1/lmr/m/n/12 Training scripts
 
-Underfull \hbox (badness 10000) in paragraph at lines 114--114
-\T1/lmr/m/n/12 dic-tions to
+Underfull \hbox (badness 7504) in paragraph at lines 149--149
+[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = \OMS/lmsy/m/n/12 k[] ^^@
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-[]|\T1/lmr/m/n/12 Enforce
+Underfull \hbox (badness 10000) in paragraph at lines 149--149
+[]|\T1/lmr/m/n/12 Newton-
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-\T1/lmr/m/n/12 Newton-
+Underfull \hbox (badness 10000) in paragraph at lines 150--151
+[]|\T1/lmr/m/n/12 PINN:
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--116
-\T1/lmr/m/n/12 Euler equa-
+Underfull \hbox (badness 10000) in paragraph at lines 150--151
+\T1/lmr/m/n/12 physics_loss()
 
-Underfull \hbox (badness 3009) in paragraph at lines 118--118
-[]|\T1/lmr/m/n/12 Energy con-
+Overfull \hbox (8.08688pt too wide) in paragraph at lines 152--152
+[]|\T1/lmr/m/n/12 Conservation| 
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
-[]|$\OMS/lmsy/m/n/12 L[] \OT1/lmr/m/n/12 = [] [](\OMS/lmsy/m/n/12 j\OML/lmm/m/i
-t/12 x[]\OMS/lmsy/m/n/12 j ^^@
+Underfull \hbox (badness 10000) in paragraph at lines 153--154
+[]|\T1/lmr/m/n/12 PINN: en-
 
-Underfull \hbox (badness 10000) in paragraph at lines 122--122
-[]|\T1/lmr/m/n/12 Bounded
+Overfull \hbox (29.8056pt too wide) in paragraph at lines 153--154
+\T1/lmr/m/n/12 ergy_consistency_loss()
 
-Underfull \hbox (badness 10000) in paragraph at lines 134--134
+Overfull \hbox (1.62495pt too wide) in paragraph at lines 155--155
+[]|\T1/lmr/m/n/12 Smoothness| 
+
+Underfull \hbox (badness 10000) in paragraph at lines 156--157
+[]|\T1/lmr/m/n/12 PINN: tem-po-
+
+Overfull \hbox (22.36469pt too wide) in paragraph at lines 156--157
+\T1/lmr/m/n/12 ral_smoothness_loss()
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
+[]|\T1/lmr/m/n/12 PINN: sta-bil-
+
+Underfull \hbox (badness 10000) in paragraph at lines 159--160
+\T1/lmr/m/n/12 ity_loss() line
+
+Overfull \hbox (17.10728pt too wide) in alignment at lines 142--164
+ [] [] [] [] [] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 170--171
+[]|\T1/lmr/bx/n/12 Implemented
+
+Underfull \hbox (badness 10000) in paragraph at lines 172--172
 []|\T1/lmr/bx/n/12 No Ar-ti-fi-cial
 
-Underfull \hbox (badness 10000) in paragraph at lines 146--146
-[]|\T1/lmr/bx/n/12 6 Learn-able Pa-
+Underfull \hbox (badness 10000) in paragraph at lines 173--173
+[]|\T1/lmr/m/n/12 Removed un-phys-i-cal damp-ing terms
 
-Underfull \hbox (badness 10000) in paragraph at lines 147--148
-[]|\T1/lmr/m/n/12 Simultaneously iden-ti-fies mass, in-er-tia ten-sor
+Underfull \hbox (badness 10000) in paragraph at lines 184--185
+\T1/lmr/m/n/12 tor_dynamics()
 
-Underfull \hbox (badness 2626) in paragraph at lines 147--148
-\T1/lmr/m/n/12 ($\OML/lmm/m/it/12 J[]; J[]; J[]$\T1/lmr/m/n/12 ), and mo-tor co
--ef-fi-cients ($\OML/lmm/m/it/12 k[]; k[]$\T1/lmr/m/n/12 ) dur-ing
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\T1/lmr/bx/n/12 Temporal
+
+Underfull \hbox (badness 1360) in paragraph at lines 187--187
+\T1/lmr/m/n/12 tion lim-its, achiev-ing 95-99% im-prove-
+
+Underfull \hbox (badness 10000) in paragraph at lines 188--189
+[]|\T1/lmr/m/n/12 PINN: tem-po-
+
+Overfull \hbox (26.89879pt too wide) in paragraph at lines 188--189
+\T1/lmr/m/n/12 ral_smoothness_loss()
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+[]|\T1/lmr/m/n/12 PINN: params
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+\T1/lmr/m/n/12 dict line
+
+Underfull \hbox (badness 10000) in paragraph at lines 192--193
+\T1/lmr/m/n/12 55-62, con-
+
+Overfull \hbox (13.6514pt too wide) in paragraph at lines 192--193
+\T1/lmr/m/n/12 strain_parameters()
 [2{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}{
 C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.enc}]
 
-Underfull \hbox (badness 10000) in paragraph at lines 157--157
-[]|\T1/lmr/bx/n/12 Normalization
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+LaTeX Warning: Command \textdegree invalid in math mode on input line 204.
 
 
-LaTeX Warning: Command \textdegree invalid in math mode on input line 159.
+LaTeX Warning: Command \textdegree invalid in math mode on input line 204.
 
+
+Underfull \hbox (badness 4316) in paragraph at lines 205--206
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 10000) in paragraph at lines 207--207
+[]|\T1/lmr/m/n/12 Angular rates
+
+Underfull \hbox (badness 4316) in paragraph at lines 208--209
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 5316) in paragraph at lines 210--210
+[]|\T1/lmr/m/n/12 Vertical ve-loc-ity
+
+Underfull \hbox (badness 10000) in paragraph at lines 210--210
+[]|\T1/lmr/m/n/12 Realistic climb/descent
+
+Underfull \hbox (badness 4316) in paragraph at lines 211--212
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Underfull \hbox (badness 4316) in paragraph at lines 214--215
+[]|\T1/lmr/m/n/12 PINN: line 132
+
+Overfull \hbox (4.7004pt too wide) in alignment at lines 200--216
+ [] [] [] [] 
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd) [3]
 [4] (presentation_physics_reference.aux) )
 (see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
@@ -357,5 +484,5 @@ ograms/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/sreej/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sreej/AppData/Local/Pr
 ograms/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej/AppData/Local/Pro
 grams/MiKTeX/fonts/type1/public/lm/lmtt12.pfb>
-Output written on presentation_physics_reference.pdf (4 pages, 195771 bytes).
+Output written on presentation_physics_reference.pdf (4 pages, 196706 bytes).
 Transcript written on presentation_physics_reference.log.

@@ -23,21 +23,27 @@
 
 \subsection*{1. Rotational Dynamics (Euler's Equations)}
 
-\begin{longtable}{|p{0.25\textwidth}|p{0.45\textwidth}|p{0.2\textwidth}|}
+\begin{longtable}{|p{0.2\textwidth}|p{0.32\textwidth}|p{0.15\textwidth}|p{0.23\textwidth}|}
 \hline
-\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} \\
+\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} & \textbf{Used In} \\
 \hline
-\textbf{Roll Angular Acceleration} &
+\textbf{Roll ($\dot{p}$)} &
 $\dot{p} = \frac{J_{yy} - J_{zz}}{J_{xx}} \cdot q \cdot r + \frac{\tau_x}{J_{xx}}$ &
-Cross-coupling, NO damping \\
+NO damping &
+Data Gen: line 243 \newline
+PINN Loss: line 108 \\
 \hline
-\textbf{Pitch Angular Acceleration} &
+\textbf{Pitch ($\dot{q}$)} &
 $\dot{q} = \frac{J_{zz} - J_{xx}}{J_{yy}} \cdot p \cdot r + \frac{\tau_y}{J_{yy}}$ &
-Cross-coupling, NO damping \\
+NO damping &
+Data Gen: line 244 \newline
+PINN Loss: line 109 \\
 \hline
-\textbf{Yaw Angular Acceleration} &
+\textbf{Yaw ($\dot{r}$)} &
 $\dot{r} = \frac{J_{xx} - J_{yy}}{J_{zz}} \cdot p \cdot q + \frac{\tau_z}{J_{zz}}$ &
-Cross-coupling, NO damping \\
+NO damping &
+Data Gen: line 245 \newline
+PINN Loss: line 110 \\
 \hline
 \end{longtable}
 
@@ -45,37 +51,47 @@ Cross-coupling, NO damping \\
 
 \subsection*{2. Euler Kinematics (Attitude Rate Equations)}
 
-\begin{longtable}{|p{0.25\textwidth}|p{0.45\textwidth}|p{0.2\textwidth}|}
+\begin{longtable}{|p{0.2\textwidth}|p{0.32\textwidth}|p{0.15\textwidth}|p{0.23\textwidth}|}
 \hline
-\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} \\
+\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} & \textbf{Used In} \\
 \hline
-\textbf{Roll Rate} &
+\textbf{Roll ($\dot{\phi}$)} &
 $\dot{\phi} = p + \sin(\phi)\tan(\theta) \cdot q + \cos(\phi)\tan(\theta) \cdot r$ &
-Nonlinear coupling \\
+Nonlinear &
+Data Gen: line 251 \newline
+PINN Loss: line 113 \\
 \hline
-\textbf{Pitch Rate} &
+\textbf{Pitch ($\dot{\theta}$)} &
 $\dot{\theta} = \cos(\phi) \cdot q - \sin(\phi) \cdot r$ &
-Nonlinear coupling \\
+Nonlinear &
+Data Gen: line 252 \newline
+PINN Loss: line 114 \\
 \hline
-\textbf{Yaw Rate} &
+\textbf{Yaw ($\dot{\psi}$)} &
 $\dot{\psi} = \frac{\sin(\phi) \cdot q + \cos(\phi) \cdot r}{\cos(\theta)}$ &
-Singularity at $\theta = \pm 90°$ \\
+Gimbal lock &
+Data Gen: line 253 \newline
+PINN Loss: line 115 \\
 \hline
 \end{longtable}
 
 \subsection*{3. Translational Dynamics (Vertical Motion)}
 
-\begin{longtable}{|p{0.25\textwidth}|p{0.45\textwidth}|p{0.2\textwidth}|}
+\begin{longtable}{|p{0.22\textwidth}|p{0.35\textwidth}|p{0.15\textwidth}|p{0.18\textwidth}|}
 \hline
-\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} \\
+\textbf{Equation} & \textbf{Implementation} & \textbf{Notes} & \textbf{Used In} \\
 \hline
-\textbf{Vertical Acceleration} &
+\textbf{Vertical Accel. ($\dot{w}$)} &
 $\dot{w} = -\frac{T \cdot \cos(\theta) \cdot \cos(\phi)}{m} + g - 0.05 \cdot v_z \cdot |v_z|$ &
-Quadratic aerodynamic drag \\
+Quadratic drag &
+Data Gen: 274 \newline
+PINN: 119 \\
 \hline
-\textbf{Altitude Rate} &
+\textbf{Altitude ($\dot{z}$)} &
 $\dot{z} = v_z$ &
-Simple integration (NED frame) \\
+NED frame &
+Data Gen: 289 \newline
+PINN: (implicit) \\
 \hline
 \end{longtable}
 
@@ -83,68 +99,97 @@ Simple integration (NED frame) \\
 
 \subsection*{4. Physical Parameters}
 
-\begin{longtable}{|p{0.15\textwidth}|p{0.2\textwidth}|p{0.15\textwidth}|p{0.3\textwidth}|}
+\begin{longtable}{|p{0.12\textwidth}|p{0.15\textwidth}|p{0.13\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|}
 \hline
-\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} & \textbf{Description} \\
+\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} & \textbf{Description} & \textbf{Used In} \\
 \hline
-Mass & $m$ & 0.068 kg & Total quadrotor mass \\
+Mass & $m$ & 0.068 kg & Total quadrotor mass &
+Data: line 19 \newline
+PINN: lines 59, 119, 204, 208 \\
 \hline
-Roll Inertia & $J_{xx}$ & $6.86 \times 10^{-5}$ kg·m² & Moment of inertia (x-axis) \\
+Roll Inertia & $J_{xx}$ & $6.86 \times 10^{-5}$ kg·m² & Moment of inertia (x-axis) &
+Data: line 16 \newline
+PINN: lines 56, 104, 108, 204 \\
 \hline
-Pitch Inertia & $J_{yy}$ & $9.2 \times 10^{-5}$ kg·m² & Moment of inertia (y-axis) \\
+Pitch Inertia & $J_{yy}$ & $9.2 \times 10^{-5}$ kg·m² & Moment of inertia (y-axis) &
+Data: line 17 \newline
+PINN: lines 57, 104-105, 109, 204 \\
 \hline
-Yaw Inertia & $J_{zz}$ & $1.366 \times 10^{-4}$ kg·m² & Moment of inertia (z-axis) \\
+Yaw Inertia & $J_{zz}$ & $1.366 \times 10^{-4}$ kg·m² & Moment of inertia (z-axis) &
+Data: line 18 \newline
+PINN: lines 58, 105-106, 110, 204 \\
 \hline
-Thrust Coefficient & $k_t$ & 0.01 N/(rad/s)² & Motor thrust constant \\
+Thrust Coeff. & $k_t$ & 0.01 N/(rad/s)² & Motor thrust constant &
+Data: line 20 \newline
+PINN: line 60 (learnable) \\
 \hline
-Torque Coefficient & $k_q$ & $7.8263 \times 10^{-4}$ N·m/(rad/s)² & Motor torque constant \\
+Torque Coeff. & $k_q$ & $7.8263 \times 10^{-4}$ N·m/(rad/s)² & Motor torque constant &
+Data: line 21 \newline
+PINN: line 61 (learnable) \\
 \hline
-Gravity & $g$ & 9.81 m/s² & Fixed constant (NOT learned) \\
+Gravity & $g$ & 9.81 m/s² & Fixed constant &
+Data: line 23 \newline
+PINN: line 64 (NOT learned) \\
 \hline
-Drag Coefficient & $c_d$ & 0.05 kg/m & Quadratic drag coefficient \\
+Drag Coeff. & $c_d$ & 0.05 kg/m & Quadratic drag &
+Data: line 271 \newline
+PINN: line 118 \\
 \hline
 \end{longtable}
 
 \subsection*{5. PINN Loss Components}
 
-\begin{longtable}{|p{0.2\textwidth}|p{0.35\textwidth}|p{0.15\textwidth}|p{0.15\textwidth}|}
+\begin{longtable}{|p{0.18\textwidth}|p{0.28\textwidth}|p{0.13\textwidth}|p{0.1\textwidth}|p{0.21\textwidth}|}
 \hline
-\textbf{Loss Type} & \textbf{Mathematical Form} & \textbf{Purpose} & \textbf{Weight} \\
+\textbf{Loss Type} & \textbf{Mathematical Form} & \textbf{Purpose} & \textbf{Weight} & \textbf{Implemented In} \\
 \hline
-Data Loss & $\mathcal{L}_{data} = \|\hat{x} - x_{true}\|^2$ & Fit predictions to data & 1.0 \\
+Data Loss & $\mathcal{L}_{data} = \|\hat{x} - x_{true}\|^2$ & Fit to data & 1.0 &
+Training scripts (MSE loss) \\
 \hline
-Physics Loss & $\mathcal{L}_{physics} = \|\hat{x}_{NN} - \hat{x}_{physics}\|^2$ & Enforce Newton-Euler equations & 20.0 \\
+Physics Loss & $\mathcal{L}_{physics} = \|\hat{x}_{NN} - \hat{x}_{physics}\|^2$ & Newton-Euler & 20.0 &
+PINN: physics\_loss() line 95-142 \\
 \hline
-Energy Loss & $\mathcal{L}_{energy} = (E_{pred} - E_{true})^2$ & Energy conservation & 0.05 \\
+Energy Loss & $\mathcal{L}_{energy} = (E_{pred} - E_{true})^2$ & Conservation & 0.05 &
+PINN: energy\_consistency\_loss() line 196-214 \\
 \hline
-Temporal Loss & $\mathcal{L}_{temporal} = \|\dot{x}\|^2$ & Smooth state transitions & 10.0 \\
+Temporal Loss & $\mathcal{L}_{temporal} = \|\dot{x}\|^2$ & Smoothness & 10.0 &
+PINN: temporal\_smoothness\_loss() line 144-173 \\
 \hline
-Stability Loss & $\mathcal{L}_{stability} = \sum \max(|x_i| - x_{max}, 0)^2$ & Bounded predictions & 5.0 \\
+Stability Loss & $\mathcal{L}_{stability} = \sum \max(|x_i| - x_{max}, 0)^2$ & Bounds & 5.0 &
+PINN: stability\_loss() line 175-194 \\
 \hline
-Regularization & $\mathcal{L}_{reg} = \sum w_i^2$ & Prevent overfitting & 0.01 \\
+Regularization & $\mathcal{L}_{reg} = \sum w_i^2$ & No overfit & 0.01 &
+Training scripts \\
 \hline
 \end{longtable}
 
 \subsection*{6. Key Physics Innovations}
 
-\begin{longtable}{|p{0.25\textwidth}|p{0.65\textwidth}|}
+\begin{longtable}{|p{0.22\textwidth}|p{0.48\textwidth}|p{0.2\textwidth}|}
 \hline
-\textbf{Innovation} & \textbf{Description} \\
+\textbf{Innovation} & \textbf{Description} & \textbf{Implemented In} \\
 \hline
 \textbf{No Artificial Damping} &
-Removed unphysical damping terms ($-2p, -2q, -2r$) from rotational dynamics. Real Euler equations have NO viscous damping. \\
+Removed unphysical damping terms ($-2p, -2q, -2r$) from rotational dynamics. Real Euler equations have NO viscous damping. &
+Data Gen: lines 241-245 \newline
+PINN: lines 108-110 \\
 \hline
 \textbf{Quadratic Drag} &
-Changed from linear drag ($-0.1 \cdot v_z$) to realistic quadratic aerodynamic drag ($-0.05 \cdot v_z \cdot |v_z|$). \\
+Changed from linear drag ($-0.1 \cdot v_z$) to realistic quadratic aerodynamic drag ($-0.05 \cdot v_z \cdot |v_z|$). &
+Data Gen: lines 269-274 \newline
+PINN: line 119 \\
 \hline
 \textbf{Motor Dynamics} &
-Realistic motor time constants (80ms spin-up) and slew rate limits prevent instantaneous thrust/torque changes. \\
+Realistic motor time constants (80ms spin-up) and slew rate limits prevent instantaneous thrust/torque changes. &
+Data Gen: motor\_dynamics() line 118-133, slew limits line 98-116 \\
 \hline
 \textbf{Temporal Smoothness} &
-Enforces physical velocity and acceleration limits, achieving 95-99\% improvement over baseline by eliminating high-frequency noise. \\
+Enforces physical velocity and acceleration limits, achieving 95-99\% improvement over baseline by eliminating high-frequency noise. &
+PINN: temporal\_smoothness\_loss() line 144-173 \\
 \hline
 \textbf{6 Learnable Parameters} &
-Simultaneously identifies mass, inertia tensor ($J_{xx}, J_{yy}, J_{zz}$), and motor coefficients ($k_t, k_q$) during training. \\
+Simultaneously identifies mass, inertia tensor ($J_{xx}, J_{yy}, J_{zz}$), and motor coefficients ($k_t, k_q$) during training. &
+PINN: params dict line 55-62, constrain\_parameters() line 216-229 \\
 \hline
 \end{longtable}
 
@@ -152,17 +197,21 @@ Simultaneously identifies mass, inertia tensor ($J_{xx}, J_{yy}, J_{zz}$), and m
 
 To balance gradient contributions from different physical variables with varying magnitudes:
 
-\begin{longtable}{|p{0.25\textwidth}|p{0.25\textwidth}|p{0.35\textwidth}|}
+\begin{longtable}{|p{0.2\textwidth}|p{0.2\textwidth}|p{0.3\textwidth}|p{0.2\textwidth}|}
 \hline
-\textbf{Variable} & \textbf{Normalization Scale} & \textbf{Reason} \\
+\textbf{Variable} & \textbf{Scale} & \textbf{Reason} & \textbf{Used In} \\
 \hline
-Angles ($\phi, \theta, \psi$) & 0.2 rad ($\approx 11°$) & Typical attitude range \\
+Angles ($\phi, \theta, \psi$) & 0.2 rad ($\approx 11°$) & Typical attitude range &
+PINN: line 132 (scales dict) \\
 \hline
-Angular rates ($p, q, r$) & 0.1 rad/s & Typical rotation speed \\
+Angular rates ($p, q, r$) & 0.1 rad/s & Typical rotation speed &
+PINN: line 132 (scales dict) \\
 \hline
-Vertical velocity ($v_z$) & 5.0 m/s & Realistic climb/descent rate \\
+Vertical velocity ($v_z$) & 5.0 m/s & Realistic climb/descent rate &
+PINN: line 132 (scales dict) \\
 \hline
-Altitude ($z$) & 5.0 m & Flight envelope height \\
+Altitude ($z$) & 5.0 m & Flight envelope height &
+PINN: line 132 (scales dict) \\
 \hline
 \end{longtable}
 
