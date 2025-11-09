@@ -1,0 +1,213 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{xcolor}
+
+\geometry{margin=0.75in}
+
+\title{\textbf{Equation Mapping for All 18 State Outputs}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section*{Comprehensive Equation Mapping}
+
+This document maps each of the 18 state outputs to the specific physics equation used to compute it.
+
+\subsection*{Rotational Dynamics Outputs (6 variables)}
+
+\begin{longtable}{|p{0.1\textwidth}|p{0.25\textwidth}|p{0.35\textwidth}|p{0.2\textwidth}|}
+\hline
+\textbf{\#} & \textbf{Output} & \textbf{Equation Used} & \textbf{Location} \\
+\hline
+\endhead
+
+1 & $\dot{p}$ (roll acceleration) &
+$\dot{p} = \frac{J_{yy} - J_{zz}}{J_{xx}} \cdot q \cdot r + \frac{\tau_x}{J_{xx}}$ &
+Data gen: line 243 \newline PINN: line 260 \\
+\hline
+
+2 & $\dot{q}$ (pitch acceleration) &
+$\dot{q} = \frac{J_{zz} - J_{xx}}{J_{yy}} \cdot p \cdot r + \frac{\tau_y}{J_{yy}}$ &
+Data gen: line 244 \newline PINN: line 261 \\
+\hline
+
+3 & $\dot{r}$ (yaw acceleration) &
+$\dot{r} = \frac{J_{xx} - J_{yy}}{J_{zz}} \cdot p \cdot q + \frac{\tau_z}{J_{zz}}$ &
+Data gen: line 245 \newline PINN: line 262 \\
+\hline
+
+4 & $p$ (roll rate) &
+$p_{t+dt} = p_t + \dot{p} \cdot dt$ (integration) &
+Data gen: line 247 \newline PINN: line 264 \\
+\hline
+
+5 & $q$ (pitch rate) &
+$q_{t+dt} = q_t + \dot{q} \cdot dt$ (integration) &
+Data gen: line 248 \newline PINN: line 265 \\
+\hline
+
+6 & $r$ (yaw rate) &
+$r_{t+dt} = r_t + \dot{r} \cdot dt$ (integration) &
+Data gen: line 249 \newline PINN: line 266 \\
+\hline
+\end{longtable}
+
+\subsection*{Euler Angle Kinematics Outputs (6 variables)}
+
+\begin{longtable}{|p{0.1\textwidth}|p{0.25\textwidth}|p{0.35\textwidth}|p{0.2\textwidth}|}
+\hline
+\textbf{\#} & \textbf{Output} & \textbf{Equation Used} & \textbf{Location} \\
+\hline
+\endhead
+
+7 & $\dot{\phi}$ (roll angle rate) &
+\textcolor{red}{Data gen:} $\dot{\phi} = p + \sin(\phi)\tan(\theta) \cdot q + \cos(\phi)\tan(\theta) \cdot r$ \newline
+\textcolor{blue}{PINN:} $\dot{\phi} = p$ (simplified) &
+Data gen: line 251 \newline PINN: line 269 \\
+\hline
+
+8 & $\dot{\theta}$ (pitch angle rate) &
+\textcolor{red}{Data gen:} $\dot{\theta} = \cos(\phi) \cdot q - \sin(\phi) \cdot r$ \newline
+\textcolor{blue}{PINN:} $\dot{\theta} = q$ (simplified) &
+Data gen: line 252 \newline PINN: line 270 \\
+\hline
+
+9 & $\dot{\psi}$ (yaw angle rate) &
+\textcolor{red}{Data gen:} $\dot{\psi} = \frac{\sin(\phi) \cdot q + \cos(\phi) \cdot r}{\cos(\theta)}$ \newline
+\textcolor{blue}{PINN:} $\dot{\psi} = r$ (simplified) &
+Data gen: line 253 \newline PINN: line 271 \\
+\hline
+
+10 & $\phi$ (roll angle) &
+$\phi_{t+dt} = \phi_t + \dot{\phi} \cdot dt$ (integration) &
+Data gen: line 255 \newline PINN: line 269 \\
+\hline
+
+11 & $\theta$ (pitch angle) &
+$\theta_{t+dt} = \theta_t + \dot{\theta} \cdot dt$ (integration) &
+Data gen: line 256 \newline PINN: line 270 \\
+\hline
+
+12 & $\psi$ (yaw angle) &
+$\psi_{t+dt} = \psi_t + \dot{\psi} \cdot dt$ (integration) &
+Data gen: line 257 \newline PINN: line 271 \\
+\hline
+\end{longtable}
+
+\textbf{Note:} Red equations show data generation (full nonlinear). Blue equations show PINN physics loss (simplified for small angles).
+
+\subsection*{Translational Dynamics Outputs (6 variables)}
+
+\begin{longtable}{|p{0.1\textwidth}|p{0.25\textwidth}|p{0.35\textwidth}|p{0.2\textwidth}|}
+\hline
+\textbf{\#} & \textbf{Output} & \textbf{Equation Used} & \textbf{Location} \\
+\hline
+\endhead
+
+13 & $\dot{u}$ (x-velocity acceleration) &
+\textcolor{red}{Data gen:} $\dot{u} = r \cdot v - q \cdot w + \frac{f_x}{m} - g\sin(\theta) - c_d \cdot u \cdot |u|$ \newline
+\textcolor{blue}{PINN:} NOT USED &
+Data gen: line 272 \newline PINN: N/A \\
+\hline
+
+14 & $\dot{v}$ (y-velocity acceleration) &
+\textcolor{red}{Data gen:} $\dot{v} = p \cdot w - r \cdot u + \frac{f_y}{m} + g\cos(\theta)\sin(\phi) - c_d \cdot v \cdot |v|$ \newline
+\textcolor{blue}{PINN:} NOT USED &
+Data gen: line 273 \newline PINN: N/A \\
+\hline
+
+15 & $\dot{w}$ (z-velocity acceleration) &
+\textcolor{red}{Data gen:} $\dot{w} = q \cdot u - p \cdot v + \frac{f_z}{m} + g\cos(\theta)\cos(\phi) - c_d \cdot w \cdot |w|$ \newline
+\textcolor{blue}{PINN:} $\dot{v}_z = -g + \frac{T}{m \cdot \cos(\theta) \cdot \cos(\phi)}$ (NO drag) &
+Data gen: line 274 \newline PINN: line 252 \\
+\hline
+
+16 & $u$ (x-velocity) &
+$u_{t+dt} = u_t + \dot{u} \cdot dt$ (integration) &
+Data gen: line 276 \newline PINN: N/A \\
+\hline
+
+17 & $v$ (y-velocity) &
+$v_{t+dt} = v_t + \dot{v} \cdot dt$ (integration) &
+Data gen: line 277 \newline PINN: N/A \\
+\hline
+
+18 & $w$ (z-velocity, $v_z$) &
+$w_{t+dt} = w_t + \dot{w} \cdot dt$ (integration) &
+Data gen: line 278 \newline PINN: line 253 \\
+\hline
+\end{longtable}
+
+\textbf{Note:} PINN only models vertical (z-axis) translational dynamics, not x/y dynamics.
+
+\subsection*{Additional Position Outputs (NOT in 18 core states)}
+
+\begin{longtable}{|p{0.15\textwidth}|p{0.4\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Output} & \textbf{Equation Used} & \textbf{Why Not in PINN} \\
+\hline
+\endhead
+
+$\dot{x}$ (x-position rate) &
+Body-to-world rotation matrix transformation: \newline
+$\dot{x} = \cos(\psi)\cos(\theta) \cdot u + [\cos(\psi)\sin(\theta)\sin(\phi) - \sin(\psi)\cos(\phi)] \cdot v + [\sin(\psi)\sin(\phi) + \cos(\psi)\sin(\theta)\cos(\phi)] \cdot w$ &
+PINN focuses on body-frame dynamics, not world-frame position \\
+\hline
+
+$\dot{y}$ (y-position rate) &
+Body-to-world rotation matrix transformation: \newline
+$\dot{y} = \sin(\psi)\cos(\theta) \cdot u + [\cos(\psi)\cos(\phi) + \sin(\psi)\sin(\theta)\sin(\phi)] \cdot v + [\sin(\psi)\sin(\theta)\cos(\phi) - \cos(\psi)\sin(\phi)] \cdot w$ &
+PINN focuses on body-frame dynamics, not world-frame position \\
+\hline
+
+$\dot{z}$ (z-position rate) &
+$\dot{z} = -[\sin(\theta) \cdot u - \cos(\theta)\sin(\phi) \cdot v - \cos(\theta)\cos(\phi) \cdot w]$ &
+Already captured through $v_z = w$ in body frame \\
+\hline
+
+$x, y, z$ (positions) &
+Integration of $\dot{x}, \dot{y}, \dot{z}$ &
+Position tracking not required for dynamics learning \\
+\hline
+\end{longtable}
+
+\subsection*{Summary of Discrepancies}
+
+\begin{longtable}{|p{0.25\textwidth}|p{0.3\textwidth}|p{0.35\textwidth}|}
+\hline
+\textbf{Variable} & \textbf{Data Generation} & \textbf{PINN Physics Loss} \\
+\hline
+\endhead
+
+Euler angle rates ($\dot{\phi}, \dot{\theta}, \dot{\psi}$) &
+Full nonlinear Euler kinematics with trigonometric coupling &
+Simplified: $\dot{\phi} = p$, $\dot{\theta} = q$, $\dot{\psi} = r$ (small angle approximation) \\
+\hline
+
+Vertical acceleration ($\dot{w}$) &
+Includes quadratic aerodynamic drag: $-c_d \cdot w \cdot |w|$ where $c_d = 0.05$ kg/m &
+NO drag term: $\dot{v}_z = -g + \frac{T}{m \cdot \cos\theta \cdot \cos\phi}$ \\
+\hline
+
+Horizontal dynamics ($\dot{u}, \dot{v}$) &
+Full 6DOF translational equations with Coriolis terms and drag &
+NOT MODELED in PINN \\
+\hline
+
+Position ($x, y, z$) &
+Computed via body-to-world transformation &
+NOT MODELED in PINN (only altitude $z$ tracked) \\
+\hline
+\end{longtable}
+
+\end{document}
