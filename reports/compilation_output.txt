@@ -120,7 +120,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.36 ...Summary Visualization}{40}{subsection.6.2}
+l.36 ...Summary Visualization}{39}{subsection.6.2}
                                                   % [1] [2] [3{C:/Users/sreej/A
 ppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]) [4]
 Overfull \hbox (169.62154pt too wide) in paragraph at lines 115--116
@@ -187,7 +187,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 256--256
 Underfull \hbox (badness 10000) in paragraph at lines 258--259
 []|\T1/lmr/m/n/12 (+20) Complete train-
 [12]
-Overfull \hbox (169.62154pt too wide) in paragraph at lines 267--268
+Overfull \hbox (84.81076pt too wide) in paragraph at lines 267--268
  [][] 
 [13] [14 <./pinn_schematics.pdf>]
 Underfull \hbox (badness 10000) in paragraph at lines 287--287
@@ -226,7 +226,7 @@ Overfull \hbox (4.09679pt too wide) in paragraph at lines 343--343
 
 Overfull \hbox (7.27pt too wide) in alignment at lines 331--359
  [] [] [] [] [] 
-[16]
+
 Overfull \hbox (0.60423pt too wide) in paragraph at lines 365--365
 []|\T1/lmr/bx/n/12 (-20) Symbol| 
 
@@ -240,11 +240,11 @@ $[]$|
 Underfull \hbox (badness 10000) in paragraph at lines 377--378
 []|$\OT1/lmr/m/n/12 (+20) 7\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 (+20) 8263 \OMS/lm
 sy/m/n/12 ^^B
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+[16] (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmtt.fd) [17]
-Overfull \hbox (169.62154pt too wide) in paragraph at lines 413--414
+Overfull \hbox (84.81076pt too wide) in paragraph at lines 413--414
  [][] 
-[18]
+
 Underfull \hbox (badness 5847) in paragraph at lines 421--421
 []|\T1/lmr/bx/n/12 (+20) Loss Com-po-
 
@@ -274,10 +274,10 @@ Overfull \hbox (5.24503pt too wide) in paragraph at lines 429--429
 
 Underfull \hbox (badness 2253) in paragraph at lines 429--429
 []|\T1/lmr/m/n/12 (+20) Physical pa-ram-e-ter
-[19 <./pinn_schematics.pdf>]
+[18 <./pinn_schematics.pdf>]
 Underfull \hbox (badness 10000) in paragraph at lines 446--446
 []|\T1/lmr/bx/n/12 (+20) Dynamics
-[20{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.e
+[19{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathex.e
 nc}]
 Underfull \hbox (badness 10000) in paragraph at lines 472--472
 []|\T1/lmr/bx/n/12 (+20) Learnable
@@ -341,10 +341,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 490--490
 
 Overfull \hbox (8.64964pt too wide) in paragraph at lines 492--492
 []|\T1/lmr/bx/n/12 (-20) Autoregressive
-[21] [22]
+[20] [21]
 Overfull \hbox (169.62154pt too wide) in paragraph at lines 502--503
  [][] 
-[23]
+[22]
 Overfull \hbox (58.24652pt too wide) in alignment at lines 512--532
  [] [] [] [] 
 
@@ -437,10 +437,10 @@ Underfull \hbox (badness 10000) in paragraph at lines 553--553
 
 Overfull \hbox (2.6975pt too wide) in alignment at lines 539--555
  [] [] [] [] [] [] 
-[24]
+[23]
 Underfull \hbox (badness 10000) in paragraph at lines 579--579
 []|\T1/lmr/bx/n/10.95 (+20) Parameter Cat-e-
-[25]
+[24]
 Underfull \hbox (badness 1953) in paragraph at lines 609--609
 []|\T1/lmr/bx/n/10.95 (+20) Physics In-te-
 
@@ -476,11 +476,11 @@ Underfull \hbox (badness 1082) in paragraph at lines 628--628
 
 Underfull \hbox (badness 10000) in paragraph at lines 630--630
 []|\T1/lmr/bx/n/10.95 (+20) Performance
-[26]
+[25]
 Underfull \hbox (badness 6284) in paragraph at lines 652--653
 []|\T1/lmr/bx/n/10.95 (+20) REAL DY-NAM-ICS\T1/lmr/m/n/10.95 (+20) : No ar-ti-f
 i-cial damp-ing,
-[27]
+[26]
 Underfull \hbox (badness 10000) in paragraph at lines 711--711
 []|\T1/lmr/bx/n/10.95 (+20) Period
 
@@ -489,11 +489,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 711--711
 
 Underfull \hbox (badness 10000) in paragraph at lines 711--711
 []|\T1/lmr/bx/n/10.95 (+20) High
-[28]
+[27]
 Underfull \hbox (badness 10000) in paragraph at lines 749--749
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B \OT1/lmr/m/n/10.95 (+20) 10[]$
-[29]
+[28]
 
 LaTeX Warning: Command \textdegree invalid in math mode on input line 775.
 
@@ -512,18 +512,18 @@ LaTeX Warning: Command \textdegree invalid in math mode on input line 791.
 
 LaTeX Warning: Command \textdegree invalid in math mode on input line 791.
 
-[30] [31] [32] [33]
+[29] [30] [31] [32]
 Overfull \hbox (41.14862pt too wide) in paragraph at lines 884--895
 [][] 
-[34] [35] [36 <../results/detailed/01_z_time_analysis.png> <../results/detailed
-/02_phi_time_analysis.png>] [37 <../results/detailed/03_theta_time_analysis.png
-> <../results/detailed/04_psi_time_analysis.png>] [38 <../results/detailed/05_p
-_time_analysis.png> <../results/detailed/06_q_time_analysis.png>] [39 <../resul
+[33] [34] [35 <../results/detailed/01_z_time_analysis.png> <../results/detailed
+/02_phi_time_analysis.png>] [36 <../results/detailed/03_theta_time_analysis.png
+> <../results/detailed/04_psi_time_analysis.png>] [37 <../results/detailed/05_p
+_time_analysis.png> <../results/detailed/06_q_time_analysis.png>] [38 <../resul
 ts/detailed/07_r_time_analysis.png> <../results/detailed/08_vz_time_analysis.pn
-g>] [40 <../results/summary.png>] [41] [42] [43] [44] [45] [46] [47]
+g>] [39 <../results/summary.png>] [40] [41] [42] [43] [44] [45] [46]
 Overfull \hbox (0.8992pt too wide) detected at line 1272
 \OMS/lmsy/m/n/10.95 L[] \OT1/lmr/m/n/10.95 = [] [] []
-[48]
+[47]
 Underfull \hbox (badness 10000) in paragraph at lines 1289--1289
 []|\T1/lmr/bx/n/10.95 (+20) True
 
@@ -562,7 +562,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1301--1301
 
 Overfull \hbox (2.6975pt too wide) in alignment at lines 1287--1303
  [] [] [] [] [] [] 
-[49] [50] [51] [52] [53]
+[48] [49] [50] [51] [52]
 
 ! LaTeX Error: Unicode character ├ (U+251C)
                not set up for use with LaTeX.
@@ -743,7 +743,7 @@ Type  H <return>  for immediate help.
                                                   
 l.1551 \end{verbatim}
                      
-[54] [55] [56] [57] [58] [59] [60]
+[53] [54] [55] [56] [57] [58] [59]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 1783.
@@ -756,16 +756,16 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 1783.
 
-[61] [62] [63] [64]
+[60] [61] [62] [63]
 Overfull \hbox (99.76834pt too wide) in paragraph at lines 1965--1993
  [][] 
-[65]
+[64]
 Overfull \hbox (25.09616pt too wide) in paragraph at lines 2001--2002
 \T1/lmr/m/n/10.95 (-20) The mod-u-lar de-sign sep-a-rat-ing Trans-la-tionalMod-
 ule $\OT1/lmr/m/n/10.95 (-20) (\OML/lmm/m/it/10.95 z; v[]\OT1/lmr/m/n/10.95 (-2
 0) )$ \T1/lmr/m/n/10.95 (-20) and Ro-ta-tionalMod-ule $\OT1/lmr/m/n/10.95 (-20)
  (\OML/lmm/m/it/10.95 ^^^; ^^R;  ; p; q; r\OT1/lmr/m/n/10.95 (-20) )$
-[66] [67]
+[65] [66]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 2056.
@@ -778,16 +778,16 @@ Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `math shift' on input line 2056.
 
-[68] [69] [70] [71]
+[67] [68] [69] [70]
 Overfull \hbox (8.05185pt too wide) in paragraph at lines 2230--2246
  [][] 
-[72] [73] [74]
+[71] [72] [73]
 Overfull \hbox (27.02069pt too wide) in paragraph at lines 2349--2360
  [][] 
 
 Overfull \hbox (72.75697pt too wide) in paragraph at lines 2367--2378
  [][] 
-[75]
+[74]
 Underfull \hbox (badness 1546) in paragraph at lines 2392--2392
 []|\T1/lmr/m/n/10.95 (+20) Out-of-distribution ex-
 
@@ -796,7 +796,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 2393--2393
 
 Underfull \hbox (badness 10000) in paragraph at lines 2394--2394
 []|\T1/lmr/m/n/10.95 (+20) Physics-only train-ing,
-[76] [77] [78] (quadrotor_pinn_report.aux) )
+[75] [76] [77] (quadrotor_pinn_report.aux) )
 (see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/sreej/Ap
 pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users
@@ -838,5 +838,5 @@ j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (79 pages, 6124457 bytes).
+Output written on quadrotor_pinn_report.pdf (78 pages, 6123566 bytes).
 Transcript written on quadrotor_pinn_report.log.

@@ -261,14 +261,14 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{Note:} Enhanced architecture with 256 neurons per layer (vs. 128 previously) and specialized coupling layer for physics-aware feature separation. The coupling layer branches into translational and rotational dynamics, then merges them to preserve physical coupling. Dropout regularization (p=0.1) and residual connections improve autoregressive stability. The network predicts 8 next state variables, with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
-\vspace{1em}
+\vspace{2em}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.4\textwidth,page=1]{pinn_schematics.pdf}
+\includegraphics[width=1.2\textwidth,page=1]{pinn_schematics.pdf}
 \caption{Optimized PINN v2 Architecture: Deep neural network with 256 neurons per layer, specialized coupling layer for physics-aware dynamics separation, dropout regularization, and residual connections. The network takes 12D input (states + controls) and outputs 8D next states, with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 268,558 parameters.}
 \label{fig:architecture}
 \end{figure}
-\vspace{1em}
+\vspace{2em}
 
 \subsection{Project Input/Output Specification}
 
@@ -407,14 +407,14 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 
 \subsection{Physics-Informed Loss Components}
 
-\vspace{1em}
+\vspace{2em}
 \begin{figure}[H]
 \centering
-\includegraphics[width=1.4\textwidth,page=4,trim=0 2cm 0 0,clip]{pinn_schematics.pdf}
+\includegraphics[width=1.2\textwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
 \caption{Multi-Objective Loss Function: The total loss combines seven different terms, each enforcing specific constraints. Weighted components include: Data loss ($\lambda=1.0$), Physics loss ($\lambda=20$), Energy conservation ($\lambda=0.05$), Temporal smoothness ($\lambda=10$), adaptive Rollout loss, Stability bounds, and L2 Regularization.}
 \label{fig:loss_breakdown}
 \end{figure}
-\vspace{1em}
+\vspace{2em}
 
 \begin{longtable}{|p{0.2\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
 \hline
