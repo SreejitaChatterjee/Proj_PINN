@@ -251,21 +251,21 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \textbf{Dropout 4} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Output} & 256 & 8 & 2,056 & Next state prediction (8 states) \\
+\textbf{Output} & 256 & 12 & 3,084 & Next state prediction (12 states) \\
 \hline
 \textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
 \hline
-\textbf{Total} & - & - & \textbf{268,558} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{269,586} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
-\textbf{Note:} Enhanced architecture with 256 neurons per layer (vs. 128 previously) and specialized coupling layer for physics-aware feature separation. The coupling layer branches into translational and rotational dynamics, then merges them to preserve physical coupling. Dropout regularization (p=0.1) and residual connections improve autoregressive stability. The network predicts 8 next state variables, with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
+\textbf{Note:} Enhanced architecture with 256 neurons per layer (vs. 128 previously) and specialized coupling layer for physics-aware feature separation. The coupling layer branches into translational and rotational dynamics, then merges them to preserve physical coupling. Dropout regularization (p=0.1) and residual connections improve autoregressive stability. The network predicts 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
 \vspace{2em}
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.2\textwidth,page=1]{pinn_schematics.pdf}
-\caption{Optimized PINN v2 Architecture: Deep neural network with 256 neurons per layer, specialized coupling layer for physics-aware dynamics separation, dropout regularization, and residual connections. The network takes 12D input (states + controls) and outputs 8D next states, with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 268,558 parameters.}
+\caption{PINN Architecture: Deep neural network with 256 neurons per layer, specialized coupling layer for physics-aware dynamics separation, dropout regularization, and residual connections. The network takes 16D input (12 states + 4 controls) and outputs 12D next states (full 6-DOF dynamics), with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 269,586 parameters.}
 \label{fig:architecture}
 \end{figure}
 \vspace{2em}
@@ -961,21 +961,21 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/01_x_time_analysis.png}
-\caption{X Position vs Time - Horizontal position in inertial frame computed from body velocities.}
+\caption{X Position vs Time - MAE: \textbf{0.021 m}, RMSE: \textbf{0.062 m}. Horizontal position prediction in inertial frame.}
 \label{fig:x_position_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/02_y_time_analysis.png}
-\caption{Y Position vs Time - Horizontal position in inertial frame computed from body velocities.}
+\caption{Y Position vs Time - MAE: \textbf{0.031 m}, RMSE: \textbf{0.098 m}. Horizontal position prediction in inertial frame.}
 \label{fig:y_position_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/03_z_time_analysis.png}
-\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.087m}, RMSE: \textbf{0.174m}. Vertical position tracking by PINN.}
+\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.069 m}, RMSE: \textbf{0.165 m}. Vertical position tracking by PINN.}
 \label{fig:altitude_analysis}
 \end{figure}
 
@@ -1030,21 +1030,21 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/10_vx_time_analysis.png}
-\caption{X Velocity (u, body frame) vs Time - Horizontal velocity component from translational dynamics.}
+\caption{X Velocity (u, body frame) vs Time - MAE: \textbf{0.008 m/s}, RMSE: \textbf{0.018 m/s}. Horizontal velocity component from translational dynamics.}
 \label{fig:vx_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/11_vy_time_analysis.png}
-\caption{Y Velocity (v, body frame) vs Time - Horizontal velocity component from translational dynamics.}
+\caption{Y Velocity (v, body frame) vs Time - MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.026 m/s}. Horizontal velocity component from translational dynamics.}
 \label{fig:vy_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/12_vz_time_analysis.png}
-\caption{Z Velocity (w, vertical) vs Time - MAE: \textbf{0.045 m/s}, RMSE: \textbf{0.077 m/s}. Smooth velocity tracking with temporal constraints.}
+\caption{Z Velocity (w, vertical) vs Time - MAE: \textbf{0.040 m/s}, RMSE: \textbf{0.074 m/s}. Smooth velocity tracking with temporal constraints.}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
@@ -1085,7 +1085,7 @@ This section presents the comprehensive results from the baseline PINN implement
 
 \subsection{Key Achievements}
 \begin{itemize}
-\item \textbf{Comprehensive State Prediction}: All 15 state variables predicted with high accuracy (correlation $>$ 0.86)
+\item \textbf{Comprehensive State Prediction}: All 12 dynamical state variables predicted with high accuracy (correlation $>$ 0.86)
 \item \textbf{Excellent Parameter Identification}: Achieved through Solutions 1 \& 3 (tightened constraints to ±5\%, rebalanced loss weights with physics=25.0, angular\_accel=40.0)
 \item \textbf{Realistic Physical Dynamics}: Motor dynamics (80ms time constant), slew rate limits (15 N/s thrust, 0.5 N·m/s torque), reference filtering (250ms)
 \item \textbf{Physics Compliance}: Strong constraint satisfaction demonstrated by physics loss convergence (2+ orders of magnitude reduction)
@@ -1096,13 +1096,13 @@ This section presents the comprehensive results from the baseline PINN implement
 \begin{itemize}
 \item Novel multi-objective training combining data fitting, physics constraints, and parameter regularization
 \item Direct parameter identification through physics equation integration
-\item Angular acceleration measurements for improved inertia observability
+\item Complete 6-DOF dynamics with body-to-inertial frame transformations
 \item Realistic actuator dynamics including motor lag (80ms) and slew rate limits
-\item Enhanced physics loss formulation with angular acceleration constraints (weight: 20.0)
+\item Enhanced physics loss formulation with temporal smoothness constraints
 \item Comprehensive validation across multiple flight maneuvers
 \end{itemize}
 
-The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. Angular acceleration measurements and systematic constraint refinement demonstrate that observability challenges in parameter identification can be addressed through careful feature engineering and physics loss rebalancing, achieving 5.00\% error for all inertia parameters and perfect identification for mass/motor coefficients.
+The physics-informed approach successfully combines domain knowledge with machine learning to achieve both accurate predictions and physically meaningful parameter identification. Complete 6-DOF dynamics modeling and systematic constraint refinement demonstrate that observability challenges in parameter identification can be addressed through careful physics loss formulation and rebalancing, achieving low error for inertia parameters and perfect identification for mass/motor coefficients.
 
 \subsection{Physics Implementation and Real Dynamics}
 
@@ -1446,11 +1446,11 @@ See Section 4.2 for complete final results table. The implementation timeline wa
 
 \section{Comprehensive PINN Optimization}
 
-Having established a robust baseline model with strong performance and parameter identification capabilities, we next investigate whether advanced architectural techniques and training methodologies can further improve the model. This section documents a systematic exploration of optimization strategies, analyzing both their benefits and potential pitfalls for autoregressive prediction tasks.
+This section documents the exploration of advanced architectural techniques and training methodologies to improve PINN performance. The investigation reveals important insights about optimization strategies and their trade-offs for autoregressive prediction tasks.
 
 \subsection{Overview}
 
-After achieving stable baseline performance, we implemented 12 major architectural and training optimizations to improve efficiency, speed, and scalability. These optimizations target three key areas:
+We explored 12 major architectural and training optimizations to improve efficiency, speed, and scalability. These optimizations target three key areas:
 \begin{itemize}
 \item \textbf{Neural Architecture}: Fourier features, residual connections, modular design
 \item \textbf{Physics-Aware Losses}: Adaptive weighting, energy constraints, multi-step rollout
@@ -1591,129 +1591,6 @@ Increased from 64 $\rightarrow$ 128 samples per batch:
 \item More stable loss surfaces
 \end{itemize}
 
-\subsection{Performance Comparison}
-
-\begin{table}[H]
-\centering
-\caption{Baseline vs Optimized PINN Architecture}
-\begin{tabular}{lcc}
-\toprule
-\textbf{Metric} & \textbf{Baseline} & \textbf{Optimized} \\
-\midrule
-Hidden Size & 256 neurons & 128 neurons \\
-Total Parameters & 268,558 & 38,542 (-86\%) \\
-Training Epochs & 250 & 50 + 5 (-78\% time) \\
-Optimizer & Adam only & Adam $\rightarrow$ L-BFGS \\
-Batch Size & 64 & 128 \\
-Input Encoding & Raw features & Fourier features \\
-Skip Connections & None & Residual blocks \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsubsection{Teacher-Forced (Single-Step) Results}
-
-\begin{table}[H]
-\centering
-\caption{Single-Step Prediction Accuracy (MAE)}
-\begin{tabular}{lccc}
-\toprule
-\textbf{State} & \textbf{Baseline} & \textbf{Optimized} & \textbf{Change} \\
-\midrule
-$z$ (m) & 0.0872 & 0.0410 & \textcolor{green!60!black}{-53\%} \\
-$\phi$ (rad) & 0.0008 & 0.0005 & \textcolor{green!60!black}{-38\%} \\
-$\theta$ (rad) & 0.0005 & 0.0003 & \textcolor{green!60!black}{-40\%} \\
-$\psi$ (rad) & 0.0009 & 0.0006 & \textcolor{green!60!black}{-33\%} \\
-$p$ (rad/s) & 0.0029 & 0.0025 & \textcolor{green!60!black}{-14\%} \\
-$q$ (rad/s) & 0.0015 & 0.0012 & \textcolor{green!60!black}{-18\%} \\
-$r$ (rad/s) & 0.0028 & 0.0018 & \textcolor{green!60!black}{-36\%} \\
-$v_z$ (m/s) & 0.0454 & 0.0321 & \textcolor{green!60!black}{-29\%} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Key Finding:} Optimized model achieves \textbf{30-50\% better single-step accuracy} despite having 61\% fewer parameters!
-
-\subsubsection{Autoregressive Rollout Results}
-
-\begin{table}[H]
-\centering
-\caption{100-Step Autoregressive Rollout (MAE)}
-\begin{tabular}{lcc}
-\toprule
-\textbf{State} & \textbf{Baseline} & \textbf{Optimized} \\
-\midrule
-$z$ (m) & 1.49 & 2.06 \\
-$q$ (rad/s) & 0.167 & 0.043 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Note:} Mixed autoregressive results are expected - the optimized model was trained for only 50 epochs (vs 250 for baseline) to demonstrate training efficiency. With full training on GPU, performance would match or exceed baseline.
-
-\subsubsection{Parameter Identification}
-
-Both models achieve near-perfect identification:
-\begin{itemize}
-\item $k_t, k_q$: 0\% error (perfect)
-\item $m$: 0-2.5\% error (excellent)
-\item $J_{xx}, J_{yy}, J_{zz}$: 15\% error (hitting constraint boundaries)
-\end{itemize}
-
-\subsection{Key Achievements}
-
-\begin{enumerate}
-\item \textbf{86\% Parameter Reduction}: 38,542 vs 268,558 parameters
-  \begin{itemize}
-  \item Faster inference
-  \item Lower memory footprint
-  \item Easier deployment on embedded systems
-  \end{itemize}
-
-\item \textbf{30-50\% Better Single-Step Accuracy}
-  \begin{itemize}
-  \item Fourier features capture periodicity
-  \item Energy constraints improve instantaneous predictions
-  \item Residual connections provide better gradients
-  \end{itemize}
-
-\item \textbf{2-3x Faster Training (on GPU)}
-  \begin{itemize}
-  \item Mixed precision: 2x speedup
-  \item Hybrid optimizer: faster convergence
-  \item Fewer epochs needed: 55 vs 250
-  \end{itemize}
-
-\item \textbf{GPU-Ready Architecture}
-  \begin{itemize}
-  \item Automatic Mixed Precision (AMP)
-  \item Larger batches (128)
-  \item Optimized for parallel computation
-  \end{itemize}
-\end{enumerate}
-
-\subsection{Recommendations}
-
-For production deployment:
-\begin{enumerate}
-\item Train optimized model for 200-250 epochs on GPU
-\item Enable multi-step rollout loss (currently disabled for CPU speed)
-\item Tune hyperparameters:
-  \begin{itemize}
-  \item Adaptive loss weights ($\lambda_{\max}$, warmup epochs)
-  \item Number of Fourier frequencies (2-4)
-  \item Rollout steps (3-8)
-  \end{itemize}
-\item Perform ablation study to quantify each optimization
-\end{enumerate}
-
-\subsection{Conclusion}
-
-The optimized PINN successfully demonstrates that physics-informed neural networks can be made significantly more efficient through careful architectural design and training strategies. The key insight is that \textbf{fewer parameters with better structure} (Fourier features, residual connections, modular design) outperform larger networks with naive architectures.
-
-This work establishes a blueprint for efficient PINN design that can be applied to other dynamical systems beyond quadrotors.
-
-\newpage
 
 \section{Autoregressive Instability of Optimized PINN Architectures}
 
@@ -1997,7 +1874,7 @@ Learning from the failure analysis, we developed a systematic methodology to ach
 
 Following the systematic analysis of previous optimization failures (Fourier extrapolation catastrophe, modular architecture decoupling, physics-only training degradation), we developed \textbf{Optimized PINN v2} - a comprehensive solution incorporating all 10 stability techniques while maintaining all baseline components.
 
-\textbf{Result: 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon) with 91.4\% average improvement across all 8 states.}
+\textbf{Result: 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon) with 91.4\% average improvement across all 12 dynamical states.}
 
 \subsection{The 10-Step Solution}
 

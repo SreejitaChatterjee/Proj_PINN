@@ -529,149 +529,184 @@ time_analysis.png> <../results/detailed/06_yaw_time_analysis.png>] [37 <../resu
 lts/detailed/07_p_time_analysis.png> <../results/detailed/08_q_time_analysis.pn
 g>] [38 <../results/detailed/09_r_time_analysis.png> <../results/detailed/10_vx
 _time_analysis.png>] [39 <../results/detailed/11_vy_time_analysis.png> <../resu
-lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/13_p_dot_time_a
-nalysis.png> <../results/detailed/14_q_dot_time_analysis.png>] [41 <../results/
-detailed/15_r_dot_time_analysis.png> <../results/detailed/16_thrust_time_analys
-is.png>] [42 <../results/detailed/17_torque_x_time_analysis.png> <../results/de
-tailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_time_ana
-lysis.png>] [43] [44] [45] [46] [47] [48] [49]
-Overfull \hbox (0.8992pt too wide) detected at line 1361
+lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/16_thrust_time_
+analysis.png> <../results/detailed/17_torque_x_time_analysis.png>] [41 <../resu
+lts/detailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_ti
+me_analysis.png>] [42] [43] [44] [45] [46] [47] [48]
+Overfull \hbox (0.8992pt too wide) detected at line 1338
 \OMS/lmsy/m/n/10.95 L[] \OT1/lmr/m/n/10.95 = [] [] []
-[50]
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) True
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Learned
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Absolute
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Relative
 
-Underfull \hbox (badness 3769) in paragraph at lines 1382--1383
+Underfull \hbox (badness 3769) in paragraph at lines 1359--1360
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 3769) in paragraph at lines 1384--1385
+Underfull \hbox (badness 3769) in paragraph at lines 1361--1362
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1386--1386
+Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1386--1386
+Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 3769) in paragraph at lines 1386--1387
+Underfull \hbox (badness 3769) in paragraph at lines 1363--1364
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1390--1390
+Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1390--1390
+Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Overfull \hbox (2.6975pt too wide) in alignment at lines 1376--1392
+Overfull \hbox (2.6975pt too wide) in alignment at lines 1353--1369
  [] [] [] [] [] [] 
-[51] [52] [53] [54]
+[50] [51] [52] [53]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1581.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 1581.
+(hyperref)                removing `math shift' on input line 1558.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1581.
+(hyperref)                removing `\rightarrow' on input line 1558.
 
-[55] [56] [57] [58] [59]
-Overfull \hbox (99.76834pt too wide) in paragraph at lines 1765--1793
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1558.
+
+[54] [55]
+Overfull \hbox (99.76834pt too wide) in paragraph at lines 1619--1647
  [][] 
-[60]
-Overfull \hbox (25.09616pt too wide) in paragraph at lines 1801--1802
+[56]
+Overfull \hbox (25.09616pt too wide) in paragraph at lines 1655--1656
 \T1/lmr/m/n/10.95 (-20) The mod-u-lar de-sign sep-a-rat-ing Trans-la-tionalMod-
 ule $\OT1/lmr/m/n/10.95 (-20) (\OML/lmm/m/it/10.95 z; v[]\OT1/lmr/m/n/10.95 (-2
 0) )$ \T1/lmr/m/n/10.95 (-20) and Ro-ta-tionalMod-ule $\OT1/lmr/m/n/10.95 (-20)
  (\OML/lmm/m/it/10.95 ^^^; ^^R;  ; p; q; r\OT1/lmr/m/n/10.95 (-20) )$
-[61] [62]
+[57]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1856.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ll' on input line 1856.
+(hyperref)                removing `math shift' on input line 1710.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1856.
+(hyperref)                removing `\ll' on input line 1710.
 
-[63] [64] [65] [66]
-Overfull \hbox (8.05185pt too wide) in paragraph at lines 2032--2048
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1710.
+
+[58] [59] [60] [61]
+Overfull \hbox (8.05185pt too wide) in paragraph at lines 1886--1902
  [][] 
-[67] [68] [69]
-Overfull \hbox (27.02069pt too wide) in paragraph at lines 2151--2162
+[62] [63] [64]
+Overfull \hbox (27.02069pt too wide) in paragraph at lines 2005--2016
  [][] 
 
-Overfull \hbox (72.75697pt too wide) in paragraph at lines 2169--2180
+Overfull \hbox (72.75697pt too wide) in paragraph at lines 2023--2034
  [][] 
-[70]
-Underfull \hbox (badness 1546) in paragraph at lines 2194--2194
+[65]
+Underfull \hbox (badness 1546) in paragraph at lines 2048--2048
 []|\T1/lmr/m/n/10.95 (+20) Out-of-distribution ex-
 
-Underfull \hbox (badness 10000) in paragraph at lines 2195--2195
+Underfull \hbox (badness 10000) in paragraph at lines 2049--2049
 []|\T1/lmr/m/n/10.95 (+20) Modular ar-chi-tec-ture
 
-Underfull \hbox (badness 10000) in paragraph at lines 2196--2196
+Underfull \hbox (badness 10000) in paragraph at lines 2050--2050
 []|\T1/lmr/m/n/10.95 (+20) Physics-only train-ing,
-[71] [72] [73] (quadrotor_pinn_report.aux) )
-(see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
-al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/sreej/Ap
-pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users
-/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx5.pfb><
-C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmb
-x7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
-s/cm/cmbx9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
-/amsfonts/cmextra/cmex7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/cmextra/cmex9.pfb><C:/Users/sreej/AppData/Local/Programs
-/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/sreej/AppData/Local
-/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi5.pfb><C:/Users/sreej/AppDa
-ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/sre
-ej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb
-><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmex
-tra/cmmib7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
-/amsfonts/cm/cmr10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/amsfonts/cm/cmr5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fon
-ts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/sreej/AppData/Local/Programs/MiK
-TeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/sreej/AppData/Local/Progr
-ams/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/sreej/AppData/Lo
-cal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/sreej/Ap
-pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Users/
-sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx10.pfb><C:/Users/
-sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmbx12.pfb><C:/Users/
-sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmcsc10.pfb><C:/Users
-/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmex10.pfb><C:/Users
-/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi10.pfb><C:/Users
-/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi12.pfb><C:/Users
-/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi6.pfb><C:/Users/
-sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmi8.pfb><C:/Users/s
-reej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmmib10.pfb><C:/Users/
-sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr10.pfb><C:/Users/s
-reej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb><C:/Users/sr
-eej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr8.pfb><C:/Users/sree
-j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri10.pfb><C:/Users/sree
-j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb><C:/Users/sree
-j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy10.pfb><C:/Users/sree
-j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/Users/sreej
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (74 pages, 8024100 bytes).
+[66] [67] [68] (quadrotor_pinn_report.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `quadrotor_pinn_report.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)
+pdfTeX warning (dest): name{subsection.8.8} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.7} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.6} has been referenced but does not ex
+ist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsubsection.8.5.3} has been referenced but does n
+ot exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsubsection.8.5.2} has been referenced but does n
+ot exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsubsection.8.5.1} has been referenced but does n
+ot exist, replaced by a fixed one
+
+
+pdfTeX warning (dest): name{subsection.8.5} has been referenced but does not ex
+ist, replaced by a fixed one
+
+<C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
+bx10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/amsfonts/cm/cmbx5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/t
+ype1/public/amsfonts/cm/cmbx7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/sreej/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/sreej/AppData/
+Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><C:/Users/s
+reej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C
+:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi
+5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmmi7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/
+amsfonts/cmextra/cmmib5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cmextra/cmmib7.pfb><C:/Users/sreej/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/sreej/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/sreej
+/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/User
+s/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb
+><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+msy5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmsy7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/lm/lmbx10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/lm/lmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/lm/lmcsc10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/lm/lmex10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/lm/lmmi10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/lm/lmmi12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
+lic/lm/lmmi6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/lm/lmmib10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/lm/lmr10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publi
+c/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
+m/lmri10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
+m/lmri12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
+m/lmsy10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
+m/lmsy8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm
+/lmtt10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm
+/lmtt12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/symbols/msam10.pfb>
+Output written on quadrotor_pinn_report.pdf (69 pages, 6509699 bytes).
 Transcript written on quadrotor_pinn_report.log.
 This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
  restricted \write18 enabled.
@@ -1204,107 +1239,105 @@ time_analysis.png> <../results/detailed/06_yaw_time_analysis.png>] [37 <../resu
 lts/detailed/07_p_time_analysis.png> <../results/detailed/08_q_time_analysis.pn
 g>] [38 <../results/detailed/09_r_time_analysis.png> <../results/detailed/10_vx
 _time_analysis.png>] [39 <../results/detailed/11_vy_time_analysis.png> <../resu
-lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/13_p_dot_time_a
-nalysis.png> <../results/detailed/14_q_dot_time_analysis.png>] [41 <../results/
-detailed/15_r_dot_time_analysis.png> <../results/detailed/16_thrust_time_analys
-is.png>] [42 <../results/detailed/17_torque_x_time_analysis.png> <../results/de
-tailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_time_ana
-lysis.png>] [43] [44] [45] [46] [47] [48] [49]
-Overfull \hbox (0.8992pt too wide) detected at line 1361
+lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/16_thrust_time_
+analysis.png> <../results/detailed/17_torque_x_time_analysis.png>] [41 <../resu
+lts/detailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_ti
+me_analysis.png>] [42] [43] [44] [45] [46] [47] [48]
+Overfull \hbox (0.8992pt too wide) detected at line 1338
 \OMS/lmsy/m/n/10.95 L[] \OT1/lmr/m/n/10.95 = [] [] []
-[50]
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) True
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Learned
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Absolute
 
-Underfull \hbox (badness 10000) in paragraph at lines 1378--1378
+Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
 []|\T1/lmr/bx/n/10.95 (+20) Relative
 
-Underfull \hbox (badness 3769) in paragraph at lines 1382--1383
+Underfull \hbox (badness 3769) in paragraph at lines 1359--1360
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 3769) in paragraph at lines 1384--1385
+Underfull \hbox (badness 3769) in paragraph at lines 1361--1362
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1386--1386
+Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1386--1386
+Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 3769) in paragraph at lines 1386--1387
+Underfull \hbox (badness 3769) in paragraph at lines 1363--1364
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1390--1390
+Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1390--1390
+Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Overfull \hbox (2.6975pt too wide) in alignment at lines 1376--1392
+Overfull \hbox (2.6975pt too wide) in alignment at lines 1353--1369
  [] [] [] [] [] [] 
-[51] [52] [53] [54]
+[50] [51] [52] [53]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1581.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 1581.
+(hyperref)                removing `math shift' on input line 1558.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1581.
+(hyperref)                removing `\rightarrow' on input line 1558.
 
-[55] [56] [57] [58] [59]
-Overfull \hbox (99.76834pt too wide) in paragraph at lines 1765--1793
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1558.
+
+[54] [55]
+Overfull \hbox (99.76834pt too wide) in paragraph at lines 1619--1647
  [][] 
-[60]
-Overfull \hbox (25.09616pt too wide) in paragraph at lines 1801--1802
+[56]
+Overfull \hbox (25.09616pt too wide) in paragraph at lines 1655--1656
 \T1/lmr/m/n/10.95 (-20) The mod-u-lar de-sign sep-a-rat-ing Trans-la-tionalMod-
 ule $\OT1/lmr/m/n/10.95 (-20) (\OML/lmm/m/it/10.95 z; v[]\OT1/lmr/m/n/10.95 (-2
 0) )$ \T1/lmr/m/n/10.95 (-20) and Ro-ta-tionalMod-ule $\OT1/lmr/m/n/10.95 (-20)
  (\OML/lmm/m/it/10.95 ^^^; ^^R;  ; p; q; r\OT1/lmr/m/n/10.95 (-20) )$
-[61] [62]
+[57]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1856.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ll' on input line 1856.
+(hyperref)                removing `math shift' on input line 1710.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1856.
+(hyperref)                removing `\ll' on input line 1710.
 
-[63] [64] [65] [66]
-Overfull \hbox (8.05185pt too wide) in paragraph at lines 2032--2048
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1710.
+
+[58] [59] [60] [61]
+Overfull \hbox (8.05185pt too wide) in paragraph at lines 1886--1902
  [][] 
-[67] [68] [69]
-Overfull \hbox (27.02069pt too wide) in paragraph at lines 2151--2162
+[62] [63] [64]
+Overfull \hbox (27.02069pt too wide) in paragraph at lines 2005--2016
  [][] 
 
-Overfull \hbox (72.75697pt too wide) in paragraph at lines 2169--2180
+Overfull \hbox (72.75697pt too wide) in paragraph at lines 2023--2034
  [][] 
-[70]
-Underfull \hbox (badness 1546) in paragraph at lines 2194--2194
+[65]
+Underfull \hbox (badness 1546) in paragraph at lines 2048--2048
 []|\T1/lmr/m/n/10.95 (+20) Out-of-distribution ex-
 
-Underfull \hbox (badness 10000) in paragraph at lines 2195--2195
+Underfull \hbox (badness 10000) in paragraph at lines 2049--2049
 []|\T1/lmr/m/n/10.95 (+20) Modular ar-chi-tec-ture
 
-Underfull \hbox (badness 10000) in paragraph at lines 2196--2196
+Underfull \hbox (badness 10000) in paragraph at lines 2050--2050
 []|\T1/lmr/m/n/10.95 (+20) Physics-only train-ing,
-[71] [72] [73] (quadrotor_pinn_report.aux) )
+[66] [67] [68] (quadrotor_pinn_report.aux) )
 (see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/sreej/Ap
 pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users
@@ -1346,5 +1379,5 @@ j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (74 pages, 8024100 bytes).
+Output written on quadrotor_pinn_report.pdf (69 pages, 6504855 bytes).
 Transcript written on quadrotor_pinn_report.log.
