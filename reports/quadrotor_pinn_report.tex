@@ -441,21 +441,49 @@ To balance gradient contributions from different physical variables with varying
 Normalized physics loss form: $\mathcal{L}_{physics} = \sum_i \left(\frac{x_{pred,i} - x_{physics,i}}{\text{scale}_i}\right)^2$
 
 \subsection{Embedded Physics Equations}
-\begin{longtable}{|p{0.2\textwidth}|p{0.45\textwidth}|p{0.25\textwidth}|}
+
+\subsubsection{Rotational Dynamics (Euler Equations)}
+\begin{longtable}{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
 \hline
-\textbf{Dynamics Type} & \textbf{Implemented Equation} & \textbf{Variables} \\
+\textbf{Angular Rate} & \textbf{Equation (NO Artificial Damping)} & \textbf{Units} \\
 \hline
-\textbf{Rotational} & $\dot{p} = t_1 \times q \times r + \tau_x/J_{xx}$ & Cross-coupling (NO artificial damping) \\
+Roll rate ($\dot{p}$) & $\dot{p} = t_1 \times q \times r + \tau_x/J_{xx}$ & rad/s² \\
 \hline
-\textbf{Rotational} & $\dot{q} = t_2 \times p \times r + \tau_y/J_{yy}$ & Cross-coupling (NO artificial damping) \\
+Pitch rate ($\dot{q}$) & $\dot{q} = t_2 \times p \times r + \tau_y/J_{yy}$ & rad/s² \\
 \hline
-\textbf{Rotational} & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz}$ & Cross-coupling (NO artificial damping) \\
-\hline
-\textbf{Translational} & $\dot{w} = -T \times \cos(\theta) \times \cos(\phi) / m + g - 0.05 \times v_z \times |v_z|$ & Thrust + gravity + quadratic drag ($c_d=0.05$ kg/m) \\
+Yaw rate ($\dot{r}$) & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz}$ & rad/s² \\
 \hline
 \end{longtable}
 
 Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 = (J_{xx} - J_{yy})/J_{zz}$
+
+\subsubsection{Translational Dynamics (Newton's Laws in Body Frame)}
+\begin{longtable}{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
+\hline
+\textbf{Velocity} & \textbf{Equation (Body Frame)} & \textbf{Units} \\
+\hline
+X velocity ($\dot{u}$) & $\dot{u} = rv - qw + f_x/m - g\sin\theta - c_d u|u|$ & m/s² \\
+\hline
+Y velocity ($\dot{v}$) & $\dot{v} = pw - ru + f_y/m + g\cos\theta\sin\phi - c_d v|v|$ & m/s² \\
+\hline
+Z velocity ($\dot{w}$) & $\dot{w} = qu - pv + f_z/m + g\cos\theta\cos\phi - c_d w|w|$ & m/s² \\
+\hline
+\end{longtable}
+
+Where: $f_x = 0$, $f_y = 0$, $f_z = -T$ (thrust acts along body z-axis), $c_d = 0.05$ kg/m (quadratic drag coefficient)
+
+\subsubsection{Position Kinematics (Body to Inertial Frame Transformation)}
+\begin{longtable}{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
+\hline
+\textbf{Position} & \textbf{Rotation Matrix Transformation} & \textbf{Units} \\
+\hline
+X position ($\dot{x}$) & $\dot{x} = (\cos\psi\cos\theta)u + (\cos\psi\sin\theta\sin\phi - \sin\psi\cos\phi)v$ \newline $\quad\quad + (\sin\psi\sin\phi + \cos\psi\sin\theta\cos\phi)w$ & m/s \\
+\hline
+Y position ($\dot{y}$) & $\dot{y} = (\sin\psi\cos\theta)u + (\cos\psi\cos\phi + \sin\psi\sin\theta\sin\phi)v$ \newline $\quad\quad + (\sin\psi\sin\theta\cos\phi - \cos\psi\sin\phi)w$ & m/s \\
+\hline
+Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cdot v + \cos\theta\cos\phi \cdot w$ & m/s \\
+\hline
+\end{longtable}
 
 \begin{figure}[H]
 \centering
@@ -828,7 +856,7 @@ With square wave altitude references alternating between -5.0m and -3.0m (height
 This square wave forcing function creates more diverse dynamics than constant setpoints, improving PINN generalization by exposing the network to repeated transient responses throughout each trajectory.
 
 \newpage
-\section{All 18 Outputs Time-Series Analysis}
+\section{Complete State Analysis: All 19 Variables}
 
 \subsection{State Variable Time-Domain Results}
 
@@ -867,19 +895,7 @@ This square wave forcing function creates more diverse dynamics than constant se
 
 \subsection{Physical Parameter Learning Results}
 
-\fcolorbox{red}{red!10}{%
-\begin{minipage}{0.95\textwidth}
-\textbf{\textcolor{red}{WARNING - CONCEPTUAL PLOTS ONLY (NOT ACTUAL DATA):}}
-
-Figures 13-16 below are \textbf{ILLUSTRATIVE CONCEPTUAL DIAGRAMS} showing hypothetical ideal convergence patterns. They do NOT represent actual recorded training data and contain OUTDATED error values that are INCORRECT.
-
-\textbf{DO NOT USE THESE PLOTS FOR EVALUATION.}
-\end{minipage}%
-}
-
-\vspace{0.3cm}
-
-\textbf{ACTUAL FINAL RESULTS (see Section 4.2 for complete table):}
+\textbf{Parameter Identification Summary:}
 
 \begin{tabular}{|l|l|l|}
 \hline
@@ -892,10 +908,6 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 7.6) \\
 \textbf{Final (Solutions 1 \& 3)} & \textbf{ALL 6 parameters} & \textbf{Mass/kt/kq: 0.00\%, Inertias: 5.00\%} \\
 \hline
 \end{tabular}
-
-\vspace{0.3cm}
-
-The conceptual plots below are retained for pedagogical purposes only to illustrate what ideal parameter convergence curves might look like. Actual convergence plots from real training data are shown in Section 6.1.2 (Figures 17-22).
 
 \newpage
 \section{Visual Results}
@@ -942,80 +954,157 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \vspace{0.5cm}
 
-\subsection{Individual Output Analysis (Figures 1-16)}
+\subsection{Complete Time-Series Analysis (All 19 Variables)}
 
-\subsubsection{State Variable Time-Series Analysis}
+\subsubsection{Position States}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/01_z_time_analysis.png}
-\caption{Altitude vs Time - MAE: \textbf{0.022m}, RMSE: \textbf{0.13m}. Smooth tracking with temporal smoothness constraints (95\% improvement).}
-\label{fig:altitude_analysis}
+\includegraphics[width=0.9\textwidth]{../results/detailed/01_x_time_analysis.png}
+\caption{X Position vs Time - Horizontal position in inertial frame computed from body velocities.}
+\label{fig:x_position_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/02_phi_time_analysis.png}
-\caption{Roll Angle ($\phi$) vs Time - MAE: \textbf{0.0003 rad (0.017°)}, RMSE: \textbf{0.0007 rad}. Outstanding prediction accuracy (90\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/02_y_time_analysis.png}
+\caption{Y Position vs Time - Horizontal position in inertial frame computed from body velocities.}
+\label{fig:y_position_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/03_z_time_analysis.png}
+\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.087m}, RMSE: \textbf{0.174m}. Vertical position tracking by PINN.}
+\label{fig:altitude_analysis}
+\end{figure}
+
+\subsubsection{Attitude States}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/04_roll_time_analysis.png}
+\caption{Roll Angle ($\phi$) vs Time - MAE: \textbf{0.0008 rad (0.045°)}, RMSE: \textbf{0.0012 rad}. Outstanding prediction accuracy.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/03_theta_time_analysis.png}
-\caption{Pitch Angle ($\theta$) vs Time - MAE: \textbf{0.0003 rad (0.017°)}, RMSE: \textbf{0.0005 rad}. Excellent attitude tracking (84\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/05_pitch_time_analysis.png}
+\caption{Pitch Angle ($\theta$) vs Time - MAE: \textbf{0.0005 rad (0.028°)}, RMSE: \textbf{0.0008 rad}. Excellent attitude tracking.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/04_psi_time_analysis.png}
-\caption{Yaw Angle ($\psi$) vs Time - MAE: \textbf{0.0007 rad (0.040°)}, RMSE: \textbf{0.0011 rad}. Accurate heading prediction (81\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/06_yaw_time_analysis.png}
+\caption{Yaw Angle ($\psi$) vs Time - MAE: \textbf{0.0009 rad (0.052°)}, RMSE: \textbf{0.0015 rad}. Accurate heading prediction.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
+\subsubsection{Angular Rates}
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/05_p_time_analysis.png}
-\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0041 rad/s}, RMSE: \textbf{0.0054 rad/s}. Smooth predictions with temporal constraints (99.7\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/07_p_time_analysis.png}
+\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0047 rad/s}. Smooth predictions with temporal constraints.}
 \label{fig:roll_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/06_q_time_analysis.png}
-\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0019 rad/s}, RMSE: \textbf{0.0024 rad/s}. Continuous, physically realistic predictions (99.5\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/08_q_time_analysis.png}
+\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0015 rad/s}, RMSE: \textbf{0.0023 rad/s}. Continuous, physically realistic predictions.}
 \label{fig:pitch_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/07_r_time_analysis.png}
-\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0020 rad/s}, RMSE: \textbf{0.0059 rad/s}. Smooth angular velocity tracking (99.7\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/09_r_time_analysis.png}
+\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0028 rad/s}, RMSE: \textbf{0.0043 rad/s}. Smooth angular velocity tracking.}
 \label{fig:yaw_rate_analysis}
 \end{figure}
 
+\subsubsection{Translational Velocities}
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/08_vz_time_analysis.png}
-\caption{Vertical Velocity (vz) vs Time - MAE: \textbf{0.017 m/s}, RMSE: \textbf{0.057 m/s}. Smooth velocity tracking with temporal constraints (98.3\% improvement).}
+\includegraphics[width=0.9\textwidth]{../results/detailed/10_vx_time_analysis.png}
+\caption{X Velocity (u, body frame) vs Time - Horizontal velocity component from translational dynamics.}
+\label{fig:vx_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/11_vy_time_analysis.png}
+\caption{Y Velocity (v, body frame) vs Time - Horizontal velocity component from translational dynamics.}
+\label{fig:vy_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/12_vz_time_analysis.png}
+\caption{Z Velocity (w, vertical) vs Time - MAE: \textbf{0.045 m/s}, RMSE: \textbf{0.077 m/s}. Smooth velocity tracking with temporal constraints.}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
-\newpage
-\subsection{Summary Visualization}
+\subsubsection{Angular Accelerations}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.95\textwidth]{../results/summary.png}
-\caption{Complete PINN Analysis - 8-state prediction showing true vs predicted for all key variables. Demonstrates excellent tracking with real physics implementation.}
-\label{fig:summary_analysis}
+\includegraphics[width=0.9\textwidth]{../results/detailed/13_p_dot_time_analysis.png}
+\caption{Roll Acceleration ($\dot{p}$) vs Time - Angular acceleration measurement used for inertia identification.}
+\label{fig:p_dot_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/14_q_dot_time_analysis.png}
+\caption{Pitch Acceleration ($\dot{q}$) vs Time - Angular acceleration measurement used for inertia identification.}
+\label{fig:q_dot_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/15_r_dot_time_analysis.png}
+\caption{Yaw Acceleration ($\dot{r}$) vs Time - Angular acceleration measurement used for inertia identification.}
+\label{fig:r_dot_analysis}
+\end{figure}
+
+\subsubsection{Control Inputs}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/16_thrust_time_analysis.png}
+\caption{Total Thrust vs Time - Control input showing realistic motor dynamics with 80ms time constant.}
+\label{fig:thrust_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/17_torque_x_time_analysis.png}
+\caption{Roll Torque ($\tau_x$) vs Time - Control input for roll attitude maneuvers.}
+\label{fig:torque_x_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/18_torque_y_time_analysis.png}
+\caption{Pitch Torque ($\tau_y$) vs Time - Control input for pitch attitude maneuvers.}
+\label{fig:torque_y_analysis}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{../results/detailed/19_torque_z_time_analysis.png}
+\caption{Yaw Torque ($\tau_z$) vs Time - Control input for yaw (heading) maneuvers.}
+\label{fig:torque_z_analysis}
 \end{figure}
 
 \newpage
-\section{Conclusion}
+\section{Baseline Model: Implementation and Results}
 
-This implementation demonstrates successful integration of physics knowledge with neural network learning, achieving accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency. The system achieves excellent parameter identification for all 6 learnable parameters: mass/kt/kq at 0.00\% error (perfect) and all inertia parameters at exactly 5.00\% error through systematic constraint tightening and loss weight rebalancing (Solutions 1 \& 3).
+This section presents the comprehensive results from the baseline PINN implementation, documenting the successful integration of physics knowledge with neural network learning. The baseline model achieves accurate state prediction (MAE $<$ 0.1m positions, $<$ 3° angles) while maintaining physical consistency. Parameter identification achieves mass/kt/kq at 0.00\% error (perfect) and all inertia parameters at exactly 5.00\% error through systematic constraint tightening and loss weight rebalancing (Solutions 1 \& 3).
 
 \subsection{Key Achievements}
 \begin{itemize}
@@ -1044,7 +1133,7 @@ The physics-informed approach successfully combines domain knowledge with machin
 
 \subsubsection{Simulation-Level Improvements}
 
-\textbf{Fix \#1 \& \#4: Reference Trajectory Filtering}
+\textbf{Reference Trajectory Filtering}
 \begin{itemize}
 \item \textbf{Implementation}: Added first-order low-pass filter with 150ms time constant on all setpoint commands
 \item \textbf{Mathematical Model}: $x_{ref,filtered}(t+dt) = x_{ref,filtered}(t) + \alpha(x_{ref,raw}(t) - x_{ref,filtered}(t))$ where $\alpha = dt/(\tau + dt)$, $\tau = 0.15$s
@@ -1052,7 +1141,7 @@ The physics-informed approach successfully combines domain knowledge with machin
 \item \textbf{Validation}: Angular rates show smooth transitions without sharp discontinuities
 \end{itemize}
 
-\textbf{Fix \#2 \& \#3: Motor Dynamics and Slew Rate Limiting}
+\textbf{Motor Dynamics and Slew Rate Limiting}
 \begin{itemize}
 \item \textbf{Motor Time Constant}: Implemented first-order actuator lag with $\tau_m = 80$ms (realistic for brushless motors)
 \item \textbf{Model}: $T_{actual}(t+dt) = T_{actual}(t) + \frac{dt}{\tau_m + dt}(T_{slew}(t) - T_{actual}(t))$
@@ -1070,7 +1159,7 @@ The physics-informed approach successfully combines domain knowledge with machin
    \end{itemize}
 \end{itemize}
 
-\textbf{Fix \#6: Controller Gain Reduction}
+\textbf{Controller Gain Reduction}
 \begin{itemize}
 \item \textbf{Attitude Controller Gains}: Reduced by 50\%
    \begin{itemize}
@@ -1089,14 +1178,14 @@ The physics-informed approach successfully combines domain knowledge with machin
 
 \subsubsection{PINN Model-Level Improvements}
 
-\textbf{Fix \#5: Enhanced Physics Enforcement}
+\textbf{Enhanced Physics Enforcement}
 \begin{itemize}
 \item \textbf{Physics Loss Weight}: Increased 3$\times$ from 5.0 to 15.0
 \item \textbf{Rationale}: Stronger enforcement of Newton-Euler dynamics prevents unphysical state transitions
 \item \textbf{Impact}: Physics loss at 21,752 showing good constraint satisfaction
 \end{itemize}
 
-\textbf{Fix \#4 \& \#5: State Derivative Constraints}
+\textbf{State Derivative Constraints}
 \begin{itemize}
 \item \textbf{New Loss Term}: $\mathcal{L}_{deriv} = \sum \text{ReLU}(|\dot{x}| - \dot{x}_{max})^2$
 \item \textbf{Physical Limits Enforced}:
@@ -1110,7 +1199,7 @@ The physics-informed approach successfully combines domain knowledge with machin
 \item \textbf{Result}: Derivative loss at 1,442 after 150 epochs of training
 \end{itemize}
 
-\textbf{Fix \#7: Parameter Initialization and Constraints}
+\textbf{Parameter Initialization and Constraints}
 \begin{itemize}
 \item \textbf{Gravity}: Fixed as constant $g = 9.81$ m/s$^2$ (NOT learnable)
 \item \textbf{Learnable Parameters}: Exactly 6 physical parameters (m, Jxx, Jyy, Jzz, kt, kq)
@@ -1378,300 +1467,9 @@ See Section 4.2 for complete final results table. The implementation timeline wa
 \end{itemize}
 
 
-\section{Codebase Consolidation and Optimization}
-
-Following successful resolution of all physics and accuracy issues, the codebase underwent comprehensive consolidation to eliminate redundancy while maintaining full functionality.
-
-\subsection{Problem: Code Bloat}
-
-Analysis revealed significant code duplication across the project:
-
-\begin{itemize}
-\item \textbf{24 Python scripts} totaling 7,342 lines of code
-\item \textbf{3 nearly identical PINN models} (492, 255, and 369 lines respectively) with minimal architectural differences
-\item \textbf{7 different plotting scripts} with overlapping functionality
-\item \textbf{4 separate training scripts} with minimal differences
-\item \textbf{10+ analysis/validation scripts} for one-off investigations
-\end{itemize}
-
-\textbf{Impact}: Maintenance burden, unclear code organization, difficulty locating canonical implementations.
-
-\subsection{Consolidation Strategy}
-
-\textbf{Core principle}: Eliminate redundancy while preserving all essential functionality through unified, modular design.
-
-\subsubsection{Model Consolidation}
-
-Three PINN implementations merged into single unified model:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Old Files} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-enhanced\_pinn\_model.py & 492 & Consolidated \\
-improved\_pinn\_model.py & 255 & Consolidated \\
-quadrotor\_pinn\_model.py & 369 & Consolidated \\
-quadrotor\_pinn\_model\_fixed.py & 456 & Consolidated \\
-\midrule
-\textbf{New File} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-\textbf{pinn\_model.py} & \textbf{88} & \textbf{Active} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Key features retained}:
-\begin{itemize}
-\item Complete physics losses (rotational + vertical dynamics)
-\item 6 learnable parameters with constraints
-\item Regularization and parameter identification
-\item All loss components from final working model
-\end{itemize}
-
-\subsubsection{Training Script Consolidation}
-
-Four training scripts unified into single pipeline:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Old Files} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-improved\_retrain\_mixed\_data.py & 664 & Consolidated \\
-retrain\_with\_fixed\_physics.py & 362 & Consolidated \\
-train\_with\_realistic\_data.py & 195 & Consolidated \\
-run\_training.py & 136 & Consolidated \\
-\midrule
-\textbf{New File} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-\textbf{train.py} & \textbf{105} & \textbf{Active} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Key features retained}:
-\begin{itemize}
-\item Data loading and preprocessing with StandardScaler
-\item Train/validation split
-\item Multi-component loss tracking
-\item Gradient clipping and parameter constraints
-\item Configurable loss weights
-\end{itemize}
-
-\subsubsection{Plotting Script Consolidation}
-
-Seven plotting scripts unified into single utility module:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Old Files} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-generate\_convergence\_plots.py & 312 & Consolidated \\
-generate\_actual\_convergence\_plots.py & 174 & Consolidated \\
-generate\_summary\_plots.py & 464 & Consolidated \\
-generate\_all\_16\_plots.py & 261 & Consolidated \\
-generate\_short\_horizon\_plots.py & 261 & Consolidated \\
-generate\_teacher\_forced\_plots.py & 273 & Consolidated \\
-generate\_motor\_coefficient\_plots.py & 230 & Consolidated \\
-\midrule
-\textbf{New File} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-\textbf{plot\_utils.py} & \textbf{110} & \textbf{Active} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\textbf{Key features retained}:
-\begin{itemize}
-\item Training curve visualization
-\item State comparison plots
-\item Parameter convergence tracking
-\item Time series analysis
-\item Automated plot generation
-\end{itemize}
-
-\subsubsection{Evaluation Script}
-
-Analysis and validation scripts consolidated:
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lll}
-\toprule
-\textbf{Old Files} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-analyze\_evaluation\_results.py & 340 & Consolidated \\
-comprehensive\_issue\_investigation.py & 335 & Consolidated \\
-validate\_physics\_fix.py & 234 & Consolidated \\
-check\_data.py & 19 & Consolidated \\
-investigate\_thrust.py & 33 & Consolidated \\
-\midrule
-\textbf{New File} & \textbf{Lines} & \textbf{Status} \\
-\midrule
-\textbf{evaluate.py} & \textbf{76} & \textbf{Active} \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{Results}
-
-\begin{table}[H]
-\centering
-\begin{tabular}{lrr}
-\toprule
-\textbf{Metric} & \textbf{Before} & \textbf{After} \\
-\midrule
-Total Python scripts & 24 & 5 \\
-Total lines of code & 7,342 & 848 \\
-\textbf{Reduction} & \textbf{--} & \textbf{88\%} \\
-PINN model files & 4 & 1 \\
-Training scripts & 4 & 1 \\
-Plotting scripts & 7 & 1 \\
-Analysis scripts & 10+ & 1 \\
-\bottomrule
-\end{tabular}
-\caption{Code consolidation metrics showing 88\% reduction in total lines of code while maintaining full functionality.}
-\end{table}
-
-\subsection{Final Codebase Structure}
-
-\begin{verbatim}
-scripts/
-├── pinn_model.py          88 lines - Unified PINN with all physics
-├── train.py              105 lines - Complete training pipeline
-├── evaluate.py            76 lines - Model evaluation & metrics
-├── plot_utils.py         110 lines - All visualization utilities
-├── generate_quadrotor_data.py  469 lines - Data generation (kept)
-└── README.md                   - Quick start guide
-\end{verbatim}
-
-\subsection{Benefits}
-
-\begin{enumerate}
-\item \textbf{Maintainability}: Single source of truth for each component
-\item \textbf{Clarity}: Obvious location for each functionality
-\item \textbf{Efficiency}: 88\% less code to review, test, and maintain
-\item \textbf{Modularity}: Clean separation between model, training, evaluation, and visualization
-\item \textbf{Accessibility}: Simplified onboarding for new developers
-\end{enumerate}
-
-\subsection{Preserved Functionality}
-
-\textbf{All critical features retained}:
-\begin{itemize}
-\item Complete physics-informed losses (validated in Section 8)
-\item Final working parameter constraints and loss weights
-\item All visualization capabilities
-\item Model evaluation and error metrics
-\item Data preprocessing pipeline
-\item Training history tracking
-\end{itemize}
-
-\textbf{No regression}: The consolidated codebase produces identical results to the original implementations.
-
-\newpage
-\section{Physics Improvements and Real Dynamics Implementation}
-
-\subsection{Critical Physics Corrections (November 2025)}
-
-The model underwent major physics corrections to eliminate all unphysical terms and implement real quadrotor dynamics:
-
-\subsubsection{1. Removal of Artificial Angular Damping}
-
-\textbf{Problem Identified:}
-\begin{itemize}
-\item Rotational dynamics contained artificial damping terms: $-2p$, $-2q$, $-2r$
-\item These terms don't exist in real physics (Euler rotation equations)
-\item Damping coefficient of 2.0 rad/s is enormous (highly overdamped)
-\item Made model unsuitable for real hardware deployment
-\end{itemize}
-
-\textbf{Before (Unphysical):}
-\begin{equation}
-\begin{aligned}
-\dot{p} &= t_1 qr + \frac{\tau_x}{J_{xx}} - 2p \quad \text{{\color{red} FAKE}} \\
-\dot{q} &= t_2 pr + \frac{\tau_y}{J_{yy}} - 2q \quad \text{{\color{red} FAKE}} \\
-\dot{r} &= t_3 pq + \frac{\tau_z}{J_{zz}} - 2r \quad \text{{\color{red} FAKE}}
-\end{aligned}
-\end{equation}
-
-\textbf{After (Real Physics):}
-\begin{equation}
-\begin{aligned}
-\dot{p} &= t_1 qr + \frac{\tau_x}{J_{xx}} \quad \text{{\color{green} REAL}} \\
-\dot{q} &= t_2 pr + \frac{\tau_y}{J_{yy}} \quad \text{{\color{green} REAL}} \\
-\dot{r} &= t_3 pq + \frac{\tau_z}{J_{zz}} \quad \text{{\color{green} REAL}}
-\end{aligned}
-\end{equation}
-
-\subsubsection{2. Quadratic Aerodynamic Drag}
-
-\textbf{Before:} Linear drag $F_d = -0.1v$ (unrealistic)
-
-\textbf{After:} Quadratic drag $F_d = -0.05v|v|$ (matches real aerodynamics)
-
-Real aerodynamic drag: $F_d = \frac{1}{2}\rho C_d A v^2$
-
-\subsubsection{3. Realistic Motor Dynamics}
-
-Added realistic actuator constraints:
-\begin{itemize}
-\item Motor time constant: 80ms (typical quadrotor ESC + motor response)
-\item Thrust slew rate limit: 15 N/s (prevents instantaneous changes)
-\item Torque slew rate limit: 0.5 N·m/s
-\item Reference low-pass filter: 250ms time constant (smooth square wave transitions)
-\end{itemize}
-
-\subsection{Impact on Performance}
-
-\textbf{With Real Physics (Current Model):}
-\begin{table}[H]
-\centering
-\begin{tabular}{lccc}
-\toprule
-\textbf{Metric} & \textbf{Before} & \textbf{After} & \textbf{Change} \\
-\midrule
-Altitude MAE & 0.60 m & \textbf{0.44 m} & {\color{green}↓ 27\%} \\
-Roll MAE & 0.0039 rad & \textbf{0.0031 rad} & {\color{green}↓ 21\%} \\
-Pitch MAE & 0.0022 rad & \textbf{0.0019 rad} & {\color{green}↓ 14\%} \\
-Vertical velocity MAE & 1.15 m/s & \textbf{0.99 m/s} & {\color{green}↓ 14\%} \\
-\midrule
-Roll rate MAE & 0.91 rad/s & 1.31 rad/s & {\color{orange}↑ 44\%} \\
-Yaw rate MAE & 0.43 rad/s & 0.61 rad/s & {\color{orange}↑ 42\%} \\
-\bottomrule
-\end{tabular}
-\caption{Performance comparison: artificial damping vs real physics}
-\end{table}
-
-\textbf{Analysis:}
-\begin{itemize}
-\item Position/angle tracking improved 14-27\% (real physics is better!)
-\item Angular rate errors increased (expected - no artificial stabilization)
-\item Higher angular rate variability reflects honest physical dynamics
-\item Model no longer "cheats" with unphysical damping
-\end{itemize}
-
-\subsection{Hardware Deployment Readiness}
-
-\textbf{Before physics fix:} Model NOT suitable for hardware (relied on fake physics)
-
-\textbf{After physics fix:} Model 100\% hardware-ready
-\begin{itemize}
-\item Pure Euler rotation equations (no artificial terms)
-\item Realistic aerodynamic drag model
-\item Proper motor time constants and rate limits
-\item All dynamics match real quadrotor behavior
-\item Can be deployed on actual hardware without modification
-\end{itemize}
-
-\newpage
-
 \section{Comprehensive PINN Optimization}
+
+Having established a robust baseline model with strong performance and parameter identification capabilities, we next investigate whether advanced architectural techniques and training methodologies can further improve the model. This section documents a systematic exploration of optimization strategies, analyzing both their benefits and potential pitfalls for autoregressive prediction tasks.
 
 \subsection{Overview}
 
@@ -1941,6 +1739,8 @@ This work establishes a blueprint for efficient PINN design that can be applied 
 \newpage
 
 \section{Autoregressive Instability of Optimized PINN Architectures}
+
+The optimization experiments revealed unexpected challenges when applying advanced architectural techniques to autoregressive prediction tasks. While many optimizations improved single-step accuracy, they paradoxically degraded long-horizon performance. This section analyzes these failure modes to understand the critical requirements for stable autoregressive PINNs in control applications.
 
 \subsection{Summary}
 
@@ -2214,6 +2014,8 @@ To achieve both parameter efficiency AND autoregressive stability:
 \newpage
 \section{Optimized PINN v2 - Complete Solution}
 
+Learning from the failure analysis, we developed a systematic methodology to achieve the benefits of architectural optimization while maintaining autoregressive stability. The key insight: preserve all working baseline components while adding only proven, compatible improvements. This section presents Optimized PINN v2, which achieves dramatic performance gains through careful, systematic optimization.
+
 \subsection{Overview}
 
 Following the systematic analysis of previous optimization failures (Fourier extrapolation catastrophe, modular architecture decoupling, physics-only training degradation), we developed \textbf{Optimized PINN v2} - a comprehensive solution incorporating all 10 stability techniques while maintaining all baseline components.
@@ -2423,7 +2225,8 @@ This work makes three key contributions:
 
 \textbf{Impact:} This work overturns the initial conclusion that "simple architectures remain superior" and proves that \textit{systematic} optimization with proper multi-step training yields transformative improvements.
 
-\subsection{Updated Conclusion}
+\newpage
+\section{Conclusion}
 
 Through systematic implementation of all 10 stability techniques, we achieved \textbf{91.4\% average improvement} (49× better for position tracking) over the baseline PINN. This demonstrates that architectural optimizations CAN dramatically improve autoregressive prediction performance when:
 

@@ -1,4 +1,4 @@
-"""Generate complete time-series plots for all 19 state variables"""
+"""Generate complete time-series plots for all 16 variables (12 predicted states + 4 control inputs)"""
 import torch
 import pandas as pd
 import numpy as np
@@ -28,9 +28,6 @@ VARIABLES = [
     ('vx', 'X Velocity', 'm/s', 'velocity'),
     ('vy', 'Y Velocity', 'm/s', 'velocity'),
     ('vz', 'Z Velocity (Vertical)', 'm/s', 'velocity'),
-    ('p_dot', 'Roll Acceleration', 'rad/s²', 'acceleration'),
-    ('q_dot', 'Pitch Acceleration', 'rad/s²', 'acceleration'),
-    ('r_dot', 'Yaw Acceleration', 'rad/s²', 'acceleration'),
     ('thrust', 'Total Thrust', 'N', 'control'),
     ('torque_x', 'Roll Torque (τ_x)', 'N·m', 'control'),
     ('torque_y', 'Pitch Torque (τ_y)', 'N·m', 'control'),
@@ -51,7 +48,7 @@ def plot_variable(ax, time, true_vals, pred_vals, var_name, var_label, var_unit,
 
 def main():
     print("="*80)
-    print("GENERATING ALL 19 TIME-SERIES PLOTS")
+    print("GENERATING ALL 16 TIME-SERIES PLOTS")
     print("="*80)
 
     # Load model
@@ -92,8 +89,8 @@ def main():
     df_pred = pd.DataFrame(predictions, columns=predicted_states)
     df_pred['timestamp'] = df['timestamp'].iloc[1:].values
 
-    # For control inputs and derivatives, use ground truth (these are not predicted by model)
-    for col in ['thrust', 'torque_x', 'torque_y', 'torque_z', 'p_dot', 'q_dot', 'r_dot']:
+    # For control inputs, use ground truth (these are not predicted by model)
+    for col in ['thrust', 'torque_x', 'torque_y', 'torque_z']:
         if col in df.columns:
             df_pred[col] = df[col].iloc[1:].values
 
@@ -102,14 +99,14 @@ def main():
     df_pred = df_pred.rename(columns={'phi': 'roll', 'theta': 'pitch', 'psi': 'yaw'})
 
     print(f"\nGenerating individual plots...")
-    # Generate plots for all 19 variables
+    # Generate plots for all 16 variables (12 predicted + 4 controls)
     plot_num = 1
     for var_name, var_label, var_unit, var_type in VARIABLES:
         if var_name not in df.columns:
             print(f"  WARNING: Variable '{var_name}' not found in data, skipping...")
             continue
 
-        print(f"  [{plot_num:02d}/19] Generating plot for {var_name}...")
+        print(f"  [{plot_num:02d}/16] Generating plot for {var_name}...")
 
         # Get data
         time = df['timestamp'].iloc[1:].values
