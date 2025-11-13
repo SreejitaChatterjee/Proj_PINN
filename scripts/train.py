@@ -40,8 +40,8 @@ class Trainer:
                 with torch.no_grad():
                     # Use model's prediction as input for next step (autoregressive)
                     pred = self.model(data)
-                    # Replace states (first 8 dims) with predictions, keep controls
-                    data = torch.cat([pred[:, :8].detach(), data[:, 8:]], dim=1)
+                    # Replace states (first 12 dims) with predictions, keep controls
+                    data = torch.cat([pred[:, :12].detach(), data[:, 12:]], dim=1)
 
             output = self.model(data)
             data_loss = self.criterion(output, target)
@@ -114,13 +114,13 @@ def create_sequences(traj_data, seq_len=10):
     Create sliding window sequences from trajectory data.
 
     Args:
-        traj_data: (T, 12) array with [states(8) + controls(4)]
+        traj_data: (T, 16) array with [states(12) + controls(4)]
         seq_len: sequence length for LSTM (default 10)
 
     Returns:
-        X_seq: (T-1, seq_len, 8) - state sequences
+        X_seq: (T-1, seq_len, 12) - state sequences
         X_ctrl: (T-1, 4) - current controls
-        y: (T-1, 8) - next states
+        y: (T-1, 12) - next states
     """
     T = len(traj_data)
     X_seq, X_ctrl, y = [], [], []
@@ -128,16 +128,16 @@ def create_sequences(traj_data, seq_len=10):
     for i in range(T - 1):
         # State sequence: states from (i-seq_len+1) to i (inclusive)
         start_idx = max(0, i - seq_len + 1)
-        state_window = traj_data[start_idx:i+1, :8]  # Get states only
+        state_window = traj_data[start_idx:i+1, :12]  # Get states only (12 states)
 
         # Pad with first state if at trajectory start
         if len(state_window) < seq_len:
-            padding = np.tile(traj_data[0:1, :8], (seq_len - len(state_window), 1))
+            padding = np.tile(traj_data[0:1, :12], (seq_len - len(state_window), 1))
             state_window = np.vstack([padding, state_window])
 
         X_seq.append(state_window)
-        X_ctrl.append(traj_data[i, 8:])  # Current controls
-        y.append(traj_data[i+1, :8])  # Next state
+        X_ctrl.append(traj_data[i, 12:])  # Current controls (last 4 dims)
+        y.append(traj_data[i+1, :12])  # Next state (first 12 dims)
 
     return np.array(X_seq), np.array(X_ctrl), np.array(y)
 
@@ -160,7 +160,8 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
     df = pd.read_csv(csv_path)
     # Rename columns to match expected names (data generator uses roll/pitch/yaw)
     df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    features = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z']
+    # Full 12-state model: positions (x,y,z), attitudes (phi,theta,psi), rates (p,q,r), velocities (vx,vy,vz)
+    features = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z']
 
     if not use_sequences:
         # Original single-timestep preparation
@@ -169,7 +170,7 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
             traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
             traj_data = traj[features].values
             X.append(traj_data[:-1])  # All but last
-            y.append(traj_data[1:, :8])  # All but first, only first 8 features
+            y.append(traj_data[1:, :12])  # All but first, only first 12 features (states)
 
         X, y = np.vstack(X), np.vstack(y)
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
@@ -196,9 +197,9 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
             X_ctrl_all.append(X_ctrl)
             y_all.append(y)
 
-        X_seq_all = np.vstack(X_seq_all)  # (N, seq_len, 8)
+        X_seq_all = np.vstack(X_seq_all)  # (N, seq_len, 12)
         X_ctrl_all = np.vstack(X_ctrl_all)  # (N, 4)
-        y_all = np.vstack(y_all)  # (N, 8)
+        y_all = np.vstack(y_all)  # (N, 12)
 
         # Split into train/val
         indices = np.arange(len(X_seq_all))

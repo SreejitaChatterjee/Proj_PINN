@@ -299,10 +299,13 @@ class QuadrotorSimulator:
             # Store data (including kt and kq for PINN learning)
             # Store ACTUAL motor outputs (with dynamics), not commanded values
             # Option 1 implementation: Include angular accelerations for improved inertia identification
+            # Complete state: 10 predicted states (x, y, z, roll, pitch, yaw, p, q, r, vx, vy, vz)
             data.append({
                 'timestamp': i * dt,
+                'x': x,  # Horizontal position (m)
+                'y': y,  # Horizontal position (m)
+                'z': z,  # Vertical position (m)
                 'thrust': T_actual,
-                'z': z,
                 'torque_x': tx_actual,
                 'torque_y': ty_actual,
                 'torque_z': tz_actual,

@@ -23,7 +23,7 @@ def rollout_predictions(model, initial_state, controls, scaler_X, scaler_y, n_st
             # Scale input
             state_controls_scaled = scaler_X.transform(state_controls.reshape(1, -1))
             # Predict next state (scaled)
-            next_state_scaled = model(torch.FloatTensor(state_controls_scaled)).squeeze(0)[:8].numpy()
+            next_state_scaled = model(torch.FloatTensor(state_controls_scaled)).squeeze(0)[:12].numpy()
             # Inverse transform to get actual next state
             next_state = scaler_y.inverse_transform(next_state_scaled.reshape(1, -1)).flatten()
             states.append(next_state)
@@ -45,18 +45,18 @@ def evaluate_model(model_path, data_path, output_dir='results'):
     df = pd.read_csv(data_path)
     # Rename columns to match expected names (data generator uses roll/pitch/yaw)
     df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    states = ['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz']
+    states = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
 
     # Compute predictions
     predictions = []
     with torch.no_grad():
         for idx in range(len(df) - 1):
-            # FIXED: Removed p_dot, q_dot, r_dot - these are NOT valid inputs
-            input_data = df.iloc[idx][['z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vz',
+            # Input: 12 states + 4 controls = 16 features
+            input_data = df.iloc[idx][['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz',
                                         'thrust', 'torque_x', 'torque_y', 'torque_z']].values
             # Apply input scaling
             input_scaled = scaler_X.transform(input_data.reshape(1, -1))
-            pred_scaled = model(torch.FloatTensor(input_scaled)).squeeze(0)[:8].numpy()
+            pred_scaled = model(torch.FloatTensor(input_scaled)).squeeze(0)[:12].numpy()
             # Inverse transform predictions
             pred = scaler_y.inverse_transform(pred_scaled.reshape(1, -1)).flatten()
             predictions.append(pred)

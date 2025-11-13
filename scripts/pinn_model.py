@@ -1,12 +1,20 @@
-"""Unified Physics-Informed Neural Network for Quadrotor Dynamics"""
+"""Unified Physics-Informed Neural Network for Quadrotor Dynamics - Full 12-State Model"""
 import torch
 import torch.nn as nn
 
 class QuadrotorPINN(nn.Module):
-    def __init__(self, input_size=12, hidden_size=256, output_size=8, num_layers=5, dropout=0.1):
+    def __init__(self, input_size=16, hidden_size=256, output_size=12, num_layers=5, dropout=0.1):
+        """
+        Full 6-DOF quadrotor PINN predicting all 12 states:
+        - Positions: x, y, z
+        - Attitudes: phi, theta, psi
+        - Angular rates: p, q, r
+        - Velocities: vx, vy, vz
+
+        Input: 12 states + 4 controls = 16 features
+        Output: 12 next states
+        """
         super().__init__()
-        # Increased capacity: 128->256 neurons, 4->5 layers
-        # Added dropout for robustness against compounding errors
         layers = [nn.Linear(input_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)]
         for _ in range(num_layers - 2):
             layers.extend([nn.Linear(hidden_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)])
@@ -23,7 +31,8 @@ class QuadrotorPINN(nn.Module):
             'kq': nn.Parameter(torch.tensor(7.8263e-4))
         })
 
-        self.g = 9.81  # Fixed constant
+        self.g = 9.81  # Gravity constant
+        self.drag_coeff = 0.05  # Aerodynamic drag coefficient
         self.true_params = {k: v.item() for k, v in self.params.items()}
 
     def forward(self, x):
@@ -43,62 +52,114 @@ class QuadrotorPINN(nn.Module):
                 self.params[k].clamp_(lo, hi)
 
     def physics_loss(self, inputs, outputs, dt=0.001):
-        # Extract states (8) and controls (4) - NO acceleration inputs
-        z, phi, theta, psi, p, q, r, vz = inputs[:, :8].T
-        thrust, tx, ty, tz = inputs[:, 8:12].T
-        z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
+        """
+        Enforce Newton-Euler equations for complete 6-DOF dynamics
+        """
+        # Extract states (12) and controls (4)
+        x, y, z, phi, theta, psi, p, q, r, vx, vy, vz = inputs[:, :12].T
+        thrust, tx, ty, tz = inputs[:, 12:16].T
+        x_next, y_next, z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vx_next, vy_next, vz_next = outputs[:, :12].T
 
-        # Rotational dynamics
+        # === ROTATIONAL DYNAMICS (Euler Equations) ===
         J = self.params
-        t1, t2, t3 = (J['Jyy'] - J['Jzz'])/J['Jxx'], (J['Jzz'] - J['Jxx'])/J['Jyy'], (J['Jxx'] - J['Jyy'])/J['Jzz']
+        t1 = (J['Jyy'] - J['Jzz']) / J['Jxx']
+        t2 = (J['Jzz'] - J['Jxx']) / J['Jyy']
+        t3 = (J['Jxx'] - J['Jyy']) / J['Jzz']
 
-        # PHYSICS FIX: Removed artificial damping terms (-2*p, -2*q, -2*r)
-        # Real Euler rotation equations have no viscous damping
+        # Angular accelerations (NO artificial damping)
         pdot = t1*q*r + tx/J['Jxx']
         qdot = t2*p*r + ty/J['Jyy']
         rdot = t3*p*q + tz/J['Jzz']
 
-        # Kinematics
+        # === ATTITUDE KINEMATICS ===
         phi_dot = p + torch.sin(phi)*torch.tan(theta)*q + torch.cos(phi)*torch.tan(theta)*r
         theta_dot = torch.cos(phi)*q - torch.sin(phi)*r
         psi_dot = torch.sin(phi)*q/torch.cos(theta) + torch.cos(phi)*r/torch.cos(theta)
 
-        # Vertical dynamics
-        # PHYSICS FIX: Changed to quadratic drag (more realistic than linear)
-        drag_coeff = 0.05
-        wdot = -thrust*torch.cos(theta)*torch.cos(phi)/J['m'] + self.g - drag_coeff*vz*torch.abs(vz)
+        # === TRANSLATIONAL DYNAMICS (Body Frame - Newton's Laws) ===
+        c_d = self.drag_coeff
+        # u, v, w are body-frame velocities (vx, vy, vz in our notation)
+        u, v, w = vx, vy, vz
 
-        # Physics predictions
-        p_pred, q_pred, r_pred = p + pdot*dt, q + qdot*dt, r + rdot*dt
+        # Forces in body frame (thrust acts along -z axis)
+        fx, fy, fz = 0.0, 0.0, -thrust
+
+        # Body-frame accelerations with quadratic drag
+        udot = r*v - q*w + fx/J['m'] - self.g*torch.sin(theta) - c_d*u*torch.abs(u)
+        vdot = p*w - r*u + fy/J['m'] + self.g*torch.cos(theta)*torch.sin(phi) - c_d*v*torch.abs(v)
+        wdot = q*u - p*v + fz/J['m'] + self.g*torch.cos(theta)*torch.cos(phi) - c_d*w*torch.abs(w)
+
+        # === POSITION KINEMATICS (Body to Inertial Transformation) ===
+        # Rotation matrix elements
+        c_phi, s_phi = torch.cos(phi), torch.sin(phi)
+        c_theta, s_theta = torch.cos(theta), torch.sin(theta)
+        c_psi, s_psi = torch.cos(psi), torch.sin(psi)
+
+        xdot = (c_psi*c_theta)*u + (c_psi*s_theta*s_phi - s_psi*c_phi)*v + (s_psi*s_phi + c_psi*s_theta*c_phi)*w
+        ydot = (s_psi*c_theta)*u + (c_psi*c_phi + s_psi*s_theta*s_phi)*v + (s_psi*s_theta*c_phi - c_psi*s_phi)*w
+        zdot = -s_theta*u + c_theta*s_phi*v + c_theta*c_phi*w
+
+        # === PHYSICS-BASED PREDICTIONS ===
+        # Angular rates
+        p_pred = p + pdot*dt
+        q_pred = q + qdot*dt
+        r_pred = r + rdot*dt
+
+        # Attitudes
         phi_pred = phi + phi_dot*dt
         theta_pred = theta + theta_dot*dt
         psi_pred = psi + psi_dot*dt
-        vz_pred = vz + wdot*dt
-        z_pred = z + vz*dt
 
-        # Normalized loss
-        scales = {'ang': 0.2, 'rate': 0.1, 'vz': 5.0, 'z': 5.0}
-        return sum([
-            ((phi_next - phi_pred)/scales['ang'])**2,
-            ((theta_next - theta_pred)/scales['ang'])**2,
-            ((psi_next - psi_pred)/scales['ang'])**2,
-            ((p_next - p_pred)/scales['rate'])**2,
-            ((q_next - q_pred)/scales['rate'])**2,
-            ((r_next - r_pred)/scales['rate'])**2,
-            ((vz_next - vz_pred)/scales['vz'])**2,
-            ((z_next - z_pred)/scales['z'])**2
-        ]).mean()
+        # Velocities
+        vx_pred = vx + udot*dt
+        vy_pred = vy + vdot*dt
+        vz_pred = vz + wdot*dt
+
+        # Positions
+        x_pred = x + xdot*dt
+        y_pred = y + ydot*dt
+        z_pred = z + zdot*dt
+
+        # === NORMALIZED PHYSICS LOSS ===
+        scales = {
+            'pos': 5.0,     # Position scale (m)
+            'ang': 0.2,     # Angle scale (rad)
+            'rate': 0.1,    # Angular rate scale (rad/s)
+            'vel': 5.0      # Velocity scale (m/s)
+        }
+
+        loss = (
+            # Positions
+            ((x_next - x_pred)/scales['pos'])**2 +
+            ((y_next - y_pred)/scales['pos'])**2 +
+            ((z_next - z_pred)/scales['pos'])**2 +
+            # Attitudes
+            ((phi_next - phi_pred)/scales['ang'])**2 +
+            ((theta_next - theta_pred)/scales['ang'])**2 +
+            ((psi_next - psi_pred)/scales['ang'])**2 +
+            # Angular rates
+            ((p_next - p_pred)/scales['rate'])**2 +
+            ((q_next - q_pred)/scales['rate'])**2 +
+            ((r_next - r_pred)/scales['rate'])**2 +
+            # Velocities
+            ((vx_next - vx_pred)/scales['vel'])**2 +
+            ((vy_next - vy_pred)/scales['vel'])**2 +
+            ((vz_next - vz_pred)/scales['vel'])**2
+        )
+
+        return loss.mean()
 
     def temporal_smoothness_loss(self, inputs, outputs, dt=0.001):
         """
-        Penalize unrealistic state changes between timesteps.
-        Enforces physical limits on acceleration and jerk.
+        Enforce physical limits on state change rates (all 12 states)
         """
         # Extract current and next states
-        z, phi, theta, psi, p, q, r, vz = inputs[:, :8].T
-        z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
+        x, y, z, phi, theta, psi, p, q, r, vx, vy, vz = inputs[:, :12].T
+        x_next, y_next, z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vx_next, vy_next, vz_next = outputs[:, :12].T
 
-        # Compute state changes (velocities/accelerations)
+        # Compute state changes
+        dx = (x_next - x) / dt
+        dy = (y_next - y) / dt
         dz = (z_next - z) / dt
         dphi = (phi_next - phi) / dt
         dtheta = (theta_next - theta) / dt
@@ -106,61 +167,69 @@ class QuadrotorPINN(nn.Module):
         dp = (p_next - p) / dt
         dq = (q_next - q) / dt
         dr = (r_next - r) / dt
+        dvx = (vx_next - vx) / dt
+        dvy = (vy_next - vy) / dt
         dvz = (vz_next - vz) / dt
 
-        # Physical limits for quadrotors (based on realistic dynamic flight)
-        # BALANCED: Allow realistic transient dynamics while preventing extreme values
+        # Physical limits
         limits = {
+            'dx': 5.0,        # Max horizontal velocity 5 m/s
+            'dy': 5.0,
             'dz': 5.0,        # Max vertical velocity 5 m/s
-            'dphi': 3.0,      # Max roll rate 3 rad/s (~172 deg/s)
-            'dtheta': 3.0,    # Max pitch rate 3 rad/s
-            'dpsi': 2.0,      # Max yaw rate 2 rad/s (~115 deg/s)
-            'dp': 35.0,       # Max roll angular acceleration 35 rad/s^2 (allows realistic transients)
-            'dq': 35.0,       # Max pitch angular acceleration 35 rad/s^2 (allows realistic transients)
-            'dr': 20.0,       # Max yaw angular acceleration 20 rad/s^2 (allows realistic transients)
-            'dvz': 15.0       # Max vertical acceleration 15 m/s^2
+            'dphi': 3.0,      # Max roll rate 3 rad/s
+            'dtheta': 3.0,
+            'dpsi': 2.0,
+            'dp': 35.0,       # Max angular acceleration
+            'dq': 35.0,
+            'dr': 20.0,
+            'dvx': 15.0,      # Max horizontal acceleration
+            'dvy': 15.0,
+            'dvz': 15.0
         }
 
-        # Smooth L2 penalty (soft constraints)
+        # Soft constraints
         loss = 0.0
-        loss += torch.relu(torch.abs(dz - vz) - limits['dz']).pow(2).mean()  # dz should equal vz
+        loss += torch.relu(torch.abs(dx - vx) - limits['dx']).pow(2).mean()
+        loss += torch.relu(torch.abs(dy - vy) - limits['dy']).pow(2).mean()
+        loss += torch.relu(torch.abs(dz - vz) - limits['dz']).pow(2).mean()
         loss += torch.relu(torch.abs(dphi) - limits['dphi']).pow(2).mean()
         loss += torch.relu(torch.abs(dtheta) - limits['dtheta']).pow(2).mean()
         loss += torch.relu(torch.abs(dpsi) - limits['dpsi']).pow(2).mean()
         loss += torch.relu(torch.abs(dp) - limits['dp']).pow(2).mean()
         loss += torch.relu(torch.abs(dq) - limits['dq']).pow(2).mean()
         loss += torch.relu(torch.abs(dr) - limits['dr']).pow(2).mean()
+        loss += torch.relu(torch.abs(dvx) - limits['dvx']).pow(2).mean()
+        loss += torch.relu(torch.abs(dvy) - limits['dvy']).pow(2).mean()
         loss += torch.relu(torch.abs(dvz) - limits['dvz']).pow(2).mean()
 
         return loss
 
     def stability_loss(self, inputs, outputs):
         """
-        Penalize predictions that would cause instability in autoregressive rollout.
-        Encourages predictions to stay close to physically reasonable state space.
+        Prevent state space divergence (all 12 states)
         """
-        # Extract predicted states
-        z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vz_next = outputs[:, :8].T
+        x_next, y_next, z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vx_next, vy_next, vz_next = outputs[:, :12].T
 
-        # Soft constraints on state magnitudes to prevent divergence
-        state_bounds = {
-            'z': 25.0,      # Altitude limit (meters)
-            'phi': 0.5,     # Roll limit (rad, ~28 deg)
-            'theta': 0.5,   # Pitch limit (rad, ~28 deg)
-            'p': 5.0,       # Roll rate limit (rad/s)
-            'q': 5.0,       # Pitch rate limit (rad/s)
-            'r': 3.0,       # Yaw rate limit (rad/s)
-            'vz': 10.0      # Vertical velocity limit (m/s)
+        # State bounds
+        bounds = {
+            'x': 50.0, 'y': 50.0, 'z': 25.0,
+            'phi': 0.5, 'theta': 0.5,
+            'p': 5.0, 'q': 5.0, 'r': 3.0,
+            'vx': 10.0, 'vy': 10.0, 'vz': 10.0
         }
 
         loss = 0.0
-        loss += torch.relu(torch.abs(z_next) - state_bounds['z']).pow(2).mean()
-        loss += torch.relu(torch.abs(phi_next) - state_bounds['phi']).pow(2).mean()
-        loss += torch.relu(torch.abs(theta_next) - state_bounds['theta']).pow(2).mean()
-        loss += torch.relu(torch.abs(p_next) - state_bounds['p']).pow(2).mean()
-        loss += torch.relu(torch.abs(q_next) - state_bounds['q']).pow(2).mean()
-        loss += torch.relu(torch.abs(r_next) - state_bounds['r']).pow(2).mean()
-        loss += torch.relu(torch.abs(vz_next) - state_bounds['vz']).pow(2).mean()
+        loss += torch.relu(torch.abs(x_next) - bounds['x']).pow(2).mean()
+        loss += torch.relu(torch.abs(y_next) - bounds['y']).pow(2).mean()
+        loss += torch.relu(torch.abs(z_next) - bounds['z']).pow(2).mean()
+        loss += torch.relu(torch.abs(phi_next) - bounds['phi']).pow(2).mean()
+        loss += torch.relu(torch.abs(theta_next) - bounds['theta']).pow(2).mean()
+        loss += torch.relu(torch.abs(p_next) - bounds['p']).pow(2).mean()
+        loss += torch.relu(torch.abs(q_next) - bounds['q']).pow(2).mean()
+        loss += torch.relu(torch.abs(r_next) - bounds['r']).pow(2).mean()
+        loss += torch.relu(torch.abs(vx_next) - bounds['vx']).pow(2).mean()
+        loss += torch.relu(torch.abs(vy_next) - bounds['vy']).pow(2).mean()
+        loss += torch.relu(torch.abs(vz_next) - bounds['vz']).pow(2).mean()
 
         return loss
 
