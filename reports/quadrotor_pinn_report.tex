@@ -88,7 +88,7 @@
 \begin{center}
 \large\textbf{Abstract}\\[0.5em]
 \normalsize
-This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics and temporal smoothness constraints}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Key innovations include: (1) no artificial damping terms in rotational dynamics, (2) quadratic aerodynamic drag, (3) realistic motor dynamics with time constants and slew rate limits, (4) temporal smoothness loss enforcing physical velocity and acceleration limits, achieving \textbf{95-99\% improvement} over baseline, (5) enhanced architecture with 256 neurons, 5 layers, and dropout regularization for autoregressive stability, (6) scheduled sampling training (0→30\%) for robust multi-step predictions. The system achieves breakthrough results: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable), with state prediction MAE of \textbf{0.022m for altitude, 0.0003 rad for angles, and 0.002-0.004 rad/s for angular rates}. The model produces smooth, physically realistic predictions suitable for real hardware deployment, validated through 500-step autoregressive rollout evaluation.
+This project presents a comprehensive implementation of Physics-Informed Neural Networks (PINNs) for quadrotor dynamics prediction with simultaneous 6-parameter identification using \textbf{real physics and temporal smoothness constraints}. The approach combines data-driven learning with physical constraints, trained on realistic flight data with square wave reference trajectories. Key innovations include: (1) complete 6-DOF dynamics with body-to-inertial frame transformations, (2) no artificial damping terms in rotational dynamics, (3) quadratic aerodynamic drag, (4) realistic motor dynamics with time constants and slew rate limits, (5) temporal smoothness loss enforcing physical velocity and acceleration limits, (6) enhanced architecture with 256 neurons, 5 layers, and dropout regularization for autoregressive stability, (7) scheduled sampling training (0→30\%) for robust multi-step predictions. The system predicts all 12 dynamical states (x, y, z, φ, θ, ψ, p, q, r, vx, vy, vz) and achieves breakthrough parameter identification: mass/kt/kq at 0.0\% error (perfect), inertias at 15\% error (acceptable). State prediction achieves MAE of \textbf{0.023-0.070m for positions, 0.0005-0.0009 rad for angles, 0.0014-0.0034 rad/s for angular rates, and 0.008-0.040 m/s for velocities}. The model produces smooth, physically realistic predictions suitable for real hardware deployment, validated through 500-step autoregressive rollout evaluation.
 \end{center}
 \vfill
 \end{titlepage}
@@ -326,35 +326,35 @@ These dynamics ensure physically realistic actuator behavior, preventing the sha
 
 \subsubsection{Outputs from PINN Model (18 Variables)}
 
-\textbf{Predicted Next States (12 Variables):}
-\textit{The PINN predicts the state vector at the next timestep $(t+1)$ given current state at time $t$.}
+\textbf{Predicted Next States (12 Dynamical States):}
+\textit{The PINN predicts the complete 6-DOF state vector at the next timestep $(t+1)$ given current state at time $t$.}
 \begin{longtable}{|p{0.05\textwidth}|p{0.2\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.4\textwidth}|}
 \hline
 \textbf{\#} & \textbf{Output Variable} & \textbf{Symbol} & \textbf{Units} & \textbf{Prediction Description} \\
 \hline
-1 & \textbf{thrust\_next} & $T(t+1)$ & N & Thrust at next timestep \\
+1 & \textbf{x\_next} & $x(t+1)$ & m & X position (inertial frame) at next timestep \\
 \hline
-2 & \textbf{z\_next} & $z(t+1)$ & m & Altitude at next timestep \\
+2 & \textbf{y\_next} & $y(t+1)$ & m & Y position (inertial frame) at next timestep \\
 \hline
-3 & \textbf{torque\_x\_next} & $\tau_x(t+1)$ & N$\cdot$m & Roll torque at next timestep \\
+3 & \textbf{z\_next} & $z(t+1)$ & m & Z position (altitude) at next timestep \\
 \hline
-4 & \textbf{torque\_y\_next} & $\tau_y(t+1)$ & N$\cdot$m & Pitch torque at next timestep \\
+4 & \textbf{roll\_next} & $\phi(t+1)$ & rad & Roll angle at next timestep \\
 \hline
-5 & \textbf{torque\_z\_next} & $\tau_z(t+1)$ & N$\cdot$m & Yaw torque at next timestep \\
+5 & \textbf{pitch\_next} & $\theta(t+1)$ & rad & Pitch angle at next timestep \\
 \hline
-6 & \textbf{roll\_next} & $\phi(t+1)$ & rad & Roll angle at next timestep \\
+6 & \textbf{yaw\_next} & $\psi(t+1)$ & rad & Yaw angle at next timestep \\
 \hline
-7 & \textbf{pitch\_next} & $\theta(t+1)$ & rad & Pitch angle at next timestep \\
+7 & \textbf{p\_next} & $p(t+1)$ & rad/s & Roll rate at next timestep \\
 \hline
-8 & \textbf{yaw\_next} & $\psi(t+1)$ & rad & Yaw angle at next timestep \\
+8 & \textbf{q\_next} & $q(t+1)$ & rad/s & Pitch rate at next timestep \\
 \hline
-9 & \textbf{p\_next} & $p(t+1)$ & rad/s & Roll rate at next timestep \\
+9 & \textbf{r\_next} & $r(t+1)$ & rad/s & Yaw rate at next timestep \\
 \hline
-10 & \textbf{q\_next} & $q(t+1)$ & rad/s & Pitch rate at next timestep \\
+10 & \textbf{vx\_next} & $u(t+1)$ & m/s & X velocity (body frame) at next timestep \\
 \hline
-11 & \textbf{r\_next} & $r(t+1)$ & rad/s & Yaw rate at next timestep \\
+11 & \textbf{vy\_next} & $v(t+1)$ & m/s & Y velocity (body frame) at next timestep \\
 \hline
-12 & \textbf{vz\_next} & $w(t+1)$ & m/s & Vertical velocity at next timestep \\
+12 & \textbf{vz\_next} & $w(t+1)$ & m/s & Z velocity (vertical, body frame) at next timestep \\
 \hline
 \end{longtable}
 
@@ -533,29 +533,45 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \end{figure}
 \vspace{1em}
 
-\subsection{State Prediction Performance (8 Variables - Real Physics + Temporal Smoothness)}
-\textbf{BREAKTHROUGH RESULTS:} Real dynamics + temporal smoothness constraints achieve 95-99\% improvement by eliminating high-frequency noise. Enforces physical limits on velocities and accelerations.
+\subsection{State Prediction Performance (12 Dynamical States - Real Physics + Temporal Smoothness)}
+\textbf{COMPREHENSIVE RESULTS:} Real 6-DOF dynamics with temporal smoothness constraints enforce physical limits on velocities and accelerations, producing smooth and physically realistic predictions across all 12 dynamical states.
 
 \small
-\begin{longtable}{|l|c|c|p{0.4\textwidth}|}
+\begin{longtable}{|l|c|c|p{0.38\textwidth}|}
 \hline
 \textbf{State Variable} & \textbf{MAE} & \textbf{RMSE} & \textbf{Performance Notes} \\
 \hline
-\textbf{Altitude (z)} & \textbf{0.022 m} & \textbf{0.13 m} & \textbf{95\% improvement!} Smooth, physically realistic predictions. \\
+\multicolumn{4}{|c|}{\textit{Position States (Inertial Frame)}} \\
 \hline
-\textbf{Roll ($\phi$)} & \textbf{0.0003 rad (0.017°)} & \textbf{0.0007 rad} & \textbf{90\% improvement!} Outstanding angle prediction. \\
+\textbf{X Position} & \textbf{0.023 m} & \textbf{0.064 m} & Accurate horizontal position tracking \\
 \hline
-\textbf{Pitch ($\theta$)} & \textbf{0.0003 rad (0.017°)} & \textbf{0.0005 rad} & \textbf{84\% improvement!} Excellent attitude tracking. \\
+\textbf{Y Position} & \textbf{0.031 m} & \textbf{0.098 m} & Good lateral position prediction \\
 \hline
-\textbf{Yaw ($\psi$)} & \textbf{0.0007 rad (0.040°)} & \textbf{0.0011 rad} & \textbf{81\% improvement!} Accurate heading prediction. \\
+\textbf{Z Position (Altitude)} & \textbf{0.070 m} & \textbf{0.165 m} & Smooth vertical position tracking \\
 \hline
-\textbf{Roll Rate (p)} & \textbf{0.0041 rad/s} & \textbf{0.0054 rad/s} & \textbf{99.7\% improvement!} Eliminates high-frequency noise. \\
+\multicolumn{4}{|c|}{\textit{Attitude States}} \\
 \hline
-\textbf{Pitch Rate (q)} & \textbf{0.0019 rad/s} & \textbf{0.0024 rad/s} & \textbf{99.5\% improvement!} Smooth, continuous predictions. \\
+\textbf{Roll ($\phi$)} & \textbf{0.0008 rad (0.045°)} & \textbf{0.0012 rad} & Outstanding roll angle prediction \\
 \hline
-\textbf{Yaw Rate (r)} & \textbf{0.0020 rad/s} & \textbf{0.0059 rad/s} & \textbf{99.7\% improvement!} Physically realistic dynamics. \\
+\textbf{Pitch ($\theta$)} & \textbf{0.0005 rad (0.029°)} & \textbf{0.0008 rad} & Excellent pitch angle tracking \\
 \hline
-\textbf{Vertical Vel ($v_z$)} & \textbf{0.017 m/s} & \textbf{0.057 m/s} & \textbf{98.3\% improvement!} Smooth velocity tracking. \\
+\textbf{Yaw ($\psi$)} & \textbf{0.0009 rad (0.054°)} & \textbf{0.0015 rad} & Accurate heading prediction \\
+\hline
+\multicolumn{4}{|c|}{\textit{Angular Velocity States}} \\
+\hline
+\textbf{Roll Rate (p)} & \textbf{0.0034 rad/s} & \textbf{0.0054 rad/s} & Smooth angular rate prediction \\
+\hline
+\textbf{Pitch Rate (q)} & \textbf{0.0014 rad/s} & \textbf{0.0024 rad/s} & Excellent rate tracking \\
+\hline
+\textbf{Yaw Rate (r)} & \textbf{0.0029 rad/s} & \textbf{0.0044 rad/s} & Physically realistic dynamics \\
+\hline
+\multicolumn{4}{|c|}{\textit{Linear Velocity States (Body Frame)}} \\
+\hline
+\textbf{X Velocity (vx)} & \textbf{0.008 m/s} & \textbf{0.018 m/s} & Good horizontal velocity prediction \\
+\hline
+\textbf{Y Velocity (vy)} & \textbf{0.012 m/s} & \textbf{0.027 m/s} & Accurate lateral velocity tracking \\
+\hline
+\textbf{Z Velocity (vz)} & \textbf{0.040 m/s} & \textbf{0.074 m/s} & Smooth vertical velocity prediction \\
 \hline
 \end{longtable}
 

@@ -111,11 +111,44 @@ fg))
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd) [1{C:/Use
-rs/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sreej/AppDa
-ta/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/AppData/L
-ocal/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] (quadrotor_pinn_report.toc
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd)
 
+! LaTeX Error: Unicode character φ (U+03C6)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.91 ...dicts all 12 dynamical states (x, y, z, φ
+                                                  , θ, ψ, p, q, r, vx, vy,...
+
+
+! LaTeX Error: Unicode character θ (U+03B8)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.91 ...s all 12 dynamical states (x, y, z, φ, θ
+                                                  , ψ, p, q, r, vx, vy, vz)...
+
+
+! LaTeX Error: Unicode character ψ (U+03C8)
+               not set up for use with LaTeX.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.91 ...l 12 dynamical states (x, y, z, φ, θ, ψ
+                                                  , p, q, r, vx, vy, vz) and...
+
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
+(quadrotor_pinn_report.toc
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
@@ -215,18 +248,12 @@ Underfull \hbox (badness 5490) in paragraph at lines 333--333
 Overfull \hbox (0.60423pt too wide) in paragraph at lines 333--333
 []|\T1/lmr/bx/n/12 (-20) Symbol| 
 
-Overfull \hbox (5.19928pt too wide) in paragraph at lines 339--339
-[]|\T1/lmr/bx/n/12 (-20) torque_x_next| 
-
-Overfull \hbox (5.19928pt too wide) in paragraph at lines 341--341
-[]|\T1/lmr/bx/n/12 (-20) torque_y_next| 
-
-Overfull \hbox (4.09679pt too wide) in paragraph at lines 343--343
-[]|\T1/lmr/bx/n/12 (-20) torque_z_next| 
+Underfull \hbox (badness 2126) in paragraph at lines 339--340
+[]|\T1/lmr/m/n/12 (+20) Z po-si-tion (al-ti-tude) at next
 
 Overfull \hbox (7.27pt too wide) in alignment at lines 331--359
  [] [] [] [] [] 
-
+[15]
 Overfull \hbox (0.60423pt too wide) in paragraph at lines 365--365
 []|\T1/lmr/bx/n/12 (-20) Symbol| 
 
@@ -240,7 +267,7 @@ $[]$|
 Underfull \hbox (badness 10000) in paragraph at lines 377--378
 []|$\OT1/lmr/m/n/12 (+20) 7\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 (+20) 8263 \OMS/lm
 sy/m/n/12 ^^B
-[15] (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
 (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmtt.fd) [16]
 Overfull \hbox (84.81076pt too wide) in paragraph at lines 413--414
  [][] 
@@ -348,286 +375,286 @@ Underfull \hbox (badness 10000) in paragraph at lines 518--518
 
 Overfull \hbox (8.64964pt too wide) in paragraph at lines 520--520
 []|\T1/lmr/bx/n/12 (-20) Autoregressive
-[20]
+[20] [21]
 Overfull \hbox (169.62154pt too wide) in paragraph at lines 530--531
  [][] 
-[21]
-Overfull \hbox (58.24652pt too wide) in alignment at lines 540--560
+[22]
+Overfull \hbox (77.36668pt too wide) in alignment at lines 540--576
  [] [] [] [] 
 
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
+Underfull \hbox (badness 10000) in paragraph at lines 585--585
 []|\T1/lmr/bx/n/10.95 (+20) True
 
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
+Underfull \hbox (badness 10000) in paragraph at lines 585--585
 []|\T1/lmr/bx/n/10.95 (+20) Learned
 
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
+Underfull \hbox (badness 10000) in paragraph at lines 585--585
 []|\T1/lmr/bx/n/10.95 (+20) Absolute
 
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
+Underfull \hbox (badness 10000) in paragraph at lines 585--585
 []|\T1/lmr/bx/n/10.95 (+20) Relative
 
-Underfull \hbox (badness 10000) in paragraph at lines 571--571
+Underfull \hbox (badness 10000) in paragraph at lines 587--587
 []|\T1/lmr/m/n/10.95 (+20) 2.34$\OMS/lmsy/m/n/10.95 ^^B\OT1/lmr/m/n/10.95 (+20)
  10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--575
+Underfull \hbox (badness 10000) in paragraph at lines 591--591
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 575--575
+Underfull \hbox (badness 10000) in paragraph at lines 591--591
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 []|$\OT1/lmr/m/n/10.95 (+20) 6\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 860
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 []|$\OT1/lmr/m/n/10.95 (+20) 5\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 831
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 029
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
+Underfull \hbox (badness 10000) in paragraph at lines 593--593
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 []|$\OT1/lmr/m/n/10.95 (+20) 9\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 200
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 058
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 380
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
+Underfull \hbox (badness 10000) in paragraph at lines 595--595
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 571
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 []|$\OT1/lmr/m/n/10.95 (+20) 2\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 050
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
+Underfull \hbox (badness 10000) in paragraph at lines 597--597
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Overfull \hbox (2.6975pt too wide) in alignment at lines 567--583
+Overfull \hbox (2.6975pt too wide) in alignment at lines 583--599
  [] [] [] [] [] [] 
-[22]
-Underfull \hbox (badness 10000) in paragraph at lines 607--607
-[]|\T1/lmr/bx/n/10.95 (+20) Parameter Cat-e-
 [23]
-Underfull \hbox (badness 1953) in paragraph at lines 637--637
+Underfull \hbox (badness 10000) in paragraph at lines 623--623
+[]|\T1/lmr/bx/n/10.95 (+20) Parameter Cat-e-
+[24]
+Underfull \hbox (badness 1953) in paragraph at lines 653--653
 []|\T1/lmr/bx/n/10.95 (+20) Physics In-te-
 
-Underfull \hbox (badness 10000) in paragraph at lines 637--637
+Underfull \hbox (badness 10000) in paragraph at lines 653--653
 []|\T1/lmr/m/n/10.95 (+20) Multi-objective loss (data +
 
-Underfull \hbox (badness 5756) in paragraph at lines 637--638
+Underfull \hbox (badness 5756) in paragraph at lines 653--654
 []|\T1/lmr/m/n/10.95 (+20) Strong con-straint sat-
 
-Underfull \hbox (badness 3439) in paragraph at lines 637--638
+Underfull \hbox (badness 3439) in paragraph at lines 653--654
 \T1/lmr/m/n/10.95 (+20) is-fac-tion ev-i-denced by
 
-Underfull \hbox (badness 10000) in paragraph at lines 639--639
+Underfull \hbox (badness 10000) in paragraph at lines 655--655
 []|\T1/lmr/bx/n/10.95 (+20) Parameter
 
-Underfull \hbox (badness 5231) in paragraph at lines 641--642
+Underfull \hbox (badness 5231) in paragraph at lines 657--658
 []|\T1/lmr/m/n/10.95 (+20) Stable con-ver-gence in
 
-Overfull \hbox (2.25974pt too wide) in paragraph at lines 643--643
+Overfull \hbox (2.25974pt too wide) in paragraph at lines 659--659
 []|\T1/lmr/bx/n/10.95 (-20) Generalization| 
 
-Underfull \hbox (badness 10000) in paragraph at lines 652--652
+Underfull \hbox (badness 10000) in paragraph at lines 668--668
 []|\T1/lmr/bx/n/10.95 (+20) Cross-
 
-Underfull \hbox (badness 10000) in paragraph at lines 652--652
+Underfull \hbox (badness 10000) in paragraph at lines 668--668
 []|\T1/lmr/m/n/10.95 (+20) 10-fold, trajectory-
 
-Underfull \hbox (badness 10000) in paragraph at lines 654--654
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
 []|\T1/lmr/bx/n/10.95 (+20) Generalization
 
-Underfull \hbox (badness 1082) in paragraph at lines 656--656
+Underfull \hbox (badness 1082) in paragraph at lines 672--672
 []|\T1/lmr/m/n/10.95 (+20) Physics loss con-ver-gence
 
-Underfull \hbox (badness 10000) in paragraph at lines 658--658
+Underfull \hbox (badness 10000) in paragraph at lines 674--674
 []|\T1/lmr/bx/n/10.95 (+20) Performance
-[24]
-Underfull \hbox (badness 6284) in paragraph at lines 680--681
+[25] [26]
+Underfull \hbox (badness 6284) in paragraph at lines 696--697
 []|\T1/lmr/bx/n/10.95 (+20) REAL DY-NAM-ICS\T1/lmr/m/n/10.95 (+20) : No ar-ti-f
 i-cial damp-ing,
-[25]
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
+[27]
+Underfull \hbox (badness 10000) in paragraph at lines 755--755
 []|\T1/lmr/bx/n/10.95 (+20) Period
 
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
+Underfull \hbox (badness 10000) in paragraph at lines 755--755
 []|\T1/lmr/bx/n/10.95 (+20) Low
 
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
+Underfull \hbox (badness 10000) in paragraph at lines 755--755
 []|\T1/lmr/bx/n/10.95 (+20) High
-[26]
-Underfull \hbox (badness 10000) in paragraph at lines 777--777
+[28]
+Underfull \hbox (badness 10000) in paragraph at lines 793--793
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B \OT1/lmr/m/n/10.95 (+20) 10[]$
-[27]
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 803.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 803.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 811.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 811.
-
+[29]
 
 LaTeX Warning: Command \textdegree invalid in math mode on input line 819.
 
 
 LaTeX Warning: Command \textdegree invalid in math mode on input line 819.
 
-[28] [29] [30] [31]
-Overfull \hbox (41.14862pt too wide) in paragraph at lines 900--911
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 827.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 827.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 835.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 835.
+
+[30] [31] [32] [33]
+Overfull \hbox (41.14862pt too wide) in paragraph at lines 916--927
 [][] 
-[32] [33] [34 <../results/detailed/01_x_time_analysis.png> <../results/detailed
-/02_y_time_analysis.png>] [35 <../results/detailed/03_z_time_analysis.png> <../
-results/detailed/04_roll_time_analysis.png>] [36 <../results/detailed/05_pitch_
-time_analysis.png> <../results/detailed/06_yaw_time_analysis.png>] [37 <../resu
+[34] [35] [36 <../results/detailed/01_x_time_analysis.png> <../results/detailed
+/02_y_time_analysis.png>] [37 <../results/detailed/03_z_time_analysis.png> <../
+results/detailed/04_roll_time_analysis.png>] [38 <../results/detailed/05_pitch_
+time_analysis.png> <../results/detailed/06_yaw_time_analysis.png>] [39 <../resu
 lts/detailed/07_p_time_analysis.png> <../results/detailed/08_q_time_analysis.pn
-g>] [38 <../results/detailed/09_r_time_analysis.png> <../results/detailed/10_vx
-_time_analysis.png>] [39 <../results/detailed/11_vy_time_analysis.png> <../resu
-lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/16_thrust_time_
-analysis.png> <../results/detailed/17_torque_x_time_analysis.png>] [41 <../resu
+g>] [40 <../results/detailed/09_r_time_analysis.png> <../results/detailed/10_vx
+_time_analysis.png>] [41 <../results/detailed/11_vy_time_analysis.png> <../resu
+lts/detailed/12_vz_time_analysis.png>] [42 <../results/detailed/16_thrust_time_
+analysis.png> <../results/detailed/17_torque_x_time_analysis.png>] [43 <../resu
 lts/detailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_ti
-me_analysis.png>] [42] [43] [44] [45] [46] [47] [48]
-Overfull \hbox (0.8992pt too wide) detected at line 1338
+me_analysis.png>] [44] [45] [46] [47] [48] [49] [50]
+Overfull \hbox (0.8992pt too wide) detected at line 1354
 \OMS/lmsy/m/n/10.95 L[] \OT1/lmr/m/n/10.95 = [] [] []
-[49]
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
+[51]
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1371
 []|\T1/lmr/bx/n/10.95 (+20) True
 
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1371
 []|\T1/lmr/bx/n/10.95 (+20) Learned
 
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1371
 []|\T1/lmr/bx/n/10.95 (+20) Absolute
 
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
+Underfull \hbox (badness 10000) in paragraph at lines 1371--1371
 []|\T1/lmr/bx/n/10.95 (+20) Relative
 
-Underfull \hbox (badness 3769) in paragraph at lines 1359--1360
+Underfull \hbox (badness 3769) in paragraph at lines 1375--1376
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 3769) in paragraph at lines 1361--1362
+Underfull \hbox (badness 3769) in paragraph at lines 1377--1378
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
+Underfull \hbox (badness 10000) in paragraph at lines 1379--1379
 []|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
  \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
+Underfull \hbox (badness 10000) in paragraph at lines 1379--1379
 \OT1/lmr/m/n/10.95 (+20) 10[]$
 
-Underfull \hbox (badness 3769) in paragraph at lines 1363--1364
+Underfull \hbox (badness 3769) in paragraph at lines 1379--1380
 []|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
 
-Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
+Underfull \hbox (badness 10000) in paragraph at lines 1383--1383
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
+Underfull \hbox (badness 10000) in paragraph at lines 1383--1383
 []|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
 3 \OMS/lmsy/m/n/10.95 ^^B
 
-Overfull \hbox (2.6975pt too wide) in alignment at lines 1353--1369
+Overfull \hbox (2.6975pt too wide) in alignment at lines 1369--1385
  [] [] [] [] [] [] 
-[50] [51] [52] [53]
+[52] [53] [54] [55]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1558.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 1558.
+(hyperref)                removing `math shift' on input line 1574.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1558.
+(hyperref)                removing `\rightarrow' on input line 1574.
 
-[54] [55]
-Overfull \hbox (99.76834pt too wide) in paragraph at lines 1619--1647
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1574.
+
+[56] [57]
+Overfull \hbox (99.76834pt too wide) in paragraph at lines 1635--1663
  [][] 
-[56]
-Overfull \hbox (25.09616pt too wide) in paragraph at lines 1655--1656
+[58]
+Overfull \hbox (25.09616pt too wide) in paragraph at lines 1671--1672
 \T1/lmr/m/n/10.95 (-20) The mod-u-lar de-sign sep-a-rat-ing Trans-la-tionalMod-
 ule $\OT1/lmr/m/n/10.95 (-20) (\OML/lmm/m/it/10.95 z; v[]\OT1/lmr/m/n/10.95 (-2
 0) )$ \T1/lmr/m/n/10.95 (-20) and Ro-ta-tionalMod-ule $\OT1/lmr/m/n/10.95 (-20)
  (\OML/lmm/m/it/10.95 ^^^; ^^R;  ; p; q; r\OT1/lmr/m/n/10.95 (-20) )$
-[57]
+[59]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1710.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ll' on input line 1710.
+(hyperref)                removing `math shift' on input line 1726.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1710.
+(hyperref)                removing `\ll' on input line 1726.
 
-[58] [59] [60] [61]
-Overfull \hbox (8.05185pt too wide) in paragraph at lines 1886--1902
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1726.
+
+[60] [61] [62] [63]
+Overfull \hbox (8.05185pt too wide) in paragraph at lines 1902--1918
  [][] 
-[62] [63] [64]
-Overfull \hbox (27.02069pt too wide) in paragraph at lines 2005--2016
+[64] [65] [66]
+Overfull \hbox (27.02069pt too wide) in paragraph at lines 2021--2032
  [][] 
 
-Overfull \hbox (72.75697pt too wide) in paragraph at lines 2023--2034
+Overfull \hbox (72.75697pt too wide) in paragraph at lines 2039--2050
  [][] 
-[65]
-Underfull \hbox (badness 1546) in paragraph at lines 2048--2048
+[67]
+Underfull \hbox (badness 1546) in paragraph at lines 2064--2064
 []|\T1/lmr/m/n/10.95 (+20) Out-of-distribution ex-
 
-Underfull \hbox (badness 10000) in paragraph at lines 2049--2049
+Underfull \hbox (badness 10000) in paragraph at lines 2065--2065
 []|\T1/lmr/m/n/10.95 (+20) Modular ar-chi-tec-ture
 
-Underfull \hbox (badness 10000) in paragraph at lines 2050--2050
+Underfull \hbox (badness 10000) in paragraph at lines 2066--2066
 []|\T1/lmr/m/n/10.95 (+20) Physics-only train-ing,
-[66] [67] [68] (quadrotor_pinn_report.aux)
+[68] [69] [70] (quadrotor_pinn_report.aux)
 
 LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
 
@@ -637,707 +664,6 @@ Package rerunfilecheck Warning: File `quadrotor_pinn_report.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
  )
-(see the transcript file for additional information)
-pdfTeX warning (dest): name{subsection.8.8} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.7} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.6} has been referenced but does not ex
-ist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.5.3} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.5.2} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsubsection.8.5.1} has been referenced but does n
-ot exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.8.5} has been referenced but does not ex
-ist, replaced by a fixed one
-
-<C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cm
-bx10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
-nts/cm/cmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/amsfonts/cm/cmbx5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/t
-ype1/public/amsfonts/cm/cmbx7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX
-/fonts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/sreej/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/sreej/AppData/
-Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><C:/Users/s
-reej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C
-:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi
-5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
-/cm/cmmi7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/
-amsfonts/cmextra/cmmib5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts
-/type1/public/amsfonts/cmextra/cmmib7.pfb><C:/Users/sreej/AppData/Local/Program
-s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/sreej/AppData/Local
-/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/sreej/AppDat
-a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/sreej
-/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/User
-s/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb
-><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
-msy5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
-nts/cm/cmsy7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/lm/lmbx10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/lm/lmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/lm/lmcsc10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/lm/lmex10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/lm/lmmi10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/lm/lmmi12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/pub
-lic/lm/lmmi6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/lm/lmmi8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/lm/lmmib10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
-ic/lm/lmr10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/lm/lmr12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
-/lm/lmr8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
-m/lmri10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
-m/lmri12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
-m/lmsy10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/l
-m/lmsy8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm
-/lmtt10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm
-/lmtt12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
-sfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (69 pages, 6509699 bytes).
-Transcript written on quadrotor_pinn_report.log.
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
- restricted \write18 enabled.
-entering extended mode
-(quadrotor_pinn_report.tex
-LaTeX2e <2023-11-01> patch level 1
-L3 programming layer <2024-01-04>
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
-Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\lmodern.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype-pdf
-tex.def)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\microtype.cfg
-)) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
-For additional information on amsmath, use the `?' option.
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
-fg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
-))) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
-ty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
-)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
-keys.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
-ty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
-.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
-.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
-lestring.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
-))) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
-.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
-
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
-echeck.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
-ounter.sty)))
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty))
- (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/caption\subcaption.sty
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/titlesec\titlesec.sty
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/fancyhdr\fancyhdr.sty
-) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/parskip\parskip.sty)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\makeidx.sty)
-Writing index file quadrotor_pinn_report.idx
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmr.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
-tex.def) (quadrotor_pinn_report.aux)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-cmr.cfg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
-ii
-[Loading MPS to PDF converter (version 2006.09.02).]
-)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
-ase.sty
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
-fg))
-*geometry* driver: auto-detecting
-*geometry* detected driver: pdftex
-(quadrotor_pinn_report.out) (quadrotor_pinn_report.out)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msa.cfg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/microtype\mt-msb.cfg)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmr.fd) [1{C:/Use
-rs/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sreej/AppDa
-ta/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ec.enc}{C:/Users/sreej/AppData/L
-ocal/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}] (quadrotor_pinn_report.toc
-
-pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
-been already used, duplicate ignored
-<to be read again> 
-                   \relax 
-l.37 ...is (All 19 Variables)}{33}{subsection.6.1}
-                                                  % [1] [2{C:/Users/sreej/AppDa
-ta/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathsy.enc}]) [3]
-Overfull \hbox (169.62154pt too wide) in paragraph at lines 115--116
- [][] 
-[4{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-mathit.en
-c}] [5 <./pinn_schematics.pdf>] [6]
-Overfull \hbox (84.81076pt too wide) in paragraph at lines 146--147
- [][] 
-[7 <./pinn_schematics.pdf>] [8] [9] [10]
-Underfull \hbox (badness 10000) in paragraph at lines 230--230
-[]|\T1/lmr/bx/n/12 (+20) Input
-
-Underfull \hbox (badness 10000) in paragraph at lines 230--230
-[]|\T1/lmr/bx/n/12 (+20) Output
-
-Overfull \hbox (6.42636pt too wide) in paragraph at lines 230--230
-[]|\T1/lmr/bx/n/12 (-20) Parameters| 
-
-Underfull \hbox (badness 10000) in paragraph at lines 232--233
-[]|\T1/lmr/m/n/12 (+20) Feature ex-
-
-Underfull \hbox (badness 10000) in paragraph at lines 232--233
-\T1/lmr/m/n/12 (+20) trac-tion from
-
-Underfull \hbox (badness 10000) in paragraph at lines 234--235
-[]|\T1/lmr/m/n/12 (+20) Regularization
-
-Underfull \hbox (badness 10000) in paragraph at lines 236--237
-[]|\T1/lmr/m/n/12 (+20) Nonlinear dy-
-
-Underfull \hbox (badness 2529) in paragraph at lines 236--237
-\T1/lmr/m/n/12 (+20) nam-ics mod-el-ing
-
-Underfull \hbox (badness 10000) in paragraph at lines 238--239
-[]|\T1/lmr/m/n/12 (+20) Regularization
-
-Underfull \hbox (badness 1221) in paragraph at lines 240--241
-[]|\T1/lmr/m/n/12 (+20) Deep fea-ture ex-
-
-Underfull \hbox (badness 10000) in paragraph at lines 242--243
-[]|\T1/lmr/m/n/12 (+20) Regularization
-
-Underfull \hbox (badness 10000) in paragraph at lines 244--244
-[]|\T1/lmr/bx/n/12 (+20) Coupling
-
-Underfull \hbox (badness 10000) in paragraph at lines 246--246
-[]| \T1/lmr/m/n/12 (+20) Trans.
-
-Underfull \hbox (badness 2042) in paragraph at lines 246--247
-[]|\T1/lmr/m/n/12 (+20) Translational dy-
-
-Underfull \hbox (badness 2005) in paragraph at lines 246--247
-\T1/lmr/m/n/12 (+20) nam-ics (po-si-tion,
-
-Underfull \hbox (badness 10000) in paragraph at lines 248--248
-[]| \T1/lmr/m/n/12 (+20) Rot.
-
-Underfull \hbox (badness 10000) in paragraph at lines 252--253
-[]|\T1/lmr/m/n/12 (+20) Regularization
-
-Underfull \hbox (badness 10000) in paragraph at lines 256--256
-[]|\T1/lmr/bx/n/12 (+20) Physics
-
-Underfull \hbox (badness 10000) in paragraph at lines 258--259
-[]|\T1/lmr/m/n/12 (+20) Complete train-
-[11]
-Overfull \hbox (84.81076pt too wide) in paragraph at lines 267--268
- [][] 
-[12] [13 <./pinn_schematics.pdf>]
-Underfull \hbox (badness 10000) in paragraph at lines 287--287
-[]|\T1/lmr/bx/n/12 (+20) Variable
-
-Overfull \hbox (9.08725pt too wide) in paragraph at lines 287--287
-[]|\T1/lmr/bx/n/12 (-20) Symbol| 
-
-Underfull \hbox (badness 10000) in paragraph at lines 287--288
-[]|\T1/lmr/bx/n/12 (+20) Value
-
-Underfull \hbox (badness 10000) in paragraph at lines 291--291
-[]|\T1/lmr/m/n/12 (+20) Vertical po-si-tion
-
-Underfull \hbox (badness 2529) in paragraph at lines 291--291
-\OML/lmm/m/it/12 z < \OT1/lmr/m/n/12 (+20) 0$ \T1/lmr/m/n/12 (+20) = above
-
-Underfull \hbox (badness 6445) in paragraph at lines 301--301
-[]|\T1/lmr/m/n/12 (+20) Pitch an-gle (nose
-[14{C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-rm.enc}]
-
-Underfull \hbox (badness 5490) in paragraph at lines 333--333
-[]|\T1/lmr/bx/n/12 (+20) Output Vari-
-
-Overfull \hbox (0.60423pt too wide) in paragraph at lines 333--333
-[]|\T1/lmr/bx/n/12 (-20) Symbol| 
-
-Overfull \hbox (5.19928pt too wide) in paragraph at lines 339--339
-[]|\T1/lmr/bx/n/12 (-20) torque_x_next| 
-
-Overfull \hbox (5.19928pt too wide) in paragraph at lines 341--341
-[]|\T1/lmr/bx/n/12 (-20) torque_y_next| 
-
-Overfull \hbox (4.09679pt too wide) in paragraph at lines 343--343
-[]|\T1/lmr/bx/n/12 (-20) torque_z_next| 
-
-Overfull \hbox (7.27pt too wide) in alignment at lines 331--359
- [] [] [] [] [] 
-
-Overfull \hbox (0.60423pt too wide) in paragraph at lines 365--365
-[]|\T1/lmr/bx/n/12 (-20) Symbol| 
-
-Overfull \hbox (4.14241pt too wide) in paragraph at lines 375--375
-[]|\T1/lmr/m/n/12 (-20) N/(rad/s)$[]$| 
-
-Overfull \hbox (26.02782pt too wide) in paragraph at lines 377--377
-[]|\T1/lmr/m/n/12 (-20) (N$\OMS/lmsy/m/n/12 ^^A$\T1/lmr/m/n/12 (-20) m)/(rad/s)
-$[]$| 
-
-Underfull \hbox (badness 10000) in paragraph at lines 377--378
-[]|$\OT1/lmr/m/n/12 (+20) 7\OML/lmm/m/it/12 :\OT1/lmr/m/n/12 (+20) 8263 \OMS/lm
-sy/m/n/12 ^^B
-[15] (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\t1lmtt.fd)
-(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/lm\ts1lmtt.fd) [16]
-Overfull \hbox (84.81076pt too wide) in paragraph at lines 413--414
- [][] 
-
-Underfull \hbox (badness 5847) in paragraph at lines 421--421
-[]|\T1/lmr/bx/n/12 (+20) Loss Com-po-
-
-Underfull \hbox (badness 10000) in paragraph at lines 421--421
-[]|\T1/lmr/bx/n/12 (+20) Mathematical
-
-Underfull \hbox (badness 10000) in paragraph at lines 421--421
-[]|\T1/lmr/bx/n/12 (+20) Physical Con-
-
-Underfull \hbox (badness 1748) in paragraph at lines 423--423
-[]|\T1/lmr/m/n/12 (+20) MSE(predicted, ac-
-
-Underfull \hbox (badness 10000) in paragraph at lines 425--425
-[]|\T1/lmr/bx/n/12 (+20) Rotational
-
-Underfull \hbox (badness 10000) in paragraph at lines 427--427
-[]|\T1/lmr/bx/n/12 (+20) Translational
-
-Underfull \hbox (badness 10000) in paragraph at lines 429--429
-[]|\T1/lmr/bx/n/12 (+20) Parameter
-
-Underfull \hbox (badness 10000) in paragraph at lines 429--429
-\T1/lmr/bx/n/12 (+20) Reg-u-lar-iza-
-
-Overfull \hbox (5.24503pt too wide) in paragraph at lines 429--429
-[]|$[]$\T1/lmr/m/n/12 (-20) (param_deviation$[]$)| 
-
-Underfull \hbox (badness 2253) in paragraph at lines 429--429
-[]|\T1/lmr/m/n/12 (+20) Physical pa-ram-e-ter
-[17 <./pinn_schematics.pdf>] [18{C:/Users/sreej/AppData/Local/Programs/MiKTeX/f
-onts/enc/dvips/lm/lm-mathex.enc}]
-Underfull \hbox (badness 3965) in paragraph at lines 480--480
-[]|$[] \OT1/lmr/m/n/12 (+20) = ([] \OML/lmm/m/it/12   [] ^^R\OT1/lmr/m/n/12 (+2
-0) )\OML/lmm/m/it/12 u \OT1/lmr/m/n/12 (+20) + ([] \OML/lmm/m/it/12   [] ^^R []
- ^^^ \OMS/lmsy/m/n/12 ^^@
-
-Underfull \hbox (badness 10000) in paragraph at lines 482--482
-[]|$[] \OT1/lmr/m/n/12 (+20) = ([] \OML/lmm/m/it/12   [] ^^R\OT1/lmr/m/n/12 (+2
-0) )\OML/lmm/m/it/12 u \OT1/lmr/m/n/12 (+20) + ([] \OML/lmm/m/it/12   [] ^^^ \O
-T1/lmr/m/n/12 (+20) +
-[19]
-Underfull \hbox (badness 10000) in paragraph at lines 500--500
-[]|\T1/lmr/bx/n/12 (+20) Learnable
-
-Underfull \hbox (badness 10000) in paragraph at lines 500--500
-\T1/lmr/bx/n/12 (+20) Physics
-
-Overfull \hbox (1.96689pt too wide) in paragraph at lines 500--500
-[]|\T1/lmr/m/n/12 (-20) nn.Parameter(torch.tensor(mass,
-
-Underfull \hbox (badness 10000) in paragraph at lines 502--502
-[]|\T1/lmr/bx/n/12 (+20) Multi-
-
-Underfull \hbox (badness 10000) in paragraph at lines 502--502
-\T1/lmr/bx/n/12 (+20) Objective
-
-Underfull \hbox (badness 10000) in paragraph at lines 502--503
-[]|\T1/lmr/m/n/12 (+20) Comprehensive con-
-
-Underfull \hbox (badness 10000) in paragraph at lines 504--504
-[]|\T1/lmr/bx/n/12 (+20) Constraint
-
-Underfull \hbox (badness 10000) in paragraph at lines 506--506
-[]|\T1/lmr/bx/n/12 (+20) Cross-
-
-Underfull \hbox (badness 10000) in paragraph at lines 506--506
-\T1/lmr/bx/n/12 (+20) Coupling
-
-Underfull \hbox (badness 10000) in paragraph at lines 508--508
-[]|\T1/lmr/bx/n/12 (+20) Automatic
-
-Underfull \hbox (badness 10000) in paragraph at lines 508--508
-\T1/lmr/bx/n/12 (+20) Dif-fer-en-ti-a-
-
-Underfull \hbox (badness 10000) in paragraph at lines 508--508
-[]|\T1/lmr/m/n/12 (+20) PyTorch au-to-grad through
-
-Underfull \hbox (badness 10000) in paragraph at lines 510--510
-[]|\T1/lmr/bx/n/12 (+20) Enhanced
-
-Underfull \hbox (badness 10000) in paragraph at lines 512--512
-[]|\T1/lmr/bx/n/12 (+20) Scheduled
-
-Underfull \hbox (badness 10000) in paragraph at lines 514--514
-[]|\T1/lmr/bx/n/12 (+20) Stability
-
-Underfull \hbox (badness 10000) in paragraph at lines 516--516
-[]|\T1/lmr/bx/n/12 (+20) Tightened
-
-Underfull \hbox (badness 10000) in paragraph at lines 516--516
-\T1/lmr/bx/n/12 (+20) Phys-i-cal
-
-Underfull \hbox (badness 10000) in paragraph at lines 518--518
-[]|\T1/lmr/bx/n/12 (+20) Learning
-
-Underfull \hbox (badness 10000) in paragraph at lines 518--518
-\T1/lmr/bx/n/12 (+20) Rate
-
-Underfull \hbox (badness 10000) in paragraph at lines 518--518
-[]|\T1/lmr/m/n/12 (+20) ReduceLROnPlateau (pa-
-
-Overfull \hbox (8.64964pt too wide) in paragraph at lines 520--520
-[]|\T1/lmr/bx/n/12 (-20) Autoregressive
-[20]
-Overfull \hbox (169.62154pt too wide) in paragraph at lines 530--531
- [][] 
-[21]
-Overfull \hbox (58.24652pt too wide) in alignment at lines 540--560
- [] [] [] [] 
-
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
-[]|\T1/lmr/bx/n/10.95 (+20) True
-
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
-[]|\T1/lmr/bx/n/10.95 (+20) Learned
-
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
-[]|\T1/lmr/bx/n/10.95 (+20) Absolute
-
-Underfull \hbox (badness 10000) in paragraph at lines 569--569
-[]|\T1/lmr/bx/n/10.95 (+20) Relative
-
-Underfull \hbox (badness 10000) in paragraph at lines 571--571
-[]|\T1/lmr/m/n/10.95 (+20) 2.34$\OMS/lmsy/m/n/10.95 ^^B\OT1/lmr/m/n/10.95 (+20)
- 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 575--575
-[]|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
-3 \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 575--575
-[]|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
-3 \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-[]|$\OT1/lmr/m/n/10.95 (+20) 6\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 860
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-[]|$\OT1/lmr/m/n/10.95 (+20) 5\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 831
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 029
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 577--577
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-[]|$\OT1/lmr/m/n/10.95 (+20) 9\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 200
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 058
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 380
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 579--579
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 571
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-[]|$\OT1/lmr/m/n/10.95 (+20) 2\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 050
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 581--581
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Overfull \hbox (2.6975pt too wide) in alignment at lines 567--583
- [] [] [] [] [] [] 
-[22]
-Underfull \hbox (badness 10000) in paragraph at lines 607--607
-[]|\T1/lmr/bx/n/10.95 (+20) Parameter Cat-e-
-[23]
-Underfull \hbox (badness 1953) in paragraph at lines 637--637
-[]|\T1/lmr/bx/n/10.95 (+20) Physics In-te-
-
-Underfull \hbox (badness 10000) in paragraph at lines 637--637
-[]|\T1/lmr/m/n/10.95 (+20) Multi-objective loss (data +
-
-Underfull \hbox (badness 5756) in paragraph at lines 637--638
-[]|\T1/lmr/m/n/10.95 (+20) Strong con-straint sat-
-
-Underfull \hbox (badness 3439) in paragraph at lines 637--638
-\T1/lmr/m/n/10.95 (+20) is-fac-tion ev-i-denced by
-
-Underfull \hbox (badness 10000) in paragraph at lines 639--639
-[]|\T1/lmr/bx/n/10.95 (+20) Parameter
-
-Underfull \hbox (badness 5231) in paragraph at lines 641--642
-[]|\T1/lmr/m/n/10.95 (+20) Stable con-ver-gence in
-
-Overfull \hbox (2.25974pt too wide) in paragraph at lines 643--643
-[]|\T1/lmr/bx/n/10.95 (-20) Generalization| 
-
-Underfull \hbox (badness 10000) in paragraph at lines 652--652
-[]|\T1/lmr/bx/n/10.95 (+20) Cross-
-
-Underfull \hbox (badness 10000) in paragraph at lines 652--652
-[]|\T1/lmr/m/n/10.95 (+20) 10-fold, trajectory-
-
-Underfull \hbox (badness 10000) in paragraph at lines 654--654
-[]|\T1/lmr/bx/n/10.95 (+20) Generalization
-
-Underfull \hbox (badness 1082) in paragraph at lines 656--656
-[]|\T1/lmr/m/n/10.95 (+20) Physics loss con-ver-gence
-
-Underfull \hbox (badness 10000) in paragraph at lines 658--658
-[]|\T1/lmr/bx/n/10.95 (+20) Performance
-[24]
-Underfull \hbox (badness 6284) in paragraph at lines 680--681
-[]|\T1/lmr/bx/n/10.95 (+20) REAL DY-NAM-ICS\T1/lmr/m/n/10.95 (+20) : No ar-ti-f
-i-cial damp-ing,
-[25]
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
-[]|\T1/lmr/bx/n/10.95 (+20) Period
-
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
-[]|\T1/lmr/bx/n/10.95 (+20) Low
-
-Underfull \hbox (badness 10000) in paragraph at lines 739--739
-[]|\T1/lmr/bx/n/10.95 (+20) High
-[26]
-Underfull \hbox (badness 10000) in paragraph at lines 777--777
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
- \OMS/lmsy/m/n/10.95 ^^B \OT1/lmr/m/n/10.95 (+20) 10[]$
-[27]
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 803.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 803.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 811.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 811.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 819.
-
-
-LaTeX Warning: Command \textdegree invalid in math mode on input line 819.
-
-[28] [29] [30] [31]
-Overfull \hbox (41.14862pt too wide) in paragraph at lines 900--911
-[][] 
-[32] [33] [34 <../results/detailed/01_x_time_analysis.png> <../results/detailed
-/02_y_time_analysis.png>] [35 <../results/detailed/03_z_time_analysis.png> <../
-results/detailed/04_roll_time_analysis.png>] [36 <../results/detailed/05_pitch_
-time_analysis.png> <../results/detailed/06_yaw_time_analysis.png>] [37 <../resu
-lts/detailed/07_p_time_analysis.png> <../results/detailed/08_q_time_analysis.pn
-g>] [38 <../results/detailed/09_r_time_analysis.png> <../results/detailed/10_vx
-_time_analysis.png>] [39 <../results/detailed/11_vy_time_analysis.png> <../resu
-lts/detailed/12_vz_time_analysis.png>] [40 <../results/detailed/16_thrust_time_
-analysis.png> <../results/detailed/17_torque_x_time_analysis.png>] [41 <../resu
-lts/detailed/18_torque_y_time_analysis.png> <../results/detailed/19_torque_z_ti
-me_analysis.png>] [42] [43] [44] [45] [46] [47] [48]
-Overfull \hbox (0.8992pt too wide) detected at line 1338
-\OMS/lmsy/m/n/10.95 L[] \OT1/lmr/m/n/10.95 = [] [] []
-[49]
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
-[]|\T1/lmr/bx/n/10.95 (+20) True
-
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
-[]|\T1/lmr/bx/n/10.95 (+20) Learned
-
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
-[]|\T1/lmr/bx/n/10.95 (+20) Absolute
-
-Underfull \hbox (badness 10000) in paragraph at lines 1355--1355
-[]|\T1/lmr/bx/n/10.95 (+20) Relative
-
-Underfull \hbox (badness 3769) in paragraph at lines 1359--1360
-[]|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
-
-Underfull \hbox (badness 3769) in paragraph at lines 1361--1362
-[]|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
-[]|$\OT1/lmr/m/n/10.95 (+20) 1\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 366
- \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 1363--1363
-\OT1/lmr/m/n/10.95 (+20) 10[]$
-
-Underfull \hbox (badness 3769) in paragraph at lines 1363--1364
-[]|[]\T1/lmr/m/n/10.95 (+20) Partial Im-prove-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
-[]|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
-3 \OMS/lmsy/m/n/10.95 ^^B
-
-Underfull \hbox (badness 10000) in paragraph at lines 1367--1367
-[]|$\OT1/lmr/m/n/10.95 (+20) 7\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 (+20) 826
-3 \OMS/lmsy/m/n/10.95 ^^B
-
-Overfull \hbox (2.6975pt too wide) in alignment at lines 1353--1369
- [] [] [] [] [] [] 
-[50] [51] [52] [53]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1558.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\rightarrow' on input line 1558.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1558.
-
-[54] [55]
-Overfull \hbox (99.76834pt too wide) in paragraph at lines 1619--1647
- [][] 
-[56]
-Overfull \hbox (25.09616pt too wide) in paragraph at lines 1655--1656
-\T1/lmr/m/n/10.95 (-20) The mod-u-lar de-sign sep-a-rat-ing Trans-la-tionalMod-
-ule $\OT1/lmr/m/n/10.95 (-20) (\OML/lmm/m/it/10.95 z; v[]\OT1/lmr/m/n/10.95 (-2
-0) )$ \T1/lmr/m/n/10.95 (-20) and Ro-ta-tionalMod-ule $\OT1/lmr/m/n/10.95 (-20)
- (\OML/lmm/m/it/10.95 ^^^; ^^R;  ; p; q; r\OT1/lmr/m/n/10.95 (-20) )$
-[57]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1710.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\ll' on input line 1710.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1710.
-
-[58] [59] [60] [61]
-Overfull \hbox (8.05185pt too wide) in paragraph at lines 1886--1902
- [][] 
-[62] [63] [64]
-Overfull \hbox (27.02069pt too wide) in paragraph at lines 2005--2016
- [][] 
-
-Overfull \hbox (72.75697pt too wide) in paragraph at lines 2023--2034
- [][] 
-[65]
-Underfull \hbox (badness 1546) in paragraph at lines 2048--2048
-[]|\T1/lmr/m/n/10.95 (+20) Out-of-distribution ex-
-
-Underfull \hbox (badness 10000) in paragraph at lines 2049--2049
-[]|\T1/lmr/m/n/10.95 (+20) Modular ar-chi-tec-ture
-
-Underfull \hbox (badness 10000) in paragraph at lines 2050--2050
-[]|\T1/lmr/m/n/10.95 (+20) Physics-only train-ing,
-[66] [67] [68] (quadrotor_pinn_report.aux) )
 (see the transcript file for additional information)<C:/Users/sreej/AppData/Loc
 al/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/sreej/Ap
 pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users
@@ -1379,5 +705,5 @@ j/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmsy8.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt10.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb><C:/Users/sreej
 /AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb>
-Output written on quadrotor_pinn_report.pdf (69 pages, 6504855 bytes).
+Output written on quadrotor_pinn_report.pdf (71 pages, 6516278 bytes).
 Transcript written on quadrotor_pinn_report.log.
