@@ -21,6 +21,8 @@
 
 \section*{Physics Laws \& Equations Used in PINN Physics Layer}
 
+All physics equations are based on established rigid body dynamics and multirotor control literature \cite{mahony2012multirotor,beard2012small}.
+
 \subsection*{1. Rotational Dynamics (Euler's Equations)}
 
 \textbf{Equation 1.1 - Roll Angular Acceleration:}
@@ -61,7 +63,7 @@ where:
 \item $\tau_z$ = yaw torque (N·m)
 \end{itemize}
 
-\textbf{Key Feature:} Real Euler equations with NO artificial damping terms. Pure physics-based rotational dynamics.
+\textbf{Key Feature:} Real Euler equations with NO artificial damping terms. Pure physics-based rotational dynamics \cite{mahony2012multirotor}.
 
 \subsection*{2. Simplified Euler Angle Integration}
 
@@ -98,7 +100,7 @@ where:
 \item $r$ = yaw rate (rad/s)
 \end{itemize}
 
-\textbf{Note:} These are simplified angular integrations valid for small angles, not the full nonlinear Euler kinematics.
+\textbf{Note:} These are simplified angular integrations valid for small angles, not the full nonlinear Euler kinematics \cite{beard2012small}.
 
 \subsection*{3. Translational Dynamics (Vertical Motion)}
 
@@ -128,7 +130,7 @@ where:
 \item $v_z$ = vertical velocity (m/s)
 \end{itemize}
 
-\textbf{Note:} No aerodynamic drag is included in the physics loss formulation.
+\textbf{Note:} No aerodynamic drag is included in the physics loss formulation. Translational dynamics based on Newton's second law \cite{mahony2012multirotor,beard2012small}.
 
 \newpage
 
@@ -151,7 +153,7 @@ where:
 \dot{\psi} = \frac{\sin(\phi) \cdot q + \cos(\phi) \cdot r}{\cos(\theta)}
 \end{equation}
 
-\textbf{Why not in PINN:} PINN uses simplified small-angle approximations ($\dot{\phi} = p$, $\dot{\theta} = q$, $\dot{\psi} = r$) which are valid for typical quadrotor maneuvers with angles $< 30°$.
+\textbf{Why not in PINN:} PINN uses simplified small-angle approximations ($\dot{\phi} = p$, $\dot{\theta} = q$, $\dot{\psi} = r$) which are valid for typical quadrotor maneuvers with angles $< 30°$ \cite{beard2012small}.
 
 \subsection*{5. Full 6DOF Translational Dynamics (Data Generation Only)}
 
@@ -178,7 +180,7 @@ where:
 \item Coriolis terms: $r \cdot v - q \cdot w$, $p \cdot w - r \cdot u$, $q \cdot u - p \cdot v$
 \end{itemize}
 
-\textbf{Why not in PINN:} PINN models only vertical (z-axis) dynamics for altitude control. Horizontal motion ($u, v$) is not controlled in the training data, and the simplified model assumes $f_x = f_y = 0$. Additionally, drag forces are omitted from physics loss.
+\textbf{Why not in PINN:} PINN models only vertical (z-axis) dynamics for altitude control. Horizontal motion ($u, v$) is not controlled in the training data, and the simplified model assumes $f_x = f_y = 0$. Additionally, drag forces are omitted from physics loss. Full 6-DOF dynamics from \cite{mahony2012multirotor,beard2012small}.
 
 \subsection*{6. Body-to-World Frame Transformation (Data Generation Only)}
 
@@ -199,7 +201,7 @@ where:
 \dot{z} = -[\sin(\theta) \cdot u - \cos(\theta)\sin(\phi) \cdot v - \cos(\theta)\cos(\phi) \cdot w]
 \end{equation}
 
-\textbf{Why not in PINN:} PINN focuses on body-frame dynamics, not world-frame position tracking. Position is not required for learning the dynamics model.
+\textbf{Why not in PINN:} PINN focuses on body-frame dynamics, not world-frame position tracking. Position is not required for learning the dynamics model. Rotation matrix formulation from \cite{mahony2012multirotor}.
 
 \subsection*{7. Motor Thrust/Torque Mapping (Not Currently Used)}
 
@@ -231,7 +233,7 @@ where:
 \item $L$ = arm length from center to motor (m)
 \end{itemize}
 
-\textbf{Why not in PINN:} Currently, PINN receives thrust $T$ and torques $\tau_x, \tau_y, \tau_z$ as direct inputs rather than computing them from motor speeds. These equations are only used to calculate physical limits during data generation.
+\textbf{Why not in PINN:} Currently, PINN receives thrust $T$ and torques $\tau_x, \tau_y, \tau_z$ as direct inputs rather than computing them from motor speeds. These equations are only used to calculate physical limits during data generation. Motor thrust/torque coefficients from \cite{mahony2012multirotor}.
 
 \newpage
 
@@ -332,5 +334,53 @@ where:
 \end{itemize}
 
 \textbf{Justification:} The PINN focuses on a simplified vertical flight dynamics model suitable for altitude control and small-angle attitude stabilization, which covers the majority of typical quadrotor flight scenarios.
+
+\newpage
+
+\section*{References}
+
+All physics equations in this document are sourced from the following established literature on quadrotor dynamics and control:
+
+\begin{thebibliography}{9}
+
+\bibitem{mahony2012multirotor}
+Mahony, R., Kumar, V., \& Corke, P. (2012).
+\textit{Multirotor Aerial Vehicles: Modeling, Estimation, and Control of Quadrotor}.
+IEEE Robotics \& Automation Magazine, 19(3), 20-32.
+DOI: 10.1109/MRA.2012.2206474
+\\
+\textbf{Coverage:} Complete Newton-Euler formulation for quadrotor 6-DOF dynamics including:
+\begin{itemize}
+\item Euler equations for rotational dynamics (Equations 1.1-1.3)
+\item Full nonlinear Euler angle kinematics (Equations 4.1-4.3)
+\item Translational dynamics in body frame (Equations 5.1-5.3)
+\item Body-to-world frame rotation matrix transformations (Equations 6.1-6.3)
+\item Motor thrust and torque coefficients (Equations 7.1-7.4)
+\end{itemize}
+
+\bibitem{beard2012small}
+Beard, R. W., \& McLain, T. W. (2012).
+\textit{Small Unmanned Aircraft: Theory and Practice}.
+Princeton University Press. Chapter 4: Forces and Moments.
+\\
+\textbf{Coverage:} Forces and moments formulation for small UAVs including:
+\begin{itemize}
+\item Simplified Euler angle integration (Equations 2.1-2.3)
+\item Small-angle approximation validity ranges
+\item Vertical translational dynamics (Equation 3.1-3.2)
+\item Aerodynamic drag modeling in body frame
+\end{itemize}
+
+\end{thebibliography}
+
+\subsection*{Reference Coverage}
+
+These two authoritative sources provide complete coverage of all physics equations used in both:
+\begin{itemize}
+\item \textbf{PINN Physics Loss:} Euler rotational dynamics, simplified kinematics, vertical dynamics
+\item \textbf{Data Generation:} Full 6-DOF dynamics, nonlinear kinematics, frame transformations, motor mapping
+\end{itemize}
+
+The PINN implementation uses a subset of these equations (simplified model) while the data generation uses the complete formulation (full model), as documented in Section 8.
 
 \end{document}
