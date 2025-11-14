@@ -155,7 +155,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Achievement} \\
 \midrule
-\textbf{6. Network Design} & 4-layer architecture with 128 neurons each, implementing 12$\rightarrow$12 state mapping + 6 parameters (18 total outputs) & 36,243 total trainable parameters \\
+\textbf{6. Network Design} & 5-layer architecture with 256 neurons each, implementing 16$\rightarrow$12 state mapping + 6 physics parameters & 204,818 total trainable parameters \\
 \addlinespace[3pt]
 \textbf{7. Physics Integration} & Embedded Newton-Euler equations directly into the loss function computation & Multi-objective training with physics constraints \\
 \addlinespace[3pt]
@@ -229,43 +229,37 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \hline
 \textbf{Layer} & \textbf{Input Dim} & \textbf{Output Dim} & \textbf{Parameters} & \textbf{Function} \\
 \hline
-\textbf{Input} & 12 & 256 & 3,328 & Feature extraction from state+controls \\
+\textbf{Layer 1} & 16 & 256 & 4,352 & Feature extraction (12 states + 4 controls) \\
 \hline
 \textbf{Dropout 1} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Shared 1} & 256 & 256 & 65,792 & Nonlinear dynamics modeling (residual) \\
+\textbf{Layer 2} & 256 & 256 & 65,792 & Nonlinear dynamics modeling \\
 \hline
 \textbf{Dropout 2} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Shared 2} & 256 & 256 & 65,792 & Deep feature extraction (residual) \\
+\textbf{Layer 3} & 256 & 256 & 65,792 & Deep feature extraction \\
 \hline
 \textbf{Dropout 3} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Coupling Layer} & \multicolumn{4}{|p{0.68\textwidth}|}{Physics-aware feature separation and merging (131,584 params)} \\
-\cline{1-1}
-\quad Trans. Branch & 256 & 128 & 32,896 & Translational dynamics (position, velocity) \\
-\hline
-\quad Rot. Branch & 256 & 128 & 32,896 & Rotational dynamics (angles, rates) \\
-\hline
-\quad Merge & 256 & 256 & 65,792 & Coupled dynamics integration \\
+\textbf{Layer 4} & 256 & 256 & 65,792 & Higher-order dynamics capture \\
 \hline
 \textbf{Dropout 4} & 256 & 256 & 0 & Regularization (p=0.1) \\
 \hline
-\textbf{Output} & 256 & 12 & 3,084 & Next state prediction (12 states) \\
+\textbf{Output Layer} & 256 & 12 & 3,084 & Next state prediction (12 states) \\
 \hline
 \textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
 \hline
-\textbf{Total} & - & - & \textbf{269,586} & Complete trainable parameters \\
+\textbf{Total} & - & - & \textbf{204,818} & Complete trainable parameters \\
 \hline
 \end{longtable}
 
-\textbf{Note:} Enhanced architecture with 256 neurons per layer (vs. 128 previously) and specialized coupling layer for physics-aware feature separation. The coupling layer branches into translational and rotational dynamics, then merges them to preserve physical coupling. Dropout regularization (p=0.1) and residual connections improve autoregressive stability. The network predicts 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
+\textbf{Note:} Deep feed-forward architecture with 5 hidden layers of 256 neurons each. Takes 16D input (12 states + 4 controls) and outputs 12D next states. Dropout regularization (p=0.1) between layers improves autoregressive stability and prevents overfitting. The network predicts all 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
 \vspace{2em}
 \begin{figure}[H]
 \centering
 \includegraphics[width=1.2\textwidth,page=1]{pinn_schematics.pdf}
-\caption{PINN Architecture: Deep neural network with 256 neurons per layer, specialized coupling layer for physics-aware dynamics separation, dropout regularization, and residual connections. The network takes 16D input (12 states + 4 controls) and outputs 12D next states (full 6-DOF dynamics), with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 269,586 parameters.}
+\caption{PINN Architecture: Deep feed-forward neural network with 5 layers of 256 neurons each, dropout regularization for stability. The network takes 16D input (12 states + 4 controls) and outputs 12D next states (full 6-DOF dynamics), with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 204,818 parameters.}
 \label{fig:architecture}
 \end{figure}
 \vspace{2em}
@@ -977,7 +971,7 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/01_x_time_analysis.png}
-\caption{X Position vs Time - MAE: \textbf{0.021 m}, RMSE: \textbf{0.062 m}. Horizontal position prediction in inertial frame.}
+\caption{X Position vs Time - MAE: \textbf{0.023 m}, RMSE: \textbf{0.064 m}. Horizontal position prediction in inertial frame.}
 \label{fig:x_position_analysis}
 \end{figure}
 
@@ -991,7 +985,7 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/03_z_time_analysis.png}
-\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.069 m}, RMSE: \textbf{0.165 m}. Vertical position tracking by PINN.}
+\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.070 m}, RMSE: \textbf{0.165 m}. Vertical position tracking by PINN.}
 \label{fig:altitude_analysis}
 \end{figure}
 
@@ -1023,21 +1017,21 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/07_p_time_analysis.png}
-\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0047 rad/s}. Smooth predictions with temporal constraints.}
+\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0034 rad/s}, RMSE: \textbf{0.0054 rad/s}. Smooth predictions with temporal constraints.}
 \label{fig:roll_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/08_q_time_analysis.png}
-\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0015 rad/s}, RMSE: \textbf{0.0023 rad/s}. Continuous, physically realistic predictions.}
+\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0014 rad/s}, RMSE: \textbf{0.0024 rad/s}. Continuous, physically realistic predictions.}
 \label{fig:pitch_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/09_r_time_analysis.png}
-\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0028 rad/s}, RMSE: \textbf{0.0043 rad/s}. Smooth angular velocity tracking.}
+\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0044 rad/s}. Smooth angular velocity tracking.}
 \label{fig:yaw_rate_analysis}
 \end{figure}
 
@@ -1053,7 +1047,7 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.9\textwidth]{../results/detailed/11_vy_time_analysis.png}
-\caption{Y Velocity (v, body frame) vs Time - MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.026 m/s}. Horizontal velocity component from translational dynamics.}
+\caption{Y Velocity (v, body frame) vs Time - MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.027 m/s}. Horizontal velocity component from translational dynamics.}
 \label{fig:vy_analysis}
 \end{figure}
 
@@ -1637,10 +1631,10 @@ After implementing comprehensive optimizations (Fourier features, modular archit
 \textbf{Metric} & \textbf{Baseline} & \textbf{Fourier Opt.} & \textbf{Vanilla Opt.} & \textbf{Winner} \\
 \midrule
 \multicolumn{5}{c}{\textit{Architecture}} \\
-Parameters & 268,558 & 37,006 & 35,470 & Optimized (-86\%) \\
+Parameters & 204,818 & 37,006 & 35,470 & Optimized (-82\%) \\
 Hidden Size & 256 & 128 & 128 & Optimized \\
 Training Epochs & 250 & 100 & 100 & Baseline (more stable) \\
-Architecture & Coupling-layer & Fourier+Modular & Modular & Baseline (physics-aware) \\
+Architecture & Feed-forward & Fourier+Modular & Modular & Current (simple, stable) \\
 \midrule
 \multicolumn{5}{c}{\textit{Single-Step Accuracy (Teacher-Forced)}} \\
 z MAE (m) & 0.0872 & 0.0410 & \textbf{0.0088} & \textcolor{green!60!black}{Vanilla Opt. (10×)} \\
@@ -1841,7 +1835,7 @@ Real-world usable (MPC) & \textbf{Yes} & No & \textcolor{red!70!black}{\textbf{B
 \end{tabular}
 \end{table}
 
-\textbf{Production model:} Baseline PINN (250 epochs, coupling-layer architecture, 268,558 parameters)
+\textbf{Production model:} Current PINN (250 epochs, 5-layer feed-forward architecture, 204,818 parameters)
 
 \textbf{Research contribution:} Documented that architectural optimizations improving single-step metrics can catastrophically degrade autoregressive stability—a critical finding for PINN-based control systems.
 
@@ -1923,9 +1917,9 @@ The complete optimization strategy systematically addresses every failure mode i
 \textbf{Key Design Principle:} Preserve all baseline loss components while adding architectural improvements.
 
 \begin{itemize}
-\item \textbf{Parameters:} 268,558 (production baseline model)
-\item \textbf{Architecture:} Input + 2 shared layers + coupling layer + output
-\item \textbf{Coupling:} Merged translational + rotational branches (maintains z-vz-$\phi$-$\theta$-$\psi$-p-q-r coupling)
+\item \textbf{Parameters:} 204,818 (current production model)
+\item \textbf{Architecture:} 5-layer feed-forward network with Tanh activation
+\item \textbf{Structure:} Sequential layers with dropout regularization between each layer
 \item \textbf{Regularization:} Dropout 0.1, AdamW weight decay $10^{-4}$
 \item \textbf{Activation:} Tanh throughout
 \end{itemize}
@@ -2076,7 +2070,7 @@ Stable PINN v1 & Physics-only training, missing losses & 2.63 m error (poor data
 \subsection{Implementation Summary}
 
 \begin{itemize}
-\item \textbf{Model:} \texttt{pinn\_model\_optimized\_v2.py} (268,558 parameters)
+\item \textbf{Model:} \texttt{pinn\_model.py} (204,818 parameters)
 \item \textbf{Training:} \texttt{train\_optimized\_v2.py} (250 epochs, 40 minutes)
 \item \textbf{Evaluation:} \texttt{evaluate\_optimized\_v2.py} (multi-horizon assessment)
 \item \textbf{Final val loss:} 0.000231 (best achieved across all experiments)
