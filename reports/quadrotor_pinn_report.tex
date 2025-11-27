@@ -211,7 +211,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \midrule
 \textbf{21. Comprehensive Plotting} & Generated all 16 individual output visualizations over time with detailed analysis & 5 essential analysis plots plus 16 detailed time-series \\
 \addlinespace[3pt]
-\textbf{22. Clean Visualization} & Implemented single representative trajectory plots with professional styling & Clear, uncluttered visual presentation \\
+\textbf{22. Clean Visualization} & Implemented separate subplot visualization for all 10 trajectories with professional styling & Clear, uncluttered visual presentation with individual trajectory analysis \\
 \addlinespace[3pt]
 \textbf{23. Performance Metrics} & Calculated comprehensive MAE, RMSE, and correlation metrics for all outputs & Complete numerical validation and statistical analysis \\
 \addlinespace[3pt]
@@ -743,22 +743,62 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \item Mathematical form: $r(t) = \begin{cases} r_{low} & \text{if } (t \mod T) < T/2 \\ r_{high} & \text{if } (t \mod T) \geq T/2 \end{cases}$
 \end{itemize}
 
-\textbf{Example: Trajectory 0 (Standard Square Wave Maneuver):}
-\begin{longtable}{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.3\textwidth}|}
+\subsubsection{Complete Trajectory Configuration Specifications}
+
+All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amplitudes to generate diverse flight dynamics. Table~\ref{tab:all_trajectories} provides a comprehensive breakdown of each trajectory's unique characteristics.
+
+\begin{longtable}{|p{0.08\textwidth}|p{0.25\textwidth}|p{0.12\textwidth}|p{0.43\textwidth}|}
+\caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
+\label{tab:all_trajectories} \\
 \hline
-\textbf{Signal} & \textbf{Period (s)} & \textbf{Low Value} & \textbf{High Value} & \textbf{Physical Interpretation} \\
+\textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
 \hline
-Roll ($\phi$) & 2.0 & -10° & +10° & Alternates between left and right bank \\
+\endfirsthead
+
+\multicolumn{4}{c}%
+{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
 \hline
-Pitch ($\theta$) & 2.5 & -5° & +5° & Alternates between nose-down and nose-up \\
+\textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
 \hline
-Yaw ($\psi$) & 3.0 & -5° & +5° & Alternates between left and right heading \\
+\endhead
+
+\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+
 \hline
-Altitude (z) & 2.0 & -5.0 m & -3.0 m & Alternates between 3m and 5m height \\
+\endlastfoot
+
+\textbf{0} & Standard square wave maneuver & 2.0--3.0s & Roll: ±10°, Pitch: ±5°, Yaw: ±5°, Alt: -5 to -3m \\
+\hline
+\textbf{1} & Fast aggressive square waves & 1.5--2.5s & Roll: ±15°, Pitch: ±8°, Yaw: ±10°, Alt: -6 to -4m \\
+\hline
+\textbf{2} & Slow gentle square waves & 3.0--4.0s & Roll: ±5°, Pitch: ±3°, Yaw: ±5°, Alt: -3 to -2m \\
+\hline
+\textbf{3} & Asymmetric square waves & 2.0--2.5s & Roll: -12° to +8°, Pitch: -6° to +4°, Yaw: ±12°, Alt: -7 to -5m \\
+\hline
+\textbf{4} & High amplitude square waves & 1.8--2.2s & Roll: ±20°, Pitch: ±10°, Yaw: ±8°, Alt: -6 to -4m \\
+\hline
+\textbf{5} & Medium frequency square waves & 2.5--3.5s & Roll: ±8°, Pitch: ±4°, Yaw: ±10°, Alt: -4 to -3m \\
+\hline
+\textbf{6} & Large asymmetric square waves & 3.0--4.0s & Roll: -6° to +12°, Pitch: -7° to +5°, Yaw: -8° to +16°, Alt: -8 to -6m \\
+\hline
+\textbf{7} & Very fast high amplitude & 1.2--1.8s & Roll: ±18°, Pitch: ±12°, Yaw: ±15°, Alt: -5 to -3m \\
+\hline
+\textbf{8} & Very slow square waves & 4.0--5.0s & Roll: ±6°, Pitch: ±4°, Yaw: ±8°, Alt: -5 to -4m \\
+\hline
+\textbf{9} & Mixed frequency square waves & 2.2--3.0s & Roll: ±10°, Pitch: ±8°, Yaw: ±14°, Alt: -7 to -5m \\
 \hline
 \end{longtable}
 
-All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amplitudes to generate diverse flight dynamics.
+\textbf{Key Differentiating Factors:}
+\begin{itemize}
+\item \textbf{Square Wave Periods:} Range from 1.2s (very fast, Trajectory 7) to 5.0s (very slow, Trajectory 8), providing diverse frequency content
+\item \textbf{Amplitude Ranges:} From gentle maneuvers (±3° pitch in Trajectory 2) to aggressive movements (±20° roll in Trajectory 4)
+\item \textbf{Symmetry:} Both symmetric patterns (e.g., ±10° in Trajectory 0) and asymmetric patterns (e.g., -12° to +8° roll in Trajectory 3)
+\item \textbf{Altitude Ranges:} Total altitude excursions from 1m (Trajectory 2, 5, 8) to 7m (Trajectory 3, 6)
+\end{itemize}
+
+This diversity ensures the PINN is trained on a comprehensive range of flight dynamics---from slow, gentle maneuvers to fast, aggressive ones---improving its ability to generalize to previously unseen trajectories. The 10 distinct configurations provide rich coverage of the quadrotor's operational envelope.
 
 \subsection{Representative Trajectory Details (Trajectory 0)}
 
@@ -913,7 +953,7 @@ This square wave forcing function creates more diverse dynamics than constant se
 \hline
 Baseline & Jxx/Jyy/Jzz & 1300-6700\% (observability problem) \\
 \hline
-After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 7.6) \\
+After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 6.6) \\
 \hline
 \textbf{Final (Solutions 1 \& 3)} & \textbf{ALL 6 parameters} & \textbf{Mass/kt/kq: 0.00\%, Inertias: 5.00\%} \\
 \hline
@@ -922,70 +962,34 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 7.6) \\
 \newpage
 \section{Visual Results}
 
-\textbf{\textcolor{red}{REMINDER: All trajectory plots (Figures 1-12) show SMOOTH CURVES, NOT square waves!}}
-
-\fcolorbox{red}{yellow!10}{%
-\begin{minipage}{0.95\textwidth}
-\textbf{Plot Interpretation Guide:}
-\begin{itemize}
-\item \textbf{Blue solid curves} = Actual smooth physical response (this is what you'll see in most of each plot)
-\item \textbf{Red dashed lines} = Square wave reference setpoints (step commands)
-\item The smooth curves are CORRECT - physical systems with mass/inertia cannot follow step inputs instantaneously
-\end{itemize}
-See Section 4.11 for detailed explanation of reference vs. response distinction.
-\end{minipage}%
-}
-
-\vspace{0.3cm}
-
-\textbf{\textcolor{red}{WARNING: Physical Realism Limitations}}
-
-\fcolorbox{orange}{orange!10}{%
-\begin{minipage}{0.95\textwidth}
-\textbf{Known Issues in Training Data:}
-
-The following plots contain unrealistic dynamics due to missing actuator models and aggressive control:
-\begin{itemize}
-\item \textbf{Figure 1 (Thrust)}: Sharp transitions at 481.64 N/s (real motors: 50-100 N/s)
-\item \textbf{Figures 3-5 (Torques)}: Instantaneous steps (real systems have rate limits)
-\item \textbf{Figure 12 (Vertical Velocity)}: Peaks at -5.24 m/s (excessive for 2m altitude changes)
-\end{itemize}
-
-\textbf{These limitations arise from:}
-\begin{enumerate}
-\item No motor dynamics (time constants, slew rate limits)
-\item Aggressive PID gains (1.01g vertical accelerations)
-\item No control input filtering
-\end{enumerate}
-
-See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative analysis, root causes, impact on PINN training, and detailed improvement plan.
-\end{minipage}%
-}
+\textbf{Plot Interpretation:} The following figures show \textit{smooth physical responses} (blue curves) tracking \textit{square wave reference setpoints} (red dashed lines). The smooth curves are physically correct - systems with mass and inertia cannot follow step inputs instantaneously. See Section 3.7 for detailed explanation.
 
 \vspace{0.5cm}
 
 \subsection{Complete Time-Series Analysis (All 19 Variables)}
 
+\textit{Note: Each figure below shows all 10 training trajectories as separate subplots (5×2 grid), allowing individual trajectory analysis rather than overlaid visualization. This eliminates visual clutter and makes it easier to examine the model's performance on each trajectory independently.}
+
 \subsubsection{Position States}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/01_x_time_analysis.png}
-\caption{X Position vs Time - MAE: \textbf{0.023 m}, RMSE: \textbf{0.064 m}. Horizontal position prediction in inertial frame.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/01_x_all_trajectories.png}
+\caption{X Position vs Time - All 10 Trajectories (Overall MAE: \textbf{0.023 m}, RMSE: \textbf{0.064 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame.}
 \label{fig:x_position_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/02_y_time_analysis.png}
-\caption{Y Position vs Time - MAE: \textbf{0.031 m}, RMSE: \textbf{0.098 m}. Horizontal position prediction in inertial frame.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/02_y_all_trajectories.png}
+\caption{Y Position vs Time - All 10 Trajectories (Overall MAE: \textbf{0.031 m}, RMSE: \textbf{0.098 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame.}
 \label{fig:y_position_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/03_z_time_analysis.png}
-\caption{Z Position (Altitude) vs Time - MAE: \textbf{0.070 m}, RMSE: \textbf{0.165 m}. Vertical position tracking by PINN.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/03_z_all_trajectories.png}
+\caption{Z Position (Altitude) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.070 m}, RMSE: \textbf{0.165 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Vertical position tracking by PINN.}
 \label{fig:altitude_analysis}
 \end{figure}
 
@@ -993,22 +997,22 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/04_roll_time_analysis.png}
-\caption{Roll Angle ($\phi$) vs Time - MAE: \textbf{0.0008 rad (0.045°)}, RMSE: \textbf{0.0012 rad}. Outstanding prediction accuracy.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/04_roll_all_trajectories.png}
+\caption{Roll Angle ($\phi$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0008 rad (0.045°)}, RMSE: \textbf{0.0012 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Outstanding prediction accuracy across all trajectories.}
 \label{fig:roll_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/05_pitch_time_analysis.png}
-\caption{Pitch Angle ($\theta$) vs Time - MAE: \textbf{0.0005 rad (0.028°)}, RMSE: \textbf{0.0008 rad}. Excellent attitude tracking.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/05_pitch_all_trajectories.png}
+\caption{Pitch Angle ($\theta$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0005 rad (0.028°)}, RMSE: \textbf{0.0008 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Excellent attitude tracking.}
 \label{fig:pitch_angle_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/06_yaw_time_analysis.png}
-\caption{Yaw Angle ($\psi$) vs Time - MAE: \textbf{0.0009 rad (0.052°)}, RMSE: \textbf{0.0015 rad}. Accurate heading prediction.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/06_yaw_all_trajectories.png}
+\caption{Yaw Angle ($\psi$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0009 rad (0.052°)}, RMSE: \textbf{0.0015 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Accurate heading prediction.}
 \label{fig:yaw_angle_analysis}
 \end{figure}
 
@@ -1016,22 +1020,22 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/07_p_time_analysis.png}
-\caption{Roll Rate (p) vs Time - MAE: \textbf{0.0034 rad/s}, RMSE: \textbf{0.0054 rad/s}. Smooth predictions with temporal constraints.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/07_p_all_trajectories.png}
+\caption{Roll Rate (p) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0034 rad/s}, RMSE: \textbf{0.0054 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth predictions with temporal constraints.}
 \label{fig:roll_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/08_q_time_analysis.png}
-\caption{Pitch Rate (q) vs Time - MAE: \textbf{0.0014 rad/s}, RMSE: \textbf{0.0024 rad/s}. Continuous, physically realistic predictions.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/08_q_all_trajectories.png}
+\caption{Pitch Rate (q) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0014 rad/s}, RMSE: \textbf{0.0024 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Continuous, physically realistic predictions.}
 \label{fig:pitch_rate_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/09_r_time_analysis.png}
-\caption{Yaw Rate (r) vs Time - MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0044 rad/s}. Smooth angular velocity tracking.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/09_r_all_trajectories.png}
+\caption{Yaw Rate (r) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0044 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth angular velocity tracking.}
 \label{fig:yaw_rate_analysis}
 \end{figure}
 
@@ -1039,22 +1043,22 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/10_vx_time_analysis.png}
-\caption{X Velocity (u, body frame) vs Time - MAE: \textbf{0.008 m/s}, RMSE: \textbf{0.018 m/s}. Horizontal velocity component from translational dynamics.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/10_vx_all_trajectories.png}
+\caption{X Velocity (u, body frame) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.008 m/s}, RMSE: \textbf{0.018 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from translational dynamics.}
 \label{fig:vx_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/11_vy_time_analysis.png}
-\caption{Y Velocity (v, body frame) vs Time - MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.027 m/s}. Horizontal velocity component from translational dynamics.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/11_vy_all_trajectories.png}
+\caption{Y Velocity (v, body frame) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.027 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from translational dynamics.}
 \label{fig:vy_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/12_vz_time_analysis.png}
-\caption{Z Velocity (w, vertical) vs Time - MAE: \textbf{0.040 m/s}, RMSE: \textbf{0.074 m/s}. Smooth velocity tracking with temporal constraints.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/12_vz_all_trajectories.png}
+\caption{Z Velocity (w, vertical) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.040 m/s}, RMSE: \textbf{0.074 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth velocity tracking with temporal constraints.}
 \label{fig:vertical_velocity_analysis}
 \end{figure}
 
@@ -1062,29 +1066,29 @@ See Section 7.1 "Physical Realism Concerns and Known Issues" for quantitative an
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/16_thrust_time_analysis.png}
-\caption{Total Thrust vs Time - \textbf{Control input (NOT predicted)} showing realistic motor dynamics with 80ms time constant. Red line matches blue line as this is a measured signal used as model input.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/13_thrust_all_trajectories.png}
+\caption{Total Thrust vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} showing realistic motor dynamics with 80ms time constant. Each subplot shows one trajectory's thrust command profile.}
 \label{fig:thrust_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/17_torque_x_time_analysis.png}
-\caption{Roll Torque ($\tau_x$) vs Time - \textbf{Control input (NOT predicted)} for roll attitude maneuvers. Red line matches blue line as this is a measured signal used as model input.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/14_torque_x_all_trajectories.png}
+\caption{Roll Torque ($\tau_x$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for roll attitude maneuvers. Each subplot shows one trajectory's roll torque command profile.}
 \label{fig:torque_x_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/18_torque_y_time_analysis.png}
-\caption{Pitch Torque ($\tau_y$) vs Time - \textbf{Control input (NOT predicted)} for pitch attitude maneuvers. Red line matches blue line as this is a measured signal used as model input.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/15_torque_y_all_trajectories.png}
+\caption{Pitch Torque ($\tau_y$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for pitch attitude maneuvers. Each subplot shows one trajectory's pitch torque command profile.}
 \label{fig:torque_y_analysis}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/detailed/19_torque_z_time_analysis.png}
-\caption{Yaw Torque ($\tau_z$) vs Time - \textbf{Control input (NOT predicted)} for yaw (heading) maneuvers. Red line matches blue line as this is a measured signal used as model input.}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/16_torque_z_all_trajectories.png}
+\caption{Yaw Torque ($\tau_z$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for yaw (heading) maneuvers. Each subplot shows one trajectory's yaw torque command profile.}
 \label{fig:torque_z_analysis}
 \end{figure}
 
@@ -1263,7 +1267,6 @@ Implemented \texttt{temporal\_smoothness\_loss()} with soft physical constraints
 \textbf{Remaining Limitations After Fixes:}
 \begin{itemize}
 \item \textbf{Simplified Aerodynamics}: Only linear drag terms modeled; no blade flapping, ground effect, or complex aerodynamic interactions.
-\item \textbf{Idealized Convergence Visualization}: Parameter convergence plots (Figures 13-16) are hypothetical curves showing expected learning patterns under ideal conditions, NOT actual recorded training data. These plots contain OUTDATED error values (4-7\%) that do not match actual results (0.07\% for mass, 6680\% for Jxx). See Section 4.2 for actual final parameter errors.
 \item \textbf{Limited Operating Envelope}: Training data focuses on small-angle attitudes (±45°); aggressive maneuvers beyond this range not explored.
 \item \textbf{Inertia Parameter Observability Problem}: While mass/kt/kq achieve near-perfect error (0.07\%, 0.01\%, 0.00\% respectively), inertia parameters show large errors (Jxx: 6680\%, Jyy: 4380\%, Jzz: 1361\%). This represents a fundamental \textbf{observability problem} rather than a training failure.
 
@@ -1319,7 +1322,7 @@ Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gra
 \item \checkmark Controller gains reduced by 50\%, vertical velocity now realistic ($<$3.5 m/s)
 \item \checkmark Reference filtering with 150ms time constant eliminates discontinuities
 \item \checkmark Enhanced physics loss with derivative constraints ($\lambda = 8.0$)
-\item \checkmark \textbf{NEW: Option 1 - Angular acceleration measurements implemented (see Section 7.6)}
+\item \checkmark \textbf{NEW: Option 1 - Angular acceleration measurements implemented (see Section 6.6)}
 \end{itemize}
 
 \subsection{Option 1 Implementation: Angular Acceleration Measurements (INTERMEDIATE STAGE)}
