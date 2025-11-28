@@ -41,10 +41,10 @@ class QuadrotorPINN(nn.Module):
     def constrain_parameters(self):
         with torch.no_grad():
             bounds = {
-                'm': (0.0646, 0.0714),
-                'Jxx': (5.831e-5, 7.889e-5),
-                'Jyy': (7.82e-5, 1.058e-4),
-                'Jzz': (1.1611e-4, 1.5709e-4),
+                'm': (0.0500, 0.0900),       # ±25% (was ±5%)
+                'Jxx': (4.0e-5, 1.0e-4),     # ±45% (was ±15%) - RELAXED for aggressive trajectories
+                'Jyy': (6.0e-5, 1.3e-4),     # ±45% (was ±15%) - RELAXED for aggressive trajectories
+                'Jzz': (9.0e-5, 2.0e-4),     # ±45% (was ±15%) - RELAXED for aggressive trajectories
                 'kt': (0.0095, 0.0105),
                 'kq': (7.435e-4, 8.218e-4)
             }
