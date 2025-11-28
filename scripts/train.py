@@ -18,9 +18,9 @@ class Trainer:
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min',
                                                                factor=0.5, patience=20)
         self.criterion = torch.nn.MSELoss()
-        self.history = {'train': [], 'val': [], 'physics': [], 'temporal': [], 'stability': [], 'reg': []}
+        self.history = {'train': [], 'val': [], 'physics': [], 'temporal': [], 'stability': [], 'reg': [], 'energy': []}
 
-    def train_epoch(self, loader, weights={'physics': 10.0, 'temporal': 20.0, 'stability': 5.0, 'reg': 1.0},
+    def train_epoch(self, loader, weights={'physics': 10.0, 'temporal': 20.0, 'stability': 5.0, 'reg': 1.0, 'energy': 5.0},
                     scheduled_sampling_prob=0.0):
         """
         Train for one epoch with scheduled sampling.
@@ -29,7 +29,7 @@ class Trainer:
                                 increases over training to improve autoregressive performance
         """
         self.model.train()
-        losses = {'total': 0, 'physics': 0, 'temporal': 0, 'stability': 0, 'reg': 0}
+        losses = {'total': 0, 'physics': 0, 'temporal': 0, 'stability': 0, 'reg': 0, 'energy': 0}
 
         for data, target in loader:
             data, target = data.to(self.device), target.to(self.device)
@@ -49,13 +49,15 @@ class Trainer:
             temporal_loss = self.model.temporal_smoothness_loss(data, output)
             stability_loss = self.model.stability_loss(data, output)
             reg_loss = self.model.regularization_loss()
+            energy_loss = self.model.energy_conservation_loss(data, output)
 
-            # Rebalanced: reduced physics (20->10), increased temporal (15->20), added stability
+            # Rebalanced: reduced physics (20->10), increased temporal (15->20), added stability + energy
             loss = (data_loss +
                     weights['physics']*physics_loss +
                     weights['temporal']*temporal_loss +
                     weights['stability']*stability_loss +
-                    weights['reg']*reg_loss)
+                    weights['reg']*reg_loss +
+                    weights['energy']*energy_loss)
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
@@ -67,6 +69,7 @@ class Trainer:
             losses['temporal'] += temporal_loss.item()
             losses['stability'] += stability_loss.item()
             losses['reg'] += reg_loss.item()
+            losses['energy'] += energy_loss.item()
 
         return {k: v/len(loader) for k, v in losses.items()}
 
@@ -80,7 +83,7 @@ class Trainer:
         return total_loss / len(loader)
 
     def train(self, train_loader, val_loader, epochs=250, weights=None):
-        weights = weights or {'physics': 10.0, 'temporal': 12.0, 'stability': 5.0, 'reg': 1.0}
+        weights = weights or {'physics': 10.0, 'temporal': 12.0, 'stability': 5.0, 'reg': 1.0, 'energy': 5.0}
         print(f"Training for {epochs} epochs with IMPROVED architecture:")
         print(f"  - Model: 256 neurons, 5 layers, dropout=0.1")
         print(f"  - Loss weights: {weights}")
@@ -104,8 +107,8 @@ class Trainer:
             if epoch % 10 == 0:
                 print(f"Epoch {epoch:03d}: Train={losses['total']:.4f}, Val={val_loss:.6f}, "
                       f"Physics={losses['physics']:.4f}, Temporal={losses['temporal']:.4f}, "
-                      f"Stability={losses['stability']:.4f}, Reg={losses['reg']:.4f}, "
-                      f"SS_prob={scheduled_sampling_prob:.2f}")
+                      f"Stability={losses['stability']:.4f}, Energy={losses['energy']:.4f}, "
+                      f"Reg={losses['reg']:.4f}, SS_prob={scheduled_sampling_prob:.2f}")
                 if epoch % 30 == 0:
                     print(f"  Params: " + ", ".join(f"{k}={v.item():.2e}" for k, v in self.model.params.items()))
 

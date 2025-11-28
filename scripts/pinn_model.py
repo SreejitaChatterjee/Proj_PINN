@@ -236,3 +236,53 @@ class QuadrotorPINN(nn.Module):
     def regularization_loss(self):
         return 100 * sum((self.params[k] - self.true_params[k])**2 / self.true_params[k]**2
                         for k in self.params)
+
+    def energy_conservation_loss(self, inputs, outputs, dt=0.001):
+        """
+        Enforce energy conservation constraints for parameter identification.
+
+        Total energy: E = (1/2)m(vx² + vy² + vz²) + (1/2)(Jxx·p² + Jyy·q² + Jzz·r²) + m·g·z
+        Power balance: dE/dt = P_input - P_drag
+
+        This provides alternative gradient signals for mass and inertia identification,
+        especially useful when force-based equations have weak observability.
+        """
+        # Extract states and controls
+        x, y, z, phi, theta, psi, p, q, r, vx, vy, vz = inputs[:, :12].T
+        thrust, tx, ty, tz = inputs[:, 12:16].T
+        x_next, y_next, z_next, phi_next, theta_next, psi_next, p_next, q_next, r_next, vx_next, vy_next, vz_next = outputs[:, :12].T
+
+        # Current energy components
+        E_trans = 0.5 * self.params['m'] * (vx**2 + vy**2 + vz**2)
+        E_rot = 0.5 * (self.params['Jxx']*p**2 + self.params['Jyy']*q**2 + self.params['Jzz']*r**2)
+        E_pot = self.params['m'] * self.g * z
+        E_total = E_trans + E_rot + E_pot
+
+        # Next step energy components
+        E_trans_next = 0.5 * self.params['m'] * (vx_next**2 + vy_next**2 + vz_next**2)
+        E_rot_next = 0.5 * (self.params['Jxx']*p_next**2 + self.params['Jyy']*q_next**2 + self.params['Jzz']*r_next**2)
+        E_pot_next = self.params['m'] * self.g * z_next
+        E_total_next = E_trans_next + E_rot_next + E_pot_next
+
+        # Energy change
+        dE_dt = (E_total_next - E_total) / dt
+
+        # Input power (work done by actuators)
+        # Thrust power (in body frame, thrust acts along -z axis)
+        P_thrust = thrust * vz  # vz is body-frame vertical velocity
+        # Torque power
+        P_torque = tx*p + ty*q + tz*r
+        P_input = P_thrust + P_torque
+
+        # Drag power dissipation (quadratic drag model)
+        c_d = self.drag_coeff
+        P_drag = c_d * (vx**2 * torch.abs(vx) + vy**2 * torch.abs(vy) + vz**2 * torch.abs(vz))
+
+        # Energy balance: dE/dt should equal P_input - P_drag
+        energy_residual = dE_dt - (P_input - P_drag)
+
+        # Normalize by typical power scale (mass * g * velocity ~ 0.068 * 9.81 * 1.0 ~ 0.67 W)
+        power_scale = self.params['m'] * self.g * 1.0
+        normalized_residual = energy_residual / power_scale
+
+        return (normalized_residual**2).mean()
