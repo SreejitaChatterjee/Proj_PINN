@@ -83,25 +83,23 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{table*}[!t]
 \centering
-\scriptsize
-\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\caption{Data Generation Pipeline}
+\label{tab:phase1}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{clp{11.5cm}}
 \toprule
-\textbf{Step} & \textbf{Implementation} & \textbf{Output} \\
+& \textbf{Step} & \textbf{Description} \\
 \midrule
-\textbf{1. Quadrotor Model Design} & Defined 12-state dynamics encompassing thrust, position, torques, angles, and rates & Physical model foundation with complete state representation \\
-
-\textbf{2. Trajectory Generation} & Created 10 diverse flight trajectories with square wave reference inputs (roll, pitch, yaw, altitude) and PID controllers generating realistic transient responses. Square wave setpoints filtered with 600ms low-pass filter (LPF) to eliminate high-frequency oscillations and provide smooth setpoint transitions for improved training stability. Altitude setpoints limited to realistic range (max 8m) to constrain vertical velocities to $\pm$7 m/s, preventing unrealistic high-speed vertical dynamics. Square wave periods range from 1.2s to 5.0s with varying amplitudes for rich dynamic behavior & 10 × 5,000 samples = 50,000 comprehensive data points \\
-
-\textbf{3. Physics Simulation} & Applied Newton-Euler equations with precisely known parameters & Ground truth dynamics dataset for validation \\
-
-\textbf{4. Data Structure Creation} & Organized as current\_state $\rightarrow$ next\_state sequential pairs & Structured training dataset for temporal learning \\
-
-\textbf{5. Data Validation} & Verified physics consistency and trajectory realism across all samples & Clean, physics-compliant dataset ready for training \\
+1 & Model Design & 12-state quadrotor dynamics (thrust, position, torques, angles, rates) \\
+2 & Trajectories & 10 diverse sequences with square wave inputs, PID control, 600ms LPF (50,000 samples) \\
+3 & Simulation & Newton-Euler equations with precisely known parameters \\
+4 & Data Structure & Sequential state pairs: current\_state $\rightarrow$ next\_state \\
+5 & Validation & Physics consistency and trajectory realism verification \\
 \bottomrule
 \end{tabular}
 \end{table*}
 
-\textit{Note: All visualization plots (Figures 1-12) correctly display Trajectory 0 data with square wave reference inputs. The PID controller demonstrates good tracking performance with typical transient response times under 0.5s.}
+\textit{Note: PID tracking achieves transient response <0.5s.}
 
 
 \begin{figure}[!t]
@@ -116,20 +114,18 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{table*}[!t]
 \centering
-\scriptsize
-\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\caption{PINN Architecture Development Steps}
+\label{tab:phase2}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{clp{11.5cm}}
 \toprule
-\textbf{Step} & \textbf{Implementation} & \textbf{Achievement} \\
+& \textbf{Step} & \textbf{Implementation} \\
 \midrule
-\textbf{6. Network Design} & 5-layer architecture with 256 neurons each, implementing 16$\rightarrow$12 state mapping + 6 physics parameters & 204,818 total trainable parameters \\
-
-\textbf{7. Physics Integration} & Embedded Newton-Euler equations directly into the loss function computation & Multi-objective training with physics constraints \\
-
-\textbf{8. Parameter Learning} & Converted physical constants (mass, inertia tensors) into trainable parameters & Simultaneous state prediction and parameter identification \\
-
-\textbf{9. Loss Function Design} & Carefully balanced combination of data fitting, physics consistency, and regularization losses & Optimal learning objective for robust training \\
-
-\textbf{10. Constraint Implementation} & Added parameter bounds and physics law enforcement throughout training & Stable, physically valid learning process \\
+6 & Network Design & 5-layer architecture, 256 neurons/layer, 16$\rightarrow$12 mapping (204,818 parameters) \\
+7 & Physics Integration & Newton-Euler equations embedded in loss function \\
+8 & Parameter Learning & 6 trainable parameters: m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$ \\
+9 & Loss Function & Multi-objective: data + physics + temporal + stability + regularization \\
+10 & Constraints & Parameter bounds and physics law enforcement \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -137,22 +133,19 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \subsection{Phase 3: Model Evolution \& Optimization}
 \begin{table*}[!t]
 \centering
-\scriptsize
-\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\caption{Progressive Model Optimization}
+\label{tab:phase3}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{clp{8cm}r}
 \toprule
-\textbf{Step} & \textbf{Implementation} & \textbf{Improvement Achieved} \\
+& \textbf{Step} & \textbf{Implementation} & \textbf{Result} \\
 \midrule
-\textbf{11. Foundation Model} & Established basic PINN with standard physics loss weighting & Baseline performance: 14.8\% parameter error \\
-
-\textbf{12. Enhanced Physics Weighting} & Systematically increased physics loss contribution by factor of 10 & Significant improvement: 8.9\% parameter error \\
-
-\textbf{13. Direct Parameter ID} & Implemented direct torque and acceleration-based identification & Advanced performance: 5.8\% parameter error \\
-
-\textbf{14. Training Optimization} & Applied gradient clipping, advanced regularization, and constraint enforcement & Stable convergence achieved in $<$100 epochs \\
-
-\textbf{15. Hyperparameter Tuning} & Systematically optimized learning rates, batch sizes, and loss weights & Final performance optimization and robustness \\
-
-\textbf{16. Autoregressive Stability} & Enhanced architecture (256 neurons, 5 layers, dropout), scheduled sampling (0→30\%), stability loss, tightened limits & Robust multi-step predictions: 500-step rollout evaluation \\
+11 & Foundation Model & Basic PINN with standard physics weighting & 14.8\% error \\
+12 & Enhanced Physics & 10× physics loss increase & 8.9\% error \\
+13 & Direct Parameter ID & Torque/acceleration-based identification & 5.8\% error \\
+14 & Training Optimization & Gradient clipping, advanced regularization & <100 epochs \\
+15 & Hyperparameter Tuning & Learning rates, batch sizes, loss weights & Optimized \\
+16 & Autoregressive Stability & Dropout, scheduled sampling (0$\rightarrow$30\%) & 500-step rollout \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -160,20 +153,18 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \subsection{Phase 4: Comprehensive Evaluation}
 \begin{table*}[!t]
 \centering
-\scriptsize
-\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\caption{Validation and Evaluation Methodology}
+\label{tab:phase4}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{clp{11.5cm}}
 \toprule
-\textbf{Step} & \textbf{Implementation} & \textbf{Validation Result} \\
+& \textbf{Step} & \textbf{Description} \\
 \midrule
-\textbf{17. Cross-Validation} & Implemented 10-fold validation strategy across diverse trajectory groups & Robust and generalizable performance assessment \\
-
-\textbf{18. Generalization Testing} & Comprehensive hold-out trajectory evaluation on unseen flight patterns & Excellent generalization: $<$10\% accuracy degradation \\
-
-\textbf{19. Physics Compliance Check} & Quantitative measurement of physics loss convergence during training showing strong constraint satisfaction & Effective physics integration: physics loss reduced by 2 orders of magnitude during training \\
-
-\textbf{20. Performance Metrics} & Comprehensive MAE, RMSE, and correlation metrics computed for all outputs & Quantitative performance evaluation completed \\
-
-\textbf{21. Comparative Analysis} & Comprehensive benchmarking across all three model evolutionary variants & Quantified improvement progression documented \\
+17 & Cross-Validation & 10-fold strategy across diverse trajectory groups \\
+18 & Generalization Testing & Hold-out trajectory evaluation (<10\% accuracy degradation) \\
+19 & Physics Compliance & Physics loss convergence (2 orders of magnitude reduction) \\
+20 & Performance Metrics & Comprehensive MAE, RMSE, and correlation analysis \\
+21 & Comparative Analysis & Benchmarking across all model evolutionary variants \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -182,20 +173,18 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{table*}[!t]
 \centering
-\scriptsize
-\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\caption{Visualization and Documentation}
+\label{tab:phase5}
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{clp{11.5cm}}
 \toprule
-\textbf{Step} & \textbf{Implementation} & \textbf{Output} \\
+& \textbf{Step} & \textbf{Output} \\
 \midrule
-\textbf{21. Comprehensive Plotting} & Generated all 16 individual output visualizations over time with detailed analysis & 5 essential analysis plots plus 16 detailed time-series \\
-
-\textbf{22. Clean Visualization} & Implemented separate subplot visualization for all 10 trajectories with professional styling & Clear, uncluttered visual presentation with individual trajectory analysis \\
-
-\textbf{23. Performance Metrics} & Calculated comprehensive MAE, RMSE, and correlation metrics for all outputs & Complete numerical validation and statistical analysis \\
-
-\textbf{24. Physics Validation Plots} & Generated parameter convergence plots and constraint satisfaction visualizations & Visual confirmation of physics compliance and learning \\
-
-\textbf{25. Documentation Creation} & Produced comprehensive technical documentation with LaTeX formatting & Professional project presentation ready for publication \\
+22 & Comprehensive Plotting & 16 output visualizations + 5 analysis plots \\
+23 & Clean Visualization & 10 trajectory subplots with professional styling \\
+24 & Performance Metrics & Complete MAE, RMSE, and correlation analysis \\
+25 & Physics Validation & Parameter convergence and constraint satisfaction plots \\
+26 & Documentation & Publication-ready LaTeX technical report \\
 \bottomrule
 \end{tabular}
 \end{table*}
