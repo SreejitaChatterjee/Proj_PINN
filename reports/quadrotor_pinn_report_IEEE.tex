@@ -196,32 +196,26 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \subsection{Neural Network Structure}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.14\textwidth}|p{0.14\textwidth}|p{0.14\textwidth}|p{0.14\textwidth}|p{0.22\textwidth}|}
-\hline
-\textbf{Layer} & \textbf{Input Dim} & \textbf{Output Dim} & \textbf{Parameters} & \textbf{Function} \\
-\hline
-\textbf{Layer 1} & 16 & 256 & 4,352 & Feature extraction (12 states + 4 controls) \\
-\hline
-\textbf{Dropout 1} & 256 & 256 & 0 & Regularization (p=0.1) \\
-\hline
-\textbf{Layer 2} & 256 & 256 & 65,792 & Nonlinear dynamics modeling \\
-\hline
-\textbf{Dropout 2} & 256 & 256 & 0 & Regularization (p=0.1) \\
-\hline
-\textbf{Layer 3} & 256 & 256 & 65,792 & Deep feature extraction \\
-\hline
-\textbf{Dropout 3} & 256 & 256 & 0 & Regularization (p=0.1) \\
-\hline
-\textbf{Layer 4} & 256 & 256 & 65,792 & Higher-order dynamics capture \\
-\hline
-\textbf{Dropout 4} & 256 & 256 & 0 & Regularization (p=0.1) \\
-\hline
-\textbf{Output Layer} & 256 & 12 & 3,084 & Next state prediction (12 states) \\
-\hline
-\textbf{Physics Params} & - & - & 6 & Learnable physical constants (m, Jxx, Jyy, Jzz, kt, kq) \\
-\hline
-\textbf{Total} & - & - & \textbf{204,818} & Complete trainable parameters \\
-\hline
+\caption{Neural Network Architecture}
+\label{tab:architecture}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lrrrl}
+\toprule
+\textbf{Layer} & \textbf{Input} & \textbf{Output} & \textbf{Params} & \textbf{Function} \\
+\midrule
+Layer 1 & 16 & 256 & 4,352 & Feature extraction \\
+Dropout 1 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Layer 2 & 256 & 256 & 65,792 & Nonlinear dynamics \\
+Dropout 2 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Layer 3 & 256 & 256 & 65,792 & Deep features \\
+Dropout 3 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Layer 4 & 256 & 256 & 65,792 & Higher-order dynamics \\
+Dropout 4 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Output & 256 & 12 & 3,084 & State prediction \\
+Physics & - & - & 6 & Physical parameters \\
+\textbf{Total} & & & \textbf{204,818} & \\
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Note:} Deep feed-forward architecture with 5 hidden layers of 256 neurons each. Takes 16D input (12 states + 4 controls) and outputs 12D next states. Dropout regularization (p=0.1) between layers improves autoregressive stability and prevents overfitting. The network predicts all 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
@@ -249,34 +243,25 @@ The system successfully predicts 12 state variables while identifying 6 critical
 \subsubsection{Inputs to PINN Model (12 Variables)}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.08\textwidth}|p{0.12\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.05\textwidth}p{0.15\textwidth}p{0.08\textwidth}p{0.12\textwidth}p{0.25\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{\#} & \textbf{Variable Name} & \textbf{Symbol} & \textbf{Units} & \textbf{Physical Meaning} & \textbf{Value Range} \\
-\hline
+\midrule
 1 & \textbf{thrust} & $T$ & N & Total upward force from 4 motors & [0.0, 2.0] \\
-\hline
 2 & \textbf{z} & $z$ & m & Vertical position (NED: down positive, $z<0$ = above ground) & [-25.0, 0.0] \\
-\hline
 3 & \textbf{torque\_x} & $\tau_x$ & N$\cdot$m & Roll torque (about x-axis) & [-0.02, 0.02] \\
-\hline
 4 & \textbf{torque\_y} & $\tau_y$ & N$\cdot$m & Pitch torque (about y-axis) & [-0.02, 0.02] \\
-\hline
 5 & \textbf{torque\_z} & $\tau_z$ & N$\cdot$m & Yaw torque (about z-axis) & [-0.01, 0.01] \\
-\hline
 6 & \textbf{roll} & $\phi$ & rad & Roll angle (banking) & [$-\pi/4$, $\pi/4$] \\
-\hline
 7 & \textbf{pitch} & $\theta$ & rad & Pitch angle (nose up/down) & [$-\pi/4$, $\pi/4$] \\
-\hline
 8 & \textbf{yaw} & $\psi$ & rad & Yaw angle (heading) & [$-\pi$, $\pi$] \\
-\hline
 9 & \textbf{p} & $p$ & rad/s & Roll rate (angular velocity) & [-10.0, 10.0] \\
-\hline
 10 & \textbf{q} & $q$ & rad/s & Pitch rate (angular velocity) & [-10.0, 10.0] \\
-\hline
 11 & \textbf{r} & $r$ & rad/s & Yaw rate (angular velocity) & [-5.0, 5.0] \\
-\hline
 12 & \textbf{vz} & $w$ & m/s & Vertical velocity & [-20.0, 20.0] \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Note on Angular Acceleration Limits:} The torque ranges (±0.02 N$\cdot$m) combined with inertia values ($\sim$10$^{-4}$ kg$\cdot$m$^2$) result in maximum angular accelerations of approximately 200 rad/s$^2$ ($\approx$11,500°/s$^2$). These values are physically realistic for micro quadrotors similar to the Crazyflie 2.0 platform (68g mass), which are capable of aggressive acrobatic maneuvers. The small inertia due to compact geometry and lightweight construction enables such high angular accelerations.
@@ -297,56 +282,44 @@ These dynamics ensure physically realistic actuator behavior, preventing the sha
 \textit{The PINN predicts the complete 6-DOF state vector at the next timestep $(t+1)$ given current state at time $t$.}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.05\textwidth}|p{0.2\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.4\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.05\textwidth}p{0.2\textwidth}p{0.1\textwidth}p{0.12\textwidth}p{0.4\textwidth}}
+\toprule
 \textbf{\#} & \textbf{Output Variable} & \textbf{Symbol} & \textbf{Units} & \textbf{Prediction Description} \\
-\hline
+\midrule
 1 & \textbf{x\_next} & $x(t+1)$ & m & X position (inertial frame) at next timestep \\
-\hline
 2 & \textbf{y\_next} & $y(t+1)$ & m & Y position (inertial frame) at next timestep \\
-\hline
 3 & \textbf{z\_next} & $z(t+1)$ & m & Z position (altitude) at next timestep \\
-\hline
 4 & \textbf{roll\_next} & $\phi(t+1)$ & rad & Roll angle at next timestep \\
-\hline
 5 & \textbf{pitch\_next} & $\theta(t+1)$ & rad & Pitch angle at next timestep \\
-\hline
 6 & \textbf{yaw\_next} & $\psi(t+1)$ & rad & Yaw angle at next timestep \\
-\hline
 7 & \textbf{p\_next} & $p(t+1)$ & rad/s & Roll rate at next timestep \\
-\hline
 8 & \textbf{q\_next} & $q(t+1)$ & rad/s & Pitch rate at next timestep \\
-\hline
 9 & \textbf{r\_next} & $r(t+1)$ & rad/s & Yaw rate at next timestep \\
-\hline
 10 & \textbf{vx\_next} & $u(t+1)$ & m/s & X velocity (body frame) at next timestep \\
-\hline
 11 & \textbf{vy\_next} & $v(t+1)$ & m/s & Y velocity (body frame) at next timestep \\
-\hline
 12 & \textbf{vz\_next} & $w(t+1)$ & m/s & Z velocity (vertical, body frame) at next timestep \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Identified Physical Parameters (6 Variables):}
 \textit{These parameters are learned as trainable nn.Parameter tensors during PINN training.}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.05\textwidth}|p{0.15\textwidth}|p{0.1\textwidth}|p{0.12\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.05\textwidth}p{0.15\textwidth}p{0.1\textwidth}p{0.12\textwidth}p{0.25\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{\#} & \textbf{Parameter} & \textbf{Symbol} & \textbf{Units} & \textbf{Physical Description} & \textbf{True Value} \\
-\hline
+\midrule
 13 & \textbf{mass} & $m$ & kg & Vehicle mass & 0.068 kg \\
-\hline
 14 & \textbf{inertia\_xx} & $J_{xx}$ & kg$\cdot$m$^2$ & Moment of inertia (x-axis) & $6.86 \times 10^{-5}$ \\
-\hline
 15 & \textbf{inertia\_yy} & $J_{yy}$ & kg$\cdot$m$^2$ & Moment of inertia (y-axis) & $9.20 \times 10^{-5}$ \\
-\hline
 16 & \textbf{inertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ & Moment of inertia (z-axis) & $1.366 \times 10^{-4}$ \\
-\hline
 17 & \textbf{kt} & $k_t$ & N/(rad/s)$^{2}$ & Thrust coefficient & 0.01 \\
-\hline
 18 & \textbf{kq} & $k_q$ & (N$\cdot$m)/(rad/s)$^{2}$ & Torque coefficient & $7.8263 \times 10^{-4}$ \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Motor Coefficient Learning - Key Innovation:} The thrust coefficient ($k_t$) and torque coefficient ($k_q$) are implemented as learnable nn.Parameter tensors in PyTorch, making them trainable alongside network weights. This enables the PINN to simultaneously:
@@ -389,18 +362,17 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.2\textwidth}|p{0.25\textwidth}|p{0.25\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.2\textwidth}p{0.25\textwidth}p{0.25\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{Loss Component} & \textbf{Mathematical Form} & \textbf{Physical Constraint} & \textbf{Weight} \\
-\hline
+\midrule
 \textbf{Data Loss} & MSE(predicted, actual) & Data fitting accuracy & 1.0 \\
-\hline
 \textbf{Rotational Physics} & MSE($\dot{p}_{pred} - \dot{p}_{physics}$) & Euler's equations & 1.0-10.0 \\
-\hline
 \textbf{Translational Physics} & MSE($\dot{w}_{pred} - \dot{w}_{physics}$) & Newton's second law & 1.0-10.0 \\
-\hline
 \textbf{Parameter Regularization} & $\sum$(param\_deviation$^2$) & Physical parameter bounds & 0.1 \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Physics Loss Normalization:}
@@ -418,16 +390,16 @@ Normalized physics loss form: $\mathcal{L}_{physics} = \sum_i \left(\frac{x_{pre
 \subsubsection{Rotational Dynamics (Euler Equations)}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{Angular Rate} & \textbf{Equation (NO Artificial Damping)} & \textbf{Units} \\
-\hline
+\midrule
 Roll rate ($\dot{p}$) & $\dot{p} = t_1 \times q \times r + \tau_x/J_{xx}$ & rad/s² \\
-\hline
 Pitch rate ($\dot{q}$) & $\dot{q} = t_2 \times p \times r + \tau_y/J_{yy}$ & rad/s² \\
-\hline
 Yaw rate ($\dot{r}$) & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz}$ & rad/s² \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 = (J_{xx} - J_{yy})/J_{zz}$
@@ -435,16 +407,16 @@ Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 
 \subsubsection{Translational Dynamics (Newton's Laws in Body Frame)}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{Velocity} & \textbf{Equation (Body Frame)} & \textbf{Units} \\
-\hline
-X velocity ($\dot{u}$) & $\dot{u} = rv - qw + f_x/m - g\sin\theta - c_d u|u|$ & m/s² \\
-\hline
-Y velocity ($\dot{v}$) & $\dot{v} = pw - ru + f_y/m + g\cos\theta\sin\phi - c_d v|v|$ & m/s² \\
-\hline
-Z velocity ($\dot{w}$) & $\dot{w} = qu - pv + f_z/m + g\cos\theta\cos\phi - c_d w|w|$ & m/s² \\
-\hline
+\midrule
+X velocity ($\dot{u}$) & $\dot{u} = rv - qw + f_x/m - g\sin\theta - c_d uu$ & m/s² \\
+Y velocity ($\dot{v}$) & $\dot{v} = pw - ru + f_y/m + g\cos\theta\sin\phi - c_d vv$ & m/s² \\
+Z velocity ($\dot{w}$) & $\dot{w} = qu - pv + f_z/m + g\cos\theta\cos\phi - c_d ww$ & m/s² \\
+\bottomrule
+\end{tabular}
 \end{table*}
 
 Where: $f_x = 0$, $f_y = 0$, $f_z = -T$ (thrust acts along body z-axis), $c_d = 0.05$ kg/m (quadratic drag coefficient)
@@ -452,16 +424,16 @@ Where: $f_x = 0$, $f_y = 0$, $f_z = -T$ (thrust acts along body z-axis), $c_d = 
 \subsubsection{Position Kinematics (Body to Inertial Frame Transformation)}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.2\textwidth}|p{0.55\textwidth}|p{0.15\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\toprule
 \textbf{Position} & \textbf{Rotation Matrix Transformation} & \textbf{Units} \\
-\hline
+\midrule
 X position ($\dot{x}$) & $\dot{x} = (\cos\psi\cos\theta)u + (\cos\psi\sin\theta\sin\phi - \sin\psi\cos\phi)v$ \newline $\quad\quad + (\sin\psi\sin\phi + \cos\psi\sin\theta\cos\phi)w$ & m/s \\
-\hline
 Y position ($\dot{y}$) & $\dot{y} = (\sin\psi\cos\theta)u + (\cos\psi\cos\phi + \sin\psi\sin\theta\sin\phi)v$ \newline $\quad\quad + (\sin\psi\sin\theta\cos\phi - \cos\psi\sin\phi)w$ & m/s \\
-\hline
 Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cdot v + \cos\theta\cos\phi \cdot w$ & m/s \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \begin{figure}[!t]
@@ -474,32 +446,24 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \subsection{Model Innovation Features}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.18\textwidth}|p{0.38\textwidth}|p{0.28\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.18\textwidth}p{0.38\textwidth}p{0.28\textwidth}}
+\toprule
 \textbf{Feature} & \textbf{Implementation} & \textbf{Benefit} \\
-\hline
+\midrule
 \textbf{Learnable Physics Parameters} & nn.Parameter(torch.tensor(mass, Jxx, Jyy, Jzz, kt, kq)) & Simultaneous identification \\
-\hline
 \textbf{Multi-Objective Training} & Combined loss: data + physics + temporal + stability + regularization & Comprehensive constraint satisfaction \\
-\hline
 \textbf{Constraint Enforcement} & torch.clamp() bounds on parameters & Physical validity \\
-\hline
 \textbf{Cross-Coupling Integration} & Full Euler equation implementation & Realistic dynamics \\
-\hline
 \textbf{Automatic Differentiation} & PyTorch autograd through physics & End-to-end training \\
-\hline
 \textbf{Enhanced Architecture} & 256 neurons, 5 layers, dropout (p=0.1) & Improved capacity and stability \\
-\hline
 \textbf{Scheduled Sampling} & Gradual autoregressive training (0→30\%) & Robust multi-step predictions \\
-\hline
 \textbf{Stability Loss} & State magnitude soft constraints & Prevents divergence in rollout \\
-\hline
 \textbf{Tightened Physical Limits} & Angular accel: 15 rad/s² (from 50) & Smoother temporal behavior \\
-\hline
 \textbf{Learning Rate Scheduling} & ReduceLROnPlateau (patience=20) & Adaptive optimization \\
-\hline
 \textbf{Autoregressive Evaluation} & 500-step rollout validation & True multi-step performance \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 
@@ -520,42 +484,29 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \small
 \begin{table*}[!t]
 \centering
-\scriptsize{|l|c|c|p{0.38\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{lccp{0.38\textwidth}}
+\toprule
 \textbf{State Variable} & \textbf{MAE} & \textbf{RMSE} & \textbf{Performance Notes} \\
-\hline
-\multicolumn{4}{|c|}{\textit{Position States (Inertial Frame)}} \\
-\hline
+\midrule
+\multicolumn{4}{c}{\textit{Position States (Inertial Frame)}} \\
 \textbf{X Position} & \textbf{0.023 m} & \textbf{0.064 m} & Accurate horizontal position tracking \\
-\hline
 \textbf{Y Position} & \textbf{0.031 m} & \textbf{0.098 m} & Good lateral position prediction \\
-\hline
 \textbf{Z Position (Altitude)} & \textbf{0.070 m} & \textbf{0.165 m} & Smooth vertical position tracking \\
-\hline
-\multicolumn{4}{|c|}{\textit{Attitude States}} \\
-\hline
+\multicolumn{4}{c}{\textit{Attitude States}} \\
 \textbf{Roll ($\phi$)} & \textbf{0.0008 rad (0.045°)} & \textbf{0.0012 rad} & Outstanding roll angle prediction \\
-\hline
 \textbf{Pitch ($\theta$)} & \textbf{0.0005 rad (0.029°)} & \textbf{0.0008 rad} & Excellent pitch angle tracking \\
-\hline
 \textbf{Yaw ($\psi$)} & \textbf{0.0009 rad (0.054°)} & \textbf{0.0015 rad} & Accurate heading prediction \\
-\hline
-\multicolumn{4}{|c|}{\textit{Angular Velocity States}} \\
-\hline
+\multicolumn{4}{c}{\textit{Angular Velocity States}} \\
 \textbf{Roll Rate (p)} & \textbf{0.0034 rad/s} & \textbf{0.0054 rad/s} & Smooth angular rate prediction \\
-\hline
 \textbf{Pitch Rate (q)} & \textbf{0.0014 rad/s} & \textbf{0.0024 rad/s} & Excellent rate tracking \\
-\hline
 \textbf{Yaw Rate (r)} & \textbf{0.0029 rad/s} & \textbf{0.0044 rad/s} & Physically realistic dynamics \\
-\hline
-\multicolumn{4}{|c|}{\textit{Linear Velocity States (Body Frame)}} \\
-\hline
+\multicolumn{4}{c}{\textit{Linear Velocity States (Body Frame)}} \\
 \textbf{X Velocity (vx)} & \textbf{0.008 m/s} & \textbf{0.018 m/s} & Good horizontal velocity prediction \\
-\hline
 \textbf{Y Velocity (vy)} & \textbf{0.012 m/s} & \textbf{0.027 m/s} & Accurate lateral velocity tracking \\
-\hline
 \textbf{Z Velocity (vz)} & \textbf{0.040 m/s} & \textbf{0.074 m/s} & Smooth vertical velocity prediction \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \subsection{Parameter Identification Results (6 Learnable Parameters)}
@@ -565,27 +516,24 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.20\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.15\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.20\textwidth}}
+\toprule
 \textbf{Parameter} & \textbf{True Value} & \textbf{Learned Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
-\hline
+\midrule
 \textbf{Mass (m)} & 0.0680 kg & 0.06798 kg & 2.34$\times 10^{-5}$ kg & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\hline
 \textbf{Thrust coef (kt)} & 0.0100 & 0.01000 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\hline
 \textbf{Torque coef (kq)} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\hline
 \textbf{Inertia Jxx} & $6.860 \times 10^{-5}$ kg$\cdot$m$^2$ & $5.831 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.029 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
-\hline
 \textbf{Inertia Jyy} & $9.200 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.058 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.380 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
-\hline
 \textbf{Inertia Jzz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.571 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.050 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Fixed Physical Constants (NOT Learnable):}
 
-\begin{tabular}{l|l|l}
+\begin{tabular}{lll}
 \hline
 \textbf{Constant} & \textbf{Value} & \textbf{Note} \\
 \hline
@@ -605,14 +553,15 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.25\textwidth}|p{0.20\textwidth}|p{0.45\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.25\textwidth}p{0.20\textwidth}p{0.45\textwidth}}
+\toprule
 \textbf{Parameter Category} & \textbf{Error Range} & \textbf{Status} \\
-\hline
+\midrule
 \textbf{Mass/Motor Coefficients} & 0.00\% & Perfect identification achieved \\
-\hline
 \textbf{Inertia Parameters} & 5.00\% (all three) & Excellent identification achieved via Solutions 1 \& 3 \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Training Configuration (Solutions 1 \& 3):}
@@ -635,59 +584,53 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \subsection{Key Implementation Techniques}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.18\textwidth}|p{0.38\textwidth}|p{0.28\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.18\textwidth}p{0.38\textwidth}p{0.28\textwidth}}
+\toprule
 \textbf{Aspect} & \textbf{Method} & \textbf{Result Achieved} \\
-\hline
+\midrule
 \textbf{Physics Integration} & Multi-objective loss (data + physics + regularization) & Strong constraint satisfaction evidenced by 2+ order of magnitude physics loss reduction \\
-\hline
 \textbf{Parameter Learning} & nn.Parameters with constraint enforcement & $<$7\% identification error \\
-\hline
 \textbf{Training Stability} & Gradient clipping + regularization & Stable convergence in $<$100 epochs \\
-\hline
 \textbf{Generalization} & Cross-trajectory validation & $<$10\% accuracy degradation \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \subsection{Validation Results}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.2\textwidth}|p{0.3\textwidth}|p{0.4\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.2\textwidth}p{0.3\textwidth}p{0.4\textwidth}}
+\toprule
 \textbf{Metric} & \textbf{Value} & \textbf{Significance} \\
-\hline
+\midrule
 \textbf{Cross-Validation} & 10-fold, trajectory-stratified & Robust performance assessment \\
-\hline
 \textbf{Generalization Gap} & 8.7\% average MAE degradation & Excellent unseen data performance \\
-\hline
 \textbf{Physics Compliance} & Physics loss convergence (2+ orders of magnitude reduction) & Strong constraint satisfaction during training \\
-\hline
 \textbf{Performance Metrics} & MAE, RMSE, correlation computed for all 12 outputs & Quantitative performance evaluation \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 
 \subsection{Dataset \& Training}
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.3\textwidth}|p{0.6\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.3\textwidth}p{0.6\textwidth}}
+\toprule
 \textbf{Component} & \textbf{Specification} \\
-\hline
+\midrule
 \textbf{Dataset Generation} & 49,382 total samples (10 trajectories, $\sim$5,000 samples each, 1ms timestep, up to 5s duration) \\
-\hline
 \textbf{Training Data Used} & Full 10 diverse trajectories with square wave references (filtered with 250ms time constant) \\
-\hline
 \textbf{Flight Maneuvers} & Square wave references for roll (±20°), pitch (±12°), yaw (±16°), altitude (-19m to 0m) with varying periods (1.2s to 5.0s) \\
-\hline
 \textbf{Optimization} & Adam optimizer, learning rate 0.0005 \\
-\hline
 \textbf{Training Config} & Batch size 64, 150 epochs, physics weight 20.0, regularization weight 1.0, gravity g=9.81 m/s$^2$ fixed \\
-\hline
 \textbf{Regularization} & Parameter constraints (bounded), gradient clipping max\_norm=1.0 \\
-\hline
 \textbf{Physics} & \textbf{REAL DYNAMICS}: No artificial damping, quadratic drag, motor time constants (80ms), slew rate limits \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \begin{figure}[!t]
@@ -748,47 +691,35 @@ All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amp
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.08\textwidth}|p{0.25\textwidth}|p{0.12\textwidth}|p{0.43\textwidth}|}
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.08\textwidth}p{0.25\textwidth}p{0.12\textwidth}p{0.43\textwidth}}
 \caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
 \label{tab:all_trajectories} \\
-\hline
+\midrule
 \textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
-\hline
 \endfirsthead
 
 \multicolumn{4}{c}%
 {\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
-\hline
 \textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
-\hline
 \endhead
 
-\hline \multicolumn{4}{r}{\textit{Continued on next page}} \\
 \endfoot
 
-\hline
 \endlastfoot
 
 \textbf{0} & Standard square wave maneuver & 2.0--3.0s & Roll: ±10°, Pitch: ±5°, Yaw: ±5°, Alt: -5 to -3m \\
-\hline
 \textbf{1} & Fast aggressive square waves & 1.5--2.5s & Roll: ±15°, Pitch: ±8°, Yaw: ±10°, Alt: -6 to -4m \\
-\hline
 \textbf{2} & Slow gentle square waves & 3.0--4.0s & Roll: ±5°, Pitch: ±3°, Yaw: ±5°, Alt: -3 to -2m \\
-\hline
 \textbf{3} & Asymmetric square waves & 2.0--2.5s & Roll: -12° to +8°, Pitch: -6° to +4°, Yaw: ±12°, Alt: -7 to -5m \\
-\hline
 \textbf{4} & High amplitude square waves & 1.8--2.2s & Roll: ±20°, Pitch: ±10°, Yaw: ±8°, Alt: -6 to -4m \\
-\hline
 \textbf{5} & Medium frequency square waves & 2.5--3.5s & Roll: ±8°, Pitch: ±4°, Yaw: ±10°, Alt: -4 to -3m \\
-\hline
 \textbf{6} & Large asymmetric square waves & 3.0--4.0s & Roll: -6° to +12°, Pitch: -7° to +5°, Yaw: -8° to +16°, Alt: -8 to -6m \\
-\hline
 \textbf{7} & Very fast high amplitude & 1.2--1.8s & Roll: ±18°, Pitch: ±12°, Yaw: ±15°, Alt: -5 to -3m \\
-\hline
 \textbf{8} & Very slow square waves & 4.0--5.0s & Roll: ±6°, Pitch: ±4°, Yaw: ±8°, Alt: -5 to -4m \\
-\hline
 \textbf{9} & Mixed frequency square waves & 2.2--3.0s & Roll: ±10°, Pitch: ±8°, Yaw: ±14°, Alt: -7 to -5m \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Key Differentiating Factors:}
@@ -817,32 +748,24 @@ The training data was generated using a high-fidelity MATLAB nonlinear quadrotor
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.25\textwidth}|p{0.2\textwidth}|p{0.45\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.25\textwidth}p{0.2\textwidth}p{0.45\textwidth}}
+\toprule
 \textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
-\hline
+\midrule
 \textbf{Mass (m)} & 0.068 kg & Quadrotor vehicle mass \\
-\hline
 \textbf{Inertia Jxx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & Roll axis moment of inertia \\
-\hline
 \textbf{Inertia Jyy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & Pitch axis moment of inertia \\
-\hline
 \textbf{Inertia Jzz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & Yaw axis moment of inertia \\
-\hline
 \textbf{Thrust Coefficient (kt)} & 0.01 & Motor thrust generation constant \\
-\hline
 \textbf{Torque Coefficient (kq)} & $7.8263 \times 10^{-4}$ & Motor torque generation constant \\
-\hline
 \textbf{Arm Length (b)} & 0.0438 m & Distance from center to motor (diagonal arm geometry) \\
-\hline
 \textbf{Gravity (g)} & 9.81 m/s$^2$ & Gravitational acceleration \\
-\hline
 \textbf{Timestep (dt)} & 0.001 s & Simulation integration step \\
-\hline
 \textbf{Duration (tend)} & 5.0 s & Total flight time per trajectory \\
-\hline
-\textbf{Quadratic Drag Coefficient} & 0.05 kg/m & Aerodynamic drag: $F_d = 0.05 \times v \times |v|$ \\
-\hline
+\textbf{Quadratic Drag Coefficient} & 0.05 kg/m & Aerodynamic drag: $F_d = 0.05 \times v \times v$ \\
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \subsubsection{Controller Specifications}
@@ -950,7 +873,7 @@ This square wave forcing function creates more diverse dynamics than constant se
 
 \textbf{Parameter Identification Summary:}
 
-\begin{tabular}{l|l|l}
+\begin{tabular}{lll}
 \hline
 \textbf{Stage} & \textbf{Parameters} & \textbf{Errors} \\
 \hline
@@ -1181,7 +1104,7 @@ The physics-informed approach successfully combines domain knowledge with machin
 
 \textbf{State Derivative Constraints}
 \begin{itemize}
-\item \textbf{New Loss Term}: $\mathcal{L}_{deriv} = \sum \text{ReLU}(|\dot{x}| - \dot{x}_{max})^2$
+\item \textbf{New Loss Term}: $\mathcal{L}_{deriv} = \sum \text{ReLU}(\dot{x} - \dot{x}_{max})^2$
 \item \textbf{Physical Limits Enforced}:
    \begin{itemize}
    \item Angular acceleration: max 20 rad/s$^2$ (realistic for quadrotor)
@@ -1238,14 +1161,14 @@ The physics-informed approach successfully combines domain knowledge with machin
 Implemented \texttt{temporal\_smoothness\_loss()} with soft physical constraints on state change rates:
 
 \begin{equation}
-\mathcal{L}_{temporal} = \sum_{i} \text{ReLU}\left(\frac{|\Delta x_i|}{\Delta t} - v_{i,max}\right)^2
+\mathcal{L}_{temporal} = \sum_{i} \text{ReLU}\left(\frac{\Delta x_i}{\Delta t} - v_{i,max}\right)^2
 \end{equation}
 
 \textbf{Physical Limits Enforced:}
 \begin{itemize}
 \item Velocity limits: 5 m/s (vertical), 3 rad/s (roll/pitch), 2 rad/s (yaw)
 \item Acceleration limits: 50 rad/s$^2$ (angular), 20 m/s$^2$ (vertical, $\approx$2g)
-\item Kinematic consistency: $|dz/dt - v_z| < \epsilon$
+\item Kinematic consistency: $dz/dt - v_z < \epsilon$
 \end{itemize}
 
 \textbf{Training Configuration:}
@@ -1368,22 +1291,19 @@ where $\dot{p}_{\text{physics}} = \frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r + \fr
 
 \begin{table*}[!t]
 \centering
-\scriptsize{|p{0.15\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.12\textwidth}|p{0.20\textwidth}|}
-\hline
+\renewcommand{\arraystretch}{1.4}
+\begin{tabular}{p{0.15\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.20\textwidth}}
+\toprule
 \textbf{Parameter} & \textbf{True Value} & \textbf{Learned Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
-\hline
+\midrule
 \textbf{Mass} & 0.068 kg & 0.0680 kg & 0.00000 kg & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
-\hline
 \textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ & $2.14 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{31.20\%}} & \textcolor{orange}{Partial Improvement} \\
-\hline
 \textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.80 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{30.43\%}} & \textcolor{orange}{Partial Improvement} \\
-\hline
 \textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ & $6.34 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{46.41\%}} & \textcolor{orange}{Partial Improvement} \\
-\hline
 \textbf{kt} & 0.01 & 0.0100 & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
-\hline
 \textbf{kq} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
-\hline
+\bottomrule
+\end{tabular}
 \end{table*}
 
 \textbf{Analysis of Results:}
@@ -1643,12 +1563,10 @@ Parameters & 204,818 & 37,006 & 35,470 & Optimized (-82\%) \\
 Hidden Size & 256 & 128 & 128 & Optimized \\
 Training Epochs & 250 & 100 & 100 & Baseline (more stable) \\
 Architecture & Feed-forward & Fourier+Modular & Modular & Current (simple, stable) \\
-\midrule
 \multicolumn{5}{c}{\textit{Single-Step Accuracy (Teacher-Forced)}} \\
 z MAE (m) & 0.0872 & 0.0410 & \textbf{0.0088} & \textcolor{green!60!black}{Vanilla Opt. (10×)} \\
 $\phi$ MAE (rad) & 0.0008 & 0.0005 & \textbf{0.0001} & \textcolor{green!60!black}{Vanilla Opt. (6×)} \\
 $v_z$ MAE (m/s) & 0.0454 & 0.0321 & \textbf{0.0092} & \textcolor{green!60!black}{Vanilla Opt. (5×)} \\
-\midrule
 \multicolumn{5}{c}{\textit{100-Step Autoregressive (CRITICAL FOR CONTROL)}} \\
 z MAE (m) & \textbf{1.49} & 5,199,034 & 177 & \textcolor{red!70!black}{Baseline (stable)} \\
 $\phi$ MAE (rad) & \textbf{0.018} & 8,596 & 0.240 & \textcolor{red!70!black}{Baseline} \\
@@ -1656,7 +1574,6 @@ $\theta$ MAE (rad) & \textbf{0.003} & 1,747 & 0.047 & \textcolor{red!70!black}{B
 $p$ MAE (rad/s) & \textbf{0.067} & 11,932 & 4.303 & \textcolor{red!70!black}{Baseline} \\
 $q$ MAE (rad/s) & \textbf{0.167} & 7,006 & 1.289 & \textcolor{red!70!black}{Baseline} \\
 $v_z$ MAE (m/s) & \textbf{1.55} & 5,552,459 & 252 & \textcolor{red!70!black}{Baseline} \\
-\midrule
 \multicolumn{5}{c}{\textit{Stability Assessment}} \\
 Divergence Time & Stable & 0.08 s & 0.06 s & \textcolor{red!70!black}{Baseline (stable)} \\
 Real-World Usable? & \textbf{Yes} & No & No & \textcolor{red!70!black}{Baseline} \\
@@ -1905,7 +1822,7 @@ The complete optimization strategy systematically addresses every failure mode i
 \toprule
 \textbf{\#} & \textbf{Technique} & \textbf{Purpose} & \textbf{Implementation} \\
 \midrule
-1 & Multi-step rollout loss & Teach long-horizon consistency & $\sum_{k=1}^{K} \frac{1}{k}||\hat{x}_k - x_k||^2$ \\
+1 & Multi-step rollout loss & Teach long-horizon consistency & $\sum_{k=1}^{K} \frac{1}{k}\hat{x}_k - x_k^2$ \\
 2 & Curriculum training & Progressive difficulty scaling & 5$\rightarrow$10$\rightarrow$25$\rightarrow$50 steps \\
 3 & Merged coupling layer & Maintain physical coupling & Branch + merge architecture \\
 4 & Adaptive energy weight & Prevent destabilization & $0.1 \times L_{data}/L_{energy}$ \\
@@ -2008,7 +1925,6 @@ yaw (rad) & 0.032 & \textbf{0.0028} & +91.3\% & 11× better \\
 p (rad/s) & 0.067 & \textbf{0.0354} & +47.2\% & 1.9× better \\
 q (rad/s) & 0.167 & \textbf{0.0253} & +84.9\% & 6.6× better \\
 r (rad/s) & 0.084 & \textbf{0.0278} & +66.9\% & 3.0× better \\
-\midrule
 \multicolumn{3}{l}{\textbf{Average improvement:}} & \textbf{83.6\%} & \textbf{18× better} \\
 \bottomrule
 \end{tabular}
@@ -2045,7 +1961,6 @@ Stable v1 & 2.630 & 0.065 & 0.022 & 4.220 & Failed \\
 1 $\rightarrow$ 10 steps & 0.087m $\rightarrow$ 0.162m (1.9×) & 0.026m $\rightarrow$ 0.017m (0.66×) & \textbf{Decreased!} \\
 10 $\rightarrow$ 50 steps & 0.162m $\rightarrow$ 0.521m (3.2×) & 0.017m $\rightarrow$ 0.021m (1.24×) & \textbf{2.6× slower} \\
 50 $\rightarrow$ 100 steps & 0.521m $\rightarrow$ 1.490m (2.9×) & 0.021m $\rightarrow$ 0.029m (1.39×) & \textbf{2.1× slower} \\
-\midrule
 \textbf{Overall} & \textbf{17× growth} & \textbf{1.1× growth} & \textbf{15× more stable} \\
 \bottomrule
 \end{tabular}
@@ -2066,7 +1981,6 @@ The error showed \textbf{minimal growth} (1.1× total) from 1 to 100 steps on he
 Fourier Optimized & Out-of-distribution extrapolation & 5,199,034 m error (catastrophic) \\
 Vanilla Optimized & Modular architecture broke coupling & 177 m error (decoupled dynamics) \\
 Stable PINN v1 & Physics-only training, missing losses & 2.63 m error (poor data fit) \\
-\midrule
 \textbf{Optimized v2} & \textbf{All baseline components maintained} & \textbf{0.029 m - 51× improvement (holdout)} \\
 \bottomrule
 \end{tabular}
@@ -2120,7 +2034,7 @@ The power balance constraint enforces:
 where:
 \begin{align}
 P_{\text{input}} &= T \cdot v_z + \tau_x p + \tau_y q + \tau_z r \\
-P_{\text{drag}} &= c_d(v_x^2|v_x| + v_y^2|v_y| + v_z^2|v_z|)
+P_{\text{drag}} &= c_d(v_x^2v_x + v_y^2v_y + v_z^2v_z)
 \end{align}
 
 \textbf{Implementation:} Added to training loss with weight $\lambda_{\text{energy}} = 5.0$:
@@ -2150,9 +2064,9 @@ At small angles, the term $(J_{yy} - J_{zz})qr \approx 0$, making inertias unobs
 \begin{table}[h]
 \centering
 \caption{Aggressive Trajectory Specifications for Inertia Identification}
-\begin{tabular}{c|l|c|c}
+\begin{tabular}{clcc}
 \hline
-\textbf{ID} & \textbf{Description} & \textbf{Angles} & \textbf{Max $|p \cdot q \cdot r|$} \\
+\textbf{ID} & \textbf{Description} & \textbf{Angles} & \textbf{Max $p \cdot q \cdot r$} \\
 \hline
 100 & Aggressive multi-axis & $\pm45°$ & 90.2 \\
 101 & Very aggressive & $\pm50°$ & 70.8 \\
@@ -2197,7 +2111,7 @@ Analyzed prediction error distributions for all 12 states to assess normality, b
 \begin{table}[h]
 \centering
 \caption{Prediction Error Statistics}
-\begin{tabular}{l|c|c|c|c}
+\begin{tabular}{lcccc}
 \hline
 \textbf{State} & \textbf{Mean} & \textbf{Std} & \textbf{MAE} & \textbf{Normality} \\
 \hline
@@ -2238,7 +2152,7 @@ Examined correlations between states to identify coupling patterns and validate 
 
 \item \textbf{Cross-Correlation Matrix:} Diagonal dominance ($r > 0.99$ on diagonal) confirms high prediction accuracy with minimal cross-state confusion
 
-\item \textbf{Error Correlations:} Weak error correlations ($|r| < 0.3$) suggest independent error sources rather than systematic coupling failures
+\item \textbf{Error Correlations:} Weak error correlations ($r < 0.3$) suggest independent error sources rather than systematic coupling failures
 \end{enumerate}
 
 \textbf{Grouped Subsystem Analysis:}
@@ -2303,7 +2217,7 @@ We analyzed the computational requirements for training and inference to assess 
 \begin{table}[h]
 \centering
 \caption{Training Computational Cost}
-\begin{tabular}{l|r|r}
+\begin{tabular}{lrr}
 \hline
 \textbf{Component} & \textbf{Time per Epoch} & \textbf{Percentage} \\
 \hline
@@ -2363,7 +2277,7 @@ Backward pass \& optimization & 1.3 s & 20\% \\
 \begin{table}[h]
 \centering
 \caption{Platform Deployment Assessment}
-\begin{tabular}{l|c|c|c}
+\begin{tabular}{lccc}
 \hline
 \textbf{Platform} & \textbf{Feasible?} & \textbf{Latency} & \textbf{Notes} \\
 \hline
@@ -2414,7 +2328,7 @@ Understanding model limitations is critical for safe deployment. This section do
 \begin{table}[h]
 \centering
 \caption{Model Operating Envelope}
-\begin{tabular}{l|c|c}
+\begin{tabular}{lcc}
 \hline
 \textbf{Variable} & \textbf{Validated Range} & \textbf{Failure Beyond} \\
 \hline
@@ -2545,7 +2459,7 @@ Following the implementation of energy conservation loss and aggressive trajecto
 \begin{table}[h]
 \centering
 \caption{Parameter Identification: Standard vs Aggressive Training}
-\begin{tabular}{l|c|c|c}
+\begin{tabular}{lccc}
 \hline
 \textbf{Parameter} & \textbf{Original (5.00\%)} & \textbf{+ Aggressive} & \textbf{Change} \\
 \hline
@@ -2649,7 +2563,7 @@ Aggressive trajectories provide stronger gradient signals (cross-coupling terms 
 \begin{table}[h]
 \centering
 \caption{Training Metrics: Aggressive Trajectory Experiment}
-\begin{tabular}{l|c|c}
+\begin{tabular}{lcc}
 \hline
 \textbf{Metric} & \textbf{Epoch 0} & \textbf{Epoch 140} \\
 \hline
@@ -2684,7 +2598,7 @@ To enable accurate training at large angles, the simulator requires:
 
 \textbf{1. Nonlinear Aerodynamics}
 \begin{equation}
-F_{\text{drag}} = \frac{1}{2}\rho A C_d v |v| \quad \text{(quadratic, not linear)}
+F_{\text{drag}} = \frac{1}{2}\rho A C_d v v \quad \text{(quadratic, not linear)}
 \end{equation}
 
 \textbf{2. Gyroscopic Torques}

@@ -1,0 +1,4833 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(quadrotor_pinn_report_IEEE.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/ieeetran\IEEEtran.cls
+Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd)
+-- Using 8.5in x 11in (letter) paper.
+-- Using PDF output.
+-- This is a 10 point document.
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/cite\cite.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.
+sty (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (quadrotor_pinn_report_IEEE.aux)
+-- Lines per column: 58 (exact).
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (quadrotor_pinn_report_IEEE.out) (quadrotor_pinn_report_IEEE.out)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+Overfull \hbox (470.39685pt too wide) in paragraph at lines 72--73
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.84 \scriptsize{p{0.24\textwidth}
+                                   p{0.34\textwidth} p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.84 \scriptsize{p{0.24\textwidth}
+                                   p{0.34\textwidth} p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.84 ...ptsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.84 ...ptsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.84 ...width} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.84 ...width} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Misplaced \noalign.
+\toprule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\abovetopsep \global \@b...
+l.85 \toprule
+             
+! Misplaced alignment tab character &.
+l.86 \textbf{Step} &
+                     \textbf{Implementation} & \textbf{Output} \\
+! Misplaced alignment tab character &.
+l.86 \textbf{Step} & \textbf{Implementation} &
+                                               \textbf{Output} \\
+! Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.87 \midrule
+             
+! Misplaced alignment tab character &.
+l.88 \textbf{1. Quadrotor Model Design} &
+                                          Defined 12-state dynamics encompas...
+
+! Misplaced alignment tab character &.
+l.88 ...st, position, torques, angles, and rates &
+                                                   Physical model foundation...
+
+! Misplaced alignment tab character &.
+l.90 \textbf{2. Trajectory Generation} &
+                                         Created 10 diverse flight trajector...
+
+! Misplaced alignment tab character &.
+l.90 ...ing amplitudes for rich dynamic behavior &
+                                                   10 × 5,000 samples = 50,...
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd)
+! Misplaced alignment tab character &.
+l.92 \textbf{3. Physics Simulation} &
+                                      Applied Newton-Euler equations with pr...
+
+! Misplaced alignment tab character &.
+l.92 ...quations with precisely known parameters &
+                                                   Ground truth dynamics dat...
+
+! Misplaced alignment tab character &.
+l.94 \textbf{4. Data Structure Creation} &
+                                           Organized as current\_state $\rig...
+
+! Misplaced alignment tab character &.
+l.94 ...rightarrow$ next\_state sequential pairs &
+                                                   Structured training datas...
+
+! Misplaced alignment tab character &.
+l.96 \textbf{5. Data Validation} &
+                                   Verified physics consistency and trajecto...
+
+! Misplaced alignment tab character &.
+l.96 ...nd trajectory realism across all samples &
+                                                   Clean, physics-compliant ...
+
+! Misplaced \noalign.
+\bottomrule ->\noalign 
+                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
+l.97 \bottomrule
+                
+
+Overfull \hbox (367.19843pt too wide) in paragraph at lines 105--106
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.115 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.115 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.115 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.115 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.115 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.115 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Misplaced \noalign.
+\toprule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\abovetopsep \global \@b...
+l.116 \toprule
+              
+! Misplaced alignment tab character &.
+l.117 \textbf{Step} &
+                      \textbf{Implementation} & \textbf{Achievement} \\
+! Misplaced alignment tab character &.
+l.117 \textbf{Step} & \textbf{Implementation} &
+                                                \textbf{Achievement} \\
+! Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.118 \midrule
+              
+! Misplaced alignment tab character &.
+l.119 \textbf{6. Network Design} &
+                                   5-layer architecture with 256 neurons eac...
+
+! Misplaced alignment tab character &.
+l.119 ...12 state mapping + 6 physics parameters &
+                                                   204,818 total trainable p...
+
+! Misplaced alignment tab character &.
+l.121 \textbf{7. Physics Integration} &
+                                        Embedded Newton-Euler equations dire...
+
+! Misplaced alignment tab character &.
+l.121 ...ctly into the loss function computation &
+                                                   Multi-objective training ...
+
+! Misplaced alignment tab character &.
+l.123 \textbf{8. Parameter Learning} &
+                                       Converted physical constants (mass, i...
+
+! Misplaced alignment tab character &.
+l.123 ...rtia tensors) into trainable parameters &
+                                                   Simultaneous state predic...
+
+! Misplaced alignment tab character &.
+l.125 \textbf{9. Loss Function Design} &
+                                         Carefully balanced combination of d...
+
+! Misplaced alignment tab character &.
+l.125 ... consistency, and regularization losses &
+                                                   Optimal learning objectiv...
+
+! Misplaced alignment tab character &.
+l.127 \textbf{10. Constraint Implementation} &
+                                               Added parameter bounds and ph...
+
+! Misplaced alignment tab character &.
+l.127 ...ics law enforcement throughout training &
+                                                   Stable, physically valid ...
+
+! Misplaced \noalign.
+\bottomrule ->\noalign 
+                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
+l.128 \bottomrule
+                 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.134 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.134 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.134 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.134 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.134 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.134 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Misplaced \noalign.
+\toprule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\abovetopsep \global \@b...
+l.135 \toprule
+              
+! Misplaced alignment tab character &.
+l.136 \textbf{Step} &
+                      \textbf{Implementation} & \textbf{Improvement Achieved...
+
+! Misplaced alignment tab character &.
+l.136 \textbf{Step} & \textbf{Implementation} &
+                                                \textbf{Improvement Achieved...
+
+! Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.137 \midrule
+              
+! Misplaced alignment tab character &.
+l.138 \textbf{11. Foundation Model} &
+                                      Established basic PINN with standard p...
+
+! Misplaced alignment tab character &.
+l.138 ...NN with standard physics loss weighting &
+                                                   Baseline performance: 14....
+
+! Misplaced alignment tab character &.
+l.140 \textbf{12. Enhanced Physics Weighting} &
+                                                Systematically increased phy...
+
+! Misplaced alignment tab character &.
+l.140 ...ysics loss contribution by factor of 10 &
+                                                   Significant improvement: ...
+
+! Misplaced alignment tab character &.
+l.142 \textbf{13. Direct Parameter ID} &
+                                         Implemented direct torque and accel...
+
+! Misplaced alignment tab character &.
+l.142 ...e and acceleration-based identification &
+                                                   Advanced performance: 5.8...
+
+! Misplaced alignment tab character &.
+l.144 \textbf{14. Training Optimization} &
+                                           Applied gradient clipping, advanc...
+
+! Misplaced alignment tab character &.
+l.144 ...ularization, and constraint enforcement &
+                                                   Stable convergence achiev...
+
+! Misplaced alignment tab character &.
+l.146 \textbf{15. Hyperparameter Tuning} &
+                                           Systematically optimized learning...
+
+! Misplaced alignment tab character &.
+l.146 ...ng rates, batch sizes, and loss weights &
+                                                   Final performance optimiz...
+
+! Misplaced alignment tab character &.
+l.148 \textbf{16. Autoregressive Stability} &
+                                              Enhanced architecture (256 neu...
+
+! Misplaced alignment tab character &.
+l.148 ...30\%), stability loss, tightened limits &
+                                                   Robust multi-step predict...
+
+! Misplaced \noalign.
+\bottomrule ->\noalign 
+                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
+l.149 \bottomrule
+                 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.155 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.155 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.155 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.155 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.155 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.155 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Misplaced \noalign.
+\toprule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\abovetopsep \global \@b...
+l.156 \toprule
+              
+! Misplaced alignment tab character &.
+l.157 \textbf{Step} &
+                      \textbf{Implementation} & \textbf{Validation Result} \\
+! Misplaced alignment tab character &.
+l.157 \textbf{Step} & \textbf{Implementation} &
+                                                \textbf{Validation Result} \\
+! Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.158 \midrule
+              
+! Misplaced alignment tab character &.
+l.159 \textbf{17. Cross-Validation} &
+                                      Implemented 10-fold validation strateg...
+
+! Misplaced alignment tab character &.
+l.159 ...rategy across diverse trajectory groups &
+                                                   Robust and generalizable ...
+
+! Misplaced alignment tab character &.
+l.161 \textbf{18. Generalization Testing} &
+                                            Comprehensive hold-out trajector...
+
+! Misplaced alignment tab character &.
+l.161 ...ry evaluation on unseen flight patterns &
+                                                   Excellent generalization:...
+
+! Misplaced alignment tab character &.
+l.163 \textbf{19. Physics Compliance Check} &
+                                              Quantitative measurement of ph...
+
+! Misplaced alignment tab character &.
+l.163 ... showing strong constraint satisfaction &
+                                                   Effective physics integra...
+
+! Misplaced alignment tab character &.
+l.165 \textbf{20. Performance Metrics} &
+                                         Comprehensive MAE, RMSE, and correl...
+
+! Misplaced alignment tab character &.
+l.165 ...lation metrics computed for all outputs &
+                                                   Quantitative performance ...
+
+! Misplaced alignment tab character &.
+l.167 \textbf{21. Comparative Analysis} &
+                                          Comprehensive benchmarking across ...
+
+! Misplaced alignment tab character &.
+l.167 ...s all three model evolutionary variants &
+                                                   Quantified improvement pr...
+
+! Misplaced \noalign.
+\bottomrule ->\noalign 
+                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
+l.168 \bottomrule
+                 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.175 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.175 \scriptsize{p{0.24\textwidth}
+                                    p{0.34\textwidth} p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.175 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.175 ...tsize{p{0.24\textwidth} p{0.34\textwidth}
+                                                   p{0.31\textwidth}}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.175 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.175 ...idth} p{0.34\textwidth} p{0.31\textwidth}
+                                                  }
+! Misplaced \noalign.
+\toprule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\abovetopsep \global \@b...
+l.176 \toprule
+              
+! Misplaced alignment tab character &.
+l.177 \textbf{Step} &
+                      \textbf{Implementation} & \textbf{Output} \\
+! Misplaced alignment tab character &.
+l.177 \textbf{Step} & \textbf{Implementation} &
+                                                \textbf{Output} \\
+! Misplaced \noalign.
+\midrule ->\noalign 
+                    {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global \@...
+l.178 \midrule
+              
+! Misplaced alignment tab character &.
+l.179 \textbf{21. Comprehensive Plotting} &
+                                            Generated all 16 individual outp...
+
+! Misplaced alignment tab character &.
+l.179 ...ations over time with detailed analysis &
+                                                   5 essential analysis plot...
+
+! Misplaced alignment tab character &.
+l.181 \textbf{22. Clean Visualization} &
+                                         Implemented separate subplot visual...
+
+! Misplaced alignment tab character &.
+l.181 ... trajectories with professional styling &
+                                                   Clear, uncluttered visual...
+
+! Misplaced alignment tab character &.
+l.183 \textbf{23. Performance Metrics} &
+                                         Calculated comprehensive MAE, RMSE,...
+
+! Misplaced alignment tab character &.
+l.183 ...and correlation metrics for all outputs &
+                                                   Complete numerical valida...
+
+! Misplaced alignment tab character &.
+l.185 \textbf{24. Physics Validation Plots} &
+                                              Generated parameter convergenc...
+
+! Misplaced alignment tab character &.
+l.185 ... constraint satisfaction visualizations &
+                                                   Visual confirmation of ph...
+
+! Misplaced alignment tab character &.
+l.187 \textbf{25. Documentation Creation} &
+                                            Produced comprehensive technical...
+
+! Misplaced alignment tab character &.
+l.187 ...cal documentation with LaTeX formatting &
+                                                   Professional project pres...
+
+! Misplaced \noalign.
+\bottomrule ->\noalign 
+                       {\ifnum 0=`}\fi \@aboverulesep =\aboverulesep \global...
+l.188 \bottomrule
+                 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.197 \scriptsize{|p{0.14\textwidth}
+                                    |p{0.14\textwidth}|p{0.14\textwidth}|p{0...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.197 \scriptsize{|p{0.14\textwidth}
+                                    |p{0.14\textwidth}|p{0.14\textwidth}|p{0...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.197 ...size{|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.14\textwidth}|p{0.14\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.197 ...size{|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.14\textwidth}|p{0.14\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.14\textwidth}|p{0.22\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.14\textwidth}|p{0.22\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.22\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.14\textwidth}
+                                                  |p{0.22\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.22\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.197 ...idth}|p{0.14\textwidth}|p{0.22\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.198 \hline
+            
+! Misplaced alignment tab character &.
+l.199 \textbf{Layer} &
+                       \textbf{Input Dim} & \textbf{Output Dim} & \textbf{Pa...
+
+! Misplaced alignment tab character &.
+l.199 \textbf{Layer} & \textbf{Input Dim} &
+                                            \textbf{Output Dim} & \textbf{Pa...
+
+! Misplaced alignment tab character &.
+l.199 ...textbf{Input Dim} & \textbf{Output Dim} &
+                                                   \textbf{Parameters} & \te...
+
+! Misplaced alignment tab character &.
+l.199 ...extbf{Output Dim} & \textbf{Parameters} &
+                                                   \textbf{Function} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.200 \hline
+            
+! Misplaced alignment tab character &.
+l.201 \textbf{Layer 1} &
+                         16 & 256 & 4,352 & Feature extraction (12 states + ...
+
+! Misplaced alignment tab character &.
+l.201 \textbf{Layer 1} & 16 &
+                              256 & 4,352 & Feature extraction (12 states + ...
+
+! Misplaced alignment tab character &.
+l.201 \textbf{Layer 1} & 16 & 256 &
+                                    4,352 & Feature extraction (12 states + ...
+
+! Misplaced alignment tab character &.
+l.201 \textbf{Layer 1} & 16 & 256 & 4,352 &
+                                            Feature extraction (12 states + ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.202 \hline
+            
+! Misplaced alignment tab character &.
+l.203 \textbf{Dropout 1} &
+                           256 & 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.203 \textbf{Dropout 1} & 256 &
+                                 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.203 \textbf{Dropout 1} & 256 & 256 &
+                                       0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.203 \textbf{Dropout 1} & 256 & 256 & 0 &
+                                           Regularization (p=0.1) \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.204 \hline
+            
+! Misplaced alignment tab character &.
+l.205 \textbf{Layer 2} &
+                         256 & 256 & 65,792 & Nonlinear dynamics modeling \\
+! Misplaced alignment tab character &.
+l.205 \textbf{Layer 2} & 256 &
+                               256 & 65,792 & Nonlinear dynamics modeling \\
+! Misplaced alignment tab character &.
+l.205 \textbf{Layer 2} & 256 & 256 &
+                                     65,792 & Nonlinear dynamics modeling \\
+! Misplaced alignment tab character &.
+l.205 \textbf{Layer 2} & 256 & 256 & 65,792 &
+                                              Nonlinear dynamics modeling \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.206 \hline
+            
+! Misplaced alignment tab character &.
+l.207 \textbf{Dropout 2} &
+                           256 & 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.207 \textbf{Dropout 2} & 256 &
+                                 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.207 \textbf{Dropout 2} & 256 & 256 &
+                                       0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.207 \textbf{Dropout 2} & 256 & 256 & 0 &
+                                           Regularization (p=0.1) \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.208 \hline
+            
+! Misplaced alignment tab character &.
+l.209 \textbf{Layer 3} &
+                         256 & 256 & 65,792 & Deep feature extraction \\
+! Misplaced alignment tab character &.
+l.209 \textbf{Layer 3} & 256 &
+                               256 & 65,792 & Deep feature extraction \\
+! Misplaced alignment tab character &.
+l.209 \textbf{Layer 3} & 256 & 256 &
+                                     65,792 & Deep feature extraction \\
+! Misplaced alignment tab character &.
+l.209 \textbf{Layer 3} & 256 & 256 & 65,792 &
+                                              Deep feature extraction \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.210 \hline
+            
+! Misplaced alignment tab character &.
+l.211 \textbf{Dropout 3} &
+                           256 & 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.211 \textbf{Dropout 3} & 256 &
+                                 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.211 \textbf{Dropout 3} & 256 & 256 &
+                                       0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.211 \textbf{Dropout 3} & 256 & 256 & 0 &
+                                           Regularization (p=0.1) \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.212 \hline
+            
+! Misplaced alignment tab character &.
+l.213 \textbf{Layer 4} &
+                         256 & 256 & 65,792 & Higher-order dynamics capture \\
+! Misplaced alignment tab character &.
+l.213 \textbf{Layer 4} & 256 &
+                               256 & 65,792 & Higher-order dynamics capture \\
+! Misplaced alignment tab character &.
+l.213 \textbf{Layer 4} & 256 & 256 &
+                                     65,792 & Higher-order dynamics capture \\
+! Misplaced alignment tab character &.
+l.213 \textbf{Layer 4} & 256 & 256 & 65,792 &
+                                              Higher-order dynamics capture \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.214 \hline
+            
+! Misplaced alignment tab character &.
+l.215 \textbf{Dropout 4} &
+                           256 & 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.215 \textbf{Dropout 4} & 256 &
+                                 256 & 0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.215 \textbf{Dropout 4} & 256 & 256 &
+                                       0 & Regularization (p=0.1) \\
+! Misplaced alignment tab character &.
+l.215 \textbf{Dropout 4} & 256 & 256 & 0 &
+                                           Regularization (p=0.1) \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.216 \hline
+            
+! Misplaced alignment tab character &.
+l.217 \textbf{Output Layer} &
+                              256 & 12 & 3,084 & Next state prediction (12 s...
+
+! Misplaced alignment tab character &.
+l.217 \textbf{Output Layer} & 256 &
+                                    12 & 3,084 & Next state prediction (12 s...
+
+! Misplaced alignment tab character &.
+l.217 \textbf{Output Layer} & 256 & 12 &
+                                         3,084 & Next state prediction (12 s...
+
+! Misplaced alignment tab character &.
+l.217 \textbf{Output Layer} & 256 & 12 & 3,084 &
+                                                 Next state prediction (12 s...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.218 \hline
+            
+! Misplaced alignment tab character &.
+l.219 \textbf{Physics Params} &
+                                - & - & 6 & Learnable physical constants (m,...
+
+! Misplaced alignment tab character &.
+l.219 \textbf{Physics Params} & - &
+                                    - & 6 & Learnable physical constants (m,...
+
+! Misplaced alignment tab character &.
+l.219 \textbf{Physics Params} & - & - &
+                                        6 & Learnable physical constants (m,...
+
+! Misplaced alignment tab character &.
+l.219 \textbf{Physics Params} & - & - & 6 &
+                                            Learnable physical constants (m,...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.220 \hline
+            
+! Misplaced alignment tab character &.
+l.221 \textbf{Total} &
+                       - & - & \textbf{204,818} & Complete trainable paramet...
+
+! Misplaced alignment tab character &.
+l.221 \textbf{Total} & - &
+                           - & \textbf{204,818} & Complete trainable paramet...
+
+! Misplaced alignment tab character &.
+l.221 \textbf{Total} & - & - &
+                               \textbf{204,818} & Complete trainable paramet...
+
+! Misplaced alignment tab character &.
+l.221 \textbf{Total} & - & - & \textbf{204,818} &
+                                                  Complete trainable paramet...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.222 \hline
+            
+
+Overfull \hbox (367.19843pt too wide) in paragraph at lines 230--231
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.15\textwidth}|p{0.08\textwidth}|p{0...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.15\textwidth}|p{0.08\textwidth}|p{0...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 ...size{|p{0.05\textwidth}|p{0.15\textwidth}
+                                                  |p{0.08\textwidth}|p{0.12\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 ...size{|p{0.05\textwidth}|p{0.15\textwidth}
+                                                  |p{0.08\textwidth}|p{0.12\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.15\textwidth}|p{0.08\textwidth}
+                                                  |p{0.12\textwidth}|p{0.25\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.15\textwidth}|p{0.08\textwidth}
+                                                  |p{0.12\textwidth}|p{0.25\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.08\textwidth}|p{0.12\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.08\textwidth}|p{0.12\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.12\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.12\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.250 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.251 \hline
+            
+! Misplaced alignment tab character &.
+l.252 \textbf{\#} &
+                    \textbf{Variable Name} & \textbf{Symbol} & \textbf{Units...
+
+! Misplaced alignment tab character &.
+l.252 \textbf{\#} & \textbf{Variable Name} &
+                                             \textbf{Symbol} & \textbf{Units...
+
+! Misplaced alignment tab character &.
+l.252 ...textbf{Variable Name} & \textbf{Symbol} &
+                                                   \textbf{Units} & \textbf{...
+
+! Misplaced alignment tab character &.
+l.252 ...ame} & \textbf{Symbol} & \textbf{Units} &
+                                                   \textbf{Physical Meaning}...
+
+! Misplaced alignment tab character &.
+l.252 ...xtbf{Units} & \textbf{Physical Meaning} &
+                                                   \textbf{Value Range} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.253 \hline
+            
+! Misplaced alignment tab character &.
+l.254 1 &
+          \textbf{thrust} & $T$ & N & Total upward force from 4 motors & [0....
+
+! Misplaced alignment tab character &.
+l.254 1 & \textbf{thrust} &
+                            $T$ & N & Total upward force from 4 motors & [0....
+
+! Misplaced alignment tab character &.
+l.254 1 & \textbf{thrust} & $T$ &
+                                  N & Total upward force from 4 motors & [0....
+
+! Misplaced alignment tab character &.
+l.254 1 & \textbf{thrust} & $T$ & N &
+                                      Total upward force from 4 motors & [0....
+
+! Misplaced alignment tab character &.
+l.254 ... & N & Total upward force from 4 motors &
+                                                   [0.0, 2.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.255 \hline
+            
+! Misplaced alignment tab character &.
+l.256 2 &
+          \textbf{z} & $z$ & m & Vertical position (NED: down positive, $z<0...
+
+! Misplaced alignment tab character &.
+l.256 2 & \textbf{z} &
+                       $z$ & m & Vertical position (NED: down positive, $z<0...
+
+! Misplaced alignment tab character &.
+l.256 2 & \textbf{z} & $z$ &
+                             m & Vertical position (NED: down positive, $z<0...
+
+! Misplaced alignment tab character &.
+l.256 2 & \textbf{z} & $z$ & m &
+                                 Vertical position (NED: down positive, $z<0...
+
+! Misplaced alignment tab character &.
+l.256 ...D: down positive, $z<0$ = above ground) &
+                                                   [-25.0, 0.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.257 \hline
+            
+! Misplaced alignment tab character &.
+l.258 3 &
+          \textbf{torque\_x} & $\tau_x$ & N$\cdot$m & Roll torque (about x-a...
+
+! Misplaced alignment tab character &.
+l.258 3 & \textbf{torque\_x} &
+                               $\tau_x$ & N$\cdot$m & Roll torque (about x-a...
+
+! Misplaced alignment tab character &.
+l.258 3 & \textbf{torque\_x} & $\tau_x$ &
+                                          N$\cdot$m & Roll torque (about x-a...
+
+! Misplaced alignment tab character &.
+l.258 ...extbf{torque\_x} & $\tau_x$ & N$\cdot$m &
+                                                   Roll torque (about x-axis...
+
+! Misplaced alignment tab character &.
+l.258 ... N$\cdot$m & Roll torque (about x-axis) &
+                                                   [-0.02, 0.02] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.259 \hline
+            
+! Misplaced alignment tab character &.
+l.260 4 &
+          \textbf{torque\_y} & $\tau_y$ & N$\cdot$m & Pitch torque (about y-...
+
+! Misplaced alignment tab character &.
+l.260 4 & \textbf{torque\_y} &
+                               $\tau_y$ & N$\cdot$m & Pitch torque (about y-...
+
+! Misplaced alignment tab character &.
+l.260 4 & \textbf{torque\_y} & $\tau_y$ &
+                                          N$\cdot$m & Pitch torque (about y-...
+
+! Misplaced alignment tab character &.
+l.260 ...extbf{torque\_y} & $\tau_y$ & N$\cdot$m &
+                                                   Pitch torque (about y-axi...
+
+! Misplaced alignment tab character &.
+l.260 ...N$\cdot$m & Pitch torque (about y-axis) &
+                                                   [-0.02, 0.02] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.261 \hline
+            
+! Misplaced alignment tab character &.
+l.262 5 &
+          \textbf{torque\_z} & $\tau_z$ & N$\cdot$m & Yaw torque (about z-ax...
+
+! Misplaced alignment tab character &.
+l.262 5 & \textbf{torque\_z} &
+                               $\tau_z$ & N$\cdot$m & Yaw torque (about z-ax...
+
+! Misplaced alignment tab character &.
+l.262 5 & \textbf{torque\_z} & $\tau_z$ &
+                                          N$\cdot$m & Yaw torque (about z-ax...
+
+! Misplaced alignment tab character &.
+l.262 ...extbf{torque\_z} & $\tau_z$ & N$\cdot$m &
+                                                   Yaw torque (about z-axis)...
+
+! Misplaced alignment tab character &.
+l.262 ...& N$\cdot$m & Yaw torque (about z-axis) &
+                                                   [-0.01, 0.01] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.263 \hline
+            
+! Misplaced alignment tab character &.
+l.264 6 &
+          \textbf{roll} & $\phi$ & rad & Roll angle (banking) & [$-\pi/4$, $...
+
+! Misplaced alignment tab character &.
+l.264 6 & \textbf{roll} &
+                          $\phi$ & rad & Roll angle (banking) & [$-\pi/4$, $...
+
+! Misplaced alignment tab character &.
+l.264 6 & \textbf{roll} & $\phi$ &
+                                   rad & Roll angle (banking) & [$-\pi/4$, $...
+
+! Misplaced alignment tab character &.
+l.264 6 & \textbf{roll} & $\phi$ & rad &
+                                         Roll angle (banking) & [$-\pi/4$, $...
+
+! Misplaced alignment tab character &.
+l.264 ...} & $\phi$ & rad & Roll angle (banking) &
+                                                   [$-\pi/4$, $\pi/4$] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.265 \hline
+            
+! Misplaced alignment tab character &.
+l.266 7 &
+          \textbf{pitch} & $\theta$ & rad & Pitch angle (nose up/down) & [$-...
+
+! Misplaced alignment tab character &.
+l.266 7 & \textbf{pitch} &
+                           $\theta$ & rad & Pitch angle (nose up/down) & [$-...
+
+! Misplaced alignment tab character &.
+l.266 7 & \textbf{pitch} & $\theta$ &
+                                      rad & Pitch angle (nose up/down) & [$-...
+
+! Misplaced alignment tab character &.
+l.266 7 & \textbf{pitch} & $\theta$ & rad &
+                                            Pitch angle (nose up/down) & [$-...
+
+! Misplaced alignment tab character &.
+l.266 ...eta$ & rad & Pitch angle (nose up/down) &
+                                                   [$-\pi/4$, $\pi/4$] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.267 \hline
+            
+! Misplaced alignment tab character &.
+l.268 8 &
+          \textbf{yaw} & $\psi$ & rad & Yaw angle (heading) & [$-\pi$, $\pi$...
+
+! Misplaced alignment tab character &.
+l.268 8 & \textbf{yaw} &
+                         $\psi$ & rad & Yaw angle (heading) & [$-\pi$, $\pi$...
+
+! Misplaced alignment tab character &.
+l.268 8 & \textbf{yaw} & $\psi$ &
+                                  rad & Yaw angle (heading) & [$-\pi$, $\pi$...
+
+! Misplaced alignment tab character &.
+l.268 8 & \textbf{yaw} & $\psi$ & rad &
+                                        Yaw angle (heading) & [$-\pi$, $\pi$...
+
+! Misplaced alignment tab character &.
+l.268 ...w} & $\psi$ & rad & Yaw angle (heading) &
+                                                   [$-\pi$, $\pi$] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.269 \hline
+            
+! Misplaced alignment tab character &.
+l.270 9 &
+          \textbf{p} & $p$ & rad/s & Roll rate (angular velocity) & [-10.0, ...
+
+! Misplaced alignment tab character &.
+l.270 9 & \textbf{p} &
+                       $p$ & rad/s & Roll rate (angular velocity) & [-10.0, ...
+
+! Misplaced alignment tab character &.
+l.270 9 & \textbf{p} & $p$ &
+                             rad/s & Roll rate (angular velocity) & [-10.0, ...
+
+! Misplaced alignment tab character &.
+l.270 9 & \textbf{p} & $p$ & rad/s &
+                                     Roll rate (angular velocity) & [-10.0, ...
+
+! Misplaced alignment tab character &.
+l.270 ... & rad/s & Roll rate (angular velocity) &
+                                                   [-10.0, 10.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.271 \hline
+            
+! Misplaced alignment tab character &.
+l.272 10 &
+           \textbf{q} & $q$ & rad/s & Pitch rate (angular velocity) & [-10.0...
+
+! Misplaced alignment tab character &.
+l.272 10 & \textbf{q} &
+                        $q$ & rad/s & Pitch rate (angular velocity) & [-10.0...
+
+! Misplaced alignment tab character &.
+l.272 10 & \textbf{q} & $q$ &
+                              rad/s & Pitch rate (angular velocity) & [-10.0...
+
+! Misplaced alignment tab character &.
+l.272 10 & \textbf{q} & $q$ & rad/s &
+                                      Pitch rate (angular velocity) & [-10.0...
+
+! Misplaced alignment tab character &.
+l.272 ...& rad/s & Pitch rate (angular velocity) &
+                                                   [-10.0, 10.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.273 \hline
+            
+! Misplaced alignment tab character &.
+l.274 11 &
+           \textbf{r} & $r$ & rad/s & Yaw rate (angular velocity) & [-5.0, 5...
+
+! Misplaced alignment tab character &.
+l.274 11 & \textbf{r} &
+                        $r$ & rad/s & Yaw rate (angular velocity) & [-5.0, 5...
+
+! Misplaced alignment tab character &.
+l.274 11 & \textbf{r} & $r$ &
+                              rad/s & Yaw rate (angular velocity) & [-5.0, 5...
+
+! Misplaced alignment tab character &.
+l.274 11 & \textbf{r} & $r$ & rad/s &
+                                      Yaw rate (angular velocity) & [-5.0, 5...
+
+! Misplaced alignment tab character &.
+l.274 ...$ & rad/s & Yaw rate (angular velocity) &
+                                                   [-5.0, 5.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.275 \hline
+            
+! Misplaced alignment tab character &.
+l.276 12 &
+           \textbf{vz} & $w$ & m/s & Vertical velocity & [-20.0, 20.0] \\
+! Misplaced alignment tab character &.
+l.276 12 & \textbf{vz} &
+                         $w$ & m/s & Vertical velocity & [-20.0, 20.0] \\
+! Misplaced alignment tab character &.
+l.276 12 & \textbf{vz} & $w$ &
+                               m/s & Vertical velocity & [-20.0, 20.0] \\
+! Misplaced alignment tab character &.
+l.276 12 & \textbf{vz} & $w$ & m/s &
+                                     Vertical velocity & [-20.0, 20.0] \\
+! Misplaced alignment tab character &.
+l.276 ...tbf{vz} & $w$ & m/s & Vertical velocity &
+                                                   [-20.0, 20.0] \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.277 \hline
+            
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}]
+Underfull \vbox (badness 10000) has occurred while \output is active
+Underfull \vbox (badness 10000) has occurred while \output is active [2]
+Underfull \vbox (badness 1472) has occurred while \output is active
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.298 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.2\textwidth}|p{0.1\textwidth}|p{0.1...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.298 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.2\textwidth}|p{0.1\textwidth}|p{0.1...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.298 ...tsize{|p{0.05\textwidth}|p{0.2\textwidth}
+                                                  |p{0.1\textwidth}|p{0.12\t...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.298 ...tsize{|p{0.05\textwidth}|p{0.2\textwidth}
+                                                  |p{0.1\textwidth}|p{0.12\t...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.298 ...twidth}|p{0.2\textwidth}|p{0.1\textwidth}
+                                                  |p{0.12\textwidth}|p{0.4\t...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.298 ...twidth}|p{0.2\textwidth}|p{0.1\textwidth}
+                                                  |p{0.12\textwidth}|p{0.4\t...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.298 ...width}|p{0.1\textwidth}|p{0.12\textwidth}
+                                                  |p{0.4\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.298 ...width}|p{0.1\textwidth}|p{0.12\textwidth}
+                                                  |p{0.4\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.298 ...width}|p{0.12\textwidth}|p{0.4\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.298 ...width}|p{0.12\textwidth}|p{0.4\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.299 \hline
+            
+! Misplaced alignment tab character &.
+l.300 \textbf{\#} &
+                    \textbf{Output Variable} & \textbf{Symbol} & \textbf{Uni...
+
+! Misplaced alignment tab character &.
+l.300 \textbf{\#} & \textbf{Output Variable} &
+                                               \textbf{Symbol} & \textbf{Uni...
+
+! Misplaced alignment tab character &.
+l.300 ...xtbf{Output Variable} & \textbf{Symbol} &
+                                                   \textbf{Units} & \textbf{...
+
+! Misplaced alignment tab character &.
+l.300 ...ble} & \textbf{Symbol} & \textbf{Units} &
+                                                   \textbf{Prediction Descri...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.301 \hline
+            
+! Misplaced alignment tab character &.
+l.302 1 &
+          \textbf{x\_next} & $x(t+1)$ & m & X position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.302 1 & \textbf{x\_next} &
+                             $x(t+1)$ & m & X position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.302 1 & \textbf{x\_next} & $x(t+1)$ &
+                                        m & X position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.302 1 & \textbf{x\_next} & $x(t+1)$ & m &
+                                            X position (inertial frame) at n...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.303 \hline
+            
+! Misplaced alignment tab character &.
+l.304 2 &
+          \textbf{y\_next} & $y(t+1)$ & m & Y position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.304 2 & \textbf{y\_next} &
+                             $y(t+1)$ & m & Y position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.304 2 & \textbf{y\_next} & $y(t+1)$ &
+                                        m & Y position (inertial frame) at n...
+
+! Misplaced alignment tab character &.
+l.304 2 & \textbf{y\_next} & $y(t+1)$ & m &
+                                            Y position (inertial frame) at n...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.305 \hline
+            
+! Misplaced alignment tab character &.
+l.306 3 &
+          \textbf{z\_next} & $z(t+1)$ & m & Z position (altitude) at next ti...
+
+! Misplaced alignment tab character &.
+l.306 3 & \textbf{z\_next} &
+                             $z(t+1)$ & m & Z position (altitude) at next ti...
+
+! Misplaced alignment tab character &.
+l.306 3 & \textbf{z\_next} & $z(t+1)$ &
+                                        m & Z position (altitude) at next ti...
+
+! Misplaced alignment tab character &.
+l.306 3 & \textbf{z\_next} & $z(t+1)$ & m &
+                                            Z position (altitude) at next ti...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.307 \hline
+            
+! Misplaced alignment tab character &.
+l.308 4 &
+          \textbf{roll\_next} & $\phi(t+1)$ & rad & Roll angle at next times...
+
+! Misplaced alignment tab character &.
+l.308 4 & \textbf{roll\_next} &
+                                $\phi(t+1)$ & rad & Roll angle at next times...
+
+! Misplaced alignment tab character &.
+l.308 4 & \textbf{roll\_next} & $\phi(t+1)$ &
+                                              rad & Roll angle at next times...
+
+! Misplaced alignment tab character &.
+l.308 ...\textbf{roll\_next} & $\phi(t+1)$ & rad &
+                                                   Roll angle at next timest...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.309 \hline
+            
+! Misplaced alignment tab character &.
+l.310 5 &
+          \textbf{pitch\_next} & $\theta(t+1)$ & rad & Pitch angle at next t...
+
+! Misplaced alignment tab character &.
+l.310 5 & \textbf{pitch\_next} &
+                                 $\theta(t+1)$ & rad & Pitch angle at next t...
+
+! Misplaced alignment tab character &.
+l.310 5 & \textbf{pitch\_next} & $\theta(t+1)$ &
+                                                 rad & Pitch angle at next t...
+
+! Misplaced alignment tab character &.
+l.310 ...xtbf{pitch\_next} & $\theta(t+1)$ & rad &
+                                                   Pitch angle at next times...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.311 \hline
+            
+! Misplaced alignment tab character &.
+l.312 6 &
+          \textbf{yaw\_next} & $\psi(t+1)$ & rad & Yaw angle at next timeste...
+
+! Misplaced alignment tab character &.
+l.312 6 & \textbf{yaw\_next} &
+                               $\psi(t+1)$ & rad & Yaw angle at next timeste...
+
+! Misplaced alignment tab character &.
+l.312 6 & \textbf{yaw\_next} & $\psi(t+1)$ &
+                                             rad & Yaw angle at next timeste...
+
+! Misplaced alignment tab character &.
+l.312 6 & \textbf{yaw\_next} & $\psi(t+1)$ & rad &
+                                                   Yaw angle at next timeste...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.313 \hline
+            
+! Misplaced alignment tab character &.
+l.314 7 &
+          \textbf{p\_next} & $p(t+1)$ & rad/s & Roll rate at next timestep \\
+! Misplaced alignment tab character &.
+l.314 7 & \textbf{p\_next} &
+                             $p(t+1)$ & rad/s & Roll rate at next timestep \\
+! Misplaced alignment tab character &.
+l.314 7 & \textbf{p\_next} & $p(t+1)$ &
+                                        rad/s & Roll rate at next timestep \\
+! Misplaced alignment tab character &.
+l.314 7 & \textbf{p\_next} & $p(t+1)$ & rad/s &
+                                                Roll rate at next timestep \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.315 \hline
+            
+! Misplaced alignment tab character &.
+l.316 8 &
+          \textbf{q\_next} & $q(t+1)$ & rad/s & Pitch rate at next timestep \\
+! Misplaced alignment tab character &.
+l.316 8 & \textbf{q\_next} &
+                             $q(t+1)$ & rad/s & Pitch rate at next timestep \\
+! Misplaced alignment tab character &.
+l.316 8 & \textbf{q\_next} & $q(t+1)$ &
+                                        rad/s & Pitch rate at next timestep \\
+! Misplaced alignment tab character &.
+l.316 8 & \textbf{q\_next} & $q(t+1)$ & rad/s &
+                                                Pitch rate at next timestep \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.317 \hline
+            
+! Misplaced alignment tab character &.
+l.318 9 &
+          \textbf{r\_next} & $r(t+1)$ & rad/s & Yaw rate at next timestep \\
+! Misplaced alignment tab character &.
+l.318 9 & \textbf{r\_next} &
+                             $r(t+1)$ & rad/s & Yaw rate at next timestep \\
+! Misplaced alignment tab character &.
+l.318 9 & \textbf{r\_next} & $r(t+1)$ &
+                                        rad/s & Yaw rate at next timestep \\
+! Misplaced alignment tab character &.
+l.318 9 & \textbf{r\_next} & $r(t+1)$ & rad/s &
+                                                Yaw rate at next timestep \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.319 \hline
+            
+! Misplaced alignment tab character &.
+l.320 10 &
+           \textbf{vx\_next} & $u(t+1)$ & m/s & X velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.320 10 & \textbf{vx\_next} &
+                               $u(t+1)$ & m/s & X velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.320 10 & \textbf{vx\_next} & $u(t+1)$ &
+                                          m/s & X velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.320 10 & \textbf{vx\_next} & $u(t+1)$ & m/s &
+                                                X velocity (body frame) at n...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.321 \hline
+            
+! Misplaced alignment tab character &.
+l.322 11 &
+           \textbf{vy\_next} & $v(t+1)$ & m/s & Y velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.322 11 & \textbf{vy\_next} &
+                               $v(t+1)$ & m/s & Y velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.322 11 & \textbf{vy\_next} & $v(t+1)$ &
+                                          m/s & Y velocity (body frame) at n...
+
+! Misplaced alignment tab character &.
+l.322 11 & \textbf{vy\_next} & $v(t+1)$ & m/s &
+                                                Y velocity (body frame) at n...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.323 \hline
+            
+! Misplaced alignment tab character &.
+l.324 12 &
+           \textbf{vz\_next} & $w(t+1)$ & m/s & Z velocity (vertical, body f...
+
+! Misplaced alignment tab character &.
+l.324 12 & \textbf{vz\_next} &
+                               $w(t+1)$ & m/s & Z velocity (vertical, body f...
+
+! Misplaced alignment tab character &.
+l.324 12 & \textbf{vz\_next} & $w(t+1)$ &
+                                          m/s & Z velocity (vertical, body f...
+
+! Misplaced alignment tab character &.
+l.324 12 & \textbf{vz\_next} & $w(t+1)$ & m/s &
+                                                Z velocity (vertical, body f...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.325 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.15\textwidth}|p{0.1\textwidth}|p{0....
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 \scriptsize{|p{0.05\textwidth}
+                                    |p{0.15\textwidth}|p{0.1\textwidth}|p{0....
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 ...size{|p{0.05\textwidth}|p{0.15\textwidth}
+                                                  |p{0.1\textwidth}|p{0.12\t...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 ...size{|p{0.05\textwidth}|p{0.15\textwidth}
+                                                  |p{0.1\textwidth}|p{0.12\t...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 ...width}|p{0.15\textwidth}|p{0.1\textwidth}
+                                                  |p{0.12\textwidth}|p{0.25\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 ...width}|p{0.15\textwidth}|p{0.1\textwidth}
+                                                  |p{0.12\textwidth}|p{0.25\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 ...width}|p{0.1\textwidth}|p{0.12\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 ...width}|p{0.1\textwidth}|p{0.12\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 ...idth}|p{0.12\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 ...idth}|p{0.12\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.332 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.332 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.333 \hline
+            
+! Misplaced alignment tab character &.
+l.334 \textbf{\#} &
+                    \textbf{Parameter} & \textbf{Symbol} & \textbf{Units} & ...
+
+! Misplaced alignment tab character &.
+l.334 \textbf{\#} & \textbf{Parameter} &
+                                         \textbf{Symbol} & \textbf{Units} & ...
+
+! Misplaced alignment tab character &.
+l.334 ... & \textbf{Parameter} & \textbf{Symbol} &
+                                                   \textbf{Units} & \textbf{...
+
+! Misplaced alignment tab character &.
+l.334 ...ter} & \textbf{Symbol} & \textbf{Units} &
+                                                   \textbf{Physical Descript...
+
+! Misplaced alignment tab character &.
+l.334 ...{Units} & \textbf{Physical Description} &
+                                                   \textbf{True Value} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.335 \hline
+            
+! Misplaced alignment tab character &.
+l.336 13 &
+           \textbf{mass} & $m$ & kg & Vehicle mass & 0.068 kg \\
+! Misplaced alignment tab character &.
+l.336 13 & \textbf{mass} &
+                           $m$ & kg & Vehicle mass & 0.068 kg \\
+! Misplaced alignment tab character &.
+l.336 13 & \textbf{mass} & $m$ &
+                                 kg & Vehicle mass & 0.068 kg \\
+! Misplaced alignment tab character &.
+l.336 13 & \textbf{mass} & $m$ & kg &
+                                      Vehicle mass & 0.068 kg \\
+! Misplaced alignment tab character &.
+l.336 ...\textbf{mass} & $m$ & kg & Vehicle mass &
+                                                   0.068 kg \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.337 \hline
+            
+! Misplaced alignment tab character &.
+l.338 14 &
+           \textbf{inertia\_xx} & $J_{xx}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.338 14 & \textbf{inertia\_xx} &
+                                  $J_{xx}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.338 14 & \textbf{inertia\_xx} & $J_{xx}$ &
+                                             kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.338 ...nertia\_xx} & $J_{xx}$ & kg$\cdot$m$^2$ &
+                                                   Moment of inertia (x-axis...
+
+! Misplaced alignment tab character &.
+l.338 ...cdot$m$^2$ & Moment of inertia (x-axis) &
+                                                   $6.86 \times 10^{-5}$ \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.339 \hline
+            
+! Misplaced alignment tab character &.
+l.340 15 &
+           \textbf{inertia\_yy} & $J_{yy}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.340 15 & \textbf{inertia\_yy} &
+                                  $J_{yy}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.340 15 & \textbf{inertia\_yy} & $J_{yy}$ &
+                                             kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.340 ...nertia\_yy} & $J_{yy}$ & kg$\cdot$m$^2$ &
+                                                   Moment of inertia (y-axis...
+
+! Misplaced alignment tab character &.
+l.340 ...cdot$m$^2$ & Moment of inertia (y-axis) &
+                                                   $9.20 \times 10^{-5}$ \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.341 \hline
+            
+! Misplaced alignment tab character &.
+l.342 16 &
+           \textbf{inertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.342 16 & \textbf{inertia\_zz} &
+                                  $J_{zz}$ & kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.342 16 & \textbf{inertia\_zz} & $J_{zz}$ &
+                                             kg$\cdot$m$^2$ & Moment of iner...
+
+! Misplaced alignment tab character &.
+l.342 ...nertia\_zz} & $J_{zz}$ & kg$\cdot$m$^2$ &
+                                                   Moment of inertia (z-axis...
+
+! Misplaced alignment tab character &.
+l.342 ...cdot$m$^2$ & Moment of inertia (z-axis) &
+                                                   $1.366 \times 10^{-4}$ \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.343 \hline
+            
+! Misplaced alignment tab character &.
+l.344 17 &
+           \textbf{kt} & $k_t$ & N/(rad/s)$^{2}$ & Thrust coefficient & 0.01 \\
+
+! Misplaced alignment tab character &.
+l.344 17 & \textbf{kt} &
+                         $k_t$ & N/(rad/s)$^{2}$ & Thrust coefficient & 0.01 \\
+
+! Misplaced alignment tab character &.
+l.344 17 & \textbf{kt} & $k_t$ &
+                                 N/(rad/s)$^{2}$ & Thrust coefficient & 0.01 \\
+
+! Misplaced alignment tab character &.
+l.344 17 & \textbf{kt} & $k_t$ & N/(rad/s)$^{2}$ &
+                                                   Thrust coefficient & 0.01 \\
+
+! Misplaced alignment tab character &.
+l.344 ... & N/(rad/s)$^{2}$ & Thrust coefficient &
+                                                   0.01 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.345 \hline
+            
+! Misplaced alignment tab character &.
+l.346 18 &
+           \textbf{kq} & $k_q$ & (N$\cdot$m)/(rad/s)$^{2}$ & Torque coeffici...
+
+! Misplaced alignment tab character &.
+l.346 18 & \textbf{kq} &
+                         $k_q$ & (N$\cdot$m)/(rad/s)$^{2}$ & Torque coeffici...
+
+! Misplaced alignment tab character &.
+l.346 18 & \textbf{kq} & $k_q$ &
+                                 (N$\cdot$m)/(rad/s)$^{2}$ & Torque coeffici...
+
+! Misplaced alignment tab character &.
+l.346 ...kq} & $k_q$ & (N$\cdot$m)/(rad/s)$^{2}$ &
+                                                   Torque coefficient & $7.8...
+
+! Misplaced alignment tab character &.
+l.346 ...t$m)/(rad/s)$^{2}$ & Torque coefficient &
+                                                   $7.8263 \times 10^{-4}$ \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.347 \hline
+            
+[3 <./pinn_schematics.pdf> <./pinn_schematics.pdf>]
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1pcr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1pcr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1cmtt.fd)
+Overfull \hbox (367.19843pt too wide) in paragraph at lines 382--383
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.390 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.25\textwidth}|p{0.25\textwidth}|p{0....
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.390 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.25\textwidth}|p{0.25\textwidth}|p{0....
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.390 ...tsize{|p{0.2\textwidth}|p{0.25\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.390 ...tsize{|p{0.2\textwidth}|p{0.25\textwidth}
+                                                  |p{0.25\textwidth}|p{0.15\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.390 ...idth}|p{0.25\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.390 ...idth}|p{0.25\textwidth}|p{0.25\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.390 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.390 ...idth}|p{0.25\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.391 \hline
+            
+! Misplaced alignment tab character &.
+l.392 \textbf{Loss Component} &
+                                \textbf{Mathematical Form} & \textbf{Physica...
+
+! Misplaced alignment tab character &.
+l.392 ...Component} & \textbf{Mathematical Form} &
+                                                   \textbf{Physical Constrai...
+
+! Misplaced alignment tab character &.
+l.392 ...al Form} & \textbf{Physical Constraint} &
+                                                   \textbf{Weight} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.393 \hline
+            
+! Misplaced alignment tab character &.
+l.394 \textbf{Data Loss} &
+                           MSE(predicted, actual) & Data fitting accuracy & ...
+
+! Misplaced alignment tab character &.
+l.394 ...tbf{Data Loss} & MSE(predicted, actual) &
+                                                   Data fitting accuracy & 1...
+
+! Misplaced alignment tab character &.
+l.394 ...dicted, actual) & Data fitting accuracy &
+                                                   1.0 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.395 \hline
+            
+! Misplaced alignment tab character &.
+l.396 \textbf{Rotational Physics} &
+                                    MSE($\dot{p}_{pred} - \dot{p}_{physics}$...
+
+! Misplaced alignment tab character &.
+l.396 ...E($\dot{p}_{pred} - \dot{p}_{physics}$) &
+                                                   Euler's equations & 1.0-1...
+
+! Misplaced alignment tab character &.
+l.396 ...\dot{p}_{physics}$) & Euler's equations &
+                                                   1.0-10.0 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.397 \hline
+            
+! Misplaced alignment tab character &.
+l.398 \textbf{Translational Physics} &
+                                       MSE($\dot{w}_{pred} - \dot{w}_{physic...
+
+! Misplaced alignment tab character &.
+l.398 ...E($\dot{w}_{pred} - \dot{w}_{physics}$) &
+                                                   Newton's second law & 1.0...
+
+! Misplaced alignment tab character &.
+l.398 ...ot{w}_{physics}$) & Newton's second law &
+                                                   1.0-10.0 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.399 \hline
+            
+! Misplaced alignment tab character &.
+l.400 \textbf{Parameter Regularization} &
+                                          $\sum$(param\_deviation$^2$) & Phy...
+
+! Misplaced alignment tab character &.
+l.400 ...ization} & $\sum$(param\_deviation$^2$) &
+                                                   Physical parameter bounds...
+
+! Misplaced alignment tab character &.
+l.400 ...iation$^2$) & Physical parameter bounds &
+                                                   0.1 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.401 \hline
+            
+
+Underfull \hbox (badness 10000) in paragraph at lines 412--413
+[]\T1/ptm/m/n/10 Normalized physics loss form: $\OMS/cmsy/m/n/10 L[] \OT1/cmr/m
+/n/10 =
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.419 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.419 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.419 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.419 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.419 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.419 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.420 \hline
+            
+! Misplaced alignment tab character &.
+l.421 \textbf{Angular Rate} &
+                              \textbf{Equation (NO Artificial Damping)} & \t...
+
+! Misplaced alignment tab character &.
+l.421 ...extbf{Equation (NO Artificial Damping)} &
+                                                   \textbf{Units} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.422 \hline
+            
+! Misplaced alignment tab character &.
+l.423 Roll rate ($\dot{p}$) &
+                              $\dot{p} = t_1 \times q \times r + \tau_x/J_{x...
+
+! Misplaced alignment tab character &.
+l.423 ... t_1 \times q \times r + \tau_x/J_{xx}$ &
+                                                   rad/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.424 \hline
+            
+! Misplaced alignment tab character &.
+l.425 Pitch rate ($\dot{q}$) &
+                               $\dot{q} = t_2 \times p \times r + \tau_y/J_{...
+
+! Misplaced alignment tab character &.
+l.425 ... t_2 \times p \times r + \tau_y/J_{yy}$ &
+                                                   rad/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.426 \hline
+            
+! Misplaced alignment tab character &.
+l.427 Yaw rate ($\dot{r}$) &
+                             $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz...
+
+! Misplaced alignment tab character &.
+l.427 ... t_3 \times p \times q + \tau_z/J_{zz}$ &
+                                                   rad/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.428 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.436 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.436 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.436 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.436 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.436 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.436 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.437 \hline
+            
+! Misplaced alignment tab character &.
+l.438 \textbf{Velocity} &
+                          \textbf{Equation (Body Frame)} & \textbf{Units} \\
+! Misplaced alignment tab character &.
+l.438 ...ocity} & \textbf{Equation (Body Frame)} &
+                                                   \textbf{Units} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.439 \hline
+            
+! Misplaced alignment tab character &.
+l.440 X velocity ($\dot{u}$) &
+                               $\dot{u} = rv - qw + f_x/m - g\sin\theta - c_...
+
+! Misplaced alignment tab character &.
+l.440 ... - qw + f_x/m - g\sin\theta - c_d u|u|$ &
+                                                   m/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.441 \hline
+            
+! Misplaced alignment tab character &.
+l.442 Y velocity ($\dot{v}$) &
+                               $\dot{v} = pw - ru + f_y/m + g\cos\theta\sin\...
+
+! Misplaced alignment tab character &.
+l.442 ...f_y/m + g\cos\theta\sin\phi - c_d v|v|$ &
+                                                   m/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.443 \hline
+            
+! Misplaced alignment tab character &.
+l.444 Z velocity ($\dot{w}$) &
+                               $\dot{w} = qu - pv + f_z/m + g\cos\theta\cos\...
+
+! Misplaced alignment tab character &.
+l.444 ...f_z/m + g\cos\theta\cos\phi - c_d w|w|$ &
+                                                   m/s² \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.445 \hline
+            
+
+Underfull \hbox (badness 4872) in paragraph at lines 448--449
+ \T1/ptm/m/it/10 2) Trans-la-tional Dy-nam-ics (New-ton's Laws in Body
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.453 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.453 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.55\textwidth}|p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.453 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.453 ...tsize{|p{0.2\textwidth}|p{0.55\textwidth}
+                                                  |p{0.15\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.453 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.453 ...idth}|p{0.55\textwidth}|p{0.15\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.454 \hline
+            
+! Misplaced alignment tab character &.
+l.455 \textbf{Position} &
+                          \textbf{Rotation Matrix Transformation} & \textbf{...
+
+! Misplaced alignment tab character &.
+l.455 ...\textbf{Rotation Matrix Transformation} &
+                                                   \textbf{Units} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.456 \hline
+            
+! Misplaced alignment tab character &.
+l.457 X position ($\dot{x}$) &
+                               $\dot{x} = (\cos\psi\cos\theta)u + (\cos\psi\...
+
+! Misplaced alignment tab character &.
+l.457 ...sin\phi + \cos\psi\sin\theta\cos\phi)w$ &
+                                                   m/s \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.458 \hline
+            
+! Misplaced alignment tab character &.
+l.459 Y position ($\dot{y}$) &
+                               $\dot{y} = (\sin\psi\cos\theta)u + (\cos\psi\...
+
+! Misplaced alignment tab character &.
+l.459 ...sin\theta\cos\phi - \cos\psi\sin\phi)w$ &
+                                                   m/s \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.460 \hline
+            
+! Misplaced alignment tab character &.
+l.461 Z position ($\dot{z}$) &
+                               $\dot{z} = -\sin\theta \cdot u + \cos\theta\s...
+
+! Misplaced alignment tab character &.
+l.461 ...i \cdot v + \cos\theta\cos\phi \cdot w$ &
+                                                   m/s \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.462 \hline
+            
+
+Overfull \hbox (264.0pt too wide) in paragraph at lines 467--468
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.475 \scriptsize{|p{0.18\textwidth}
+                                    |p{0.38\textwidth}|p{0.28\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.475 \scriptsize{|p{0.18\textwidth}
+                                    |p{0.38\textwidth}|p{0.28\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.475 ...size{|p{0.18\textwidth}|p{0.38\textwidth}
+                                                  |p{0.28\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.475 ...size{|p{0.18\textwidth}|p{0.38\textwidth}
+                                                  |p{0.28\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.475 ...idth}|p{0.38\textwidth}|p{0.28\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.475 ...idth}|p{0.38\textwidth}|p{0.28\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.476 \hline
+            
+! Misplaced alignment tab character &.
+l.477 \textbf{Feature} &
+                         \textbf{Implementation} & \textbf{Benefit} \\
+! Misplaced alignment tab character &.
+l.477 \textbf{Feature} & \textbf{Implementation} &
+                                                   \textbf{Benefit} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.478 \hline
+            
+! Misplaced alignment tab character &.
+l.479 \textbf{Learnable Physics Parameters} &
+                                              nn.Parameter(torch.tensor(mass...
+
+! Misplaced alignment tab character &.
+l.479 ...ch.tensor(mass, Jxx, Jyy, Jzz, kt, kq)) &
+                                                   Simultaneous identificati...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.480 \hline
+            
+! Misplaced alignment tab character &.
+l.481 \textbf{Multi-Objective Training} &
+                                          Combined loss: data + physics + te...
+
+! Misplaced alignment tab character &.
+l.481 ...+ temporal + stability + regularization &
+                                                   Comprehensive constraint ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.482 \hline
+            
+! Misplaced alignment tab character &.
+l.483 \textbf{Constraint Enforcement} &
+                                        torch.clamp() bounds on parameters &...
+
+! Misplaced alignment tab character &.
+l.483 ...t} & torch.clamp() bounds on parameters &
+                                                   Physical validity \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.484 \hline
+            
+! Misplaced alignment tab character &.
+l.485 \textbf{Cross-Coupling Integration} &
+                                            Full Euler equation implementati...
+
+! Misplaced alignment tab character &.
+l.485 ...n} & Full Euler equation implementation &
+                                                   Realistic dynamics \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.486 \hline
+            
+! Misplaced alignment tab character &.
+l.487 \textbf{Automatic Differentiation} &
+                                           PyTorch autograd through physics ...
+
+! Misplaced alignment tab character &.
+l.487 ...ion} & PyTorch autograd through physics &
+                                                   End-to-end training \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.488 \hline
+            
+! Misplaced alignment tab character &.
+l.489 \textbf{Enhanced Architecture} &
+                                       256 neurons, 5 layers, dropout (p=0.1...
+
+! Misplaced alignment tab character &.
+l.489 ... 256 neurons, 5 layers, dropout (p=0.1) &
+                                                   Improved capacity and sta...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.490 \hline
+            
+! Misplaced alignment tab character &.
+l.491 \textbf{Scheduled Sampling} &
+                                    Gradual autoregressive training (0→30\...
+
+! Misplaced alignment tab character &.
+l.491 ...dual autoregressive training (0→30\%) &
+                                                   Robust multi-step predict...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.492 \hline
+            
+! Misplaced alignment tab character &.
+l.493 \textbf{Stability Loss} &
+                                State magnitude soft constraints & Prevents ...
+
+! Misplaced alignment tab character &.
+l.493 ...oss} & State magnitude soft constraints &
+                                                   Prevents divergence in ro...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.494 \hline
+            
+! Misplaced alignment tab character &.
+l.495 \textbf{Tightened Physical Limits} &
+                                           Angular accel: 15 rad/s² (from 5...
+
+! Misplaced alignment tab character &.
+l.495 ...} & Angular accel: 15 rad/s² (from 50) &
+                                                   Smoother temporal behavio...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.496 \hline
+            
+! Misplaced alignment tab character &.
+l.497 \textbf{Learning Rate Scheduling} &
+                                          ReduceLROnPlateau (patience=20) & ...
+
+! Misplaced alignment tab character &.
+l.497 ...ling} & ReduceLROnPlateau (patience=20) &
+                                                   Adaptive optimization \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.498 \hline
+            
+! Misplaced alignment tab character &.
+l.499 \textbf{Autoregressive Evaluation} &
+                                           500-step rollout validation & Tru...
+
+! Misplaced alignment tab character &.
+l.499 ...aluation} & 500-step rollout validation &
+                                                   True multi-step performan...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.500 \hline
+            
+
+Overfull \hbox (470.39685pt too wide) in paragraph at lines 509--510
+ [][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.521 \scriptsize{|l|c|c|p{0.38\textwidth}
+                                          |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.521 \scriptsize{|l|c|c|p{0.38\textwidth}
+                                          |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.522 \hline
+            
+! Misplaced alignment tab character &.
+l.523 \textbf{State Variable} &
+                                \textbf{MAE} & \textbf{RMSE} & \textbf{Perfo...
+
+! Misplaced alignment tab character &.
+l.523 \textbf{State Variable} & \textbf{MAE} &
+                                               \textbf{RMSE} & \textbf{Perfo...
+
+! Misplaced alignment tab character &.
+l.523 ...ariable} & \textbf{MAE} & \textbf{RMSE} &
+                                                   \textbf{Performance Notes...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.524 \hline
+            
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.525 ...textit{Position States (Inertial Frame)}}
+                                                   \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.526 \hline
+            
+! Misplaced alignment tab character &.
+l.527 \textbf{X Position} &
+                            \textbf{0.023 m} & \textbf{0.064 m} & Accurate h...
+
+! Misplaced alignment tab character &.
+l.527 \textbf{X Position} & \textbf{0.023 m} &
+                                               \textbf{0.064 m} & Accurate h...
+
+! Misplaced alignment tab character &.
+l.527 ...} & \textbf{0.023 m} & \textbf{0.064 m} &
+                                                   Accurate horizontal posit...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.528 \hline
+            
+! Misplaced alignment tab character &.
+l.529 \textbf{Y Position} &
+                            \textbf{0.031 m} & \textbf{0.098 m} & Good later...
+
+! Misplaced alignment tab character &.
+l.529 \textbf{Y Position} & \textbf{0.031 m} &
+                                               \textbf{0.098 m} & Good later...
+
+! Misplaced alignment tab character &.
+l.529 ...} & \textbf{0.031 m} & \textbf{0.098 m} &
+                                                   Good lateral position pre...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.530 \hline
+            
+! Misplaced alignment tab character &.
+l.531 \textbf{Z Position (Altitude)} &
+                                       \textbf{0.070 m} & \textbf{0.165 m} &...
+
+! Misplaced alignment tab character &.
+l.531 ...Position (Altitude)} & \textbf{0.070 m} &
+                                                   \textbf{0.165 m} & Smooth...
+
+! Misplaced alignment tab character &.
+l.531 ...} & \textbf{0.070 m} & \textbf{0.165 m} &
+                                                   Smooth vertical position ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.532 \hline
+            
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.533 ...icolumn{4}{|c|}{\textit{Attitude States}}
+                                                   \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.534 \hline
+            
+! Misplaced alignment tab character &.
+l.535 \textbf{Roll ($\phi$)} &
+                               \textbf{0.0008 rad (0.045°)} & \textbf{0.001...
+
+! Misplaced alignment tab character &.
+l.535 ...\phi$)} & \textbf{0.0008 rad (0.045°)} &
+                                                   \textbf{0.0012 rad} & Out...
+
+! Misplaced alignment tab character &.
+l.535 ...08 rad (0.045°)} & \textbf{0.0012 rad} &
+                                                   Outstanding roll angle pr...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.536 \hline
+            
+! Misplaced alignment tab character &.
+l.537 \textbf{Pitch ($\theta$)} &
+                                  \textbf{0.0005 rad (0.029°)} & \textbf{0....
+
+! Misplaced alignment tab character &.
+l.537 ...heta$)} & \textbf{0.0005 rad (0.029°)} &
+                                                   \textbf{0.0008 rad} & Exc...
+
+! Misplaced alignment tab character &.
+l.537 ...05 rad (0.029°)} & \textbf{0.0008 rad} &
+                                                   Excellent pitch angle tra...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.538 \hline
+            
+! Misplaced alignment tab character &.
+l.539 \textbf{Yaw ($\psi$)} &
+                              \textbf{0.0009 rad (0.054°)} & \textbf{0.0015...
+
+! Misplaced alignment tab character &.
+l.539 ...\psi$)} & \textbf{0.0009 rad (0.054°)} &
+                                                   \textbf{0.0015 rad} & Acc...
+
+! Misplaced alignment tab character &.
+l.539 ...09 rad (0.054°)} & \textbf{0.0015 rad} &
+                                                   Accurate heading predicti...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.540 \hline
+            
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.541 ...4}{|c|}{\textit{Angular Velocity States}}
+                                                   \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.542 \hline
+            
+! Misplaced alignment tab character &.
+l.543 \textbf{Roll Rate (p)} &
+                               \textbf{0.0034 rad/s} & \textbf{0.0054 rad/s}...
+
+! Misplaced alignment tab character &.
+l.543 ...{Roll Rate (p)} & \textbf{0.0034 rad/s} &
+                                                   \textbf{0.0054 rad/s} & S...
+
+! Misplaced alignment tab character &.
+l.543 ...f{0.0034 rad/s} & \textbf{0.0054 rad/s} &
+                                                   Smooth angular rate predi...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.544 \hline
+            
+! Misplaced alignment tab character &.
+l.545 \textbf{Pitch Rate (q)} &
+                                \textbf{0.0014 rad/s} & \textbf{0.0024 rad/s...
+
+! Misplaced alignment tab character &.
+l.545 ...Pitch Rate (q)} & \textbf{0.0014 rad/s} &
+                                                   \textbf{0.0024 rad/s} & E...
+
+! Misplaced alignment tab character &.
+l.545 ...f{0.0014 rad/s} & \textbf{0.0024 rad/s} &
+                                                   Excellent rate tracking \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.546 \hline
+            
+! Misplaced alignment tab character &.
+l.547 \textbf{Yaw Rate (r)} &
+                              \textbf{0.0029 rad/s} & \textbf{0.0044 rad/s} ...
+
+! Misplaced alignment tab character &.
+l.547 ...f{Yaw Rate (r)} & \textbf{0.0029 rad/s} &
+                                                   \textbf{0.0044 rad/s} & P...
+
+! Misplaced alignment tab character &.
+l.547 ...f{0.0029 rad/s} & \textbf{0.0044 rad/s} &
+                                                   Physically realistic dyna...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.548 \hline
+            
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.549 ...tit{Linear Velocity States (Body Frame)}}
+                                                   \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.550 \hline
+            
+! Misplaced alignment tab character &.
+l.551 \textbf{X Velocity (vx)} &
+                                 \textbf{0.008 m/s} & \textbf{0.018 m/s} & G...
+
+! Misplaced alignment tab character &.
+l.551 ...f{X Velocity (vx)} & \textbf{0.008 m/s} &
+                                                   \textbf{0.018 m/s} & Good...
+
+! Misplaced alignment tab character &.
+l.551 ...\textbf{0.008 m/s} & \textbf{0.018 m/s} &
+                                                   Good horizontal velocity ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.552 \hline
+            
+! Misplaced alignment tab character &.
+l.553 \textbf{Y Velocity (vy)} &
+                                 \textbf{0.012 m/s} & \textbf{0.027 m/s} & A...
+
+! Misplaced alignment tab character &.
+l.553 ...f{Y Velocity (vy)} & \textbf{0.012 m/s} &
+                                                   \textbf{0.027 m/s} & Accu...
+
+! Misplaced alignment tab character &.
+l.553 ...\textbf{0.012 m/s} & \textbf{0.027 m/s} &
+                                                   Accurate lateral velocity...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.554 \hline
+            
+! Misplaced alignment tab character &.
+l.555 \textbf{Z Velocity (vz)} &
+                                 \textbf{0.040 m/s} & \textbf{0.074 m/s} & S...
+
+! Misplaced alignment tab character &.
+l.555 ...f{Z Velocity (vz)} & \textbf{0.040 m/s} &
+                                                   \textbf{0.074 m/s} & Smoo...
+
+! Misplaced alignment tab character &.
+l.555 ...\textbf{0.040 m/s} & \textbf{0.074 m/s} &
+                                                   Smooth vertical velocity ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.556 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 \scriptsize{|p{0.15\textwidth}
+                                    |p{0.12\textwidth}|p{0.12\textwidth}|p{0...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 \scriptsize{|p{0.15\textwidth}
+                                    |p{0.12\textwidth}|p{0.12\textwidth}|p{0...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 ...size{|p{0.15\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 ...size{|p{0.15\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.20\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.20\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.20\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.20\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.20\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.566 ...idth}|p{0.12\textwidth}|p{0.20\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.567 \hline
+            
+! Misplaced alignment tab character &.
+l.568 \textbf{Parameter} &
+                           \textbf{True Value} & \textbf{Learned Value} & \t...
+
+! Misplaced alignment tab character &.
+l.568 \textbf{Parameter} & \textbf{True Value} &
+                                                 \textbf{Learned Value} & \t...
+
+! Misplaced alignment tab character &.
+l.568 ...bf{True Value} & \textbf{Learned Value} &
+                                                   \textbf{Absolute Error} &...
+
+! Misplaced alignment tab character &.
+l.568 ...earned Value} & \textbf{Absolute Error} &
+                                                   \textbf{Relative Error} &...
+
+! Misplaced alignment tab character &.
+l.568 ...solute Error} & \textbf{Relative Error} &
+                                                   \textbf{Status} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.569 \hline
+            
+! Misplaced alignment tab character &.
+l.570 \textbf{Mass (m)} &
+                          0.0680 kg & 0.06798 kg & 2.34$\times 10^{-5}$ kg &...
+
+! Misplaced alignment tab character &.
+l.570 \textbf{Mass (m)} & 0.0680 kg &
+                                      0.06798 kg & 2.34$\times 10^{-5}$ kg &...
+
+! Misplaced alignment tab character &.
+l.570 \textbf{Mass (m)} & 0.0680 kg & 0.06798 kg &
+                                                   2.34$\times 10^{-5}$ kg &...
+
+! Misplaced alignment tab character &.
+l.570 ... & 0.06798 kg & 2.34$\times 10^{-5}$ kg &
+                                                   \textcolor{blue}{\textbf{...
+
+! Misplaced alignment tab character &.
+l.570 ...$ kg & \textcolor{blue}{\textbf{0.0\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.571 \hline
+            
+! Misplaced alignment tab character &.
+l.572 \textbf{Thrust coef (kt)} &
+                                  0.0100 & 0.01000 & 0.00000 & \textcolor{bl...
+
+! Misplaced alignment tab character &.
+l.572 \textbf{Thrust coef (kt)} & 0.0100 &
+                                           0.01000 & 0.00000 & \textcolor{bl...
+
+! Misplaced alignment tab character &.
+l.572 ...bf{Thrust coef (kt)} & 0.0100 & 0.01000 &
+                                                   0.00000 & \textcolor{blue...
+
+! Misplaced alignment tab character &.
+l.572 ...coef (kt)} & 0.0100 & 0.01000 & 0.00000 &
+                                                   \textcolor{blue}{\textbf{...
+
+! Misplaced alignment tab character &.
+l.572 ...0000 & \textcolor{blue}{\textbf{0.0\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.573 \hline
+            
+! Misplaced alignment tab character &.
+l.574 \textbf{Torque coef (kq)} &
+                                  $7.8263 \times 10^{-4}$ & $7.8263 \times 1...
+
+! Misplaced alignment tab character &.
+l.574 ...ue coef (kq)} & $7.8263 \times 10^{-4}$ &
+                                                   $7.8263 \times 10^{-4}$ &...
+
+! Misplaced alignment tab character &.
+l.574 ...imes 10^{-4}$ & $7.8263 \times 10^{-4}$ &
+                                                   0.00000 & \textcolor{blue...
+
+! Misplaced alignment tab character &.
+l.574 ...4}$ & $7.8263 \times 10^{-4}$ & 0.00000 &
+                                                   \textcolor{blue}{\textbf{...
+
+! Misplaced alignment tab character &.
+l.574 ...0000 & \textcolor{blue}{\textbf{0.0\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.575 \hline
+            
+! Misplaced alignment tab character &.
+l.576 \textbf{Inertia Jxx} &
+                             $6.860 \times 10^{-5}$ kg$\cdot$m$^2$ & $5.831 ...
+
+! Misplaced alignment tab character &.
+l.576 ...& $6.860 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $5.831 \times 10^{-5}$ kg...
+
+! Misplaced alignment tab character &.
+l.576 ...& $5.831 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $1.029 \times 10^{-5}$ kg...
+
+! Misplaced alignment tab character &.
+l.576 ...& $1.029 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.576 ...$ & \textcolor{orange}{\textbf{15.0\%}} &
+                                                   \textcolor{orange}{Accept...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.577 \hline
+            
+! Misplaced alignment tab character &.
+l.578 \textbf{Inertia Jyy} &
+                             $9.200 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.058 ...
+
+! Misplaced alignment tab character &.
+l.578 ...& $9.200 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $1.058 \times 10^{-4}$ kg...
+
+! Misplaced alignment tab character &.
+l.578 ...& $1.058 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $1.380 \times 10^{-5}$ kg...
+
+! Misplaced alignment tab character &.
+l.578 ...& $1.380 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.578 ...$ & \textcolor{orange}{\textbf{15.0\%}} &
+                                                   \textcolor{orange}{Accept...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.579 \hline
+            
+! Misplaced alignment tab character &.
+l.580 \textbf{Inertia Jzz} &
+                             $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.571 ...
+
+! Misplaced alignment tab character &.
+l.580 ...& $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $1.571 \times 10^{-4}$ kg...
+
+! Misplaced alignment tab character &.
+l.580 ...& $1.571 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $2.050 \times 10^{-5}$ kg...
+
+! Misplaced alignment tab character &.
+l.580 ...& $2.050 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.580 ...$ & \textcolor{orange}{\textbf{15.0\%}} &
+                                                   \textcolor{orange}{Accept...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.581 \hline
+            
+
+Overfull \hbox (24.38823pt too wide) in paragraph at lines 586--593
+[][] 
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.606 \scriptsize{|p{0.25\textwidth}
+                                    |p{0.20\textwidth}|p{0.45\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.606 \scriptsize{|p{0.25\textwidth}
+                                    |p{0.20\textwidth}|p{0.45\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.606 ...size{|p{0.25\textwidth}|p{0.20\textwidth}
+                                                  |p{0.45\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.606 ...size{|p{0.25\textwidth}|p{0.20\textwidth}
+                                                  |p{0.45\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.606 ...idth}|p{0.20\textwidth}|p{0.45\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.606 ...idth}|p{0.20\textwidth}|p{0.45\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.607 \hline
+            
+! Misplaced alignment tab character &.
+l.608 \textbf{Parameter Category} &
+                                    \textbf{Error Range} & \textbf{Status} \\
+! Misplaced alignment tab character &.
+l.608 ...ameter Category} & \textbf{Error Range} &
+                                                   \textbf{Status} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.609 \hline
+            
+! Misplaced alignment tab character &.
+l.610 \textbf{Mass/Motor Coefficients} &
+                                         0.00\% & Perfect identification ach...
+
+! Misplaced alignment tab character &.
+l.610 \textbf{Mass/Motor Coefficients} & 0.00\% &
+                                                  Perfect identification ach...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.611 \hline
+            
+! Misplaced alignment tab character &.
+l.612 \textbf{Inertia Parameters} &
+                                    5.00\% (all three) & Excellent identific...
+
+! Misplaced alignment tab character &.
+l.612 ...nertia Parameters} & 5.00\% (all three) &
+                                                   Excellent identification ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.613 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.636 \scriptsize{|p{0.18\textwidth}
+                                    |p{0.38\textwidth}|p{0.28\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.636 \scriptsize{|p{0.18\textwidth}
+                                    |p{0.38\textwidth}|p{0.28\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.636 ...size{|p{0.18\textwidth}|p{0.38\textwidth}
+                                                  |p{0.28\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.636 ...size{|p{0.18\textwidth}|p{0.38\textwidth}
+                                                  |p{0.28\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.636 ...idth}|p{0.38\textwidth}|p{0.28\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.636 ...idth}|p{0.38\textwidth}|p{0.28\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.637 \hline
+            
+! Misplaced alignment tab character &.
+l.638 \textbf{Aspect} &
+                        \textbf{Method} & \textbf{Result Achieved} \\
+! Misplaced alignment tab character &.
+l.638 \textbf{Aspect} & \textbf{Method} &
+                                          \textbf{Result Achieved} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.639 \hline
+            
+! Misplaced alignment tab character &.
+l.640 \textbf{Physics Integration} &
+                                     Multi-objective loss (data + physics + ...
+
+! Misplaced alignment tab character &.
+l.640 ... loss (data + physics + regularization) &
+                                                   Strong constraint satisfa...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.641 \hline
+            
+! Misplaced alignment tab character &.
+l.642 \textbf{Parameter Learning} &
+                                    nn.Parameters with constraint enforcemen...
+
+! Misplaced alignment tab character &.
+l.642 ....Parameters with constraint enforcement &
+                                                   $<$7\% identification err...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.643 \hline
+            
+! Misplaced alignment tab character &.
+l.644 \textbf{Training Stability} &
+                                    Gradient clipping + regularization & Sta...
+
+! Misplaced alignment tab character &.
+l.644 ...y} & Gradient clipping + regularization &
+                                                   Stable convergence in $<$...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.645 \hline
+            
+! Misplaced alignment tab character &.
+l.646 \textbf{Generalization} &
+                                Cross-trajectory validation & $<$10\% accura...
+
+! Misplaced alignment tab character &.
+l.646 ...lization} & Cross-trajectory validation &
+                                                   $<$10\% accuracy degradat...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.647 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.653 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.3\textwidth}|p{0.4\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.653 \scriptsize{|p{0.2\textwidth}
+                                   |p{0.3\textwidth}|p{0.4\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.653 ...ptsize{|p{0.2\textwidth}|p{0.3\textwidth}
+                                                  |p{0.4\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.653 ...ptsize{|p{0.2\textwidth}|p{0.3\textwidth}
+                                                  |p{0.4\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.653 ...twidth}|p{0.3\textwidth}|p{0.4\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.653 ...twidth}|p{0.3\textwidth}|p{0.4\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.654 \hline
+            
+! Misplaced alignment tab character &.
+l.655 \textbf{Metric} &
+                        \textbf{Value} & \textbf{Significance} \\
+! Misplaced alignment tab character &.
+l.655 \textbf{Metric} & \textbf{Value} &
+                                         \textbf{Significance} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.656 \hline
+            
+! Misplaced alignment tab character &.
+l.657 \textbf{Cross-Validation} &
+                                  10-fold, trajectory-stratified & Robust pe...
+
+! Misplaced alignment tab character &.
+l.657 ...ation} & 10-fold, trajectory-stratified &
+                                                   Robust performance assess...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.658 \hline
+            
+! Misplaced alignment tab character &.
+l.659 \textbf{Generalization Gap} &
+                                    8.7\% average MAE degradation & Excellen...
+
+! Misplaced alignment tab character &.
+l.659 ...on Gap} & 8.7\% average MAE degradation &
+                                                   Excellent unseen data per...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.660 \hline
+            
+! Misplaced alignment tab character &.
+l.661 \textbf{Physics Compliance} &
+                                    Physics loss convergence (2+ orders of m...
+
+! Misplaced alignment tab character &.
+l.661 ...ence (2+ orders of magnitude reduction) &
+                                                   Strong constraint satisfa...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.662 \hline
+            
+! Misplaced alignment tab character &.
+l.663 \textbf{Performance Metrics} &
+                                     MAE, RMSE, correlation computed for all...
+
+! Misplaced alignment tab character &.
+l.663 ...correlation computed for all 12 outputs &
+                                                   Quantitative performance ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.664 \hline
+            
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.671 \scriptsize{|p{0.3\textwidth}
+                                   |p{0.6\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.671 \scriptsize{|p{0.3\textwidth}
+                                   |p{0.6\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.671 ...ptsize{|p{0.3\textwidth}|p{0.6\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.671 ...ptsize{|p{0.3\textwidth}|p{0.6\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.672 \hline
+            
+! Misplaced alignment tab character &.
+l.673 \textbf{Component} &
+                           \textbf{Specification} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.674 \hline
+            
+! Misplaced alignment tab character &.
+l.675 \textbf{Dataset Generation} &
+                                    49,382 total samples (10 trajectories, $...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.676 \hline
+            
+! Misplaced alignment tab character &.
+l.677 \textbf{Training Data Used} &
+                                    Full 10 diverse trajectories with square...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.678 \hline
+            
+! Misplaced alignment tab character &.
+l.679 \textbf{Flight Maneuvers} &
+                                  Square wave references for roll (±20°), ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.680 \hline
+            
+! Misplaced alignment tab character &.
+l.681 \textbf{Optimization} &
+                              Adam optimizer, learning rate 0.0005 \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.682 \hline
+            
+! Misplaced alignment tab character &.
+l.683 \textbf{Training Config} &
+                                 Batch size 64, 150 epochs, physics weight 2...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.684 \hline
+            
+! Misplaced alignment tab character &.
+l.685 \textbf{Regularization} &
+                                Parameter constraints (bounded), gradient cl...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.686 \hline
+            
+! Misplaced alignment tab character &.
+l.687 \textbf{Physics} &
+                         \textbf{REAL DYNAMICS}: No artificial damping, quad...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.688 \hline
+            
+[4]
+Overfull \hbox (264.0pt too wide) in paragraph at lines 693--694
+ [][] 
+
+Underfull \vbox (badness 10000) has occurred while \output is active
+Overfull \vbox (26.17609pt too high) has occurred while \output is active
+[5]
+Underfull \vbox (badness 2573) has occurred while \output is active
+Overfull \hbox (254.99841pt too wide) in paragraph at lines 732--733
+[][][][] 
+
+Underfull \vbox (badness 10000) has occurred while \output is active [6 <./pinn
+_schematics.pdf> <./pinn_schematics.pdf>]
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.749 \scriptsize{|p{0.08\textwidth}
+                                    |p{0.25\textwidth}|p{0.12\textwidth}|p{0...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.749 \scriptsize{|p{0.08\textwidth}
+                                    |p{0.25\textwidth}|p{0.12\textwidth}|p{0...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.749 ...size{|p{0.08\textwidth}|p{0.25\textwidth}
+                                                  |p{0.12\textwidth}|p{0.43\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.749 ...size{|p{0.08\textwidth}|p{0.25\textwidth}
+                                                  |p{0.12\textwidth}|p{0.43\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.749 ...idth}|p{0.25\textwidth}|p{0.12\textwidth}
+                                                  |p{0.43\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.749 ...idth}|p{0.25\textwidth}|p{0.12\textwidth}
+                                                  |p{0.43\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.749 ...idth}|p{0.12\textwidth}|p{0.43\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.749 ...idth}|p{0.12\textwidth}|p{0.43\textwidth}
+                                                  |}
+
+! LaTeX Error: There's no line here to end.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.751 \label{tab:all_trajectories} \\
+                                     
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.752 \hline
+            
+! Misplaced alignment tab character &.
+l.753 \textbf{Traj. ID} &
+                          \textbf{Description} & \textbf{Period Range} & \te...
+
+! Misplaced alignment tab character &.
+l.753 \textbf{Traj. ID} & \textbf{Description} &
+                                                 \textbf{Period Range} & \te...
+
+! Misplaced alignment tab character &.
+l.753 ...bf{Description} & \textbf{Period Range} &
+                                                   \textbf{Amplitude Charact...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.754 \hline
+            
+! Undefined control sequence.
+<recently read> \endfirsthead 
+                              
+l.755 \endfirsthead
+                   
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.758 ...-- \textit{Continued from previous page}}
+                                                   \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.759 \hline
+            
+! Misplaced alignment tab character &.
+l.760 \textbf{Traj. ID} &
+                          \textbf{Description} & \textbf{Period Range} & \te...
+
+! Misplaced alignment tab character &.
+l.760 \textbf{Traj. ID} & \textbf{Description} &
+                                                 \textbf{Period Range} & \te...
+
+! Misplaced alignment tab character &.
+l.760 ...bf{Description} & \textbf{Period Range} &
+                                                   \textbf{Amplitude Charact...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.761 \hline
+            
+! Undefined control sequence.
+<recently read> \endhead 
+                         
+l.762 \endhead
+              
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.764 \hline
+             \multicolumn{4}{r}{\textit{Continued on next page}} \\
+! Misplaced \omit.
+\multispan ->\omit 
+                   \@multispan 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \span.
+\sp@n ->\span 
+              \omit \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Misplaced \omit.
+\sp@n ->\span \omit 
+                    \advance \@multicnt \m@ne 
+l.764 ...mn{4}{r}{\textit{Continued on next page}}
+                                                   \\
+! Undefined control sequence.
+<recently read> \endfoot 
+                         
+l.765 \endfoot
+              
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.767 \hline
+            
+! Undefined control sequence.
+<recently read> \endlastfoot 
+                             
+l.768 \endlastfoot
+                  
+! Misplaced alignment tab character &.
+l.770 \textbf{0} &
+                   Standard square wave maneuver & 2.0--3.0s & Roll: ±10°,...
+
+! Misplaced alignment tab character &.
+l.770 \textbf{0} & Standard square wave maneuver &
+                                                   2.0--3.0s & Roll: ±10°,...
+
+! Misplaced alignment tab character &.
+l.770 ...andard square wave maneuver & 2.0--3.0s &
+                                                   Roll: ±10°, Pitch: ±5�...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.771 \hline
+            
+! Misplaced alignment tab character &.
+l.772 \textbf{1} &
+                   Fast aggressive square waves & 1.5--2.5s & Roll: ±15°, ...
+
+! Misplaced alignment tab character &.
+l.772 \textbf{1} & Fast aggressive square waves &
+                                                  1.5--2.5s & Roll: ±15°, ...
+
+! Misplaced alignment tab character &.
+l.772 ...ast aggressive square waves & 1.5--2.5s &
+                                                   Roll: ±15°, Pitch: ±8�...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.773 \hline
+            
+! Misplaced alignment tab character &.
+l.774 \textbf{2} &
+                   Slow gentle square waves & 3.0--4.0s & Roll: ±5°, Pitch...
+
+! Misplaced alignment tab character &.
+l.774 \textbf{2} & Slow gentle square waves &
+                                              3.0--4.0s & Roll: ±5°, Pitch...
+
+! Misplaced alignment tab character &.
+l.774 ... & Slow gentle square waves & 3.0--4.0s &
+                                                   Roll: ±5°, Pitch: ±3°...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.775 \hline
+            
+! Misplaced alignment tab character &.
+l.776 \textbf{3} &
+                   Asymmetric square waves & 2.0--2.5s & Roll: -12° to +8°...
+
+! Misplaced alignment tab character &.
+l.776 \textbf{3} & Asymmetric square waves &
+                                             2.0--2.5s & Roll: -12° to +8°...
+
+! Misplaced alignment tab character &.
+l.776 ...} & Asymmetric square waves & 2.0--2.5s &
+                                                   Roll: -12° to +8°, Pitc...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.777 \hline
+            
+! Misplaced alignment tab character &.
+l.778 \textbf{4} &
+                   High amplitude square waves & 1.8--2.2s & Roll: ±20°, P...
+
+! Misplaced alignment tab character &.
+l.778 \textbf{4} & High amplitude square waves &
+                                                 1.8--2.2s & Roll: ±20°, P...
+
+! Misplaced alignment tab character &.
+l.778 ...High amplitude square waves & 1.8--2.2s &
+                                                   Roll: ±20°, Pitch: ±10...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.779 \hline
+            
+! Misplaced alignment tab character &.
+l.780 \textbf{5} &
+                   Medium frequency square waves & 2.5--3.5s & Roll: ±8°, ...
+
+! Misplaced alignment tab character &.
+l.780 \textbf{5} & Medium frequency square waves &
+                                                   2.5--3.5s & Roll: ±8°, ...
+
+! Misplaced alignment tab character &.
+l.780 ...dium frequency square waves & 2.5--3.5s &
+                                                   Roll: ±8°, Pitch: ±4°...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.781 \hline
+            
+! Misplaced alignment tab character &.
+l.782 \textbf{6} &
+                   Large asymmetric square waves & 3.0--4.0s & Roll: -6° to...
+
+! Misplaced alignment tab character &.
+l.782 \textbf{6} & Large asymmetric square waves &
+                                                   3.0--4.0s & Roll: -6° to...
+
+! Misplaced alignment tab character &.
+l.782 ...rge asymmetric square waves & 3.0--4.0s &
+                                                   Roll: -6° to +12°, Pitc...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.783 \hline
+            
+! Misplaced alignment tab character &.
+l.784 \textbf{7} &
+                   Very fast high amplitude & 1.2--1.8s & Roll: ±18°, Pitc...
+
+! Misplaced alignment tab character &.
+l.784 \textbf{7} & Very fast high amplitude &
+                                              1.2--1.8s & Roll: ±18°, Pitc...
+
+! Misplaced alignment tab character &.
+l.784 ... & Very fast high amplitude & 1.2--1.8s &
+                                                   Roll: ±18°, Pitch: ±12...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.785 \hline
+            
+! Misplaced alignment tab character &.
+l.786 \textbf{8} &
+                   Very slow square waves & 4.0--5.0s & Roll: ±6°, Pitch: ...
+
+! Misplaced alignment tab character &.
+l.786 \textbf{8} & Very slow square waves &
+                                            4.0--5.0s & Roll: ±6°, Pitch: ...
+
+! Misplaced alignment tab character &.
+l.786 ...8} & Very slow square waves & 4.0--5.0s &
+                                                   Roll: ±6°, Pitch: ±4°...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.787 \hline
+            
+! Misplaced alignment tab character &.
+l.788 \textbf{9} &
+                   Mixed frequency square waves & 2.2--3.0s & Roll: ±10°, ...
+
+! Misplaced alignment tab character &.
+l.788 \textbf{9} & Mixed frequency square waves &
+                                                  2.2--3.0s & Roll: ±10°, ...
+
+! Misplaced alignment tab character &.
+l.788 ...ixed frequency square waves & 2.2--3.0s &
+                                                   Roll: ±10°, Pitch: ±8�...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.789 \hline
+            
+[7]
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.818 \scriptsize{|p{0.25\textwidth}
+                                    |p{0.2\textwidth}|p{0.45\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.818 \scriptsize{|p{0.25\textwidth}
+                                    |p{0.2\textwidth}|p{0.45\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.818 ...tsize{|p{0.25\textwidth}|p{0.2\textwidth}
+                                                  |p{0.45\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.818 ...tsize{|p{0.25\textwidth}|p{0.2\textwidth}
+                                                  |p{0.45\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.818 ...width}|p{0.2\textwidth}|p{0.45\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.818 ...width}|p{0.2\textwidth}|p{0.45\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.819 \hline
+            
+! Misplaced alignment tab character &.
+l.820 \textbf{Parameter} &
+                           \textbf{Value} & \textbf{Description} \\
+! Misplaced alignment tab character &.
+l.820 \textbf{Parameter} & \textbf{Value} &
+                                            \textbf{Description} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.821 \hline
+            
+! Misplaced alignment tab character &.
+l.822 \textbf{Mass (m)} &
+                          0.068 kg & Quadrotor vehicle mass \\
+! Misplaced alignment tab character &.
+l.822 \textbf{Mass (m)} & 0.068 kg &
+                                     Quadrotor vehicle mass \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.823 \hline
+            
+! Misplaced alignment tab character &.
+l.824 \textbf{Inertia Jxx} &
+                             $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & Roll axi...
+
+! Misplaced alignment tab character &.
+l.824 ... & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   Roll axis moment of inert...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.825 \hline
+            
+! Misplaced alignment tab character &.
+l.826 \textbf{Inertia Jyy} &
+                             $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & Pitch ax...
+
+! Misplaced alignment tab character &.
+l.826 ... & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   Pitch axis moment of iner...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.827 \hline
+            
+! Misplaced alignment tab character &.
+l.828 \textbf{Inertia Jzz} &
+                             $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & Yaw axi...
+
+! Misplaced alignment tab character &.
+l.828 ...& $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   Yaw axis moment of inerti...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.829 \hline
+            
+! Misplaced alignment tab character &.
+l.830 \textbf{Thrust Coefficient (kt)} &
+                                         0.01 & Motor thrust generation cons...
+
+! Misplaced alignment tab character &.
+l.830 \textbf{Thrust Coefficient (kt)} & 0.01 &
+                                                Motor thrust generation cons...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.831 \hline
+            
+! Misplaced alignment tab character &.
+l.832 \textbf{Torque Coefficient (kq)} &
+                                         $7.8263 \times 10^{-4}$ & Motor tor...
+
+! Misplaced alignment tab character &.
+l.832 ...ficient (kq)} & $7.8263 \times 10^{-4}$ &
+                                                   Motor torque generation c...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.833 \hline
+            
+! Misplaced alignment tab character &.
+l.834 \textbf{Arm Length (b)} &
+                                0.0438 m & Distance from center to motor (di...
+
+! Misplaced alignment tab character &.
+l.834 \textbf{Arm Length (b)} & 0.0438 m &
+                                           Distance from center to motor (di...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.835 \hline
+            
+! Misplaced alignment tab character &.
+l.836 \textbf{Gravity (g)} &
+                             9.81 m/s$^2$ & Gravitational acceleration \\
+! Misplaced alignment tab character &.
+l.836 \textbf{Gravity (g)} & 9.81 m/s$^2$ &
+                                            Gravitational acceleration \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.837 \hline
+            
+! Misplaced alignment tab character &.
+l.838 \textbf{Timestep (dt)} &
+                               0.001 s & Simulation integration step \\
+! Misplaced alignment tab character &.
+l.838 \textbf{Timestep (dt)} & 0.001 s &
+                                         Simulation integration step \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.839 \hline
+            
+! Misplaced alignment tab character &.
+l.840 \textbf{Duration (tend)} &
+                                 5.0 s & Total flight time per trajectory \\
+! Misplaced alignment tab character &.
+l.840 \textbf{Duration (tend)} & 5.0 s &
+                                         Total flight time per trajectory \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.841 \hline
+            
+! Misplaced alignment tab character &.
+l.842 \textbf{Quadratic Drag Coefficient} &
+                                            0.05 kg/m & Aerodynamic drag: $F...
+
+! Misplaced alignment tab character &.
+l.842 ...Quadratic Drag Coefficient} & 0.05 kg/m &
+                                                   Aerodynamic drag: $F_d = ...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.843 \hline
+            
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 854.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 854.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 862.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 862.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 870.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 870.
+
+Missing character: There is no � in font cmr9!
+[8]
+Underfull \hbox (badness 7944) in paragraph at lines 926--927
+[]\T1/ptm/b/n/9 Cross-coupling ef-fects\T1/ptm/m/n/9 : Eu-ler equa-tion terms $
+\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 J[] \OMS/cmsy/m/n/9 ^^@
+
+Overfull \hbox (101.72324pt too wide) in paragraph at lines 951--962
+[][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 978--979
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 985--986
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 992--993
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1001--1002
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1008--1009
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1015--1016
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1024--1025
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1031--1032
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1038--1039
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1047--1048
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1054--1055
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1061--1062
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1070--1071
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1077--1078
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1084--1085
+ [][] 
+
+Overfull \hbox (238.19843pt too wide) in paragraph at lines 1091--1092
+ [][] 
+[9]
+
+LaTeX Warning: Text page 10 contains only floats.
+
+
+LaTeX Warning: Text page 10 contains only floats.
+
+[10 <../results/comparative_trajectories/01_x_all_trajectories.png> <../results
+/comparative_trajectories/02_y_all_trajectories.png>]
+
+LaTeX Warning: Text page 11 contains only floats.
+
+
+LaTeX Warning: Text page 11 contains only floats.
+
+[11 <../results/comparative_trajectories/03_z_all_trajectories.png> <../results
+/comparative_trajectories/04_roll_all_trajectories.png>]
+
+LaTeX Warning: Text page 12 contains only floats.
+
+
+LaTeX Warning: Text page 12 contains only floats.
+
+[12 <../results/comparative_trajectories/05_pitch_all_trajectories.png> <../res
+ults/comparative_trajectories/06_yaw_all_trajectories.png>]
+
+LaTeX Warning: Text page 13 contains only floats.
+
+
+LaTeX Warning: Text page 13 contains only floats.
+
+[13 <../results/comparative_trajectories/07_p_all_trajectories.png> <../results
+/comparative_trajectories/08_q_all_trajectories.png>]
+
+LaTeX Warning: Text page 14 contains only floats.
+
+
+LaTeX Warning: Text page 14 contains only floats.
+
+[14 <../results/comparative_trajectories/09_r_all_trajectories.png> <../results
+/comparative_trajectories/10_vx_all_trajectories.png>]
+
+LaTeX Warning: Text page 15 contains only floats.
+
+
+LaTeX Warning: Text page 15 contains only floats.
+
+[15 <../results/comparative_trajectories/11_vy_all_trajectories.png> <../result
+s/comparative_trajectories/12_vz_all_trajectories.png>]
+Underfull \vbox (badness 10000) has occurred while \output is active
+Overfull \vbox (8.51819pt too high) has occurred while \output is active
+[16 <../results/comparative_trajectories/13_thrust_all_trajectories.png> <../re
+sults/comparative_trajectories/14_torque_x_all_trajectories.png>]
+Underfull \vbox (badness 6220) has occurred while \output is active
+Underfull \vbox (badness 6220) has occurred while \output is active [17 <../res
+ults/comparative_trajectories/15_torque_y_all_trajectories.png> <../results/com
+parative_trajectories/16_torque_z_all_trajectories.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1131--1132
+[]\T1/ptm/b/n/9 Mathematical Model\T1/ptm/m/n/9 : $\OML/cmm/m/it/9 x[]\OT1/cmr/
+m/n/9 (\OML/cmm/m/it/9 t \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 dt\OT1/cmr/m/n/9 ) =
+
+Underfull \hbox (badness 2229) in paragraph at lines 1131--1132
+\OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 t\OT1/cmr/m/n/9 ) + \OML/cmm
+/m/it/9 \OT1/cmr/m/n/9 (\OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 t\O
+T1/cmr/m/n/9 ) \OMS/cmsy/m/n/9 ^^@ \OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/
+m/it/9 t\OT1/cmr/m/n/9 ))$ \T1/ptm/m/n/9 where
+
+Underfull \hbox (badness 2512) in paragraph at lines 1229--1230
+[]\T1/ptm/m/n/9 All state vari-ables showed dis-con-tin-u-ous jumps be-tween
+
+Underfull \hbox (badness 5231) in paragraph at lines 1236--1237
+[]\T1/ptm/m/n/9 Implemented \T1/pcr/m/n/9 temporal_smoothness_loss() \T1/ptm/m/
+n/9 with soft
+
+Underfull \hbox (badness 4479) in paragraph at lines 1252--1253
+[]\T1/ptm/m/n/9 Soft con-straints us-ing ReLU penal-ties (vi-o-la-tions in-cur
+[18]
+Overfull \hbox (73.9717pt too wide) detected at line 1282
+[] \OMS/cmsy/m/n/9 ^^Y [] ^^@ \OT1/cmr/m/n/9 2\OML/cmm/m/it/9 p [][]q \OMS/cmsy
+/m/n/9 ^^A \OML/cmm/m/it/9 r \OMS/cmsy/m/n/9 ^^Y \OT1/cmr/m/n/9 0[]\OML/cmm/m/i
+t/9 q; r[]
+
+Underfull \hbox (badness 1742) in paragraph at lines 1302--1303
+[]\T1/ptm/b/n/9 Direct an-gu-lar ac-cel-er-a-tion mea-sure-ments\T1/ptm/m/n/9 :
+ In-clude
+
+Underfull \hbox (badness 1939) in paragraph at lines 1309--1311
+[]\T1/ptm/b/n/9 Future Work Di-rec-tions (Re-main-ing Af-ter Im-ple-mented
+
+Overfull \hbox (72.34743pt too wide) detected at line 1352
+\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 = [] [] []
+[19]
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 \scriptsize{|p{0.15\textwidth}
+                                     |p{0.12\textwidth}|p{0.12\textwidth}|p{...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 \scriptsize{|p{0.15\textwidth}
+                                     |p{0.12\textwidth}|p{0.12\textwidth}|p{...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 ...ize{|p{0.15\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 ...ize{|p{0.15\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.12\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.20\...
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.12\textwidth}|p{0.20\...
+
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.20\textwidth}|}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.12\textwidth}
+                                                  |p{0.20\textwidth}|}
+! Missing number, treated as zero.
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.20\textwidth}
+                                                  |}
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   }
+l.1369 ...dth}|p{0.12\textwidth}|p{0.20\textwidth}
+                                                  |}
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1370 \hline
+             
+! Misplaced alignment tab character &.
+l.1371 \textbf{Parameter} &
+                            \textbf{True Value} & \textbf{Learned Value} & \...
+
+! Misplaced alignment tab character &.
+l.1371 \textbf{Parameter} & \textbf{True Value} &
+                                                  \textbf{Learned Value} & \...
+
+! Misplaced alignment tab character &.
+l.1371 ...f{True Value} & \textbf{Learned Value} &
+                                                   \textbf{Absolute Error} &...
+
+! Misplaced alignment tab character &.
+l.1371 ...arned Value} & \textbf{Absolute Error} &
+                                                   \textbf{Relative Error} &...
+
+! Misplaced alignment tab character &.
+l.1371 ...olute Error} & \textbf{Relative Error} &
+                                                   \textbf{Status} \\
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1372 \hline
+             
+! Misplaced alignment tab character &.
+l.1373 \textbf{Mass} &
+                       0.068 kg & 0.0680 kg & 0.00000 kg & \textcolor{blue}{...
+
+! Misplaced alignment tab character &.
+l.1373 \textbf{Mass} & 0.068 kg &
+                                  0.0680 kg & 0.00000 kg & \textcolor{blue}{...
+
+! Misplaced alignment tab character &.
+l.1373 \textbf{Mass} & 0.068 kg & 0.0680 kg &
+                                              0.00000 kg & \textcolor{blue}{...
+
+! Misplaced alignment tab character &.
+l.1373 ...s} & 0.068 kg & 0.0680 kg & 0.00000 kg &
+                                                   \textcolor{blue}{\textbf{...
+
+! Misplaced alignment tab character &.
+l.1373 ...kg & \textcolor{blue}{\textbf{0.00\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1374 \hline
+             
+! Misplaced alignment tab character &.
+l.1375 \textbf{Inertia\_xx} &
+                              $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $9.00 \...
+
+! Misplaced alignment tab character &.
+l.1375 ...& $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $9.00 \times 10^{-5}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1375 ...& $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $2.14 \times 10^{-5}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1375 ...& $2.14 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.1375 ...& \textcolor{orange}{\textbf{31.20\%}} &
+                                                   \textcolor{orange}{Partia...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1376 \hline
+             
+! Misplaced alignment tab character &.
+l.1377 \textbf{Inertia\_yy} &
+                              $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.20 \...
+
+! Misplaced alignment tab character &.
+l.1377 ...& $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   $1.20 \times 10^{-4}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1377 ...& $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $2.80 \times 10^{-5}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1377 ...& $2.80 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.1377 ...& \textcolor{orange}{\textbf{30.43\%}} &
+                                                   \textcolor{orange}{Partia...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1378 \hline
+             
+! Misplaced alignment tab character &.
+l.1379 \textbf{Inertia\_zz} &
+                              $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 ...
+
+! Misplaced alignment tab character &.
+l.1379 ... $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $2.00 \times 10^{-4}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1379 ...& $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ &
+                                                   $6.34 \times 10^{-5}$ kg$...
+
+! Misplaced alignment tab character &.
+l.1379 ...& $6.34 \times 10^{-5}$ kg$\cdot$m$^2$ &
+                                                   \textcolor{orange}{\textb...
+
+! Misplaced alignment tab character &.
+l.1379 ...& \textcolor{orange}{\textbf{46.41\%}} &
+                                                   \textcolor{orange}{Partia...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1380 \hline
+             
+! Misplaced alignment tab character &.
+l.1381 \textbf{kt} &
+                     0.01 & 0.0100 & 0.00000 & \textcolor{blue}{\textbf{0.00...
+
+! Misplaced alignment tab character &.
+l.1381 \textbf{kt} & 0.01 &
+                            0.0100 & 0.00000 & \textcolor{blue}{\textbf{0.00...
+
+! Misplaced alignment tab character &.
+l.1381 \textbf{kt} & 0.01 & 0.0100 &
+                                     0.00000 & \textcolor{blue}{\textbf{0.00...
+
+! Misplaced alignment tab character &.
+l.1381 \textbf{kt} & 0.01 & 0.0100 & 0.00000 &
+                                               \textcolor{blue}{\textbf{0.00...
+
+! Misplaced alignment tab character &.
+l.1381 ...00 & \textcolor{blue}{\textbf{0.00\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1382 \hline
+             
+! Misplaced alignment tab character &.
+l.1383 \textbf{kq} &
+                     $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.0...
+
+! Misplaced alignment tab character &.
+l.1383 \textbf{kq} & $7.8263 \times 10^{-4}$ &
+                                               $7.8263 \times 10^{-4}$ & 0.0...
+
+! Misplaced alignment tab character &.
+l.1383 ...mes 10^{-4}$ & $7.8263 \times 10^{-4}$ &
+                                                   0.00000 & \textcolor{blue...
+
+! Misplaced alignment tab character &.
+l.1383 ...}$ & $7.8263 \times 10^{-4}$ & 0.00000 &
+                                                   \textcolor{blue}{\textbf{...
+
+! Misplaced alignment tab character &.
+l.1383 ...00 & \textcolor{blue}{\textbf{0.00\%}} &
+                                                   \textcolor{green}{Perfect...
+
+! Misplaced \noalign.
+\hline ->\noalign 
+                  {\ifnum 0=`}\fi \hrule \@height \arrayrulewidth \futurelet...
+l.1384 \hline
+             
+[20]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1576.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 1576.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1576.
+
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1632 \begin{table}[H]
+                       
+
+Overfull \hbox (92.5094pt too wide) in paragraph at lines 1635--1663
+ [][] 
+[21]
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1708 \begin{table}[H]
+                       
+
+Overfull \hbox (4.02188pt too wide) in paragraph at lines 1711--1722
+ [][] 
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1729.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\ll' on input line 1729.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1729.
+
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1830 \begin{table}[H]
+                       
+[22]
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1899 \begin{table}[H]
+                       
+
+Overfull \hbox (180.11218pt too wide) in paragraph at lines 1902--1918
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1975 \begin{table}[H]
+                       
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1994 \begin{table}[H]
+                       
+
+Overfull \hbox (65.02835pt too wide) in paragraph at lines 1997--2013
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2018 \begin{table}[H]
+                       
+
+Overfull \hbox (85.0653pt too wide) in paragraph at lines 2021--2032
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2037 \begin{table}[H]
+                       
+
+Overfull \hbox (79.45961pt too wide) in paragraph at lines 2039--2050
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.2057 \begin{table}[H]
+                       
+
+Underfull \hbox (badness 10000) in paragraph at lines 2064--2064
+[]|\T1/ptm/m/n/9 Out-of-distribution
+
+Underfull \hbox (badness 10000) in paragraph at lines 2065--2065
+[]|\T1/ptm/m/n/9 Modular ar-chi-tec-ture broke
+
+Underfull \hbox (badness 10000) in paragraph at lines 2068--2068
+[]|\T1/ptm/b/n/9 All base-line com-po-nents
+
+Overfull \hbox (153.8858pt too wide) in paragraph at lines 2060--2071
+ [][] 
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2105.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2105.
+
+Missing character: There is no � in font cmr9!
+[23]
+Overfull \hbox (0.76445pt too wide) detected at line 2127
+[][][]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 = \OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 +
+ \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[
+]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[] 
+\OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2139.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2139.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2146.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2146.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2146.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2146.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2155.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2155.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2156.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2156.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2157.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2157.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2158.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2158.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2159.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2159.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2174--2175
+[]\T1/ptm/b/n/9 Status: \T1/ptm/m/n/9 Data gen-er-ated and avail-able in
+
+Underfull \hbox (badness 10000) in paragraph at lines 2174--2175
+\T1/pcr/m/n/9 data/aggressive_inertia_trajectories.csv\T1/ptm/m/n/9 .
+
+Overfull \hbox (77.29503pt too wide) in paragraph at lines 2198--2216
+ [][] 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[24]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 2330--2331
+[]\T1/ptm/m/n/9 Complex deriva-tive com-pu-ta-tions (ro-ta-tion ma-tri-ces,
+
+Overfull \hbox (13.70557pt too wide) in paragraph at lines 2364--2374
+ [][] 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2396.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2396.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2398.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2398.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2419.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2419.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2419.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2419.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2420.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2420.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2420.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2420.
+
+Missing character: There is no � in font cmr8!
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2431.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2431.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2502.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2502.
+
+Missing character: There is no � in font cmr9!
+[25]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2509.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2509.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2524.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2524.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2528.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2528.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2529.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2529.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2574.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2574.
+
+Missing character: There is no � in font cmr9!
+
+Underfull \hbox (badness 10000) in paragraph at lines 2574--2575
+ \T1/ptm/m/it/10 1) Sim-u-la-tion Break-down at Large An-gles: [][][] \T1/ptm/m
+/n/9 The
+
+Underfull \hbox (badness 2261) in paragraph at lines 2574--2575
+\T1/pcr/m/n/9 QuadrotorSimulator \T1/ptm/m/n/9 uses sim-pli-fied physics that b
+e-come
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2582.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2582.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2586.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2586.
+
+Missing character: There is no � in font cmr9!
+
+Overfull \hbox (219.19684pt too wide) in paragraph at lines 2626--2627
+ [] 
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2631.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2631.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2632.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2632.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2677.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2677.
+
+Missing character: There is no � in font cmr9!
+[26]
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2700.
+
+Missing character: There is no � in font cmr9!
+Missing character: There is no � in font cmr9!
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2732.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2732.
+
+Missing character: There is no � in font cmr9!
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2750.
+
+
+LaTeX Warning: Command \textdegree invalid in math mode on input line 2750.
+
+Missing character: There is no � in font cmr9!
+[27] [28] [29] (quadrotor_pinn_report_IEEE.aux) )
+(see the transcript file for additional information) <C:\Users\sreej\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0900.pk> <C:\Users\sreej\AppD
+ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tctt1000.pk> <C:\Users\sree
+j\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0700.pk> <C:\User
+s\sreej\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrb0900.pk><C:
+/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx1
+0.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmbx5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type
+1/public/amsfonts/cm/cmbx7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fo
+nts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/sreej/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/sreej/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/sreej/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex9.pfb><C:/U
+sers/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.
+pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmmi5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/cm/cmmi6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/cm/cmmi7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/sreej/AppData/Local/Progr
+ams/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><C:/Users/sreej/AppDa
+ta/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><C:/Use
+rs/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmi
+b9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfont
+s/cm/cmr10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmr5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmr6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/font
+s/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/sreej/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/sreej/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Users/sreej/AppD
+ata/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb><C:/
+Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.
+pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
+m/cmsy8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/am
+sfonts/cm/cmsy9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/symbols/msam10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX
+/fonts/type1/urw/courier/ucrb8a.pfb><C:/Users/sreej/AppData/Local/Programs/MiKT
+eX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/sreej/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/sreej/AppData/Local/Programs/Mi
+KTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/sreej/AppData/Local/Programs/M
+iKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/sreej/AppData/Local/Programs/M
+iKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on quadrotor_pinn_report_IEEE.pdf (29 pages, 7891303 bytes).
+Transcript written on quadrotor_pinn_report_IEEE.log.
