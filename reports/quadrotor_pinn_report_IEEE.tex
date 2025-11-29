@@ -685,12 +685,20 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \end{tabular}
 \end{table*}
 
-\begin{figure}[!t]
-\centering
-\includegraphics[width=\textwidth,page=1,trim=0 5.8cm 0 5cm,clip]{pinn_schematics.pdf}
-\caption{Training Pipeline with Curriculum Learning: Progressive multi-step rollout training from 5-step (Epochs 0-50) to 50-step predictions (Epochs 150-230), with scheduled sampling gradually increasing from 0\% to 30\%. Final phase uses L-BFGS optimizer for fine-tuning (Epochs 230-250).}
-\label{fig:training_pipeline}
-\end{figure}
+\textbf{Training Pipeline Overview:}
+
+\textit{Curriculum Learning Schedule:}
+\begin{itemize}
+\item \textbf{Epochs 0-50}: 5-step rollouts (learning short-term dynamics)
+\item \textbf{Epochs 50-100}: 10-step rollouts (extending prediction horizon)
+\item \textbf{Epochs 100-150}: 25-step rollouts (mid-range stability)
+\item \textbf{Epochs 150-230}: 50-step rollouts (long-term autoregressive stability)
+\item \textbf{Epochs 230-250}: L-BFGS fine-tuning (final convergence)
+\end{itemize}
+
+\textit{Scheduled Sampling:} Gradually increases from 0\% to 30\%, replacing ground truth states with model predictions during training to improve autoregressive stability.
+
+\textit{Multi-Step Rollout Loss:} Computed every 5th batch, enforcing consistency across the full prediction horizon while maintaining computational efficiency.
 
 \clearpage
 
