@@ -517,18 +517,20 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \begin{table*}[!t]
 \centering
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.15\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.20\textwidth}}
+\small
+\begin{tabular}{lccccl}
 \toprule
-\textbf{Parameter} & \textbf{True Value} & \textbf{Learned Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
+\textbf{Parameter} & \textbf{True} & \textbf{Learned} & \textbf{Abs. Error} & \textbf{Rel. Error} & \textbf{Status} \\
 \midrule
-\textbf{Mass (m)} & 0.0680 kg & 0.06798 kg & 2.34$\times 10^{-5}$ kg & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\textbf{Thrust coef (kt)} & 0.0100 & 0.01000 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\textbf{Torque coef (kq)} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\textbf{Inertia Jxx} & $6.860 \times 10^{-5}$ kg$\cdot$m$^2$ & $5.831 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.029 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
-\textbf{Inertia Jyy} & $9.200 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.058 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.380 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
-\textbf{Inertia Jzz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $1.571 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.050 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{Acceptable} \\
+\textbf{Mass} & 0.0680 kg & 0.06798 kg & 2.34e-5 kg & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
+\textbf{kt} & 0.0100 & 0.01000 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
+\textbf{kq} & 7.83e-4 & 7.83e-4 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
+\textbf{Jxx} & 6.86e-5 & 5.83e-5 & 1.03e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
+\textbf{Jyy} & 9.20e-5 & 1.06e-4 & 1.38e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
+\textbf{Jzz} & 1.37e-4 & 1.57e-4 & 2.05e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 \textbf{Fixed Physical Constants (NOT Learnable):}
@@ -1282,18 +1284,20 @@ where $\dot{p}_{\text{physics}} = \frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r + \fr
 \begin{table*}[!t]
 \centering
 \renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.15\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.12\textwidth}p{0.20\textwidth}}
+\small
+\begin{tabular}{lccccl}
 \toprule
-\textbf{Parameter} & \textbf{True Value} & \textbf{Learned Value} & \textbf{Absolute Error} & \textbf{Relative Error} & \textbf{Status} \\
+\textbf{Parameter} & \textbf{True} & \textbf{Learned} & \textbf{Abs. Error} & \textbf{Rel. Error} & \textbf{Status} \\
 \midrule
 \textbf{Mass} & 0.068 kg & 0.0680 kg & 0.00000 kg & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
-\textbf{Inertia\_xx} & $6.86 \times 10^{-5}$ kg$\cdot$m$^2$ & $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ & $2.14 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{31.20\%}} & \textcolor{orange}{Partial Improvement} \\
-\textbf{Inertia\_yy} & $9.20 \times 10^{-5}$ kg$\cdot$m$^2$ & $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.80 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{30.43\%}} & \textcolor{orange}{Partial Improvement} \\
-\textbf{Inertia\_zz} & $1.366 \times 10^{-4}$ kg$\cdot$m$^2$ & $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ & $6.34 \times 10^{-5}$ kg$\cdot$m$^2$ & \textcolor{orange}{\textbf{46.41\%}} & \textcolor{orange}{Partial Improvement} \\
+\textbf{Jxx} & 6.86e-5 & 9.00e-5 & 2.14e-5 & \textcolor{orange}{\textbf{31.20\%}} & \textcolor{orange}{Partial} \\
+\textbf{Jyy} & 9.20e-5 & 1.20e-4 & 2.80e-5 & \textcolor{orange}{\textbf{30.43\%}} & \textcolor{orange}{Partial} \\
+\textbf{Jzz} & 1.37e-4 & 2.00e-4 & 6.34e-5 & \textcolor{orange}{\textbf{46.41\%}} & \textcolor{orange}{Partial} \\
 \textbf{kt} & 0.01 & 0.0100 & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
-\textbf{kq} & $7.8263 \times 10^{-4}$ & $7.8263 \times 10^{-4}$ & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
+\textbf{kq} & 7.83e-4 & 7.83e-4 & 0.00000 & \textcolor{blue}{\textbf{0.00\%}} & \textcolor{green}{Perfect} \\
 \bottomrule
 \end{tabular}
+\normalsize
 \end{table*}
 
 \textbf{Analysis of Results:}
