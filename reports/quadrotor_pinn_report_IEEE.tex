@@ -691,23 +691,13 @@ All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amp
 
 \begin{table*}[!t]
 \centering
+\caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
+\label{tab:all_trajectories}
 \renewcommand{\arraystretch}{1.4}
 \begin{tabular}{p{0.08\textwidth}p{0.25\textwidth}p{0.12\textwidth}p{0.43\textwidth}}
-\caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
-\label{tab:all_trajectories} \\
+\toprule
+\textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
 \midrule
-\textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
-\endfirsthead
-
-\multicolumn{4}{c}%
-{\tablename\ \thetable\ -- \textit{Continued from previous page}} \\
-\textbf{Traj. ID} & \textbf{Description} & \textbf{Period Range} & \textbf{Amplitude Characteristics} \\
-\endhead
-
-\endfoot
-
-\endlastfoot
-
 \textbf{0} & Standard square wave maneuver & 2.0--3.0s & Roll: ±10°, Pitch: ±5°, Yaw: ±5°, Alt: -5 to -3m \\
 \textbf{1} & Fast aggressive square waves & 1.5--2.5s & Roll: ±15°, Pitch: ±8°, Yaw: ±10°, Alt: -6 to -4m \\
 \textbf{2} & Slow gentle square waves & 3.0--4.0s & Roll: ±5°, Pitch: ±3°, Yaw: ±5°, Alt: -3 to -2m \\
@@ -776,7 +766,7 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \item Outer loop proportional gain (k1): 1.0
 \item Outer loop integral gain (ki): 0.004
 \item Inner loop proportional gain (k2): 0.1
-\item Setpoint: $\phi_r = 10°$ (0.1745 rad)
+\item Setpoint: $\phi_r = 10^\circ$ (0.1745 rad)
 \end{itemize}
 
 \textbf{Pitch Controller:}
@@ -784,7 +774,7 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \item Outer loop proportional gain (k11): 1.0
 \item Outer loop integral gain (ki1): 0.004
 \item Inner loop proportional gain (k21): 0.1
-\item Setpoint: $\theta_r = -5°$ (-0.0873 rad)
+\item Setpoint: $\theta_r = -5^\circ$ (-0.0873 rad)
 \end{itemize}
 
 \textbf{Yaw Controller:}
@@ -792,7 +782,7 @@ The MATLAB simulation uses a cascaded PID control architecture for all three att
 \item Outer loop proportional gain (k12): 1.0
 \item Outer loop integral gain (ki2): 0.004
 \item Inner loop proportional gain (k22): 0.1
-\item Setpoint: $\psi_r = 5°$ (0.0873 rad)
+\item Setpoint: $\psi_r = 5^\circ$ (0.0873 rad)
 \end{itemize}
 
 \textbf{Altitude Controller:}
@@ -2018,7 +2008,7 @@ Following the successful Optimized PINN v2 implementation, we developed addition
 
 \subsection{Energy Conservation Loss}
 
-\textbf{Motivation:} The original physics loss enforces Newton-Euler equations but provides weak gradient signals for inertia parameters (Jxx, Jyy, Jzz) at small angles ($\pm20°$), leading to 5.00\% residual errors.
+\textbf{Motivation:} The original physics loss enforces Newton-Euler equations but provides weak gradient signals for inertia parameters (Jxx, Jyy, Jzz) at small angles ($\pm20^\circ$), leading to 5.00\% residual errors.
 
 \textbf{Solution:} We added an energy-based physics constraint that provides alternative gradient signals through power balance equations:
 
@@ -2052,14 +2042,14 @@ P_{\text{drag}} &= c_d(v_x^2v_x + v_y^2v_y + v_z^2v_z)
 
 \subsection{Aggressive Trajectory Generation}
 
-\textbf{Problem:} Training data uses $\pm20°$ attitudes, resulting in small angular rates ($<1$ rad/s) and weak cross-coupling terms in Euler equations:
+\textbf{Problem:} Training data uses $\pm20^\circ$ attitudes, resulting in small angular rates ($<1$ rad/s) and weak cross-coupling terms in Euler equations:
 \begin{equation}
 \dot{p} = \frac{(J_{yy} - J_{zz})qr}{J_{xx}} + \frac{\tau_x}{J_{xx}}
 \end{equation}
 
 At small angles, the term $(J_{yy} - J_{zz})qr \approx 0$, making inertias unobservable.
 
-\textbf{Solution:} Generated 5 aggressive trajectories with $\pm45°$ to $\pm60°$ attitudes:
+\textbf{Solution:} Generated 5 aggressive trajectories with $\pm45^\circ$ to $\pm60^\circ$ attitudes:
 
 \begin{table}[h]
 \centering
@@ -2068,11 +2058,11 @@ At small angles, the term $(J_{yy} - J_{zz})qr \approx 0$, making inertias unobs
 \hline
 \textbf{ID} & \textbf{Description} & \textbf{Angles} & \textbf{Max $p \cdot q \cdot r$} \\
 \hline
-100 & Aggressive multi-axis & $\pm45°$ & 90.2 \\
-101 & Very aggressive & $\pm50°$ & 70.8 \\
-102 & Extreme fast flips & $\pm60°$ & 7.1 \\
-103 & Mixed-rate excitation & $\pm55-60°$ & 47.0 \\
-104 & Synchronized all-axis & $\pm50°$ & 27.9 \\
+100 & Aggressive multi-axis & $\pm45^\circ$ & 90.2 \\
+101 & Very aggressive & $\pm50^\circ$ & 70.8 \\
+102 & Extreme fast flips & $\pm60^\circ$ & 7.1 \\
+103 & Mixed-rate excitation & $\pm55-60^\circ$ & 47.0 \\
+104 & Synchronized all-axis & $\pm50^\circ$ & 27.9 \\
 \hline
 \end{tabular}
 \end{table}
@@ -2309,9 +2299,9 @@ Understanding model limitations is critical for safe deployment. This section do
 \textbf{Inertia Parameters (Jxx, Jyy, Jzz):}
 \begin{itemize}
 \item \textbf{Current error:} 5.00\% (improved from 1300--6700\% in baseline)
-\item \textbf{Root cause:} Weak observability at small angles ($\pm20°$)
+\item \textbf{Root cause:} Weak observability at small angles ($\pm20^\circ$)
 \item \textbf{Physics:} Cross-coupling terms $(J_{yy} - J_{zz})qr \approx 0$ at low angular rates
-\item \textbf{Mitigation:} Aggressive trajectories ($\pm45--60°$) and energy conservation loss implemented
+\item \textbf{Mitigation:} Aggressive trajectories ($\pm45--60^\circ$) and energy conservation loss implemented
 \end{itemize}
 
 \textbf{Well-Identified Parameters:}
@@ -2332,8 +2322,8 @@ Understanding model limitations is critical for safe deployment. This section do
 \hline
 \textbf{Variable} & \textbf{Validated Range} & \textbf{Failure Beyond} \\
 \hline
-Roll/Pitch & $\pm20°$ & $>40°$ unreliable \\
-Yaw & $\pm30°$ & $>60°$ unreliable \\
+Roll/Pitch & $\pm20^\circ$ & $>40^\circ$ unreliable \\
+Yaw & $\pm30^\circ$ & $>60^\circ$ unreliable \\
 Angular rates & $<5$ rad/s & $>10$ rad/s unstable \\
 Horizontal velocity & $<2$ m/s & $>5$ m/s diverges \\
 Vertical velocity & $<1.5$ m/s & $>3$ m/s diverges \\
@@ -2344,7 +2334,7 @@ Altitude & $>0.5$ m & $<0.5$ m (ground effect) \\
 
 \textbf{Consequences of Operating Outside Envelope:}
 \begin{enumerate}
-\item \textbf{Large angles ($>40°$):} Kinematics break down, gimbal lock risk
+\item \textbf{Large angles ($>40^\circ$):} Kinematics break down, gimbal lock risk
 \item \textbf{High rates ($>10$ rad/s):} Gyroscopic effects not modeled
 \item \textbf{High speeds ($>5$ m/s):} Aerodynamic drag model insufficient
 \item \textbf{Near ground ($<0.5$ m):} Ground effect not modeled
@@ -2415,14 +2405,14 @@ Altitude & $>0.5$ m & $<0.5$ m (ground effect) \\
 \textbf{Recommended Use Cases:}
 \begin{itemize}
 \item Small quadrotors ($<0.5$ kg)
-\item Standard flight maneuvers ($<30°$ attitudes)
+\item Standard flight maneuvers ($<30^\circ$ attitudes)
 \item Short-horizon prediction ($<100$ steps / 0.1s)
 \item Simulation and digital twin applications
 \end{itemize}
 
 \textbf{Not Recommended:}
 \begin{itemize}
-\item Acrobatic flight ($>45°$ attitudes, flips)
+\item Acrobatic flight ($>45^\circ$ attitudes, flips)
 \item High-speed racing ($>5$ m/s)
 \item Safety-critical applications without validation
 \item Real-time control without hardware testing
@@ -2437,12 +2427,12 @@ Following the implementation of energy conservation loss and aggressive trajecto
 
 \subsection{Experimental Setup}
 
-\textbf{Hypothesis:} Aggressive maneuvers with larger angles ($\pm45-60°$) will excite cross-coupling dynamics more strongly, providing better gradient signals for inertia parameter identification.
+\textbf{Hypothesis:} Aggressive maneuvers with larger angles ($\pm45-60^\circ$) will excite cross-coupling dynamics more strongly, providing better gradient signals for inertia parameter identification.
 
 \textbf{Dataset:}
 \begin{itemize}
-\item \textbf{Standard trajectories:} 49,365 samples (10 trajectories, $\pm20°$ angles)
-\item \textbf{Aggressive trajectories:} 20,873 samples (5 trajectories, $\pm45-60°$ angles)
+\item \textbf{Standard trajectories:} 49,365 samples (10 trajectories, $\pm20^\circ$ angles)
+\item \textbf{Aggressive trajectories:} 20,873 samples (5 trajectories, $\pm45-60^\circ$ angles)
 \item \textbf{Combined dataset:} 70,238 samples (15 trajectories total)
 \end{itemize}
 
@@ -2487,7 +2477,7 @@ The model consistently wants \textbf{even higher inertias} than the relaxed boun
 
 \subsubsection{Simulation Breakdown at Large Angles}
 
-The \texttt{QuadrotorSimulator} uses simplified physics that become inaccurate at $\pm60°$ attitudes:
+The \texttt{QuadrotorSimulator} uses simplified physics that become inaccurate at $\pm60^\circ$ attitudes:
 
 \textbf{Missing Physics:}
 \begin{enumerate}
@@ -2495,11 +2485,11 @@ The \texttt{QuadrotorSimulator} uses simplified physics that become inaccurate a
 
 \item \textbf{Gyroscopic effects:} Rotors spinning at $\sim6000$ RPM create angular momentum $h_{\text{rotor}} = I_{\text{rotor}} \omega_{\text{rotor}}$. Gyroscopic torques $\tau_{\text{gyro}} = \omega_{\text{body}} \times h_{\text{rotor}}$ become significant at large body rates
 
-\item \textbf{Blade flapping:} Propeller thrust varies with rotor tilt angle: $T_{\text{eff}} = T_{\text{cmd}} \cos(\theta_{\text{flap}})$. At $\pm60°$, thrust can drop by 50\%
+\item \textbf{Blade flapping:} Propeller thrust varies with rotor tilt angle: $T_{\text{eff}} = T_{\text{cmd}} \cos(\theta_{\text{flap}})$. At $\pm60^\circ$, thrust can drop by 50\%
 
 \item \textbf{Aerodynamic stall:} Propeller efficiency drops at high angles of attack
 
-\item \textbf{Small-angle approximations:} Some kinematic terms use linearized forms that break down beyond $\pm30°$
+\item \textbf{Small-angle approximations:} Some kinematic terms use linearized forms that break down beyond $\pm30^\circ$
 \end{enumerate}
 
 \textbf{Consequence:} Aggressive trajectory data is \textbf{physically inconsistent}. The simulation generates states and control inputs that violate true quadrotor physics at large angles.
@@ -2544,8 +2534,8 @@ Aggressive trajectories provide stronger gradient signals (cross-coupling terms 
 
 \textbf{Original Hypothesis (INCORRECT):}
 \begin{enumerate}
-\item Standard data ($\pm20°$) has weak inertia observability
-\item Aggressive data ($\pm60°$) excites cross-coupling terms
+\item Standard data ($\pm20^\circ$) has weak inertia observability
+\item Aggressive data ($\pm60^\circ$) excites cross-coupling terms
 \item PINN will identify inertias better
 \end{enumerate}
 
@@ -2590,7 +2580,7 @@ Temporal Loss & 189,796 & 151,466 \\
 \item $k_t, k_q$: 0.00\% error (perfect)
 \end{itemize}
 
-This is the \textbf{state-of-the-art} for simulation-based training at $\pm20°$ operating envelope.
+This is the \textbf{state-of-the-art} for simulation-based training at $\pm20^\circ$ operating envelope.
 
 \subsubsection{To Improve Simulation}
 
@@ -2613,7 +2603,7 @@ T_{\text{eff}} = T_{\text{cmd}} \cos(\theta_{\text{flap}}) \quad \text{where} \q
 
 \textbf{4. Hardware Validation}
 \begin{itemize}
-\item Fly Crazyflie 2.0 at various angles ($\pm20°, \pm40°, \pm60°$)
+\item Fly Crazyflie 2.0 at various angles ($\pm20^\circ, \pm40^\circ, \pm60^\circ$)
 \item Record IMU data (angular rates, accelerations)
 \item Compare measured vs simulated dynamics
 \item Calibrate missing physics terms from real data
@@ -2645,7 +2635,7 @@ Despite the negative result, this experiment was highly valuable:
 
 \textbf{Scientific Insights:}
 \begin{itemize}
-\item \checkmark Definitively validated $\pm20°$ as operating envelope limit
+\item \checkmark Definitively validated $\pm20^\circ$ as operating envelope limit
 \item \checkmark Discovered simulation breakdown at large angles
 \item \checkmark Documented why aggressive data degrades identification
 \item \checkmark Demonstrated rigorous experimental methodology
@@ -2663,7 +2653,7 @@ The aggressive trajectory experiment \textbf{failed to improve parameter identif
 \item Providing clear guidance for future improvements
 \end{enumerate}
 
-\textbf{Key Takeaway:} The original Optimized PINN v2 with standard $\pm20°$ trajectories remains the best model. The 5.00\% inertia error represents the \textbf{limit of simulation-based identification}. Further improvement requires either better simulation physics or real hardware data.
+\textbf{Key Takeaway:} The original Optimized PINN v2 with standard $\pm20^\circ$ trajectories remains the best model. The 5.00\% inertia error represents the \textbf{limit of simulation-based identification}. Further improvement requires either better simulation physics or real hardware data.
 
 \textbf{Sometimes the most valuable experiments are those that tell us what \textit{not} to do.}
 
