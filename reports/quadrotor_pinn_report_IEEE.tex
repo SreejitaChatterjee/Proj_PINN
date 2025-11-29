@@ -59,7 +59,7 @@ Physics-informed neural networks, quadrotor dynamics, parameter identification, 
 
 This project implements a state-of-the-art Physics-Informed Neural Network (PINN) system for quadrotor dynamics modeling. The approach uniquely combines:
 
-\begin{itemize}[leftmargin=2em,itemsep=3pt]
+\begin{itemize}
     \item \textbf{Data-driven learning}: Neural network architecture optimized for time-series prediction
     \item \textbf{Physics integration}: Embedded Newton-Euler equations ensuring physical consistency
     \item \textbf{Parameter identification}: Simultaneous learning of unknown physical parameters
@@ -71,7 +71,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=1.4\textwidth,page=3,trim=0 2cm 0 0,clip]{pinn_schematics.pdf}
+\includegraphics[width=\textwidth,page=3,trim=0 2cm 0 0,clip]{pinn_schematics.pdf}
 \caption{Comparison between Standard Neural Networks and Physics-Informed Neural Networks. PINNs integrate physical laws directly into the learning process, resulting in data-efficient, physically meaningful, and stable predictions with better generalization capabilities.}
 \label{fig:nn_vs_pinn}
 \end{figure}
@@ -83,7 +83,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{table*}[!t]
 \centering
-\scriptsize{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\scriptsize
+\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Output} \\
 \midrule
@@ -97,6 +98,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{5. Data Validation} & Verified physics consistency and trajectory realism across all samples & Clean, physics-compliant dataset ready for training \\
 \bottomrule
+\end{tabular}
 \end{table*}
 
 \textit{Note: All visualization plots (Figures 1-12) correctly display Trajectory 0 data with square wave reference inputs. The PID controller demonstrates good tracking performance with typical transient response times under 0.5s.}
@@ -104,7 +106,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=1.2\textwidth,page=2,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
+\includegraphics[width=\textwidth,page=2,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
 \caption{Complete Data Flow Pipeline: From data generation through training to evaluation. The pipeline includes trajectory generation (10 sequences, 49,382 samples), an 80/20 train-test split, curriculum learning over 250 epochs, and holdout evaluation achieving 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon).}
 \label{fig:data_flow}
 \end{figure}
@@ -114,7 +116,8 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{table*}[!t]
 \centering
-\scriptsize{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\scriptsize
+\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Achievement} \\
 \midrule
@@ -128,12 +131,14 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{10. Constraint Implementation} & Added parameter bounds and physics law enforcement throughout training & Stable, physically valid learning process \\
 \bottomrule
+\end{tabular}
 \end{table*}
 
 \subsection{Phase 3: Model Evolution \& Optimization}
 \begin{table*}[!t]
 \centering
-\scriptsize{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\scriptsize
+\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Improvement Achieved} \\
 \midrule
@@ -149,12 +154,14 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{16. Autoregressive Stability} & Enhanced architecture (256 neurons, 5 layers, dropout), scheduled sampling (0→30\%), stability loss, tightened limits & Robust multi-step predictions: 500-step rollout evaluation \\
 \bottomrule
+\end{tabular}
 \end{table*}
 
 \subsection{Phase 4: Comprehensive Evaluation}
 \begin{table*}[!t]
 \centering
-\scriptsize{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\scriptsize
+\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Validation Result} \\
 \midrule
@@ -168,13 +175,15 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{21. Comparative Analysis} & Comprehensive benchmarking across all three model evolutionary variants & Quantified improvement progression documented \\
 \bottomrule
+\end{tabular}
 \end{table*}
 
 \subsection{Phase 5: Results Visualization \& Documentation}
 
 \begin{table*}[!t]
 \centering
-\scriptsize{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
+\scriptsize
+\begin{tabular}{p{0.24\textwidth} p{0.34\textwidth} p{0.31\textwidth}}
 \toprule
 \textbf{Step} & \textbf{Implementation} & \textbf{Output} \\
 \midrule
@@ -188,6 +197,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \textbf{25. Documentation Creation} & Produced comprehensive technical documentation with LaTeX formatting & Professional project presentation ready for publication \\
 \bottomrule
+\end{tabular}
 \end{table*}
 
 
@@ -229,7 +239,7 @@ The system successfully predicts 12 state variables while identifying 6 critical
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=1.2\textwidth,page=1]{pinn_schematics.pdf}
+\includegraphics[width=\textwidth,page=1]{pinn_schematics.pdf}
 \caption{PINN Architecture: Deep feed-forward neural network with 5 layers of 256 neurons each, dropout regularization for stability. The network takes 16D input (12 states + 4 controls) and outputs 12D next states (full 6-DOF dynamics), with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 204,818 parameters.}
 \label{fig:architecture}
 \end{figure}
@@ -381,7 +391,7 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=1.2\textwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
+\includegraphics[width=\textwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
 \caption{Multi-Objective Loss Function: The total loss combines seven different terms, each enforcing specific constraints. Weighted components include: Data loss ($\lambda=1.0$), Physics loss ($\lambda=20$), Energy conservation ($\lambda=0.05$), Temporal smoothness ($\lambda=10$), adaptive Rollout loss, Stability bounds, and L2 Regularization.}
 \label{fig:loss_breakdown}
 \end{figure}
@@ -508,7 +518,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=1.4\textwidth,page=4,trim=0 0.2cm 0 1cm,clip]{pinn_schematics.pdf}
+\includegraphics[width=\textwidth,page=4,trim=0 0.2cm 0 1cm,clip]{pinn_schematics.pdf}
 \caption{PINN v2 Performance on Held-Out Test Set: The optimized model achieves 51× improvement over baseline at 100-step horizon (0.029m vs 1.49m), with state-wise improvements ranging from 2× to 51×. The model demonstrates exceptional stability with only 1.1× error growth (vs 17× for baseline) and accurate physics parameter identification (mass and motor coefficients at 0\% error, inertias within 5\%).}
 \label{fig:performance}
 \end{figure}
@@ -585,7 +595,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 
 \textbf{Fixed Physical Constants (NOT Learnable):}
 
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{l|l|l}
 \hline
 \textbf{Constant} & \textbf{Value} & \textbf{Note} \\
 \hline
@@ -950,7 +960,7 @@ This square wave forcing function creates more diverse dynamics than constant se
 
 \textbf{Parameter Identification Summary:}
 
-\begin{tabular}{|l|l|l|}
+\begin{tabular}{l|l|l}
 \hline
 \textbf{Stage} & \textbf{Parameters} & \textbf{Errors} \\
 \hline
@@ -2150,7 +2160,7 @@ At small angles, the term $(J_{yy} - J_{zz})qr \approx 0$, making inertias unobs
 \begin{table}[h]
 \centering
 \caption{Aggressive Trajectory Specifications for Inertia Identification}
-\begin{tabular}{|c|l|c|c|}
+\begin{tabular}{c|l|c|c}
 \hline
 \textbf{ID} & \textbf{Description} & \textbf{Angles} & \textbf{Max $|p \cdot q \cdot r|$} \\
 \hline
@@ -2197,7 +2207,7 @@ Analyzed prediction error distributions for all 12 states to assess normality, b
 \begin{table}[h]
 \centering
 \caption{Prediction Error Statistics}
-\begin{tabular}{|l|c|c|c|c|}
+\begin{tabular}{l|c|c|c|c}
 \hline
 \textbf{State} & \textbf{Mean} & \textbf{Std} & \textbf{MAE} & \textbf{Normality} \\
 \hline
@@ -2303,7 +2313,7 @@ We analyzed the computational requirements for training and inference to assess 
 \begin{table}[h]
 \centering
 \caption{Training Computational Cost}
-\begin{tabular}{|l|r|r|}
+\begin{tabular}{l|r|r}
 \hline
 \textbf{Component} & \textbf{Time per Epoch} & \textbf{Percentage} \\
 \hline
@@ -2363,7 +2373,7 @@ Backward pass \& optimization & 1.3 s & 20\% \\
 \begin{table}[h]
 \centering
 \caption{Platform Deployment Assessment}
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{l|c|c|c}
 \hline
 \textbf{Platform} & \textbf{Feasible?} & \textbf{Latency} & \textbf{Notes} \\
 \hline
@@ -2414,7 +2424,7 @@ Understanding model limitations is critical for safe deployment. This section do
 \begin{table}[h]
 \centering
 \caption{Model Operating Envelope}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{l|c|c}
 \hline
 \textbf{Variable} & \textbf{Validated Range} & \textbf{Failure Beyond} \\
 \hline
@@ -2545,7 +2555,7 @@ Following the implementation of energy conservation loss and aggressive trajecto
 \begin{table}[h]
 \centering
 \caption{Parameter Identification: Standard vs Aggressive Training}
-\begin{tabular}{|l|c|c|c|}
+\begin{tabular}{l|c|c|c}
 \hline
 \textbf{Parameter} & \textbf{Original (5.00\%)} & \textbf{+ Aggressive} & \textbf{Change} \\
 \hline
@@ -2649,7 +2659,7 @@ Aggressive trajectories provide stronger gradient signals (cross-coupling terms 
 \begin{table}[h]
 \centering
 \caption{Training Metrics: Aggressive Trajectory Experiment}
-\begin{tabular}{|l|c|c|}
+\begin{tabular}{l|c|c}
 \hline
 \textbf{Metric} & \textbf{Epoch 0} & \textbf{Epoch 140} \\
 \hline
