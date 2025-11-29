@@ -713,6 +713,8 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 
 All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amplitudes to generate diverse flight dynamics. Table~\ref{tab:all_trajectories} provides a comprehensive breakdown of each trajectory's unique characteristics.
 
+\clearpage
+
 \begin{table*}[!t]
 \centering
 \caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
@@ -1859,6 +1861,8 @@ The complete optimization strategy systematically addresses every failure mode i
 \caption{Ablation Study: Progressive Impact of Optimization Components on 100-Step MAE. Each component addition yields substantial improvements: Baseline (1.49m) → +Curriculum Learning (0.82m, 45\% reduction) → +Scheduled Sampling (0.45m, 45\% further reduction) → +Dropout Regularization (0.12m, 73\% reduction) → +Energy Conservation Loss (0.029m, 76\% reduction). The cumulative 51× improvement demonstrates the synergistic effect of combining stability mechanisms systematically rather than in isolation.}
 \label{fig:ablation_study}
 \end{figure}
+
+\clearpage
 
 \subsection{Architecture: OptimizedPINNv2}
 
