@@ -700,8 +700,6 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 
 \textit{Multi-Step Rollout Loss:} Computed every 5th batch, enforcing consistency across the full prediction horizon while maintaining computational efficiency.
 
-\clearpage
-
 \subsection{Square Wave Reference Input Specifications}
 
 \textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. Square wave setpoints are filtered through a 250ms (0.25s) low-pass filter to prevent discontinuous jumps and reduce shakiness, resulting in smooth reference transitions. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
