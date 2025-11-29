@@ -190,6 +190,44 @@ The primary contributions of this work are threefold: \textbf{(1)} A systematic 
 
 \section{Model Architecture \& Physics Integration}
 
+\subsection{Theoretical Analysis: Observability of Inertia Parameters}
+
+The difficulty in identifying inertia parameters ($J_{xx}$, $J_{yy}$, $J_{zz}$) from trajectory data can be rigorously formalized through observability analysis of the governing equations. Consider the standard Euler equation for roll angular acceleration in the body frame:
+
+\begin{equation}
+\dot{p} = \frac{\tau_x}{J_{xx}} - \frac{(J_{yy} - J_{zz})}{J_{xx}} q r
+\label{eq:euler_roll}
+\end{equation}
+
+where $p$, $q$, $r$ are the roll, pitch, and yaw rates, $\tau_x$ is the applied roll torque, and $J_{xx}$, $J_{yy}$, $J_{zz}$ are the principal moments of inertia. The parameter sensitivity—critical for gradient-based identification—is given by the partial derivative:
+
+\begin{equation}
+\frac{\partial \dot{p}}{\partial J_{xx}} = -\frac{\tau_x}{J_{xx}^2} + \frac{(J_{yy} - J_{zz})}{J_{xx}^2} q r
+\label{eq:sensitivity_jxx}
+\end{equation}
+
+For the standard flight envelope ($\phi, \theta \in [-20^\circ, 20^\circ]$), the angular rates remain small ($|q|, |r| < 0.5$ rad/s in typical maneuvers), causing the cross-coupling term $qr$ to vanish: $|qr| \approx O(10^{-2})$ rad$^2$/s$^2$. Consequently, the sensitivity becomes dominated by the first term $-\tau_x / J_{xx}^2$, which depends on precise measurement of applied torques—quantities subject to actuator modeling errors and measurement noise. In contrast, the mass parameter $m$ appears in the vertical dynamics:
+
+\begin{equation}
+\ddot{z} = -\frac{T}{m} + g
+\label{eq:vertical_mass}
+\end{equation}
+
+where the sensitivity $\partial \ddot{z} / \partial m = T/m^2$ directly couples to easily-measurable vertical acceleration, providing strong gradients even at hover. This asymmetry renders inertia identification fundamentally more challenging than mass identification.
+
+From an information-theoretic perspective, the Fisher Information Matrix (FIM) quantifies parameter identifiability. For a parameter $\theta$, the FIM element is:
+
+\begin{equation}
+\mathcal{I}(\theta) = \mathbb{E}\left[\left(\frac{\partial \log p(\mathbf{y}|\theta)}{\partial \theta}\right)^2\right]
+\label{eq:fisher_info}
+\end{equation}
+
+where $\mathbf{y}$ represents observable states. The Cramér-Rao bound establishes that the variance of any unbiased estimator $\hat{\theta}$ satisfies $\text{Var}(\hat{\theta}) \geq 1/\mathcal{I}(\theta)$. When the output sensitivity $\partial \mathbf{y}/\partial J_{xx}$ is small—as occurs at small angles where cross-coupling terms vanish—the Fisher information $\mathcal{I}(J_{xx})$ decreases, and the estimation variance lower bound increases. Our experimental observation of 15\% inertia errors versus 0\% mass errors reflects this fundamental observability limit, not a deficiency of the optimization algorithm.
+
+Attempts to improve inertia observability through aggressive maneuvers ($\pm 45^\circ$--$60^\circ$ attitudes) encountered a critical failure mode: the training data simulator employed simplified linear drag assumptions that become invalid at high angular rates, where gyroscopic effects and nonlinear aerodynamic coupling dominate. The PINN, trained on this mis-specified simulation, learned \textit{hallucinated dynamics}—parameters that fit the incorrect high-angle data but degraded prediction accuracy within the physically valid $\pm 20^\circ$ envelope. This "Garbage In, Garbage Out" phenomenon demonstrates that aggressive excitation improves observability only when the underlying model fidelity matches the operational regime.
+
+To circumvent these limitations while preserving identifiability, we introduce an \textit{Energy Conservation Loss} (detailed in Section III-C) that enforces global energy consistency independent of local gradient magnitudes. This auxiliary constraint provides alternative pathways for parameter learning, enabling 5.0\% inertia identification without requiring high-angle maneuvers or risking model mismatch.
+
 \subsection{Neural Network Structure}
 \begin{table*}[!t]
 \centering
