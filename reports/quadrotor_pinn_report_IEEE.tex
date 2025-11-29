@@ -657,6 +657,8 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \end{tabular}
 \end{table*}
 
+\clearpage
+
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{results/ieee_publication_plots/fig_a_autoregressive_stability_proof.pdf}
@@ -690,41 +692,13 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \label{fig:training_pipeline}
 \end{figure}
 
+\clearpage
+
 \subsection{Square Wave Reference Input Specifications}
 
 \textbf{Training Data Uses Square Wave Inputs (Not Constant):} All 10 trajectories use square wave reference inputs for roll, pitch, yaw, and altitude. Square wave setpoints are filtered through a 250ms (0.25s) low-pass filter to prevent discontinuous jumps and reduce shakiness, resulting in smooth reference transitions. This provides rich dynamic behavior with periodic step changes, testing the controller's transient response repeatedly throughout each 5-second flight.
 
-\textbf{\textcolor{red}{CRITICAL: Why Plots Show Smooth Curves, NOT Square Waves}}
-
-\fcolorbox{red}{yellow!20}{%
-\begin{minipage}{0.95\textwidth}
-
-\textbf{IMPORTANT - Understanding Plot Interpretation:}
-
-\textbf{You will see SMOOTH CURVES in all trajectory plots (Figures 1-12), NOT square waves. This is physically CORRECT!}
-
-\begin{itemize}
-\item \textbf{Square Waves} = Reference SETPOINTS (red dashed lines) = What the controller is COMMANDED to achieve
-\item \textbf{Smooth Curves} = Actual system RESPONSE (blue curves) = What the quadrotor PHYSICALLY does
-\end{itemize}
-
-\textbf{Why the response MUST be smooth:}
-\begin{enumerate}
-\item \textbf{Physical impossibility}: A quadrotor with mass and inertia CANNOT instantaneously change angles or altitude (would require infinite force/torque)
-\item \textbf{Newton's Laws}: $F = ma$ requires finite acceleration time. Mass resists instantaneous velocity changes.
-\item \textbf{Controller dynamics}: PID controllers produce smooth tracking with rise time ($\sim$0.5s), overshoot, and settling behavior
-\item \textbf{This validates realism}: The smooth curves demonstrate physically accurate dynamics, not simulation errors
-\end{enumerate}
-
-\textbf{Visual Guide:}
-\begin{itemize}
-\item \textbf{Red dashed horizontal lines} = Square wave setpoint levels (step commands)
-\item \textbf{Blue solid curves} = Smooth physical response tracking those setpoints
-\item \textbf{Transitions between setpoints} = Rise time, overshoot, settling (realistic controller behavior)
-\end{itemize}
-
-\end{minipage}%
-}
+\textit{Note:} Trajectory plots show smooth curves (actual system response) tracking square wave setpoints. This smooth behavior is physically required by Newton's laws---mass and inertia prevent instantaneous changes.
 
 
 
