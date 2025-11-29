@@ -1,0 +1,573 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 24.1) (preloaded format=pdflatex.fmt)
+ restricted \write18 enabled.
+entering extended mode
+(quadrotor_pinn_report_IEEE.tex
+LaTeX2e <2023-11-01> patch level 1
+L3 programming layer <2024-01-04>
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/ieeetran\IEEEtran.cls
+Document Class: IEEEtran 2015/08/26 V1.8b by Michael Shell
+-- See the "IEEEtran_HOWTO" manual for usage information.
+-- http://www.michaelshell.org/tex/ieeetran/
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ot1ptm.fd)
+-- Using 8.5in x 11in (letter) paper.
+-- Using PDF output.
+-- This is a 10 point document.
+) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1ptm.fd))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+For additional information on amsmath, use the `?' option.
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfonts.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssymb.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphicx.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphics.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\graphics.c
+fg)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
+))) (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/cite\cite.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\color.cfg)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/graphics\mathcolor.ltx)
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/algorithms\algorithmic.
+sty (C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\ifthen.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\textcomp.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/preprint\balance.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperref.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\infwarerr.s
+ty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvsetkeys.sty
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\kvdefine
+keys.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdfescape.s
+ty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcmds.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pdftexcmds
+.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/letltxmacro\letltxmacro
+.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\nameref.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcount.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestring\gettit
+lestring.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvoptions.sty
+)))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolbox.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc.def)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intcalc.sty)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.def)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bigintcalc
+.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atbegshi-ltx.sty))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdftex.def
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\atveryend-ltx.sty)
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\rerunfil
+echeck.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter\uniquec
+ounter.sty)))
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdf
+tex.def) (quadrotor_pinn_report_IEEE.aux)
+-- Lines per column: 58 (exact).
+
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mk
+ii
+[Loading MPS to PDF converter (version 2006.09.02).]
+)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-b
+ase.sty
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstopdf-sys.c
+fg)) (quadrotor_pinn_report_IEEE.out) (quadrotor_pinn_report_IEEE.out)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.fd)
+Overfull \hbox (264.0pt too wide) in paragraph at lines 74--75
+ [][] 
+
+Overfull \hbox (264.0pt too wide) in paragraph at lines 107--108
+ [][] 
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ptm.fd)
+[1{C:/Users/sreej/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/sr
+eej/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc} <./pinn_schemati
+cs.pdf>] [2 <./pinn_schematics.pdf>] [3]
+Overfull \hbox (264.0pt too wide) in paragraph at lines 226--227
+ [][] 
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\t1pcr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1pcr.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\t1cmtt.fd)
+(C:\Users\sreej\AppData\Local\Programs\MiKTeX\tex/latex/base\ts1cmtt.fd)
+[4 <./pinn_schematics.pdf>]
+
+LaTeX Warning: Text page 5 contains only floats.
+
+
+Overfull \vbox (18.96861pt too high) has occurred while \output is active
+
+LaTeX Warning: Text page 5 contains only floats.
+
+
+Overfull \vbox (18.96861pt too high) has occurred while \output is active
+[5]
+Overfull \hbox (264.0pt too wide) in paragraph at lines 357--358
+ [][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 386--387
+[]\T1/ptm/m/n/10 Normalized physics loss form: $\OMS/cmsy/m/n/10 L[] \OT1/cmr/m
+/n/10 =
+
+Underfull \hbox (badness 4872) in paragraph at lines 422--423
+ \T1/ptm/m/it/10 2) Trans-la-tional Dy-nam-ics (New-ton's Laws in Body
+
+Overfull \hbox (264.0pt too wide) in paragraph at lines 441--442
+ [][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 457--457
+[]|\T1/ptm/b/n/8 Cross-Coupling
+
+Overfull \hbox (264.0pt too wide) in paragraph at lines 475--476
+ [][] 
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|$\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 860 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|$\OT1/cmr/m/n/8 5\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 831 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 527--527
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 029 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 528--528
+[]|$\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 200 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 528--528
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 058 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 528--528
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 380 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 529--529
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 366 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 529--529
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 571 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 529--529
+[]|$\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 050 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Overfull \hbox (22.78825pt too wide) in paragraph at lines 536--543
+[][] 
+[6 <./pinn_schematics.pdf>]
+Overfull \hbox (264.0pt too wide) in paragraph at lines 638--639
+ [][] 
+[7]
+Overfull \hbox (254.99841pt too wide) in paragraph at lines 677--678
+[][][][] 
+
+Underfull \vbox (badness 10000) has occurred while \output is active
+Overfull \vbox (90.29659pt too high) has occurred while \output is active
+[8] [9]
+Underfull \hbox (badness 7944) in paragraph at lines 841--842
+[]\T1/ptm/b/n/9 Cross-coupling ef-fects\T1/ptm/m/n/9 : Eu-ler equa-tion terms $
+\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 J[] \OMS/cmsy/m/n/9 ^^@
+[10]
+Overfull \hbox (100.12326pt too wide) in paragraph at lines 866--877
+[][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 893--894
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 900--901
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 907--908
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 916--917
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 923--924
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 930--931
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 939--940
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 946--947
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 953--954
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 962--963
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 969--970
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 976--977
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 985--986
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 992--993
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 999--1000
+ [][] 
+
+Overfull \hbox (212.39685pt too wide) in paragraph at lines 1006--1007
+ [][] 
+[11] [12 <../results/comparative_trajectories/01_x_all_trajectories.png> <../re
+sults/comparative_trajectories/02_y_all_trajectories.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1046--1047
+[]\T1/ptm/b/n/9 Mathematical Model\T1/ptm/m/n/9 : $\OML/cmm/m/it/9 x[]\OT1/cmr/
+m/n/9 (\OML/cmm/m/it/9 t \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 dt\OT1/cmr/m/n/9 ) =
+
+Underfull \hbox (badness 2229) in paragraph at lines 1046--1047
+\OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 t\OT1/cmr/m/n/9 ) + \OML/cmm
+/m/it/9 \OT1/cmr/m/n/9 (\OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/m/it/9 t\O
+T1/cmr/m/n/9 ) \OMS/cmsy/m/n/9 ^^@ \OML/cmm/m/it/9 x[]\OT1/cmr/m/n/9 (\OML/cmm/
+m/it/9 t\OT1/cmr/m/n/9 ))$ \T1/ptm/m/n/9 where
+[13 <../results/comparative_trajectories/03_z_all_trajectories.png> <../results
+/comparative_trajectories/04_roll_all_trajectories.png>] [14 <../results/compar
+ative_trajectories/05_pitch_all_trajectories.png> <../results/comparative_traje
+ctories/06_yaw_all_trajectories.png>] [15 <../results/comparative_trajectories/
+07_p_all_trajectories.png> <../results/comparative_trajectories/08_q_all_trajec
+tories.png>] [16 <../results/comparative_trajectories/09_r_all_trajectories.png
+> <../results/comparative_trajectories/10_vx_all_trajectories.png>]
+Underfull \vbox (badness 3058) has occurred while \output is active [17 <../res
+ults/comparative_trajectories/11_vy_all_trajectories.png> <../results/comparati
+ve_trajectories/12_vz_all_trajectories.png>] [18 <../results/comparative_trajec
+tories/13_thrust_all_trajectories.png> <../results/comparative_trajectories/14_
+torque_x_all_trajectories.png>] [19 <../results/comparative_trajectories/15_tor
+que_y_all_trajectories.png> <../results/comparative_trajectories/16_torque_z_al
+l_trajectories.png>]
+Underfull \hbox (badness 2512) in paragraph at lines 1144--1145
+[]\T1/ptm/m/n/9 All state vari-ables showed dis-con-tin-u-ous jumps be-tween
+
+Underfull \hbox (badness 5231) in paragraph at lines 1151--1152
+[]\T1/ptm/m/n/9 Implemented \T1/pcr/m/n/9 temporal_smoothness_loss() \T1/ptm/m/
+n/9 with soft
+
+Underfull \hbox (badness 4479) in paragraph at lines 1167--1168
+[]\T1/ptm/m/n/9 Soft con-straints us-ing ReLU penal-ties (vi-o-la-tions in-cur
+
+Overfull \hbox (73.9717pt too wide) detected at line 1197
+[] \OMS/cmsy/m/n/9 ^^Y [] ^^@ \OT1/cmr/m/n/9 2\OML/cmm/m/it/9 p [][]q \OMS/cmsy
+/m/n/9 ^^A \OML/cmm/m/it/9 r \OMS/cmsy/m/n/9 ^^Y \OT1/cmr/m/n/9 0[]\OML/cmm/m/i
+t/9 q; r[]
+
+Underfull \hbox (badness 1742) in paragraph at lines 1217--1218
+[]\T1/ptm/b/n/9 Direct an-gu-lar ac-cel-er-a-tion mea-sure-ments\T1/ptm/m/n/9 :
+ In-clude
+
+Underfull \hbox (badness 1939) in paragraph at lines 1224--1226
+[]\T1/ptm/b/n/9 Future Work Di-rec-tions (Re-main-ing Af-ter Im-ple-mented
+[20]
+Overfull \hbox (72.34743pt too wide) detected at line 1267
+\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 = [] [] []
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1290
+[]|$\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 86 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1290
+[]|$\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 00 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1290--1290
+[]|$\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 14 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1291--1291
+[]|$\OT1/cmr/m/n/8 9\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 20 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1291--1291
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 20 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1291--1291
+[]|$\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 80 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1292--1292
+[]|$\OT1/cmr/m/n/8 1\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 366 \OMS/cmsy/m/n/8 ^^B \OT
+1/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1292--1292
+[]|$\OT1/cmr/m/n/8 2\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 00 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+
+Underfull \hbox (badness 10000) in paragraph at lines 1292--1292
+[]|$\OT1/cmr/m/n/8 6\OML/cmm/m/it/8 :\OT1/cmr/m/n/8 34 \OMS/cmsy/m/n/8 ^^B \OT1
+/cmr/m/n/8 10[]$
+[21]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1488.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\rightarrow' on input line 1488.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1488.
+
+[22]
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1544 \begin{table}[H]
+                       
+
+Overfull \hbox (92.5094pt too wide) in paragraph at lines 1547--1572
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1617 \begin{table}[H]
+                       
+
+Overfull \hbox (4.02188pt too wide) in paragraph at lines 1620--1631
+ [][] 
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1638.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\ll' on input line 1638.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1638.
+
+[23]
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1739 \begin{table}[H]
+                       
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1808 \begin{table}[H]
+                       
+
+Overfull \hbox (180.11218pt too wide) in paragraph at lines 1811--1827
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1884 \begin{table}[H]
+                       
+[24]
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1903 \begin{table}[H]
+                       
+
+Overfull \hbox (65.02835pt too wide) in paragraph at lines 1906--1921
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1926 \begin{table}[H]
+                       
+
+Overfull \hbox (85.0653pt too wide) in paragraph at lines 1929--1940
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1945 \begin{table}[H]
+                       
+
+Overfull \hbox (79.45961pt too wide) in paragraph at lines 1947--1957
+ [][] 
+
+! LaTeX Error: Unknown float option `H'.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1964 \begin{table}[H]
+                       
+
+Underfull \hbox (badness 10000) in paragraph at lines 1971--1971
+[]|\T1/ptm/m/n/9 Out-of-distribution
+
+Underfull \hbox (badness 10000) in paragraph at lines 1972--1972
+[]|\T1/ptm/m/n/9 Modular ar-chi-tec-ture broke
+
+Underfull \hbox (badness 10000) in paragraph at lines 1974--1974
+[]|\T1/ptm/b/n/9 All base-line com-po-nents
+
+Overfull \hbox (153.8858pt too wide) in paragraph at lines 1967--1977
+ [][] 
+
+Overfull \hbox (0.76445pt too wide) detected at line 2033
+[][][]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 = \OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 +
+ \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[
+]\OMS/cmsy/m/n/9 L[] \OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[] 
+\OT1/cmr/m/n/9 + \OML/cmm/m/it/9 ^^U[]\OMS/cmsy/m/n/9 L[]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2080--2081
+[]\T1/ptm/b/n/9 Status: \T1/ptm/m/n/9 Data gen-er-ated and avail-able in
+
+Underfull \hbox (badness 10000) in paragraph at lines 2080--2081
+\T1/pcr/m/n/9 data/aggressive_inertia_trajectories.csv\T1/ptm/m/n/9 .
+
+Overfull \hbox (74.89507pt too wide) in paragraph at lines 2104--2122
+ [][] 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[25]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 2236--2237
+[]\T1/ptm/m/n/9 Complex deriva-tive com-pu-ta-tions (ro-ta-tion ma-tri-ces,
+
+Overfull \hbox (11.7056pt too wide) in paragraph at lines 2270--2280
+ [][] 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[26]
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 2480--2481
+ \T1/ptm/m/it/10 1) Sim-u-la-tion Break-down at Large An-gles: [][][] \T1/ptm/m
+/n/9 The
+
+Underfull \hbox (badness 2261) in paragraph at lines 2480--2481
+\T1/pcr/m/n/9 QuadrotorSimulator \T1/ptm/m/n/9 uses sim-pli-fied physics that b
+e-come
+[27]
+Overfull \hbox (219.19684pt too wide) in paragraph at lines 2532--2533
+ [] 
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[28] [29] [30] (quadrotor_pinn_report_IEEE.aux) )
+(see the transcript file for additional information) <C:\Users\sreej\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0900.pk> <C:\Users\sreej\AppD
+ata\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm0800.pk> <C:\Users\sree
+j\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tctt1000.pk> <C:\User
+s\sreej\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrb0900.pk><C:
+/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx1
+0.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmbx12.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public
+/amsfonts/cm/cmbx5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type
+1/public/amsfonts/cm/cmbx7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fo
+nts/type1/public/amsfonts/cm/cmbx9.pfb><C:/Users/sreej/AppData/Local/Programs/M
+iKTeX/fonts/type1/public/amsfonts/cm/cmex10.pfb><C:/Users/sreej/AppData/Local/P
+rograms/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><C:/Users/sreej/Ap
+pData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmex8.pfb><C:/U
+sers/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cm
+ex9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
+ts/cm/cmmi10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmmi5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmmi6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/cm/cmmi7.pfb><C:/Users/sreej/AppData/Local/Programs
+/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi8.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi9.pfb><C:/Users/sreej/AppDat
+a/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><C:/User
+s/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cmextra/cmmib
+7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cmextra/cmmib9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/p
+ublic/amsfonts/cm/cmr10.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts
+/type1/public/amsfonts/cm/cmr5.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmr6.pfb><C:/Users/sreej/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/sreej/AppData
+/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb><C:/Users/sreej/
+AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb><C:/Use
+rs/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy5.pfb
+><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/c
+msy6.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfo
+nts/cm/cmsy7.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/type1/publ
+ic/amsfonts/cm/cmsy8.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/fonts/ty
+pe1/public/amsfonts/cm/cmsy9.pfb><C:/Users/sreej/AppData/Local/Programs/MiKTeX/
+fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/sreej/AppData/Local/Pr
+ograms/MiKTeX/fonts/type1/urw/courier/ucrb8a.pfb><C:/Users/sreej/AppData/Local/
+Programs/MiKTeX/fonts/type1/urw/courier/ucrr8a.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/times/utmb8a.pfb><C:/Users/sreej/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/urw/times/utmbi8a.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><C:/Users/sreej/AppData/Loc
+al/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
+Output written on quadrotor_pinn_report_IEEE.pdf (30 pages, 7934869 bytes).
+Transcript written on quadrotor_pinn_report_IEEE.log.
