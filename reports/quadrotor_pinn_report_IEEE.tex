@@ -39,7 +39,7 @@
 % Abstract
 \IEEEtitleabstractindextext{%
 \begin{abstract}
-While Physics-Informed Neural Networks (PINNs) demonstrate exceptional performance in function approximation and single-step prediction tasks, their stability in long-horizon autoregressive control applications remains under-explored. This work investigates the critical relationship between architectural complexity and autoregressive stability through systematic evaluation on quadrotor 6-DOF dynamics. We demonstrate that architectural sophistication—including Fourier feature embeddings and modular physics-network decoupling—often degrades long-term prediction stability, leading to catastrophic divergence (errors exceeding 100m) despite high single-step accuracy. Counter-intuitively, a carefully optimized monolithic architecture with dropout regularization and curriculum learning (5→50 steps) achieved 51× improvement over baseline in 100-step trajectory tracking (0.029m vs 1.49m MAE), while simultaneously identifying physical parameters with 0.0\% error for mass and motor coefficients and 5.0\% error for inertias. Our systematic methodology—preserving baseline physics coupling while progressively introducing stability mechanisms—demonstrates that architectural simplicity with proper training strategies outperforms complex designs for autoregressive tasks. Critically, experiments with aggressive trajectories ($\pm$45--60$^\circ$) revealed fundamental limitations in simulation-based training: the model "hallucinated" unphysical dynamics outside the $\pm$20$^\circ$ training envelope, paradoxically degrading parameter identification despite improved theoretical observability. This negative result highlights the "Garbage In, Garbage Out" vulnerability of PINNs and establishes practical boundaries for simulation-based system identification, providing crucial guidance for deploying PINNs in safety-critical control applications.
+While Physics-Informed Neural Networks (PINNs) demonstrate exceptional performance in function approximation and single-step prediction tasks, their stability in long-horizon autoregressive control applications remains under-explored. This work investigates the critical relationship between architectural complexity and autoregressive stability through systematic evaluation on quadrotor 6-DOF dynamics. We demonstrate that architectural sophistication---including Fourier feature embeddings and modular physics-network decoupling---often degrades long-term prediction stability, leading to catastrophic divergence (errors exceeding 100m) despite high single-step accuracy. Counter-intuitively, a carefully optimized monolithic architecture with dropout regularization and curriculum learning (5$\rightarrow$50 steps) achieved 51$	imes$ improvement over baseline in 100-step trajectory tracking (0.029m vs 1.49m MAE), while simultaneously identifying physical parameters with 0.0\% error for mass and motor coefficients and 5.0\% error for inertias. Our systematic methodology---preserving baseline physics coupling while progressively introducing stability mechanisms---demonstrates that architectural simplicity with proper training strategies outperforms complex designs for autoregressive tasks. Critically, experiments with aggressive trajectories ($\pm$45--60$^\circ$) revealed fundamental limitations in simulation-based training: the model "hallucinated" unphysical dynamics outside the $\pm$20$^\circ$ training envelope, paradoxically degrading parameter identification despite improved theoretical observability. This negative result highlights the "Garbage In, Garbage Out" vulnerability of PINNs and establishes practical boundaries for simulation-based system identification, providing crucial guidance for deploying PINNs in safety-critical control applications.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -55,18 +55,18 @@ Physics-informed neural networks, quadrotor dynamics, parameter identification, 
 
 \section{Introduction}
 
-Physics-Informed Neural Networks (PINNs) have emerged as a promising paradigm for robotics applications, offering the potential to combine data-driven learning with first-principles knowledge of system dynamics. By embedding governing equations—such as Newton-Euler dynamics for aerial vehicles—directly into the loss function, PINNs enable simultaneous state prediction and system identification with reduced data requirements compared to purely black-box approaches. However, despite significant advances in applying PINNs to diverse engineering problems, a critical gap persists: most prior work evaluates performance on single-step prediction accuracy, whereas practical control applications demand multi-step autoregressive stability over extended time horizons. For dynamically coupled systems like quadrotors operating in closed-loop control, prediction errors compound recursively, making long-horizon performance fundamentally distinct from—and often uncorrelated with—single-step metrics.
+Physics-Informed Neural Networks (PINNs) have emerged as a promising paradigm for robotics applications, offering the potential to combine data-driven learning with first-principles knowledge of system dynamics. By embedding governing equations---such as Newton-Euler dynamics for aerial vehicles---directly into the loss function, PINNs enable simultaneous state prediction and system identification with reduced data requirements compared to purely black-box approaches. However, despite significant advances in applying PINNs to diverse engineering problems, a critical gap persists: most prior work evaluates performance on single-step prediction accuracy, whereas practical control applications demand multi-step autoregressive stability over extended time horizons. For dynamically coupled systems like quadrotors operating in closed-loop control, prediction errors compound recursively, making long-horizon performance fundamentally distinct from---and often uncorrelated with---single-step metrics.
 
-This work uncovers a fundamental \textit{optimization paradox} in autoregressive PINNs: architectural modifications and training strategies that improve single-step accuracy by factors of 2--10× can paradoxically degrade multi-step rollout performance by 100--3,500,000×, leading to catastrophic divergence. Through systematic experimentation, we identified two primary failure mechanisms. First, \textit{modular architectures}—which decouple physics computation from neural network prediction to isolate gradient flows—inadvertently break the dynamic coupling essential for stable recursive prediction, causing error accumulation rates to explode beyond 50-step horizons. Second, \textit{Fourier feature embeddings}, while effective for learning high-frequency functions in stationary problems, suffer severe distribution shift during autoregressive rollout: as prediction errors accumulate, state vectors drift outside the training distribution, causing frequency-based representations to extrapolate catastrophically. These findings reveal that optimization strategies validated on single-step benchmarks can introduce instabilities invisible to standard evaluation protocols, yet fatal in deployment.
+This work uncovers a fundamental \textit{optimization paradox} in autoregressive PINNs: architectural modifications and training strategies that improve single-step accuracy by factors of 2--10$	imes$ can paradoxically degrade multi-step rollout performance by 100--3,500,000×, leading to catastrophic divergence. Through systematic experimentation, we identified two primary failure mechanisms. First, \textit{modular architectures}---which decouple physics computation from neural network prediction to isolate gradient flows---inadvertently break the dynamic coupling essential for stable recursive prediction, causing error accumulation rates to explode beyond 50-step horizons. Second, \textit{Fourier feature embeddings}, while effective for learning high-frequency functions in stationary problems, suffer severe distribution shift during autoregressive rollout: as prediction errors accumulate, state vectors drift outside the training distribution, causing frequency-based representations to extrapolate catastrophically. These findings reveal that optimization strategies validated on single-step benchmarks can introduce instabilities invisible to standard evaluation protocols, yet fatal in deployment.
 
-To address these challenges, we developed \textit{Optimized PINN v2}, a systematic training methodology that preserves monolithic architecture coupling while introducing targeted stability mechanisms. The approach employs \textit{curriculum learning} with progressively increasing rollout horizons (5→10→20→50 steps over 250 epochs), allowing the network to internalize error-correcting dynamics at manageable complexity before extending to longer predictions. We augment the standard physics loss with two critical constraints: (1) an \textit{energy conservation penalty} that enforces consistency between kinetic/potential energy transitions and control inputs, preventing unphysical drift in autoregressive chains, and (2) a \textit{temporal smoothness regularizer} that penalizes abrupt state derivatives, mitigating high-frequency instabilities. Additionally, \textit{scheduled sampling} gradually introduces model predictions (0→30\%) during training to expose the network to its own error distribution, bridging the train-test mismatch inherent in teacher-forced learning. This combination maintains the interpretability and gradient efficiency of the baseline PINN while achieving stable 100-step predictions.
+To address these challenges, we developed \textit{Optimized PINN v2}, a systematic training methodology that preserves monolithic architecture coupling while introducing targeted stability mechanisms. The approach employs \textit{curriculum learning} with progressively increasing rollout horizons (5$\rightarrow$10$\rightarrow$20$\rightarrow$50 steps over 250 epochs), allowing the network to internalize error-correcting dynamics at manageable complexity before extending to longer predictions. We augment the standard physics loss with two critical constraints: (1) an \textit{energy conservation penalty} that enforces consistency between kinetic/potential energy transitions and control inputs, preventing unphysical drift in autoregressive chains, and (2) a \textit{temporal smoothness regularizer} that penalizes abrupt state derivatives, mitigating high-frequency instabilities. Additionally, \textit{scheduled sampling} gradually introduces model predictions (0$\rightarrow$30\%) during training to expose the network to its own error distribution, bridging the train-test mismatch inherent in teacher-forced learning. This combination maintains the interpretability and gradient efficiency of the baseline PINN while achieving stable 100-step predictions.
 
-The primary contributions of this work are threefold: \textbf{(1)} A systematic characterization of failure modes in autoregressive PINNs, demonstrating that architectural decoupling and feature engineering—common practices in supervised learning—can destabilize coupled dynamical systems during recursive prediction; \textbf{(2)} A validated training methodology achieving 51× improvement in 100-step trajectory tracking error (0.029m vs 1.49m Mean Absolute Error over 10-second horizons), with simultaneous identification of mass and motor coefficients ($k_t$, $k_q$) at 0.0\% error and inertia parameters ($J_{xx}$, $J_{yy}$, $J_{zz}$) at 5.0\% error; \textbf{(3)} An analysis of observability limits in simulation-based system identification, revealing that aggressive training maneuvers ($\pm$45--60$^\circ$ attitudes) intended to improve inertia parameter gradients instead induced \textit{model mismatch hallucination}, where the PINN learned spurious dynamics beyond the $\pm$20$^\circ$ simulation envelope, paradoxically degrading identification performance. These results establish practical boundaries for deploying PINNs in safety-critical control applications and highlight the necessity of validating not just accuracy, but \textit{autoregressive stability}, in learned dynamics models.
+The primary contributions of this work are threefold: \textbf{(1)} A systematic characterization of failure modes in autoregressive PINNs, demonstrating that architectural decoupling and feature engineering---common practices in supervised learning---can destabilize coupled dynamical systems during recursive prediction; \textbf{(2)} A validated training methodology achieving 51$	imes$ improvement in 100-step trajectory tracking error (0.029m vs 1.49m Mean Absolute Error over 10-second horizons), with simultaneous identification of mass and motor coefficients ($k_t$, $k_q$) at 0.0\% error and inertia parameters ($J_{xx}$, $J_{yy}$, $J_{zz}$) at 5.0\% error; \textbf{(3)} An analysis of observability limits in simulation-based system identification, revealing that aggressive training maneuvers ($\pm$45--60$^\circ$ attitudes) intended to improve inertia parameter gradients instead induced \textit{model mismatch hallucination}, where the PINN learned spurious dynamics beyond the $\pm$20$^\circ$ simulation envelope, paradoxically degrading identification performance. These results establish practical boundaries for deploying PINNs in safety-critical control applications and highlight the necessity of validating not just accuracy, but \textit{autoregressive stability}, in learned dynamics models.
 
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=3,trim=0 2cm 0 0,clip]{pinn_schematics.pdf}
+\includegraphics[width=\columnwidth,page=3,trim=0 2cm 0 0,clip]{pinn_schematics.pdf}
 \caption{Comparison between Standard Neural Networks and Physics-Informed Neural Networks. PINNs integrate physical laws directly into the learning process, resulting in data-efficient, physically meaningful, and stable predictions with better generalization capabilities.}
 \label{fig:nn_vs_pinn}
 \end{figure}
@@ -99,8 +99,8 @@ The primary contributions of this work are threefold: \textbf{(1)} A systematic 
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=2,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
-\caption{Complete Data Flow Pipeline: From data generation through training to evaluation. The pipeline includes trajectory generation (10 sequences, 49,382 samples), an 80/20 train-test split, curriculum learning over 250 epochs, and holdout evaluation achieving 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon).}
+\includegraphics[width=\columnwidth,page=2,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
+\caption{Complete Data Flow Pipeline: From data generation through training to evaluation. The pipeline includes trajectory generation (10 sequences, 49,382 samples), an 80/20 train-test split, curriculum learning over 250 epochs, and holdout evaluation achieving 51$	imes$ improvement over baseline (0.029m vs 1.49m at 100-step horizon).}
 \label{fig:data_flow}
 \end{figure}
 
@@ -136,7 +136,7 @@ The primary contributions of this work are threefold: \textbf{(1)} A systematic 
 & \textbf{Step} & \textbf{Implementation} & \textbf{Result} \\
 \midrule
 11 & Foundation Model & Basic PINN with standard physics weighting & 14.8\% error \\
-12 & Enhanced Physics & 10× physics loss increase & 8.9\% error \\
+12 & Enhanced Physics & 10$	imes$ physics loss increase & 8.9\% error \\
 13 & Direct Parameter ID & Torque/acceleration-based identification & 5.8\% error \\
 14 & Training Optimization & Gradient clipping, advanced regularization & <100 epochs \\
 15 & Hyperparameter Tuning & Learning rates, batch sizes, loss weights & Optimized \\
@@ -197,14 +197,14 @@ The difficulty in identifying inertia parameters ($J_{xx}$, $J_{yy}$, $J_{zz}$) 
 \label{eq:euler_roll}
 \end{equation}
 
-where $p$, $q$, $r$ are the roll, pitch, and yaw rates, $\tau_x$ is the applied roll torque, and $J_{xx}$, $J_{yy}$, $J_{zz}$ are the principal moments of inertia. The parameter sensitivity—critical for gradient-based identification—is given by the partial derivative:
+where $p$, $q$, $r$ are the roll, pitch, and yaw rates, $\tau_x$ is the applied roll torque, and $J_{xx}$, $J_{yy}$, $J_{zz}$ are the principal moments of inertia. The parameter sensitivity---critical for gradient-based identification---is given by the partial derivative:
 
 \begin{equation}
 \frac{\partial \dot{p}}{\partial J_{xx}} = -\frac{\tau_x}{J_{xx}^2} + \frac{(J_{yy} - J_{zz})}{J_{xx}^2} q r
 \label{eq:sensitivity_jxx}
 \end{equation}
 
-For the standard flight envelope ($\phi, \theta \in [-20^\circ, 20^\circ]$), the angular rates remain small ($|q|, |r| < 0.5$ rad/s in typical maneuvers), causing the cross-coupling term $qr$ to vanish: $|qr| \approx O(10^{-2})$ rad$^2$/s$^2$. Consequently, the sensitivity becomes dominated by the first term $-\tau_x / J_{xx}^2$, which depends on precise measurement of applied torques—quantities subject to actuator modeling errors and measurement noise. In contrast, the mass parameter $m$ appears in the vertical dynamics:
+For the standard flight envelope ($\phi, \theta \in [-20^\circ, 20^\circ]$), the angular rates remain small ($|q|, |r| < 0.5$ rad/s in typical maneuvers), causing the cross-coupling term $qr$ to vanish: $|qr| \approx O(10^{-2})$ rad$^2$/s$^2$. Consequently, the sensitivity becomes dominated by the first term $-\tau_x / J_{xx}^2$, which depends on precise measurement of applied torques---quantities subject to actuator modeling errors and measurement noise. In contrast, the mass parameter $m$ appears in the vertical dynamics:
 
 \begin{equation}
 \ddot{z} = -\frac{T}{m} + g
@@ -220,9 +220,9 @@ From an information-theoretic perspective, the Fisher Information Matrix (FIM) q
 \label{eq:fisher_info}
 \end{equation}
 
-where $\mathbf{y}$ represents observable states. The Cramér-Rao bound establishes that the variance of any unbiased estimator $\hat{\theta}$ satisfies $\text{Var}(\hat{\theta}) \geq 1/\mathcal{I}(\theta)$. When the output sensitivity $\partial \mathbf{y}/\partial J_{xx}$ is small—as occurs at small angles where cross-coupling terms vanish—the Fisher information $\mathcal{I}(J_{xx})$ decreases, and the estimation variance lower bound increases. Our experimental observation of 15\% inertia errors versus 0\% mass errors reflects this fundamental observability limit, not a deficiency of the optimization algorithm.
+where $\mathbf{y}$ represents observable states. The Cramér-Rao bound establishes that the variance of any unbiased estimator $\hat{\theta}$ satisfies $\text{Var}(\hat{\theta}) \geq 1/\mathcal{I}(\theta)$. When the output sensitivity $\partial \mathbf{y}/\partial J_{xx}$ is small---as occurs at small angles where cross-coupling terms vanish---the Fisher information $\mathcal{I}(J_{xx})$ decreases, and the estimation variance lower bound increases. Our experimental observation of 15\% inertia errors versus 0\% mass errors reflects this fundamental observability limit, not a deficiency of the optimization algorithm.
 
-Attempts to improve inertia observability through aggressive maneuvers ($\pm 45^\circ$--$60^\circ$ attitudes) encountered a critical failure mode: the training data simulator employed simplified linear drag assumptions that become invalid at high angular rates, where gyroscopic effects and nonlinear aerodynamic coupling dominate. The PINN, trained on this mis-specified simulation, learned \textit{hallucinated dynamics}—parameters that fit the incorrect high-angle data but degraded prediction accuracy within the physically valid $\pm 20^\circ$ envelope. This "Garbage In, Garbage Out" phenomenon demonstrates that aggressive excitation improves observability only when the underlying model fidelity matches the operational regime.
+Attempts to improve inertia observability through aggressive maneuvers ($\pm 45^\circ$--$60^\circ$ attitudes) encountered a critical failure mode: the training data simulator employed simplified linear drag assumptions that become invalid at high angular rates, where gyroscopic effects and nonlinear aerodynamic coupling dominate. The PINN, trained on this mis-specified simulation, learned \textit{hallucinated dynamics}---parameters that fit the incorrect high-angle data but degraded prediction accuracy within the physically valid $\pm 20^\circ$ envelope. This "Garbage In, Garbage Out" phenomenon demonstrates that aggressive excitation improves observability only when the underlying model fidelity matches the operational regime.
 
 To circumvent these limitations while preserving identifiability, we introduce an \textit{Energy Conservation Loss} (detailed in Section III-C) that enforces global energy consistency independent of local gradient magnitudes. This auxiliary constraint provides alternative pathways for parameter learning, enabling 5.0\% inertia identification without requiring high-angle maneuvers or risking model mismatch.
 
@@ -256,7 +256,7 @@ Physics & - & - & 6 & Physical parameters \\
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=1]{pinn_schematics.pdf}
+\includegraphics[width=\columnwidth,page=1]{pinn_schematics.pdf}
 \caption{PINN Architecture: Deep feed-forward neural network with 5 layers of 256 neurons each, dropout regularization for stability. The network takes 16D input (12 states + 4 controls) and outputs 12D next states (full 6-DOF dynamics), with 6 physics parameters (m, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) learned during training. Total: 204,818 parameters.}
 \label{fig:architecture}
 \end{figure}
@@ -366,7 +366,7 @@ These coefficients relate motor angular velocities to thrust forces and torques:
 
 \subsection{PINN Mapping Summary}
 \begin{center}
-\texttt{INPUT VECTOR (12×1) → NEURAL NETWORK → OUTPUT VECTOR (18×1)}
+\texttt{INPUT VECTOR (12$	imes$1) $\rightarrow$ NEURAL NETWORK $\rightarrow$ OUTPUT VECTOR (18$	imes$1)}
 
 
 
@@ -375,7 +375,7 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_t$
 $\downarrow$
 
 \textbf{PHYSICS-INFORMED NEURAL NETWORK}
-(4 layers × 128 neurons + 6 learnable parameters)
+(4 layers $\times$ 128 neurons + 6 learnable parameters)
 
 $\downarrow$
 
@@ -387,7 +387,7 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
+\includegraphics[width=\columnwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
 \caption{Multi-Objective Loss Function: The total loss combines seven different terms, each enforcing specific constraints. Weighted components include: Data loss ($\lambda=1.0$), Physics loss ($\lambda=20$), Energy conservation ($\lambda=0.05$), Temporal smoothness ($\lambda=10$), adaptive Rollout loss, Stability bounds, and L2 Regularization.}
 \label{fig:loss_breakdown}
 \end{figure}
@@ -471,7 +471,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=2,trim=0 4.5cm 0 1.5cm,clip]{pinn_schematics.pdf}
+\includegraphics[width=\columnwidth,page=2,trim=0 4.5cm 0 1.5cm,clip]{pinn_schematics.pdf}
 \caption{Physics-Informed Learning Process: The neural network predictions are constrained by physics equations. Three loss components guide training: Data Loss (comparing NN predictions with ground truth), Physics Loss (enforcing Newton-Euler equations), and Energy Loss (conservation principle). This hybrid approach combines flexibility of data-driven learning with physical realism.}
 \label{fig:physics_integration}
 \end{figure}
@@ -490,7 +490,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \textbf{Cross-Coupling Integration} & Full Euler equation implementation & Realistic dynamics \\
 \textbf{Automatic Differentiation} & PyTorch autograd through physics & End-to-end training \\
 \textbf{Enhanced Architecture} & 256 neurons, 5 layers, dropout (p=0.1) & Improved capacity and stability \\
-\textbf{Scheduled Sampling} & Gradual autoregressive training (0→30\%) & Robust multi-step predictions \\
+\textbf{Scheduled Sampling} & Gradual autoregressive training (0$\rightarrow$30\%) & Robust multi-step predictions \\
 \textbf{Stability Loss} & State magnitude soft constraints & Prevents divergence in rollout \\
 \textbf{Tightened Physical Limits} & Angular accel: 15 rad/s² (from 50) & Smoother temporal behavior \\
 \textbf{Learning Rate Scheduling} & ReduceLROnPlateau (patience=20) & Adaptive optimization \\
@@ -505,8 +505,8 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 
 \begin{figure}[!t]
 \centering
-\includegraphics[width=\textwidth,page=4,trim=0 0.2cm 0 1cm,clip]{pinn_schematics.pdf}
-\caption{PINN v2 Performance on Held-Out Test Set: The optimized model achieves 51× improvement over baseline at 100-step horizon (0.029m vs 1.49m), with state-wise improvements ranging from 2× to 51×. The model demonstrates exceptional stability with only 1.1× error growth (vs 17× for baseline) and accurate physics parameter identification (mass and motor coefficients at 0\% error, inertias within 5\%).}
+\includegraphics[width=\columnwidth,page=4,trim=0 0.2cm 0 1cm,clip]{pinn_schematics.pdf}
+\caption{PINN v2 Performance on Held-Out Test Set: The optimized model achieves 51$	imes$ improvement over baseline at 100-step horizon (0.029m vs 1.49m), with state-wise improvements ranging from 2$	imes$ to 51×. The model demonstrates exceptional stability with only 1.1$	imes$ error growth (vs 17$	imes$ for baseline) and accurate physics parameter identification (mass and motor coefficients at 0\% error, inertias within 5\%).}
 \label{fig:performance}
 \end{figure}
 
@@ -660,7 +660,7 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\textwidth]{../results/ieee_publication_plots/fig_a_autoregressive_stability_proof.pdf}
-\caption{Autoregressive Stability: Position Error Accumulation Over 100-Step Prediction Horizon. The Optimized PINN v2 (blue, solid) demonstrates controlled linear error accumulation, achieving 0.029m MAE at 100 steps—a 51× improvement over the Baseline PINN (red, dashed) which exhibits exponential divergence to 1.49m. Modular PINN (orange, dash-dot) and Fourier PINN (green, dotted) show catastrophic instability, diverging beyond 10m and 100m respectively. This validates that architectural simplicity with proper training strategies (curriculum learning, scheduled sampling, dropout regularization) outperforms complex designs for long-horizon autoregressive tasks.}
+\caption{Autoregressive Stability: Position Error Accumulation Over 100-Step Prediction Horizon. The Optimized PINN v2 (blue, solid) demonstrates controlled linear error accumulation, achieving 0.029m MAE at 100 steps---a 51$	imes$ improvement over the Baseline PINN (red, dashed) which exhibits exponential divergence to 1.49m. Modular PINN (orange, dash-dot) and Fourier PINN (green, dotted) show catastrophic instability, diverging beyond 10m and 100m respectively. This validates that architectural simplicity with proper training strategies (curriculum learning, scheduled sampling, dropout regularization) outperforms complex designs for long-horizon autoregressive tasks.}
 \label{fig:autoregressive_stability}
 \end{figure*}
 
@@ -914,7 +914,7 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 6.6) \\
 
 \subsection{Complete Time-Series Analysis (All 19 Variables)}
 
-\textit{Note: Each figure below shows all 10 training trajectories as separate subplots (5×2 grid), allowing individual trajectory analysis rather than overlaid visualization. This eliminates visual clutter and makes it easier to examine the model's performance on each trajectory independently.}
+\textit{Note: Each figure below shows all 10 training trajectories as separate subplots (5$	imes$2 grid), allowing individual trajectory analysis rather than overlaid visualization. This eliminates visual clutter and makes it easier to examine the model's performance on each trajectory independently.}
 
 \subsubsection{Position States}
 
@@ -1558,15 +1558,15 @@ The optimization experiments revealed unexpected challenges when applying advanc
 
 \subsection{Summary}
 
-Despite achieving lower parameter count (65\% reduction) and improved single-step performance (2-10× better accuracy), optimized model variants exhibited \textbf{severe instability during long-horizon autoregressive rollouts}, with errors 100-3,500,000× worse than baseline. This indicates a fundamental trade-off between architectural complexity and autoregressive stability for control applications.
+Despite achieving lower parameter count (65\% reduction) and improved single-step performance (2-10$	imes$ better accuracy), optimized model variants exhibited \textbf{severe instability during long-horizon autoregressive rollouts}, with errors 100-3,500,000$	imes$ worse than baseline. This indicates a fundamental trade-off between architectural complexity and autoregressive stability for control applications.
 
 \subsection{Key Observations}
 
 After implementing comprehensive optimizations (Fourier features, modular architecture, residual connections, energy constraints), we observed a paradoxical result:
 
 \begin{itemize}
-\item \textbf{Single-step teacher-forced MAE:} Excellent (< 0.01 m for z, 2-10× better than baseline)
-\item \textbf{100-step autoregressive MAE:} Catastrophic (177 m to 5.2M m for z, 100-3,500,000× worse than baseline)
+\item \textbf{Single-step teacher-forced MAE:} Excellent (< 0.01 m for z, 2-10$	imes$ better than baseline)
+\item \textbf{100-step autoregressive MAE:} Catastrophic (177 m to 5.2M m for z, 100-3,500,000$	imes$ worse than baseline)
 \item \textbf{Divergence onset:} Consistent at t $\approx$ 0.06-0.08 s (60-80 steps) across all optimized variants
 \item \textbf{Real-world usability:} Baseline usable for MPC, all optimized versions unusable
 \end{itemize}
@@ -1603,7 +1603,7 @@ Real-World Usable? & \textbf{Yes} & No & No & \textcolor{red!70!black}{Baseline}
 \end{tabular}
 \end{table}
 
-\textbf{Key Finding:} Baseline PINN wins on \textbf{ALL autoregressive metrics} (the critical metrics for control) despite having 3× more parameters and lower single-step accuracy.
+\textbf{Key Finding:} Baseline PINN wins on \textbf{ALL autoregressive metrics} (the critical metrics for control) despite having 3$	imes$ more parameters and lower single-step accuracy.
 
 \subsection{Root Causes of Autoregressive Instability}
 
@@ -1653,10 +1653,10 @@ Fourier encoding:
 \toprule
 \textbf{Component} & \textbf{Training Multiplier} & \textbf{Total Needed} \\
 \midrule
-Baseline architecture & 1.0× & 250 epochs \\
-+ Residual connections & 1.2× & 300 epochs \\
-+ Modular design & 1.5× & 375 epochs \\
-+ Multi-step rollout & 2.0× & 500 epochs \\
+Baseline architecture & 1.0$	imes$ & 250 epochs \\
++ Residual connections & 1.2$	imes$ & 300 epochs \\
++ Modular design & 1.5$	imes$ & 375 epochs \\
++ Multi-step rollout & 2.0$	imes$ & 500 epochs \\
 \textbf{Optimized (actual)} & \textbf{0.4×} & \textbf{100 epochs [FAILED]} \\
 \bottomrule
 \end{tabular}
@@ -1669,14 +1669,14 @@ Baseline architecture & 1.0× & 250 epochs \\
 \begin{itemize}
 \item \textbf{Training:} 5-step rollout loss (0.005 s horizon)
 \item \textbf{Testing:} 100-step autoregressive evaluation (0.1 s horizon)
-\item \textbf{Gap:} 20× mismatch
+\item \textbf{Gap:} 20$	imes$ mismatch
 \end{itemize}
 
 Model never experienced errors that compound beyond 5 steps during training, so it failed catastrophically at 60-100 steps.
 
 \subsection{The Single-Step vs Multi-Step Paradox}
 
-\textbf{Question:} How can a model be 10× better at single-step but 100× worse at multi-step?
+\textbf{Question:} How can a model be 10$	imes$ better at single-step but 100$	imes$ worse at multi-step?
 
 \textbf{Answer:} Distribution shift + error accumulation.
 
@@ -1705,7 +1705,7 @@ Model encounters its own predictions, which are \textbf{outside training distrib
 \item 250 epochs with 30\% scheduled sampling throughout
 \item Model trained extensively on its own predictions
 \item Learned to be robust to distribution shift
-\item Simpler architecture → fewer failure modes
+\item Simpler architecture $\rightarrow$ fewer failure modes
 \end{itemize}
 
 \subsection{What Actually Worked}
@@ -1715,7 +1715,7 @@ Despite autoregressive failure, several optimizations succeeded independently:
 \begin{enumerate}
 \item \textbf{Residual Connections + Swish Activation:}
   \begin{itemize}
-  \item Better gradient flow, 2× faster convergence
+  \item Better gradient flow, 2$	imes$ faster convergence
   \item Single-step accuracy improved 2-10×
   \item Recommendation: Keep for any PINN
   \end{itemize}
@@ -1739,7 +1739,7 @@ Despite autoregressive failure, several optimizations succeeded independently:
 
 \item \textbf{Multi-Step Rollout Loss:}
   \begin{itemize}
-  \item Reduced rollout error 6.8× (197,963 $\rightarrow$ 29,004)
+  \item Reduced rollout error 6.8$	imes$ (197,963 $\rightarrow$ 29,004)
   \item Critical for autoregressive applications
   \item But 5 steps $\ll$ 100 steps needed
   \item Recommendation: Use $K \geq$ test horizon / 2
@@ -1753,7 +1753,7 @@ Despite autoregressive failure, several optimizations succeeded independently:
 
 \item \textbf{Optimization $\neq$ improvement:} Reducing parameters and adding modularity improved single-step accuracy but destabilized long rollouts. We successfully optimized the wrong objective.
 
-\item \textbf{Stability matters more than precision:} For control tasks, robustness to compounding error outweighs marginal accuracy gains. A model that's 10× more accurate per step but diverges after 60 steps is useless.
+\item \textbf{Stability matters more than precision:} For control tasks, robustness to compounding error outweighs marginal accuracy gains. A model that's 10$	imes$ more accurate per step but diverges after 60 steps is useless.
 
 \item \textbf{Training duration scales with complexity:} More complex architectures require proportionally longer and richer training. Our mistake: added 3 complexity factors but cut training to 40\% of baseline.
 
@@ -1784,7 +1784,7 @@ Real-world usable (MPC) & \textbf{Yes} & No & \textcolor{red!70!black}{\textbf{B
 
 \textbf{Production model:} Current PINN (250 epochs, 5-layer feed-forward architecture, 204,818 parameters)
 
-\textbf{Research contribution:} Documented that architectural optimizations improving single-step metrics can catastrophically degrade autoregressive stability—a critical finding for PINN-based control systems.
+\textbf{Research contribution:} Documented that architectural optimizations improving single-step metrics can catastrophically degrade autoregressive stability---a critical finding for PINN-based control systems.
 
 \subsection{Future Work}
 
@@ -1831,7 +1831,7 @@ Learning from the failure analysis, we developed a systematic methodology to ach
 
 Following the systematic analysis of previous optimization failures (Fourier extrapolation catastrophe, modular architecture decoupling, physics-only training degradation), we developed \textbf{Optimized PINN v2} - a comprehensive solution incorporating all 10 stability techniques while maintaining all baseline components.
 
-\textbf{Result: 51× improvement over baseline (0.029m vs 1.49m at 100-step horizon) with 91.4\% average improvement across all 12 dynamical states.}
+\textbf{Result: 51$	imes$ improvement over baseline (0.029m vs 1.49m at 100-step horizon) with 91.4\% average improvement across all 12 dynamical states.}
 
 \subsection{The 10-Step Solution}
 
@@ -1862,7 +1862,7 @@ The complete optimization strategy systematically addresses every failure mode i
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth]{../results/ieee_publication_plots/fig_d_ablation_study.pdf}
-\caption{Ablation Study: Progressive Impact of Optimization Components on 100-Step MAE. Each component addition yields substantial improvements: Baseline (1.49m) → +Curriculum Learning (0.82m, 45\% reduction) → +Scheduled Sampling (0.45m, 45\% further reduction) → +Dropout Regularization (0.12m, 73\% reduction) → +Energy Conservation Loss (0.029m, 76\% reduction). The cumulative 51× improvement demonstrates the synergistic effect of combining stability mechanisms systematically rather than in isolation.}
+\caption{Ablation Study: Progressive Impact of Optimization Components on 100-Step MAE. Each component addition yields substantial improvements: Baseline (1.49m) $\rightarrow$ +Curriculum Learning (0.82m, 45\% reduction) $\rightarrow$ +Scheduled Sampling (0.45m, 45\% further reduction) $\rightarrow$ +Dropout Regularization (0.12m, 73\% reduction) $\rightarrow$ +Energy Conservation Loss (0.029m, 76\% reduction). The cumulative 51$	imes$ improvement demonstrates the synergistic effect of combining stability mechanisms systematically rather than in isolation.}
 \label{fig:ablation_study}
 \end{figure}
 
@@ -1937,7 +1937,7 @@ This methodology prevents data leakage and tests true generalization on \textit{
 \caption{Optimized PINN v2 multi-horizon evaluation results on held-out test set (last 20\% of data)}
 \end{table}
 
-\textbf{Critical observation:} Minimal error growth from 1 to 100 steps (0.026m $\rightarrow$ 0.029m, 1.1× growth), proving \textit{exceptional dynamic stability on completely unseen data}. Note that error actually \textit{decreased} from 1 to 10 steps (0.026m $\rightarrow$ 0.017m), demonstrating true learned dynamics rather than memorization.
+\textbf{Critical observation:} Minimal error growth from 1 to 100 steps (0.026m $\rightarrow$ 0.029m, 1.1$	imes$ growth), proving \textit{exceptional dynamic stability on completely unseen data}. Note that error actually \textit{decreased} from 1 to 10 steps (0.026m $\rightarrow$ 0.017m), demonstrating true learned dynamics rather than memorization.
 
 \subsubsection{Comparison to Baseline}
 
@@ -1948,15 +1948,15 @@ This methodology prevents data leakage and tests true generalization on \textit{
 \toprule
 \textbf{State} & \textbf{Baseline} & \textbf{Optimized v2 (Holdout)} & \textbf{Improvement} & \textbf{Multiplier} \\
 \midrule
-z (m) & 1.490 & \textbf{0.029} & +98.0\% & 51× better \\
-vz (m/s) & 1.550 & \textbf{0.038} & +97.6\% & 41× better \\
-roll (rad) & 0.018 & \textbf{0.0011} & +93.6\% & 16× better \\
-pitch (rad) & 0.003 & \textbf{0.0003} & +89.2\% & 11× better \\
-yaw (rad) & 0.032 & \textbf{0.0028} & +91.3\% & 11× better \\
-p (rad/s) & 0.067 & \textbf{0.0354} & +47.2\% & 1.9× better \\
-q (rad/s) & 0.167 & \textbf{0.0253} & +84.9\% & 6.6× better \\
-r (rad/s) & 0.084 & \textbf{0.0278} & +66.9\% & 3.0× better \\
-\multicolumn{3}{l}{\textbf{Average improvement:}} & \textbf{83.6\%} & \textbf{18× better} \\
+z (m) & 1.490 & \textbf{0.029} & +98.0\% & 51$	imes$ better \\
+vz (m/s) & 1.550 & \textbf{0.038} & +97.6\% & 41$	imes$ better \\
+roll (rad) & 0.018 & \textbf{0.0011} & +93.6\% & 16$	imes$ better \\
+pitch (rad) & 0.003 & \textbf{0.0003} & +89.2\% & 11$	imes$ better \\
+yaw (rad) & 0.032 & \textbf{0.0028} & +91.3\% & 11$	imes$ better \\
+p (rad/s) & 0.067 & \textbf{0.0354} & +47.2\% & 1.9$	imes$ better \\
+q (rad/s) & 0.167 & \textbf{0.0253} & +84.9\% & 6.6$	imes$ better \\
+r (rad/s) & 0.084 & \textbf{0.0278} & +66.9\% & 3.0$	imes$ better \\
+\multicolumn{3}{l}{\textbf{Average improvement:}} & \textbf{83.6\%} & \textbf{18$	imes$ better} \\
 \bottomrule
 \end{tabular}
 \caption{100-step prediction on held-out test set: Optimized v2 vs Baseline - \textbf{ALL states improved}}
@@ -1990,15 +1990,15 @@ Stable v1 & 2.630 & 0.065 & 0.022 & 4.220 & Failed \\
 \textbf{Transition} & \textbf{Baseline (est.)} & \textbf{Optimized v2 (Holdout)} & \textbf{Comparison} \\
 \midrule
 1 $\rightarrow$ 10 steps & 0.087m $\rightarrow$ 0.162m (1.9×) & 0.026m $\rightarrow$ 0.017m (0.66×) & \textbf{Decreased!} \\
-10 $\rightarrow$ 50 steps & 0.162m $\rightarrow$ 0.521m (3.2×) & 0.017m $\rightarrow$ 0.021m (1.24×) & \textbf{2.6× slower} \\
-50 $\rightarrow$ 100 steps & 0.521m $\rightarrow$ 1.490m (2.9×) & 0.021m $\rightarrow$ 0.029m (1.39×) & \textbf{2.1× slower} \\
-\textbf{Overall} & \textbf{17× growth} & \textbf{1.1× growth} & \textbf{15× more stable} \\
+10 $\rightarrow$ 50 steps & 0.162m $\rightarrow$ 0.521m (3.2×) & 0.017m $\rightarrow$ 0.021m (1.24×) & \textbf{2.6$	imes$ slower} \\
+50 $\rightarrow$ 100 steps & 0.521m $\rightarrow$ 1.490m (2.9×) & 0.021m $\rightarrow$ 0.029m (1.39×) & \textbf{2.1$	imes$ slower} \\
+\textbf{Overall} & \textbf{17$	imes$ growth} & \textbf{1.1$	imes$ growth} & \textbf{15$	imes$ more stable} \\
 \bottomrule
 \end{tabular}
 \caption{Error growth comparison on held-out test set proving exceptional long-term stability}
 \end{table}
 
-The error showed \textbf{minimal growth} (1.1× total) from 1 to 100 steps on held-out data, and actually \textit{decreased} from 1 to 10 steps, demonstrating that the model learned true dynamics rather than memorizing training data. This proves exceptional dynamic stability that baseline completely lacks.
+The error showed \textbf{minimal growth} (1.1$	imes$ total) from 1 to 100 steps on held-out data, and actually \textit{decreased} from 1 to 10 steps, demonstrating that the model learned true dynamics rather than memorizing training data. This proves exceptional dynamic stability that baseline completely lacks.
 
 \subsection{Why This Succeeded vs Previous Failures}
 
@@ -2012,7 +2012,7 @@ The error showed \textbf{minimal growth} (1.1× total) from 1 to 100 steps on he
 Fourier Optimized & Out-of-distribution extrapolation & 5,199,034 m error (catastrophic) \\
 Vanilla Optimized & Modular architecture broke coupling & 177 m error (decoupled dynamics) \\
 Stable PINN v1 & Physics-only training, missing losses & 2.63 m error (poor data fit) \\
-\textbf{Optimized v2} & \textbf{All baseline components maintained} & \textbf{0.029 m - 51× improvement (holdout)} \\
+\textbf{Optimized v2} & \textbf{All baseline components maintained} & \textbf{0.029 m - 51$	imes$ improvement (holdout)} \\
 \bottomrule
 \end{tabular}
 \caption{Failure mode analysis: Success requires preserving ALL working components}
@@ -2036,7 +2036,7 @@ This work makes three key contributions:
 
 \begin{enumerate}
 \item \textbf{Systematic failure mode identification:} Documented three distinct failure mechanisms (extrapolation, decoupling, incomplete training) that destroy autoregressive stability
-\item \textbf{Complete optimization solution:} Developed and validated 10-step methodology achieving 49× improvement while maintaining dynamic stability
+\item \textbf{Complete optimization solution:} Developed and validated 10-step methodology achieving 49$	imes$ improvement while maintaining dynamic stability
 \item \textbf{Proof of concept:} Definitively demonstrated that architectural optimizations CAN work for autoregressive PINNs when applied systematically with all baseline components preserved
 \end{enumerate}
 
@@ -2619,7 +2619,7 @@ Temporal Loss & 189,796 & 151,466 \\
 
 \subsection{Discussion: Model Mismatch and Sensitivity Analysis}
 
-The aggressive trajectory experiment, while failing to achieve its intended goal of improved inertia parameter identification, provides critical insights into the vulnerability of Physics-Informed Neural Networks to \textit{model mismatch}—a phenomenon we term the \textit{Physics-Data Conflict}.
+The aggressive trajectory experiment, while failing to achieve its intended goal of improved inertia parameter identification, provides critical insights into the vulnerability of Physics-Informed Neural Networks to \textit{model mismatch}---a phenomenon we term the \textit{Physics-Data Conflict}.
 
 \subsubsection{Experimental Design and Motivation}
 
@@ -2630,13 +2630,13 @@ To address the weak observability of inertia parameters at small angles (as esta
 The PINN training converged successfully, achieving an 82\% reduction in validation loss compared to the baseline model trained on aggressive data alone. State prediction accuracy improved substantially: position MAE decreased from 0.127m to 0.074m (42\% improvement), and angular rate RMSE dropped from 0.183 rad/s to 0.091 rad/s (50\% improvement). By standard machine learning metrics, the model appeared to have learned the dynamics effectively. However, examination of the identified physical parameters revealed catastrophic failure:
 
 \begin{itemize}
-\item \textbf{Mass}: 0.0698 kg (true: 0.068 kg) — 2.6\% error (acceptable)
-\item \textbf{$J_{xx}$}: $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ (true: $6.86 \times 10^{-5}$) — 31.2\% error
-\item \textbf{$J_{yy}$}: $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ (true: $9.20 \times 10^{-5}$) — 30.4\% error
-\item \textbf{$J_{zz}$}: $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ (true: $1.37 \times 10^{-4}$) — 46.4\% error
+\item \textbf{Mass}: 0.0698 kg (true: 0.068 kg) --- 2.6\% error (acceptable)
+\item \textbf{$J_{xx}$}: $9.00 \times 10^{-5}$ kg$\cdot$m$^2$ (true: $6.86 \times 10^{-5}$) --- 31.2\% error
+\item \textbf{$J_{yy}$}: $1.20 \times 10^{-4}$ kg$\cdot$m$^2$ (true: $9.20 \times 10^{-5}$) --- 30.4\% error
+\item \textbf{$J_{zz}$}: $2.00 \times 10^{-4}$ kg$\cdot$m$^2$ (true: $1.37 \times 10^{-4}$) --- 46.4\% error
 \end{itemize}
 
-This stands in stark contrast to the Optimized PINN v2 trained exclusively on standard trajectories ($\pm 20^\circ$), which achieved 5.0\% inertia errors. The paradox—improved predictive accuracy yet degraded parameter accuracy—cannot be explained by optimization failure or insufficient training, as evidenced by the converged loss curves.
+This stands in stark contrast to the Optimized PINN v2 trained exclusively on standard trajectories ($\pm 20^\circ$), which achieved 5.0\% inertia errors. The paradox---improved predictive accuracy yet degraded parameter accuracy---cannot be explained by optimization failure or insufficient training, as evidenced by the converged loss curves.
 
 \subsubsection{Root Cause: Physics-Data Conflict}
 
@@ -2653,15 +2653,15 @@ At $\pm 20^\circ$ attitudes, these approximations introduce negligible error ($<
 
 \begin{itemize}
 \item Gyroscopic torques from four 8,500 RPM rotors induce $\approx 0.015$ N$\cdot$m coupling (comparable to control torques)
-\item Quadratic drag terms $(v^2)$ introduce 3--5× higher damping than linear model predicts
+\item Quadratic drag terms $(v^2)$ introduce 3--5$	imes$ higher damping than linear model predicts
 \item Blade flapping reduces effective thrust by $\cos(\theta_{\text{flap}}) \approx 0.85$ at extreme tilts
 \end{itemize}
 
-The PINN, trained with the physics loss enforcing rigid-body Euler equations, encountered a fundamental conflict: the data exhibited dynamics inconsistent with the embedded physics model. Unable to modify the governing equations (which are hard-coded in the loss function), the network compensated by \textit{biasing the learnable parameters}—the inertia values—to artificially account for the missing physics. Specifically, the inflated $J_{zz}$ value (46\% too high) effectively damped the yaw dynamics to match the unmodeled aerodynamic damping present in the data. This is not a bug in the PINN architecture; it is the \textit{optimal solution} to the mismatched optimization problem posed during training.
+The PINN, trained with the physics loss enforcing rigid-body Euler equations, encountered a fundamental conflict: the data exhibited dynamics inconsistent with the embedded physics model. Unable to modify the governing equations (which are hard-coded in the loss function), the network compensated by \textit{biasing the learnable parameters}---the inertia values---to artificially account for the missing physics. Specifically, the inflated $J_{zz}$ value (46\% too high) effectively damped the yaw dynamics to match the unmodeled aerodynamic damping present in the data. This is not a bug in the PINN architecture; it is the \textit{optimal solution} to the mismatched optimization problem posed during training.
 
 \subsubsection{Implications for PINN Robustness}
 
-This phenomenon—which we term \textit{model mismatch hallucination}—reveals a critical vulnerability of Physics-Informed Neural Networks: when the embedded physics model diverges from the true data-generating process, the network will exploit parameter degrees of freedom to minimize loss, even if the resulting parameters are physically meaningless. Unlike black-box neural networks that can freely adjust their representations, PINNs are constrained by the structure of the physics equations, making them \textit{more sensitive} to model specification errors. The 82\% loss reduction demonstrates that the optimization succeeded from a machine learning perspective, but the 46\% parameter errors show it failed from a scientific inference perspective.
+This phenomenon---which we term \textit{model mismatch hallucination}---reveals a critical vulnerability of Physics-Informed Neural Networks: when the embedded physics model diverges from the true data-generating process, the network will exploit parameter degrees of freedom to minimize loss, even if the resulting parameters are physically meaningless. Unlike black-box neural networks that can freely adjust their representations, PINNs are constrained by the structure of the physics equations, making them \textit{more sensitive} to model specification errors. The 82\% loss reduction demonstrates that the optimization succeeded from a machine learning perspective, but the 46\% parameter errors show it failed from a scientific inference perspective.
 
 This finding has profound implications for deploying PINNs in system identification:
 
@@ -2680,13 +2680,13 @@ This finding has profound implications for deploying PINNs in system identificat
 While the aggressive trajectory approach failed to improve parameter identification, the experiment provides a valuable \textit{negative result} with several scientific contributions:
 
 \begin{itemize}
-\item \textbf{Empirical demonstration of PINN vulnerability}: Quantifies the impact of physics model mismatch on parameter estimation (5\% → 46\% error despite 42\% better state prediction).
+\item \textbf{Empirical demonstration of PINN vulnerability}: Quantifies the impact of physics model mismatch on parameter estimation (5\% $\rightarrow$ 46\% error despite 42\% better state prediction).
 
 \item \textbf{Validation of simulation limits}: Definitively establishes the $\pm 20^\circ$ operating envelope for the current rigid-body model, preventing future researchers from pursuing the same flawed approach.
 
-\item \textbf{Methodological guidance}: Establishes that observability improvements through aggressive excitation require commensurate improvements in model fidelity—a principle applicable to all physics-informed learning approaches.
+\item \textbf{Methodological guidance}: Establishes that observability improvements through aggressive excitation require commensurate improvements in model fidelity---a principle applicable to all physics-informed learning approaches.
 
-\item \textbf{Practical warning for practitioners}: Highlights the "Garbage In, Garbage Out" principle in PINNs—high-quality data with mismatched physics is more harmful than lower-quality data with correct physics.
+\item \textbf{Practical warning for practitioners}: Highlights the "Garbage In, Garbage Out" principle in PINNs---high-quality data with mismatched physics is more harmful than lower-quality data with correct physics.
 \end{itemize}
 
 The success of Optimized PINN v2 (5.0\% inertia error with standard trajectories) versus the failure of the aggressive approach (46.4\% error) demonstrates that \textit{data quality matters more than data diversity} when the embedded physics model has limited fidelity. Sometimes the most valuable experiments are those that rigorously establish what \textit{not} to do.
@@ -2782,7 +2782,7 @@ The aggressive trajectory experiment \textbf{failed to improve parameter identif
 
 \section{Conclusion}
 
-Through systematic implementation of all 10 stability techniques, we achieved \textbf{91.4\% average improvement} (49× better for position tracking) over the baseline PINN. This demonstrates that architectural optimizations CAN dramatically improve autoregressive prediction performance when:
+Through systematic implementation of all 10 stability techniques, we achieved \textbf{91.4\% average improvement} (49$	imes$ better for position tracking) over the baseline PINN. This demonstrates that architectural optimizations CAN dramatically improve autoregressive prediction performance when:
 
 \begin{enumerate}
 \item \textbf{All baseline loss components are maintained} (physics, temporal, stability, energy, regularization)
@@ -2800,7 +2800,7 @@ This work provides a reproducible methodology for optimizing physics-informed ne
 
 \subsection{Technical Roadmap: Bridging the Simulation-to-Reality Gap}
 
-The limitations identified in this work—particularly the model mismatch hallucination at aggressive angles and the reliance on simulation-based validation—motivate four concrete technical extensions that would strengthen the practical applicability of PINNs for quadrotor control.
+The limitations identified in this work---particularly the model mismatch hallucination at aggressive angles and the reliance on simulation-based validation---motivate four concrete technical extensions that would strengthen the practical applicability of PINNs for quadrotor control.
 
 \subsubsection{Residual Physics Learning for Aerodynamic Compensation}
 
@@ -2811,7 +2811,7 @@ The aggressive trajectory experiment (Section XV) revealed that the rigid-body p
 \label{eq:residual_pinn}
 \end{equation}
 
-where $\mathbf{f}_{\text{physics}}$ represents the Newton-Euler rigid-body dynamics (used in the current implementation), and $\mathbf{g}_{\text{residual}}$ is a small auxiliary neural network (e.g., 2 layers, 64 neurons) trained to predict the \textit{residual dynamics}—the difference between observed state derivatives and physics-predicted values. This approach offers several advantages:
+where $\mathbf{f}_{\text{physics}}$ represents the Newton-Euler rigid-body dynamics (used in the current implementation), and $\mathbf{g}_{\text{residual}}$ is a small auxiliary neural network (e.g., 2 layers, 64 neurons) trained to predict the \textit{residual dynamics}---the difference between observed state derivatives and physics-predicted values. This approach offers several advantages:
 
 \begin{enumerate}
 \item \textbf{Decoupled Parameter Identification}: The rigid-body parameters ($m$, $J_{xx}$, $J_{yy}$, $J_{zz}$, $k_t$, $k_q$) remain constrained by the physics loss on $\mathbf{f}_{\text{physics}}$, preventing the bias observed in Section XV.D where the network compensated for missing aerodynamics by inflating inertias.
@@ -2827,7 +2827,7 @@ where $\mathbf{f}_{\text{physics}}$ represents the Newton-Euler rigid-body dynam
 
 \subsubsection{Closed-Loop Model Predictive Control Validation}
 
-Current evaluation focuses on \textit{open-loop} autoregressive rollouts—measuring how accurately the PINN predicts future states when given perfect initial conditions. However, the ultimate test of a learned dynamics model is its performance in \textit{closed-loop control}, where prediction errors at each timestep influence subsequent control actions. We propose integrating Optimized PINN v2 into a Model Predictive Control (MPC) framework as follows:
+Current evaluation focuses on \textit{open-loop} autoregressive rollouts---measuring how accurately the PINN predicts future states when given perfect initial conditions. However, the ultimate test of a learned dynamics model is its performance in \textit{closed-loop control}, where prediction errors at each timestep influence subsequent control actions. We propose integrating Optimized PINN v2 into a Model Predictive Control (MPC) framework as follows:
 
 \begin{equation}
 \mathbf{u}^*_{0:H-1} = \arg\min_{\mathbf{u}_{0:H-1}} \sum_{k=0}^{H-1} \left[ \|\mathbf{x}_k - \mathbf{x}_{\text{ref}}\|^2_Q + \|\mathbf{u}_k\|^2_R \right]
@@ -2869,7 +2869,7 @@ where $\boldsymbol{\Sigma}_{\text{sensor}}$ models realistic IMU noise based on 
 \item \textbf{High}: $\sigma_{\omega} = 0.02$ rad/s, $\sigma_a = 0.2$ m/s$^2$ (degraded sensors)
 \end{itemize}
 
-\textbf{Hypothesis}: The \textit{Temporal Smoothness Loss} introduced in Section IX.C—which penalizes abrupt state derivative changes—should act as an \textit{implicit denoising mechanism}. By enforcing physically plausible acceleration limits, the PINN is biased toward smooth trajectories even when trained on noisy data, effectively filtering high-frequency measurement artifacts.
+\textbf{Hypothesis}: The \textit{Temporal Smoothness Loss} introduced in Section IX.C---which penalizes abrupt state derivative changes---should act as an \textit{implicit denoising mechanism}. By enforcing physically plausible acceleration limits, the PINN is biased toward smooth trajectories even when trained on noisy data, effectively filtering high-frequency measurement artifacts.
 
 \textbf{Validation Metrics}: Compare prediction error on clean vs. noisy test trajectories for:
 \begin{enumerate}
@@ -2882,7 +2882,7 @@ A successful outcome would show that Optimized v2's error degrades gracefully ($
 
 \subsubsection{Uncertainty Quantification via Bayesian Ensembles}
 
-The current PINN provides deterministic predictions, offering no indication of confidence in its outputs. For safety-critical applications like autonomous flight, \textit{epistemic uncertainty}—knowing when the model is extrapolating beyond its training domain—is essential. We propose augmenting the deployment system with uncertainty estimation via an ensemble approach:
+The current PINN provides deterministic predictions, offering no indication of confidence in its outputs. For safety-critical applications like autonomous flight, \textit{epistemic uncertainty}---knowing when the model is extrapolating beyond its training domain---is essential. We propose augmenting the deployment system with uncertainty estimation via an ensemble approach:
 
 \textbf{Training}: Train $N=5$ independent PINNs with different random initializations and dropout masks (Monte Carlo dropout). Each network $i$ produces a prediction $\hat{\mathbf{x}}^{(i)}_{k+1}$.
 
@@ -2918,7 +2918,7 @@ The four proposed extensions address the critical gaps between the current simul
 \item \textbf{Uncertainty quantification}: Provides runtime safety monitoring via ensemble variance
 \end{enumerate}
 
-Together, these extensions form a roadmap for transitioning physics-informed neural networks from research prototypes to safety-critical robotic systems. The negative results documented in Section XV—rather than dead ends—become the foundation for principled solutions that preserve the PINN's physical interpretability while addressing its real-world deployment challenges.
+Together, these extensions form a roadmap for transitioning physics-informed neural networks from research prototypes to safety-critical robotic systems. The negative results documented in Section XV---rather than dead ends---become the foundation for principled solutions that preserve the PINN's physical interpretability while addressing its real-world deployment challenges.
 
 
 % \printindex
