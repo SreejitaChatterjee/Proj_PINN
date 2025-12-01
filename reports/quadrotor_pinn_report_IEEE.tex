@@ -1,4 +1,4 @@
-\documentclass[journal]{IEEEtran}
+\documentclass[journal,11pt]{IEEEtran}
 
 % Essential packages
 \usepackage[utf8]{inputenc}
@@ -423,8 +423,9 @@ Normalized physics loss form: $\mathcal{L}_{physics} = \sum_i \left(\frac{x_{pre
 \subsubsection{Rotational Dynamics (Euler Equations)}
 \begin{table*}[!t]
 \centering
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{0.18\textwidth}p{0.57\textwidth}p{0.13\textwidth}}
 \toprule
 \textbf{Angular Rate} & \textbf{Equation (NO Artificial Damping)} & \textbf{Units} \\
 \midrule
@@ -435,13 +436,14 @@ Yaw rate ($\dot{r}$) & $\dot{r} = t_3 \times p \times q + \tau_z/J_{zz}$ & rad/s
 \end{tabular}
 \end{table*}
 
-Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 = (J_{xx} - J_{yy})/J_{zz}$
+\noindent Where: $t_1 = (J_{yy} - J_{zz})/J_{xx}$, $t_2 = (J_{zz} - J_{xx})/J_{yy}$, $t_3 = (J_{xx} - J_{yy})/J_{zz}$
 
 \subsubsection{Translational Dynamics (Newton's Laws in Body Frame)}
 \begin{table*}[!t]
 \centering
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{0.18\textwidth}p{0.57\textwidth}p{0.13\textwidth}}
 \toprule
 \textbf{Velocity} & \textbf{Equation (Body Frame)} & \textbf{Units} \\
 \midrule
@@ -452,13 +454,14 @@ Z velocity ($\dot{w}$) & $\dot{w} = qu - pv + f_z/m + g\cos\theta\cos\phi - c_d 
 \end{tabular}
 \end{table*}
 
-Where: $f_x = 0$, $f_y = 0$, $f_z = -T$ (thrust acts along body z-axis), $c_d = 0.05$ kg/m (quadratic drag coefficient)
+\noindent Where: $f_x = 0$, $f_y = 0$, $f_z = -T$ (thrust acts along body z-axis), $c_d = 0.05$ kg/m (quadratic drag coefficient)
 
 \subsubsection{Position Kinematics (Body to Inertial Frame Transformation)}
 \begin{table*}[!t]
 \centering
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.2\textwidth}p{0.55\textwidth}p{0.15\textwidth}}
+\small
+\renewcommand{\arraystretch}{1.2}
+\begin{tabular}{p{0.18\textwidth}p{0.57\textwidth}p{0.13\textwidth}}
 \toprule
 \textbf{Position} & \textbf{Rotation Matrix Transformation} & \textbf{Units} \\
 \midrule
@@ -476,11 +479,14 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \label{fig:physics_integration}
 \end{figure}
 
+\clearpage
+
 \subsection{Model Innovation Features}
 \begin{table*}[!t]
 \centering
-\renewcommand{\arraystretch}{1.4}
-\begin{tabular}{p{0.18\textwidth}p{0.38\textwidth}p{0.28\textwidth}}
+\small
+\renewcommand{\arraystretch}{1.5}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.2cm}>{\raggedright\arraybackslash}p{6.5cm}>{\raggedright\arraybackslash}p{4.5cm}}
 \toprule
 \textbf{Feature} & \textbf{Implementation} & \textbf{Benefit} \\
 \midrule
@@ -497,6 +503,8 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \textbf{Autoregressive Evaluation} & 500-step rollout validation & True multi-step performance \\
 \bottomrule
 \end{tabular}
+\caption{Key features of the PINN implementation showing comprehensive integration of physics-informed constraints and architectural innovations.}
+\label{tab:model_features}
 \end{table*}
 
 
@@ -719,6 +727,8 @@ All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amp
 
 \clearpage
 
+\vspace{0.5cm}
+
 \begin{table*}[!t]
 \centering
 \caption{Complete Training Trajectory Specifications: Square Wave Reference Configurations for All 10 Trajectories}
@@ -741,6 +751,8 @@ All 10 trajectories use different combinations of periods (1.2s to 5.0s) and amp
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\vspace{0.8cm}
 
 \textbf{Key Differentiating Factors:}
 \begin{itemize}
@@ -766,6 +778,8 @@ With square wave reference inputs, the controller must continuously adapt to cha
 \subsubsection{MATLAB Simulation Parameters}
 The training data was generated using a high-fidelity MATLAB nonlinear quadrotor model with the following specifications:
 
+\vspace{0.3cm}
+
 \begin{table*}[!t]
 \centering
 \renewcommand{\arraystretch}{1.4}
@@ -787,6 +801,8 @@ The training data was generated using a high-fidelity MATLAB nonlinear quadrotor
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\vspace{0.3cm}
 
 \subsubsection{Controller Specifications}
 The MATLAB simulation uses a cascaded PID control architecture for all three attitude axes and altitude control:
@@ -889,21 +905,26 @@ This square wave forcing function creates more diverse dynamics than constant se
 \item Acceleration/deceleration patterns physically consistent with Newton's law: $\dot{w} = -T\cos\theta\cos\phi/m + g - 0.1w$
 \end{itemize}
 
+\clearpage
+
 \subsection{Physical Parameter Learning Results}
 
 \textbf{Parameter Identification Summary:}
 
-\begin{tabular}{lll}
+\begin{table}[!t]
+\centering
+\small
+\begin{tabular}{p{0.25\columnwidth}p{0.35\columnwidth}p{0.30\columnwidth}}
 \hline
 \textbf{Stage} & \textbf{Parameters} & \textbf{Errors} \\
 \hline
-Baseline & Jxx/Jyy/Jzz & 1300-6700\% (observability problem) \\
-\hline
-After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 6.6) \\
-\hline
-\textbf{Final (Solutions 1 \& 3)} & \textbf{ALL 6 parameters} & \textbf{Mass/kt/kq: 0.00\%, Inertias: 5.00\%} \\
+Baseline & Jxx/Jyy/Jzz & 1300-6700\% \\
+After Option 1 & Jxx/Jyy/Jzz & 30-46\% \\
+\textbf{Final} & \textbf{ALL 6} & \textbf{0.00\%, 5.00\%} \\
 \hline
 \end{tabular}
+\caption{Parameter identification improvement progression}
+\end{table}
 
 
 \section{Visual Results}
@@ -918,125 +939,125 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% (see Section 6.6) \\
 
 \subsubsection{Position States}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/01_x_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/01_x_all_trajectories.png}
 \caption{X Position vs Time - All 10 Trajectories (Overall MAE: \textbf{0.023 m}, RMSE: \textbf{0.064 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame.}
 \label{fig:x_position_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/02_y_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/02_y_all_trajectories.png}
 \caption{Y Position vs Time - All 10 Trajectories (Overall MAE: \textbf{0.031 m}, RMSE: \textbf{0.098 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame.}
 \label{fig:y_position_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/03_z_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/03_z_all_trajectories.png}
 \caption{Z Position (Altitude) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.070 m}, RMSE: \textbf{0.165 m}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Vertical position tracking by PINN.}
 \label{fig:altitude_analysis}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Attitude States}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/04_roll_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/04_roll_all_trajectories.png}
 \caption{Roll Angle ($\phi$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0008 rad (0.045°)}, RMSE: \textbf{0.0012 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Outstanding prediction accuracy across all trajectories.}
 \label{fig:roll_angle_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/05_pitch_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/05_pitch_all_trajectories.png}
 \caption{Pitch Angle ($\theta$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0005 rad (0.028°)}, RMSE: \textbf{0.0008 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Excellent attitude tracking.}
 \label{fig:pitch_angle_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/06_yaw_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/06_yaw_all_trajectories.png}
 \caption{Yaw Angle ($\psi$) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0009 rad (0.052°)}, RMSE: \textbf{0.0015 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Accurate heading prediction.}
 \label{fig:yaw_angle_analysis}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Angular Rates}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/07_p_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/07_p_all_trajectories.png}
 \caption{Roll Rate (p) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0034 rad/s}, RMSE: \textbf{0.0054 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth predictions with temporal constraints.}
 \label{fig:roll_rate_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/08_q_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/08_q_all_trajectories.png}
 \caption{Pitch Rate (q) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0014 rad/s}, RMSE: \textbf{0.0024 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Continuous, physically realistic predictions.}
 \label{fig:pitch_rate_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/09_r_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/09_r_all_trajectories.png}
 \caption{Yaw Rate (r) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0044 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth angular velocity tracking.}
 \label{fig:yaw_rate_analysis}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Translational Velocities}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/10_vx_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/10_vx_all_trajectories.png}
 \caption{X Velocity (u, body frame) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.008 m/s}, RMSE: \textbf{0.018 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from translational dynamics.}
 \label{fig:vx_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/11_vy_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/11_vy_all_trajectories.png}
 \caption{Y Velocity (v, body frame) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.012 m/s}, RMSE: \textbf{0.027 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from translational dynamics.}
 \label{fig:vy_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/12_vz_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/12_vz_all_trajectories.png}
 \caption{Z Velocity (w, vertical) vs Time - All 10 Trajectories (Overall MAE: \textbf{0.040 m/s}, RMSE: \textbf{0.074 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Smooth velocity tracking with temporal constraints.}
 \label{fig:vertical_velocity_analysis}
-\end{figure}
+\end{figure*}
 
 \subsubsection{Control Inputs}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/13_thrust_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/13_thrust_all_trajectories.png}
 \caption{Total Thrust vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} showing realistic motor dynamics with 80ms time constant. Each subplot shows one trajectory's thrust command profile.}
 \label{fig:thrust_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/14_torque_x_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/14_torque_x_all_trajectories.png}
 \caption{Roll Torque ($\tau_x$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for roll attitude maneuvers. Each subplot shows one trajectory's roll torque command profile.}
 \label{fig:torque_x_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/15_torque_y_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/15_torque_y_all_trajectories.png}
 \caption{Pitch Torque ($\tau_y$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for pitch attitude maneuvers. Each subplot shows one trajectory's pitch torque command profile.}
 \label{fig:torque_y_analysis}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[!t]
+\begin{figure*}[!t]
 \centering
-\includegraphics[width=0.9\textwidth]{../results/comparative_trajectories/16_torque_z_all_trajectories.png}
+\includegraphics[width=0.95\textwidth]{../results/comparative_trajectories/16_torque_z_all_trajectories.png}
 \caption{Yaw Torque ($\tau_z$) vs Time - All 10 Trajectories. \textbf{Control input (NOT predicted)} for yaw (heading) maneuvers. Each subplot shows one trajectory's yaw torque command profile.}
 \label{fig:torque_z_analysis}
-\end{figure}
+\end{figure*}
 
 
 \section{Baseline Model: Implementation and Results}
@@ -1223,8 +1244,9 @@ Inertia parameters (Jxx, Jyy, Jzz) are extremely difficult to identify from posi
 \begin{enumerate}
 \item \textbf{Weak Direct Observability}: At small angles ($\pm$10-20$^\circ$), Euler's rotational equations reduce to nearly decoupled forms:
 \begin{equation*}
-\dot{p} \approx \frac{\tau_x}{J_{xx}} - 2p \quad \text{(cross-coupling term } \frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r \approx 0 \text{ when } q, r \text{ are small)}
+\dot{p} \approx \frac{\tau_x}{J_{xx}} - 2p
 \end{equation*}
+\textit{Note: Cross-coupling term $\frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r \approx 0$ when $q, r$ are small.}
 
 Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gradient signal} compared to mass (which directly affects easily-measurable vertical acceleration: $\ddot{z} = -T/m + g$).
 
@@ -1292,10 +1314,11 @@ Inertia appears only in direct division ($\tau/J$), providing a \textit{weak gra
 \item Updated input/output size from 12 to 15 dimensions
 \item Modified direct parameter identification loss to use measured angular accelerations instead of finite differences
 \item Added new angular acceleration physics loss that directly enforces Euler's equations on predicted angular accelerations:
-\begin{equation*}
-\mathcal{L}_{\text{ang\_accel}} = \frac{1}{N}\sum_{i=1}^{N} \left[(\dot{p}_{\text{pred}} - \dot{p}_{\text{physics}})^2 + (\dot{q}_{\text{pred}} - \dot{q}_{\text{physics}})^2 + (\dot{r}_{\text{pred}} - \dot{r}_{\text{physics}})^2\right]
-\end{equation*}
-where $\dot{p}_{\text{physics}} = \frac{J_{yy} - J_{zz}}{J_{xx}} q \cdot r + \frac{\tau_x}{J_{xx}} - 2p$
+\begin{align*}
+\mathcal{L}_{\text{ang\_accel}} = \frac{1}{N}\sum_{i=1}^{N} &\left[(\dot{p}_{\text{pred}} - \dot{p}_{\text{physics}})^2 \right. \\
+&\left. + (\dot{q}_{\text{pred}} - \dot{q}_{\text{physics}})^2 + (\dot{r}_{\text{pred}} - \dot{r}_{\text{physics}})^2\right]
+\end{align*}
+where $\dot{p}_{\text{physics}} = \frac{J_{yy} - J_{zz}}{J_{xx}} q r + \frac{\tau_x}{J_{xx}} - 2p$
 \item Added tracking for angular acceleration loss convergence
 \end{itemize}
 
@@ -1573,7 +1596,7 @@ After implementing comprehensive optimizations (Fourier features, modular archit
 
 \subsection{Comparative Performance Analysis}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \caption{Baseline vs Optimized PINN Architectures - Complete Comparison}
 \begin{tabular}{lcccl}
@@ -1646,7 +1669,7 @@ Fourier encoding:
 
 \subsubsection{3. Training Duration Insufficient for Complexity}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \caption{Training Requirements vs Actual}
 \begin{tabular}{lcc}
@@ -1768,7 +1791,7 @@ Despite autoregressive failure, several optimizations succeeded independently:
 
 \subsection{Final Verdict}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \caption{Final Model Selection for Quadrotor Control}
 \begin{tabular}{lccc}
@@ -1837,10 +1860,10 @@ Following the systematic analysis of previous optimization failures (Fourier ext
 
 The complete optimization strategy systematically addresses every failure mode identified:
 
-\begin{table}[H]
+\begin{table*}[!t]
 \centering
 \small
-\begin{tabular}{p{0.5cm}p{4.5cm}p{4.5cm}p{4cm}}
+\begin{tabular}{clll}
 \toprule
 \textbf{\#} & \textbf{Technique} & \textbf{Purpose} & \textbf{Implementation} \\
 \midrule
@@ -1857,7 +1880,7 @@ The complete optimization strategy systematically addresses every failure mode i
 \bottomrule
 \end{tabular}
 \caption{Complete 10-step optimization solution for autoregressive stability}
-\end{table}
+\end{table*}
 
 \begin{figure}[!t]
 \centering
@@ -1922,7 +1945,7 @@ This methodology prevents data leakage and tests true generalization on \textit{
 
 \subsubsection{Multi-Horizon Performance on Held-Out Test Set}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \begin{tabular}{lcccc}
 \toprule
@@ -1941,7 +1964,7 @@ This methodology prevents data leakage and tests true generalization on \textit{
 
 \subsubsection{Comparison to Baseline}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \small
 \begin{tabular}{lcccc}
@@ -1964,7 +1987,7 @@ r (rad/s) & 0.084 & \textbf{0.0278} & +66.9\% & 3.0$	imes$ better \\
 
 \subsubsection{Comparison to All Previous Models}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \small
 \begin{tabular}{lccccc}
@@ -1983,9 +2006,10 @@ Stable v1 & 2.630 & 0.065 & 0.022 & 4.220 & Failed \\
 
 \subsection{Error Growth Analysis}
 
-\begin{table}[H]
+\begin{table*}[!t]
 \centering
-\begin{tabular}{lccc}
+\small
+\begin{tabular}{llll}
 \toprule
 \textbf{Transition} & \textbf{Baseline (est.)} & \textbf{Optimized v2 (Holdout)} & \textbf{Comparison} \\
 \midrule
@@ -1996,13 +2020,13 @@ Stable v1 & 2.630 & 0.065 & 0.022 & 4.220 & Failed \\
 \bottomrule
 \end{tabular}
 \caption{Error growth comparison on held-out test set proving exceptional long-term stability}
-\end{table}
+\end{table*}
 
 The error showed \textbf{minimal growth} (1.1$	imes$ total) from 1 to 100 steps on held-out data, and actually \textit{decreased} from 1 to 10 steps, demonstrating that the model learned true dynamics rather than memorizing training data. This proves exceptional dynamic stability that baseline completely lacks.
 
 \subsection{Why This Succeeded vs Previous Failures}
 
-\begin{table}[H]
+\begin{table}[!t]
 \centering
 \small
 \begin{tabular}{p{3.5cm}p{4cm}p{5.5cm}}
