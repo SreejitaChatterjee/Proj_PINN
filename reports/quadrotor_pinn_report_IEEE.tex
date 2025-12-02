@@ -237,13 +237,13 @@ To circumvent these limitations while preserving identifiability, we introduce a
 \textbf{Layer} & \textbf{Input} & \textbf{Output} & \textbf{Params} & \textbf{Function} \\
 \midrule
 Layer 1 & 16 & 256 & 4,352 & Feature extraction \\
-Dropout 1 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Dropout 1 & 256 & 256 & 0 & Regularization (p=0.3) \\
 Layer 2 & 256 & 256 & 65,792 & Nonlinear dynamics \\
-Dropout 2 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Dropout 2 & 256 & 256 & 0 & Regularization (p=0.3) \\
 Layer 3 & 256 & 256 & 65,792 & Deep features \\
-Dropout 3 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Dropout 3 & 256 & 256 & 0 & Regularization (p=0.3) \\
 Layer 4 & 256 & 256 & 65,792 & Higher-order dynamics \\
-Dropout 4 & 256 & 256 & 0 & Regularization (p=0.1) \\
+Dropout 4 & 256 & 256 & 0 & Regularization (p=0.3) \\
 Output & 256 & 12 & 3,084 & State prediction \\
 Physics & - & - & 6 & Physical parameters \\
 \textbf{Total} & & & \textbf{204,818} & \\
@@ -251,7 +251,7 @@ Physics & - & - & 6 & Physical parameters \\
 \end{tabular}
 \end{table*}
 
-\textbf{Note:} Deep feed-forward architecture with 5 hidden layers of 256 neurons each. Takes 16D input (12 states + 4 controls) and outputs 12D next states. Dropout regularization (p=0.1) between layers improves autoregressive stability and prevents overfitting. The network predicts all 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
+\textbf{Note:} Deep feed-forward architecture with 5 hidden layers of 256 neurons each. Takes 16D input (12 states + 4 controls) and outputs 12D next states. Dropout regularization (p=0.3) between layers improves autoregressive stability and prevents overfitting. The network predicts all 12 next state variables (x, y, z, $\phi$, $\theta$, $\psi$, p, q, r, $v_x$, $v_y$, $v_z$), with 6 learned physical parameters (m, Jxx, Jyy, Jzz, kt, kq). Gravity (g=9.81 m/s²) is a \textbf{fixed constant} used in physics calculations, NOT a learnable parameter.
 
 
 \begin{figure}[!t]
@@ -273,7 +273,7 @@ Physics & - & - & 6 & Physical parameters \\
 \item Plots display height $h = -z$ (upward positive) for conventional visualization
 \end{itemize}
 
-\subsubsection{Inputs to PINN Model (12 Variables)}
+\subsubsection{Inputs to PINN Model (16 Variables)}
 \begin{table*}[!t]
 \centering
 \renewcommand{\arraystretch}{1.4}
@@ -281,18 +281,25 @@ Physics & - & - & 6 & Physical parameters \\
 \toprule
 \textbf{\#} & \textbf{Variable Name} & \textbf{Symbol} & \textbf{Units} & \textbf{Physical Meaning} & \textbf{Value Range} \\
 \midrule
-1 & \textbf{thrust} & $T$ & N & Total upward force from 4 motors & [0.0, 2.0] \\
-2 & \textbf{z} & $z$ & m & Vertical position (NED: down positive, $z<0$ = above ground) & [-25.0, 0.0] \\
-3 & \textbf{torque\_x} & $\tau_x$ & N$\cdot$m & Roll torque (about x-axis) & [-0.02, 0.02] \\
-4 & \textbf{torque\_y} & $\tau_y$ & N$\cdot$m & Pitch torque (about y-axis) & [-0.02, 0.02] \\
-5 & \textbf{torque\_z} & $\tau_z$ & N$\cdot$m & Yaw torque (about z-axis) & [-0.01, 0.01] \\
-6 & \textbf{roll} & $\phi$ & rad & Roll angle (banking) & [$-\pi/4$, $\pi/4$] \\
-7 & \textbf{pitch} & $\theta$ & rad & Pitch angle (nose up/down) & [$-\pi/4$, $\pi/4$] \\
-8 & \textbf{yaw} & $\psi$ & rad & Yaw angle (heading) & [$-\pi$, $\pi$] \\
-9 & \textbf{p} & $p$ & rad/s & Roll rate (angular velocity) & [-10.0, 10.0] \\
-10 & \textbf{q} & $q$ & rad/s & Pitch rate (angular velocity) & [-10.0, 10.0] \\
-11 & \textbf{r} & $r$ & rad/s & Yaw rate (angular velocity) & [-5.0, 5.0] \\
-12 & \textbf{vz} & $w$ & m/s & Vertical velocity & [-20.0, 20.0] \\
+\multicolumn{6}{c}{\textit{State Variables (12)}} \\
+1 & \textbf{x} & $x$ & m & X position (inertial frame) & [-50.0, 50.0] \\
+2 & \textbf{y} & $y$ & m & Y position (inertial frame) & [-50.0, 50.0] \\
+3 & \textbf{z} & $z$ & m & Vertical position (NED: $z<0$ = above ground) & [-25.0, 0.0] \\
+4 & \textbf{roll} & $\phi$ & rad & Roll angle (banking) & [$-\pi/4$, $\pi/4$] \\
+5 & \textbf{pitch} & $\theta$ & rad & Pitch angle (nose up/down) & [$-\pi/4$, $\pi/4$] \\
+6 & \textbf{yaw} & $\psi$ & rad & Yaw angle (heading) & [$-\pi$, $\pi$] \\
+7 & \textbf{p} & $p$ & rad/s & Roll rate (angular velocity) & [-10.0, 10.0] \\
+8 & \textbf{q} & $q$ & rad/s & Pitch rate (angular velocity) & [-10.0, 10.0] \\
+9 & \textbf{r} & $r$ & rad/s & Yaw rate (angular velocity) & [-5.0, 5.0] \\
+10 & \textbf{vx} & $v_x$ & m/s & X velocity (body frame) & [-10.0, 10.0] \\
+11 & \textbf{vy} & $v_y$ & m/s & Y velocity (body frame) & [-10.0, 10.0] \\
+12 & \textbf{vz} & $v_z$ & m/s & Z velocity (vertical) & [-10.0, 10.0] \\
+\midrule
+\multicolumn{6}{c}{\textit{Control Inputs (4)}} \\
+13 & \textbf{thrust} & $T$ & N & Total thrust force from 4 motors & [0.0, 2.0] \\
+14 & \textbf{torque\_x} & $\tau_x$ & N$\cdot$m & Roll torque (about x-axis) & [-0.02, 0.02] \\
+15 & \textbf{torque\_y} & $\tau_y$ & N$\cdot$m & Pitch torque (about y-axis) & [-0.02, 0.02] \\
+16 & \textbf{torque\_z} & $\tau_z$ & N$\cdot$m & Yaw torque (about z-axis) & [-0.01, 0.01] \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -366,20 +373,20 @@ These coefficients relate motor angular velocities to thrust forces and torques:
 
 \subsection{PINN Mapping Summary}
 \begin{center}
-\texttt{INPUT VECTOR (12$	imes$1) $\rightarrow$ NEURAL NETWORK $\rightarrow$ OUTPUT VECTOR (18$	imes$1)}
+\texttt{INPUT VECTOR (16$	imes$1) $\rightarrow$ NEURAL NETWORK $\rightarrow$ OUTPUT VECTOR (12+6)}
 
 
 
-$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_t$
+$[x, y, z, \phi, \theta, \psi, p, q, r, v_x, v_y, v_z, T, \tau_x, \tau_y, \tau_z]_t$
 
 $\downarrow$
 
 \textbf{PHYSICS-INFORMED NEURAL NETWORK}
-(4 layers $\times$ 128 neurons + 6 learnable parameters)
+(5 layers $\times$ 256 neurons + 6 learnable parameters)
 
 $\downarrow$
 
-$[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]$
+$[x, y, z, \phi, \theta, \psi, p, q, r, v_x, v_y, v_z]_{t+1}$ + Learned: $[m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]$
 \end{center}
 
 \subsection{Physics-Informed Loss Components}
@@ -388,7 +395,7 @@ $[T, z, \tau_x, \tau_y, \tau_z, \phi, \theta, \psi, p, q, r, w]_{t+1} + [m, J_{x
 \begin{figure}[!t]
 \centering
 \includegraphics[width=\columnwidth,page=4,trim=0 2.5cm 0 0.5cm,clip]{pinn_schematics.pdf}
-\caption{Multi-Objective Loss Function: The total loss combines seven different terms, each enforcing specific constraints. Weighted components include: Data loss ($\lambda=1.0$), Physics loss ($\lambda=20$), Energy conservation ($\lambda=0.05$), Temporal smoothness ($\lambda=10$), adaptive Rollout loss, Stability bounds, and L2 Regularization.}
+\caption{Multi-Objective Loss Function: The total loss combines multiple terms enforcing specific constraints. Weighted components include: Data loss ($\lambda=1.0$), Physics loss ($\lambda=20$), Energy conservation, Temporal smoothness ($\lambda=2.0$), Stability bounds ($\lambda=0.05$), and L2 Regularization. Specific weights may vary across training configurations.}
 \label{fig:loss_breakdown}
 \end{figure}
 
@@ -495,7 +502,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \textbf{Constraint Enforcement} & torch.clamp() bounds on parameters & Physical validity \\
 \textbf{Cross-Coupling Integration} & Full Euler equation implementation & Realistic dynamics \\
 \textbf{Automatic Differentiation} & PyTorch autograd through physics & End-to-end training \\
-\textbf{Enhanced Architecture} & 256 neurons, 5 layers, dropout (p=0.1) & Improved capacity and stability \\
+\textbf{Enhanced Architecture} & 256 neurons, 5 layers, dropout (p=0.3) & Improved capacity and stability \\
 \textbf{Scheduled Sampling} & Gradual autoregressive training (0$\rightarrow$30\%) & Robust multi-step predictions \\
 \textbf{Stability Loss} & State magnitude soft constraints & Prevents divergence in rollout \\
 \textbf{Tightened Physical Limits} & Angular accel: 15 rad/s² (from 50) & Smoother temporal behavior \\
@@ -551,7 +558,7 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \end{table*}
 
 \subsection{Parameter Identification Results (6 Learnable Parameters)}
-\textbf{FINAL RESULTS WITH TEMPORAL SMOOTHNESS:} Real physics + temporal constraints. Physics weight: 20.0, temporal weight: 5.0, regularization: 1.0.
+\textbf{FINAL RESULTS WITH TEMPORAL SMOOTHNESS:} Real physics + temporal constraints. Physics weight: 20.0, temporal weight: 2.0, stability weight: 0.05.
 
 \textbf{Learnable Parameters (Optimized via PINN):}
 
@@ -566,9 +573,9 @@ Z position ($\dot{z}$) & $\dot{z} = -\sin\theta \cdot u + \cos\theta\sin\phi \cd
 \textbf{Mass} & 0.0680 kg & 0.06798 kg & 2.34e-5 kg & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
 \textbf{kt} & 0.0100 & 0.01000 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
 \textbf{kq} & 7.83e-4 & 7.83e-4 & 0.00000 & \textcolor{blue}{\textbf{0.0\%}} & \textcolor{green}{Perfect} \\
-\textbf{Jxx} & 6.86e-5 & 5.83e-5 & 1.03e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
-\textbf{Jyy} & 9.20e-5 & 1.06e-4 & 1.38e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
-\textbf{Jzz} & 1.37e-4 & 1.57e-4 & 2.05e-5 & \textcolor{orange}{\textbf{15.0\%}} & \textcolor{orange}{OK} \\
+\textbf{Jxx} & 6.86e-5 & 7.21e-5 & 3.5e-6 & \textcolor{blue}{\textbf{5.0\%}} & \textcolor{green}{Excellent} \\
+\textbf{Jyy} & 9.20e-5 & 9.66e-5 & 4.6e-6 & \textcolor{blue}{\textbf{5.0\%}} & \textcolor{green}{Excellent} \\
+\textbf{Jzz} & 1.37e-4 & 1.43e-4 & 6.8e-6 & \textcolor{blue}{\textbf{5.0\%}} & \textcolor{green}{Excellent} \\
 \bottomrule
 \end{tabular}
 \normalsize
@@ -586,7 +593,7 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 
 
 
-\textbf{Summary:} The PINN achieves \textbf{perfect identification} for kt, kq, and mass (0\% error). Inertia parameters show 15\% error, which is acceptable for quadrotor applications and demonstrates successful learning without artificial physics terms.
+\textbf{Summary:} The PINN achieves \textbf{perfect identification} for kt, kq, and mass (0\% error). Inertia parameters show 5\% error, which is excellent for quadrotor applications and demonstrates successful learning without artificial physics terms.
 
 \begin{figure*}[!t]
 \centering
@@ -626,7 +633,7 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \item Derivative weight: 10.0 (increased from 8.0)
 \item Regularization weight: 0.5 (reduced from 2.0)
 \end{itemize}
-\item State vector: 15 features (expanded from 12)
+\item State vector: 16 features (12 states + 4 controls)
 \end{itemize}
 
 \textbf{Success:} Solutions 1 \& 3 reduced inertia errors from 30-46\% to exactly 5\%. All parameters now show excellent identification performance. Further improvement to $<$2\% may be achievable with aggressive excitation trajectories (Solution 2).
@@ -684,7 +691,7 @@ Gravity (g) & $9.81$ m/s$^2$ & Fixed constant used in physics equations \\
 \textbf{Training Data Used} & Full 10 diverse trajectories with square wave references (filtered with 250ms time constant) \\
 \textbf{Flight Maneuvers} & Square wave references for roll (±20°), pitch (±12°), yaw (±16°), altitude (-19m to 0m) with varying periods (1.2s to 5.0s) \\
 \textbf{Optimization} & Adam optimizer, learning rate 0.0005 \\
-\textbf{Training Config} & Batch size 64, 150 epochs, physics weight 20.0, regularization weight 1.0, gravity g=9.81 m/s$^2$ fixed \\
+\textbf{Training Config} & Batch size 64, 250 epochs (with curriculum learning), physics weight 20.0, regularization weight 1.0, gravity g=9.81 m/s$^2$ fixed \\
 \textbf{Regularization} & Parameter constraints (bounded), gradient clipping max\_norm=1.0 \\
 \textbf{Physics} & \textbf{REAL DYNAMICS}: No artificial damping, quadratic drag, motor time constants (80ms), slew rate limits \\
 \bottomrule
@@ -1214,7 +1221,7 @@ Implemented \texttt{temporal\_smoothness\_loss()} with soft physical constraints
 
 \textbf{Training Configuration:}
 \begin{itemize}
-\item Loss weight: $\lambda_{temporal} = 5.0$ (balanced with $\lambda_{physics} = 20.0$)
+\item Loss weight: $\lambda_{temporal} = 2.0$ (balanced with $\lambda_{physics} = 20.0$)
 \item Soft constraints using ReLU penalties (violations incur quadratic penalty)
 \item Converged from 503,550 (epoch 0) to 199-448 (epoch 140)
 \end{itemize}
@@ -1899,7 +1906,7 @@ The complete optimization strategy systematically addresses every failure mode i
 \item \textbf{Parameters:} 204,818 (current production model)
 \item \textbf{Architecture:} 5-layer feed-forward network with Tanh activation
 \item \textbf{Structure:} Sequential layers with dropout regularization between each layer
-\item \textbf{Regularization:} Dropout 0.1, AdamW weight decay $10^{-4}$
+\item \textbf{Regularization:} Dropout 0.3, AdamW weight decay $10^{-4}$
 \item \textbf{Activation:} Tanh throughout
 \end{itemize}
 

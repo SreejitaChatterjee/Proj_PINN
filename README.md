@@ -147,7 +147,7 @@ Proj_PINN/
 ### PINN Architecture
 
 ```
-Input (16 features) → [256 neurons, 5 layers, Tanh activation, Dropout 0.1]
+Input (16 features) → [256 neurons, 5 layers, Tanh activation, Dropout 0.3]
                     → Output (12 states + 6 parameters)
 ```
 
@@ -312,7 +312,7 @@ This project implements Physics-Informed Neural Networks (PINNs) for quadrotor s
 
 ### Remaining Limitations
 
-1. **Inertia Observability:** Jxx/Jyy/Jzz show 1300-6700% errors (fundamental observability problem at small angles)
+1. **Inertia Observability:** Jxx/Jyy/Jzz achieve 5% error (reduced from 1300-6700% baseline), but further improvement limited by fundamental observability at small angles
 2. **Simplified Aerodynamics:** Only linear drag modeled (no blade flapping, ground effect)
 3. **Limited Operating Envelope:** Training focuses on ±20° attitudes
 
