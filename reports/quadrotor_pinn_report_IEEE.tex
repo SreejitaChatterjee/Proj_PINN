@@ -944,26 +944,35 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% \\
 
 \textit{Note: Each figure below shows all 10 training trajectories as separate subplots (5$	imes$2 grid), allowing individual trajectory analysis rather than overlaid visualization. This eliminates visual clutter and makes it easier to examine the model's performance on each trajectory independently.}
 
+\vspace{0.3cm}
+\noindent\fcolorbox{black}{yellow!15}{%
+\parbox{0.97\columnwidth}{%
+\textbf{IMPORTANT -- One-Step vs. Autoregressive Prediction:}\\[0.1cm]
+The plots below show \textbf{one-step prediction} performance, where at each timestep $t$, the model receives the \textit{ground truth state} as input and predicts the state at $t+1$ (i.e., $\Delta t = 1$ms ahead). This evaluates whether the PINN correctly learned the underlying \textbf{Newton-Euler dynamics}---a model with incorrect dynamics would produce poor predictions regardless of input quality.\\[0.1cm]
+This differs from \textbf{autoregressive rollout}, where predictions feed back as inputs and errors accumulate over time. One-step evaluation isolates the model's ability to capture instantaneous dynamics without compounding prediction errors. For multi-step horizon analysis, see Fig.~\ref{fig:autoregressive_stability}.
+}}
+\vspace{0.3cm}
+
 \subsubsection{Position States}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/01_x_diverse_test.png}
-\caption{X Position vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{1.43 m}, RMSE: \textbf{1.79 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame from diverse training set.}
+\caption{X Position vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.118 m}, RMSE: \textbf{0.180 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame from diverse training set.}
 \label{fig:x_position_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/02_y_diverse_test.png}
-\caption{Y Position vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{1.79 m}, RMSE: \textbf{2.13 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame from diverse training set.}
+\caption{Y Position vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.100 m}, RMSE: \textbf{0.166 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal position prediction in inertial frame from diverse training set.}
 \label{fig:y_position_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/03_z_diverse_test.png}
-\caption{Z Position (Altitude) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{4.65 m}, RMSE: \textbf{5.47 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Vertical position tracking by PINN from diverse training set.}
+\caption{Z Position (Altitude) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.243 m}, RMSE: \textbf{0.363 m}). Each subplot shows one test trajectory with its true values (blue) and PINN predictions (red dashed). Vertical position tracking by PINN from diverse training set.}
 \label{fig:altitude_analysis}
 \end{figure*}
 
@@ -972,21 +981,21 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/04_roll_diverse_test.png}
-\caption{Roll Angle ($\phi$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0327 rad (1.87°)}, RMSE: \textbf{0.0452 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Roll angle prediction from diverse training set.}
+\caption{Roll Angle ($\phi$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0030 rad (0.17°)}, RMSE: \textbf{0.0045 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Roll angle prediction from diverse training set.}
 \label{fig:roll_angle_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/05_pitch_diverse_test.png}
-\caption{Pitch Angle ($\theta$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0267 rad (1.53°)}, RMSE: \textbf{0.0338 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Pitch angle prediction from diverse training set.}
+\caption{Pitch Angle ($\theta$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0056 rad (0.32°)}, RMSE: \textbf{0.0075 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Pitch angle prediction from diverse training set.}
 \label{fig:pitch_angle_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/06_yaw_diverse_test.png}
-\caption{Yaw Angle ($\psi$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0353 rad (2.02°)}, RMSE: \textbf{0.0467 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Yaw angle prediction from diverse training set.}
+\caption{Yaw Angle ($\psi$) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0069 rad (0.40°)}, RMSE: \textbf{0.0095 rad}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Yaw angle prediction from diverse training set.}
 \label{fig:yaw_angle_analysis}
 \end{figure*}
 
@@ -995,21 +1004,21 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/07_p_diverse_test.png}
-\caption{Roll Rate (p) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0635 rad/s}, RMSE: \textbf{0.0893 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Roll rate prediction from diverse training set.}
+\caption{Roll Rate (p) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0032 rad/s}, RMSE: \textbf{0.0045 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Roll rate prediction from diverse training set.}
 \label{fig:roll_rate_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/08_q_diverse_test.png}
-\caption{Pitch Rate (q) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0639 rad/s}, RMSE: \textbf{0.1075 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Pitch rate prediction from diverse training set.}
+\caption{Pitch Rate (q) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0029 rad/s}, RMSE: \textbf{0.0063 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Pitch rate prediction from diverse training set.}
 \label{fig:pitch_rate_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/09_r_diverse_test.png}
-\caption{Yaw Rate (r) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0929 rad/s}, RMSE: \textbf{0.1489 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Yaw rate prediction from diverse training set.}
+\caption{Yaw Rate (r) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.0028 rad/s}, RMSE: \textbf{0.0067 rad/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Yaw rate prediction from diverse training set.}
 \label{fig:yaw_rate_analysis}
 \end{figure*}
 
@@ -1018,21 +1027,21 @@ After Option 1 & Jxx/Jyy/Jzz & 30-46\% \\
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/10_vx_diverse_test.png}
-\caption{X Velocity (u, body frame) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.553 m/s}, RMSE: \textbf{0.669 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from diverse training set.}
+\caption{X Velocity (vx, inertial frame) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.186 m/s}, RMSE: \textbf{0.217 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from diverse training set.}
 \label{fig:vx_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/11_vy_diverse_test.png}
-\caption{Y Velocity (v, body frame) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.660 m/s}, RMSE: \textbf{0.805 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from diverse training set.}
+\caption{Y Velocity (vy, inertial frame) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.258 m/s}, RMSE: \textbf{0.334 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Horizontal velocity component from diverse training set.}
 \label{fig:vy_analysis}
 \end{figure*}
 
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=0.95\textwidth]{../results/test_set_trajectories_diverse/12_vz_diverse_test.png}
-\caption{Z Velocity (w, vertical) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{1.959 m/s}, RMSE: \textbf{2.340 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Vertical velocity tracking from diverse training set.}
+\caption{Z Velocity (vz, vertical) vs Time - Test Set (15 Held-Out Trajectories) (Overall MAE: \textbf{0.253 m/s}, RMSE: \textbf{0.364 m/s}). Each subplot shows one trajectory with its true values (blue) and PINN predictions (red dashed). Vertical velocity tracking from diverse training set.}
 \label{fig:vertical_velocity_analysis}
 \end{figure*}
 

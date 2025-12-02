@@ -58,3 +58,4 @@ training_log*.txt
 .DS_Store
 Thumbs.db
 desktop.ini
+data/

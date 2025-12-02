@@ -68,21 +68,26 @@ def load_data(data_path):
     return X, y
 
 def create_dataloaders(X_train, y_train, X_val, y_val, scaler_X, scaler_y):
-    """Scale data and create DataLoaders"""
+    """Scale data and create DataLoaders - keep both scaled and unscaled for physics loss"""
     # Scale data
     X_train_scaled = scaler_X.fit_transform(X_train)
     y_train_scaled = scaler_y.fit_transform(y_train)
     X_val_scaled = scaler_X.transform(X_val)
     y_val_scaled = scaler_y.transform(y_val)
 
-    # Create datasets
+    # Create datasets with BOTH scaled and unscaled data
+    # [scaled_X, scaled_y, unscaled_X, unscaled_y]
     train_dataset = TensorDataset(
         torch.FloatTensor(X_train_scaled),
-        torch.FloatTensor(y_train_scaled)
+        torch.FloatTensor(y_train_scaled),
+        torch.FloatTensor(X_train),  # Unscaled for physics loss
+        torch.FloatTensor(y_train)   # Unscaled for physics loss
     )
     val_dataset = TensorDataset(
         torch.FloatTensor(X_val_scaled),
-        torch.FloatTensor(y_val_scaled)
+        torch.FloatTensor(y_val_scaled),
+        torch.FloatTensor(X_val),
+        torch.FloatTensor(y_val)
     )
 
     # Create dataloaders
@@ -91,25 +96,32 @@ def create_dataloaders(X_train, y_train, X_val, y_val, scaler_X, scaler_y):
 
     return train_loader, val_loader
 
-def evaluate_model(model, dataloader):
+def evaluate_model(model, dataloader, scaler_y):
     """Evaluate model on validation/test set"""
     model.eval()
     total_data_loss = 0
     total_physics_loss = 0
     total_samples = 0
 
+    # Convert scaler params to tensors for inverse transform
+    y_mean = torch.FloatTensor(scaler_y.mean_)
+    y_scale = torch.FloatTensor(scaler_y.scale_)
+
     with torch.no_grad():
-        for X_batch, y_batch in dataloader:
-            # Predictions
-            y_pred = model(X_batch)
+        for X_scaled, y_scaled, X_unscaled, y_unscaled in dataloader:
+            # Predictions (scaled)
+            y_pred_scaled = model(X_scaled)
 
-            # Data loss
-            data_loss = nn.MSELoss()(y_pred, y_batch)
+            # Data loss (on scaled data - this is fine)
+            data_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
 
-            # Physics loss
-            physics_loss = model.physics_loss(X_batch, y_pred)
+            # Inverse transform predictions for physics loss
+            y_pred_unscaled = y_pred_scaled * y_scale + y_mean
 
-            batch_size = X_batch.size(0)
+            # Physics loss on UNSCALED data (actual physical units)
+            physics_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
+
+            batch_size = X_scaled.size(0)
             total_data_loss += data_loss.item() * batch_size
             total_physics_loss += physics_loss.item() * batch_size
             total_samples += batch_size
@@ -175,21 +187,34 @@ def train_model():
     print(f"{'Epoch':<8} {'Train Loss':<12} {'Val Loss':<12} {'Val Data':<12} {'Val Physics':<12} {'LR':<10} {'Status'}")
     print(f"{'='*80}")
 
+    # Convert scaler params to tensors for inverse transform during training
+    y_mean = torch.FloatTensor(scaler_y.mean_)
+    y_scale = torch.FloatTensor(scaler_y.scale_)
+
     for epoch in range(MAX_EPOCHS):
         # Training
         model.train()
         train_loss = 0
-        for X_batch, y_batch in train_loader:
+        for X_scaled, y_scaled, X_unscaled, y_unscaled in train_loader:
             optimizer.zero_grad()
 
-            # Forward pass
-            y_pred = model(X_batch)
+            # Forward pass (on scaled data)
+            y_pred_scaled = model(X_scaled)
 
-            # Losses
-            data_loss = nn.MSELoss()(y_pred, y_batch)
-            physics_loss = model.physics_loss(X_batch, y_pred)
-            temporal_loss = nn.MSELoss()(y_pred[:, :3], y_batch[:, :3])
-            stability_loss = torch.mean(torch.sum(y_pred**2, dim=1))
+            # Data loss (scaled space - this is fine for learning)
+            data_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
+
+            # Inverse transform predictions for physics loss
+            y_pred_unscaled = y_pred_scaled * y_scale + y_mean
+
+            # Physics loss on UNSCALED data (actual physical units!)
+            physics_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
+
+            # Temporal loss (scaled space)
+            temporal_loss = nn.MSELoss()(y_pred_scaled[:, :3], y_scaled[:, :3])
+
+            # Stability loss (scaled space)
+            stability_loss = torch.mean(torch.sum(y_pred_scaled**2, dim=1))
 
             # Combined loss
             loss = data_loss + PHYSICS_WEIGHT*physics_loss + TEMPORAL_WEIGHT*temporal_loss + STABILITY_WEIGHT*stability_loss
@@ -202,12 +227,12 @@ def train_model():
             # Constrain parameters
             model.constrain_parameters()
 
-            train_loss += loss.item() * X_batch.size(0)
+            train_loss += loss.item() * X_scaled.size(0)
 
         train_loss /= len(train_loader.dataset)
 
         # Validation
-        val_loss, val_data_loss, val_physics_loss = evaluate_model(model, val_loader)
+        val_loss, val_data_loss, val_physics_loss = evaluate_model(model, val_loader, scaler_y)
 
         # Update scheduler
         scheduler.step(val_loss)
