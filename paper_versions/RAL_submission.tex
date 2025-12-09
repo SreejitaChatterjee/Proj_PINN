@@ -1,0 +1,266 @@
+% IEEE Robotics and Automation Letters (RA-L) Template
+% Format: 6 pages base (+ 2 pages with $175/page fee) = 8 pages max
+% Two-column IEEE format, 10pt font
+% References count toward page limit
+
+\documentclass[letterpaper, 10pt, journal, twoside]{IEEEtran}
+
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{subcaption}
+\usepackage{balance}
+
+% Correct bad hyphenation
+\hyphenation{op-tical net-works semi-conduc-tor}
+
+\begin{document}
+
+\title{Autoregressive Stability in Physics-Informed Neural Networks for Quadrotor Dynamics: A Curriculum Learning Approach with Simultaneous Parameter Identification}
+
+\author{Sreejita~Chatterjee%
+\thanks{Manuscript received [date]; revised [date]; accepted [date]. This paper was recommended for publication by Editor [Name] upon evaluation of the Associate Editor and Reviewers' comments.}%
+\thanks{S. Chatterjee is with [Department], [University], [City], [Country]. E-mail: {\tt\small email@institution.edu}}%
+\thanks{Digital Object Identifier (DOI): see top of this page.}}
+
+\markboth{IEEE Robotics and Automation Letters. Preprint Version. Accepted [Month], [Year]}%
+{Chatterjee \MakeLowercase{\textit{et al.}}: Autoregressive Stability in PINNs for Quadrotor Dynamics}
+
+\maketitle
+
+\begin{abstract}
+Physics-Informed Neural Networks (PINNs) offer a principled approach to learning robot dynamics by embedding governing equations into neural network training. However, we demonstrate that evaluating PINNs on single-step prediction accuracy---the standard practice---fundamentally misleads about deployment performance in model predictive control. Through systematic experiments on 6-DOF quadrotor dynamics, we show that architectural modifications improving single-step accuracy by 2--10$\times$ can destabilize 100-step autoregressive rollouts by 100--1,000,000$\times$. We identify two failure mechanisms: modular architectures break dynamic coupling between translation and rotation, while Fourier feature encodings suffer catastrophic extrapolation under distribution shift. To address these failures, we develop a curriculum-based training methodology that progressively extends prediction horizons (5$\rightarrow$50 steps) with scheduled sampling. Our approach achieves 51$\times$ improvement in 100-step prediction accuracy (0.029m vs 1.49m MAE) while simultaneously identifying physical parameters with 0\% error for mass and motor coefficients, and 5\% for inertias---consistent with theoretical observability limits derived from Fisher Information analysis. Experiments with aggressive maneuvers ($\pm$45--60$^{\circ}$) reveal that increased excitation can paradoxically degrade identification due to simulator-model mismatch. These results establish practical guidelines for deploying PINNs in safety-critical robot control.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Physics-informed neural networks, quadrotor dynamics, system identification, autoregressive prediction, deep learning.
+\end{IEEEkeywords}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+\IEEEPARstart{L}{earning} accurate dynamics models is fundamental to model-based control of robotic systems. Physics-Informed Neural Networks (PINNs)~\cite{raissi2019physics} embed physical laws directly into neural network training, enabling data-efficient learning with guaranteed physical consistency. For quadrotor control, where model predictive control (MPC) requires accurate multi-step predictions, PINNs offer the potential to jointly learn dynamics and identify physical parameters such as mass and inertia tensors.
+
+However, a critical gap exists between how PINNs are evaluated and deployed. Standard benchmarks assess single-step prediction: given ground truth state $\mathbf{x}_t$, predict $\mathbf{x}_{t+1}$. In contrast, MPC and trajectory tracking require \textit{autoregressive rollout}: predictions feed back as inputs, compounding errors over dozens to hundreds of steps. We demonstrate that these evaluation regimes yield contradictory conclusions about model quality.
+
+This paper makes four contributions:
+\begin{enumerate}
+    \item We systematically characterize autoregressive instability in PINNs, demonstrating that single-step metrics are insufficient for control applications (Sec.~\ref{sec:failure}).
+    \item We develop a curriculum-based training methodology achieving 51$\times$ improvement in 100-step stability (Sec.~\ref{sec:method}).
+    \item We demonstrate simultaneous dynamics learning and parameter identification, with 0\% error on mass/motor coefficients and 5\% on inertias (Sec.~\ref{sec:results}).
+    \item We characterize observability limits and document a negative result on aggressive training maneuvers (Sec.~\ref{sec:observability}).
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+\label{sec:related}
+
+\subsection{Physics-Informed Neural Networks}
+
+Raissi et al.~\cite{raissi2019physics} introduced PINNs for solving differential equations by embedding physics constraints into training. Applications to robotics include manipulators~\cite{lutter2019deep}, continuum robots~\cite{bensch2024physics}, and multirotor slung-load systems~\cite{serrano2024physics}. Yang et al.~\cite{yang2024pinn} applied PINNs to collaborative robot joint dynamics. Most work evaluates single-step accuracy; our contribution is systematic analysis of autoregressive stability.
+
+\subsection{Quadrotor System Identification}
+
+Classical approaches use least-squares~\cite{pounds2010modelling} or extended Kalman filtering for parameter identification. Learning-based methods include Gaussian processes~\cite{deisenroth2011pilco} and neural network residual models~\cite{shi2019neural}. Our work jointly learns dynamics and parameters while ensuring autoregressive stability required for control.
+
+\subsection{Distribution Shift in Learned Dynamics}
+
+Model-based RL extensively studies compounding errors~\cite{janner2019trust, chua2018deep}. Scheduled sampling~\cite{bengio2015scheduled} and DAgger~\cite{ross2011reduction} address train-test mismatch. We adapt these insights to physics-informed learning.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem Formulation}
+\label{sec:problem}
+
+\subsection{Quadrotor Dynamics}
+
+We consider a 6-DOF quadrotor with state $\mathbf{x} = [x, y, z, \phi, \theta, \psi, p, q, r, v_x, v_y, v_z]^T \in \mathbb{R}^{12}$ and control $\mathbf{u} = [T, \tau_x, \tau_y, \tau_z]^T$. The dynamics follow Newton-Euler equations:
+\begin{align}
+    \dot{p} &= \frac{(J_{yy} - J_{zz})qr}{J_{xx}} + \frac{\tau_x}{J_{xx}} \\
+    \dot{v}_z &= -\frac{T\cos\theta\cos\phi}{m} + g - c_d v_z |v_z|
+\end{align}
+with unknown parameters $\boldsymbol{\theta} = [m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]^T$.
+
+\subsection{PINN Architecture}
+
+Our network $g_\phi: \mathbb{R}^{16} \to \mathbb{R}^{12}$ predicts next state from current state and control. We use a 5-layer MLP with 256 neurons per layer (204,818 parameters). Physical parameters are learnable \texttt{nn.Parameter} tensors. The total loss combines:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{data}} + \lambda_p \mathcal{L}_{\text{physics}} + \lambda_t \mathcal{L}_{\text{temporal}} + \lambda_e \mathcal{L}_{\text{energy}}
+\end{equation}
+
+\subsection{Autoregressive Evaluation}
+
+For control, we evaluate $K$-step autoregressive rollout:
+\begin{equation}
+    \hat{\mathbf{x}}_{t+k} = g_\phi^{(k)}(\mathbf{x}_t, \mathbf{u}_{t:t+k-1})
+\end{equation}
+where predictions recursively feed as inputs. We use $K=100$ as our primary stability metric.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Failure Mode Analysis}
+\label{sec:failure}
+
+We compare four architectures with identical physics constraints: Baseline (monolithic MLP), Modular (separate translation/rotation), Fourier (periodic encoding), and Ours (curriculum-trained).
+
+\subsection{Main Result}
+
+Table~\ref{tab:main} reveals an inverse correlation: architectures with best single-step accuracy have worst 100-step stability.
+
+\begin{table}[t]
+\centering
+\caption{Single-Step vs. 100-Step Performance}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{1-Step}} & \multicolumn{2}{c}{\textbf{100-Step}} \\
+\textbf{Model} & $z$ (m) & $\phi$ (rad) & $z$ (m) & $\phi$ (rad) \\
+\midrule
+Baseline & 0.087 & 0.0008 & 1.49 & 0.018 \\
+Modular & 0.041 & 0.0005 & 30.0 & 0.24 \\
+Fourier & \textbf{0.009} & \textbf{0.0001} & 5.2M & 8,596 \\
+\textbf{Ours} & 0.026 & 0.0002 & \textbf{0.029} & \textbf{0.001} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Failure Mode I: Modular Decoupling}
+
+The modular architecture separates translation and rotation modules, breaking the physical coupling $\ddot{z} = -T\cos\theta\cos\phi/m + g$. During rollout, errors accumulate independently in each module then interact catastrophically.
+
+\subsection{Failure Mode II: Fourier Extrapolation}
+
+Fourier encoding $\gamma(\theta) = [\sin(\omega_k\theta), \cos(\omega_k\theta)]$ amplifies distribution shift: small state perturbations cause large feature-space jumps for high frequencies, creating exponential feedback during rollout.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proposed Methodology}
+\label{sec:method}
+
+We preserve monolithic architecture while adding stability mechanisms.
+
+\subsection{Curriculum Learning}
+
+We progressively extend training horizon: 5$\rightarrow$10$\rightarrow$25$\rightarrow$50 steps over 250 epochs. This allows learning short-term error correction before longer horizons.
+
+\subsection{Scheduled Sampling}
+
+We replace ground truth with predictions during training, increasing from 0\% to 30\%. This exposes the network to its own error distribution.
+
+\subsection{Physics-Consistent Regularization}
+
+\textbf{Energy Conservation:} $\mathcal{L}_{\text{energy}} = (dE/dt - P_{\text{in}} + P_{\text{drag}})^2$
+
+\textbf{Temporal Smoothness:} Penalize state derivatives exceeding physical limits.
+
+\subsection{Training Configuration}
+
+AdamW optimizer with cosine annealing (epochs 0--230), L-BFGS fine-tuning (epochs 230--250). Loss weights: $\lambda_p = 20$, $\lambda_t = 2$, $\lambda_e = 5$. Dropout $p=0.3$.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experimental Results}
+\label{sec:results}
+
+\subsection{Data and Metrics}
+
+10 trajectories with square-wave references ($\pm 20^{\circ}$), 49,382 samples at 1kHz. Realistic motor dynamics (80ms time constant). 80/20 time-based split.
+
+\subsection{Autoregressive Stability}
+
+Fig.~\ref{fig:stability} shows error growth over 100 steps. Our method maintains near-constant error (1.1$\times$ growth) versus baseline's exponential divergence (17$\times$ growth).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig_stability.pdf}
+\caption{Position error over 100-step rollout. Our curriculum approach (blue) achieves 51$\times$ lower error than baseline (red) with stable growth.}
+\label{fig:stability}
+\end{figure}
+
+\subsection{Ablation Study}
+
+Table~\ref{tab:ablation} shows component contributions. All are necessary; the combination is synergistic.
+
+\begin{table}[t]
+\centering
+\caption{Ablation: 100-Step Position MAE}
+\label{tab:ablation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{MAE (m)} & \textbf{Impr.} \\
+\midrule
+Baseline & 1.49 & -- \\
++ Curriculum & 0.82 & 45\% \\
++ Sched. sampling & 0.45 & 70\% \\
++ Dropout & 0.12 & 92\% \\
++ Energy cons. & \textbf{0.029} & \textbf{98\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Parameter Identification}
+
+Table~\ref{tab:params} shows identification results. Mass and motor coefficients achieve perfect identification; inertias reach observability-limited 5\% error.
+
+\begin{table}[t]
+\centering
+\caption{Parameter Identification Results}
+\label{tab:params}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Param.} & \textbf{True} & \textbf{Learned} & \textbf{Error} \\
+\midrule
+$m$ & 0.068 kg & 0.0680 kg & 0.0\% \\
+$k_t$ & 0.0100 & 0.0100 & 0.0\% \\
+$k_q$ & 7.83e-4 & 7.83e-4 & 0.0\% \\
+$J_{xx}$ & 6.86e-5 & 7.21e-5 & 5.0\% \\
+$J_{yy}$ & 9.20e-5 & 9.66e-5 & 5.0\% \\
+$J_{zz}$ & 1.37e-4 & 1.43e-4 & 5.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Observability Analysis}
+\label{sec:observability}
+
+\subsection{Fisher Information Analysis}
+
+The sensitivity of roll dynamics to $J_{xx}$:
+\begin{equation}
+    \frac{\partial \dot{p}}{\partial J_{xx}} = -\frac{\tau_x}{J_{xx}^2} + \frac{(J_{yy} - J_{zz})}{J_{xx}^2} qr
+\end{equation}
+
+At small angles ($\pm 20^{\circ}$), $|qr| \approx 0$, making inertias weakly observable. The Cram\'er-Rao bound implies estimation variance $\geq 1/\mathcal{I}(J_{xx})$. Our 5\% error matches this theoretical limit.
+
+\subsection{Negative Result: Aggressive Maneuvers}
+
+We generated $\pm 45$--$60^{\circ}$ trajectories to improve inertia observability. Paradoxically, errors \textit{increased} from 5\% to 46\%.
+
+\textbf{Cause:} The simulator uses linearized drag invalid at large angles. The PINN learned ``effective'' parameters compensating for missing physics, degrading identification in the valid envelope.
+
+\textbf{Implication:} Excitation must match simulator fidelity.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{sec:conclusion}
+
+We demonstrated that architectural improvements to PINNs can catastrophically destabilize autoregressive rollouts despite improving single-step accuracy. Our curriculum-based methodology achieves 51$\times$ stability improvement while identifying physical parameters accurately. The key insight: training methodology, not architectural expressivity, determines autoregressive stability.
+
+Future work includes real-world validation on Crazyflie hardware and integration with model predictive control.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgment}
+
+[Acknowledgments here]
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\balance
+
+\end{document}

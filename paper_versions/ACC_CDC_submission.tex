@@ -1,0 +1,313 @@
+% ACC/CDC Paper Template
+% Format: 6 pages (8 max with $200/extra page)
+% Two-column IEEE conference format, 10pt, US Letter
+% LaTeX class: \documentclass[letterpaper, 10 pt, conference]{ieeeconf}
+
+\documentclass[conference]{IEEEtran}
+
+\IEEEoverridecommandlockouts
+
+\usepackage{graphics}
+\usepackage{graphicx}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{cite}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\title{\LARGE \bf
+Observability-Limited Parameter Identification in Physics-Informed Neural Networks: Stability Analysis for Quadrotor System Identification
+}
+
+\author{Sreejita Chatterjee$^{1}$%
+\thanks{$^{1}$S. Chatterjee is with [Department], [University], [Address]. {\tt\small email@institution.edu}}%
+}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+Physics-Informed Neural Networks (PINNs) enable simultaneous dynamics learning and parameter identification by embedding governing equations into neural network training. We present a systematic analysis of PINN-based system identification for 6-DOF quadrotor dynamics, addressing two challenges: autoregressive prediction stability and parameter observability limits. We show that architectural modifications improving single-step prediction can destabilize multi-step rollouts by 100--1,000,000$\times$, with direct implications for model predictive control. We identify modular architecture decoupling and Fourier feature extrapolation as primary failure mechanisms. For parameter identification, we characterize observability using Fisher Information: mass and motor coefficients achieve 0\% error due to strong translational dynamics gradients, while inertia parameters saturate at 5\% error due to weak cross-coupling at small angles ($\pm 20^{\circ}$). A curriculum-based training methodology achieves 51$\times$ stability improvement. Experiments with aggressive maneuvers ($\pm 45$--$60^{\circ}$) paradoxically degraded identification due to simulator-model mismatch, demonstrating that excitation must match model fidelity. These results establish practical bounds for PINN-based system identification in control applications.
+
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODUCTION}
+
+System identification is fundamental to model-based control of dynamical systems. Physics-Informed Neural Networks (PINNs) offer a learning-based approach that embeds governing equations---such as Newton-Euler dynamics---directly into neural network training~\cite{raissi2019physics}. This enables simultaneous dynamics learning and parameter identification with physical consistency guarantees.
+
+For control applications, however, two critical challenges arise. First, model predictive control (MPC) requires stable \textit{multi-step} predictions, yet PINNs are typically evaluated on \textit{single-step} accuracy. We demonstrate that these metrics can contradict: architectures improving single-step accuracy by 2--10$\times$ may destabilize 100-step rollouts by $10^2$--$10^6\times$. Second, parameter identification accuracy is fundamentally limited by \textit{observability}---the information content in measured trajectories about unknown parameters.
+
+The contributions of this paper are:
+\begin{enumerate}
+    \item Stability analysis of autoregressive PINNs, identifying failure mechanisms in modular and Fourier architectures (Sec.~\ref{sec:stability}).
+    \item Fisher Information-based observability analysis explaining differential identification accuracy across parameters (Sec.~\ref{sec:observability}).
+    \item A curriculum-based training methodology achieving 51$\times$ stability improvement with accurate parameter identification (Sec.~\ref{sec:method}).
+    \item Characterization of model mismatch effects on identification from aggressive maneuvers (Sec.~\ref{sec:mismatch}).
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PROBLEM FORMULATION}
+
+\subsection{Quadrotor Dynamics}
+
+Consider a 6-DOF quadrotor with state $\mathbf{x} \in \mathbb{R}^{12}$:
+\begin{equation}
+\mathbf{x} = [x, y, z, \phi, \theta, \psi, p, q, r, v_x, v_y, v_z]^T
+\end{equation}
+and control input $\mathbf{u} = [T, \tau_x, \tau_y, \tau_z]^T$. The dynamics follow Newton-Euler equations with unknown parameters $\boldsymbol{\theta} = [m, J_{xx}, J_{yy}, J_{zz}, k_t, k_q]^T$:
+
+\textbf{Rotational dynamics:}
+\begin{equation}
+\dot{p} = \frac{(J_{yy} - J_{zz})qr}{J_{xx}} + \frac{\tau_x}{J_{xx}}
+\label{eq:euler}
+\end{equation}
+
+\textbf{Translational dynamics:}
+\begin{equation}
+\dot{v}_z = -\frac{T\cos\theta\cos\phi}{m} + g - c_d v_z |v_z|
+\label{eq:newton}
+\end{equation}
+
+\subsection{PINN Formulation}
+
+The PINN predicts next state: $\hat{\mathbf{x}}_{t+1} = g_\phi(\mathbf{x}_t, \mathbf{u}_t)$ with learnable parameters $\hat{\boldsymbol{\theta}}$. Training minimizes:
+\begin{equation}
+\mathcal{L} = \mathcal{L}_{\text{data}} + \lambda_p \mathcal{L}_{\text{physics}}
+\end{equation}
+where $\mathcal{L}_{\text{physics}}$ enforces~\eqref{eq:euler}--\eqref{eq:newton}.
+
+\subsection{Autoregressive Rollout}
+
+For control, predictions recursively feed as inputs:
+\begin{equation}
+\hat{\mathbf{x}}_{t+k} = g_\phi^{(k)}(\mathbf{x}_t, \mathbf{u}_{t:t+k-1})
+\end{equation}
+Stability requires bounded error growth over $K$ steps.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{STABILITY ANALYSIS}
+\label{sec:stability}
+
+\subsection{Experimental Setup}
+
+We compare four PINN architectures:
+\begin{itemize}
+    \item \textbf{Baseline}: Monolithic 5-layer MLP
+    \item \textbf{Modular}: Separate translation/rotation subnetworks
+    \item \textbf{Fourier}: Periodic encoding of angular states
+    \item \textbf{Proposed}: Curriculum-trained monolithic
+\end{itemize}
+
+All share identical physics constraints; only architecture differs.
+
+\subsection{Main Result}
+
+Table~\ref{tab:stability} reveals inverse correlation between single-step accuracy and autoregressive stability.
+
+\begin{table}[t]
+\centering
+\caption{Single-Step vs. 100-Step Performance}
+\label{tab:stability}
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{1-Step MAE}} & \multicolumn{2}{c}{\textbf{100-Step MAE}} \\
+\textbf{Model} & $z$ (m) & $\phi$ (rad) & $z$ (m) & $\phi$ (rad) \\
+\midrule
+Baseline & 0.087 & 0.0008 & 1.49 & 0.018 \\
+Modular & 0.041 & 0.0005 & 30.0 & 0.24 \\
+Fourier & \textbf{0.009} & \textbf{0.0001} & 5.2M & 8,596 \\
+\textbf{Proposed} & 0.026 & 0.0002 & \textbf{0.029} & \textbf{0.001} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Failure Mode I: Gradient Decoupling}
+
+The modular architecture separates:
+\begin{itemize}
+    \item Translational module: predicts $z, v_z$
+    \item Rotational module: predicts $\phi, \theta, \psi, p, q, r$
+\end{itemize}
+
+This breaks physical coupling in~\eqref{eq:newton}. During autoregressive rollout, errors in $\phi, \theta$ (rotation module) cause thrust projection errors in $\ddot{z}$ (translation module), but gradients do not flow between modules to enable coordinated correction.
+
+\subsection{Failure Mode II: Fourier Extrapolation}
+
+Fourier encoding: $\gamma(\theta) = [\sin(\omega_k \theta), \cos(\omega_k \theta)]_{k=1}^K$
+
+For high frequencies $\omega_K$:
+\begin{equation}
+\|\gamma(\theta + \epsilon) - \gamma(\theta)\| \propto \omega_K |\epsilon|
+\end{equation}
+
+Small state drift causes large feature-space discontinuities. During rollout, this creates exponential feedback: drift $\to$ feature jump $\to$ poor prediction $\to$ larger drift.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{OBSERVABILITY ANALYSIS}
+\label{sec:observability}
+
+\subsection{Parameter Sensitivity}
+
+From~\eqref{eq:euler}, the sensitivity to $J_{xx}$:
+\begin{equation}
+\frac{\partial \dot{p}}{\partial J_{xx}} = -\frac{\tau_x}{J_{xx}^2} + \frac{(J_{yy} - J_{zz})}{J_{xx}^2} qr
+\label{eq:sensitivity}
+\end{equation}
+
+At small angles ($|\phi|, |\theta| < 20^{\circ}$), angular rates $|q|, |r| < 0.5$ rad/s, making the cross-coupling term in~\eqref{eq:sensitivity} negligible: $|qr| \approx O(10^{-2})$.
+
+For mass, from~\eqref{eq:newton}:
+\begin{equation}
+\frac{\partial \dot{v}_z}{\partial m} = \frac{T\cos\theta\cos\phi}{m^2}
+\end{equation}
+
+Mass sensitivity couples directly to easily-measured vertical acceleration, providing strong gradient signal even at hover.
+
+\subsection{Fisher Information Analysis}
+
+The Fisher Information Matrix element for parameter $\theta_i$:
+\begin{equation}
+\mathcal{I}_{ii} = \mathbb{E}\left[\left(\frac{\partial \log p(\mathbf{y}|\boldsymbol{\theta})}{\partial \theta_i}\right)^2\right]
+\end{equation}
+
+The Cram\'er-Rao bound establishes:
+\begin{equation}
+\text{Var}(\hat{\theta}_i) \geq \frac{1}{\mathcal{I}_{ii}}
+\end{equation}
+
+When output sensitivity $\partial \mathbf{y}/\partial J_{xx}$ is small (as at small angles), $\mathcal{I}(J_{xx})$ decreases and estimation variance increases.
+
+\subsection{Experimental Validation}
+
+Table~\ref{tab:params} shows identification results matching theoretical predictions.
+
+\begin{table}[t]
+\centering
+\caption{Parameter Identification Results}
+\label{tab:params}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Parameter} & \textbf{True} & \textbf{Learned} & \textbf{Error} \\
+\midrule
+Mass $m$ & 0.068 kg & 0.0680 kg & 0.0\% \\
+$k_t$ & 0.0100 & 0.0100 & 0.0\% \\
+$k_q$ & 7.83e-4 & 7.83e-4 & 0.0\% \\
+$J_{xx}$ & 6.86e-5 & 7.21e-5 & 5.0\% \\
+$J_{yy}$ & 9.20e-5 & 9.66e-5 & 5.0\% \\
+$J_{zz}$ & 1.37e-4 & 1.43e-4 & 5.0\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Strong-observable parameters (mass, $k_t$, $k_q$) achieve 0\% error. Weak-observable parameters (inertias) saturate at 5\%, consistent with Fisher Information bounds.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{PROPOSED METHODOLOGY}
+\label{sec:method}
+
+\subsection{Curriculum Learning}
+
+We progressively extend training rollout horizon:
+\begin{equation}
+K(e) = \begin{cases}
+5 & e < 50 \\
+10 & 50 \leq e < 100 \\
+25 & 100 \leq e < 150 \\
+50 & e \geq 150
+\end{cases}
+\end{equation}
+
+\subsection{Scheduled Sampling}
+
+Replace ground truth with predictions with probability $p(e)$ increasing from 0 to 0.3 over training, bridging train-test distribution gap.
+
+\subsection{Physics-Consistent Regularization}
+
+\textbf{Energy conservation:}
+\begin{equation}
+\mathcal{L}_{\text{energy}} = \left(\frac{dE}{dt} - P_{\text{thrust}} - P_{\text{torque}} + P_{\text{drag}}\right)^2
+\end{equation}
+
+\textbf{Temporal smoothness:}
+\begin{equation}
+\mathcal{L}_{\text{smooth}} = \sum_i \text{ReLU}\left(\left|\frac{d\hat{x}_i}{dt}\right| - v_{\text{max},i}\right)^2
+\end{equation}
+
+\subsection{Results}
+
+Table~\ref{tab:ablation} shows ablation results. All components necessary; full combination achieves 51$\times$ improvement.
+
+\begin{table}[t]
+\centering
+\caption{Ablation Study: 100-Step Position MAE}
+\label{tab:ablation}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{MAE (m)} & \textbf{Improvement} \\
+\midrule
+Baseline & 1.49 & -- \\
++ Curriculum & 0.82 & 45\% \\
++ Scheduled sampling & 0.45 & 70\% \\
++ Dropout & 0.12 & 92\% \\
++ Energy conservation & \textbf{0.029} & \textbf{98\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{MODEL MISMATCH ANALYSIS}
+\label{sec:mismatch}
+
+\subsection{Aggressive Trajectory Experiment}
+
+To improve inertia observability, we generated trajectories with $\pm 45$--$60^{\circ}$ attitudes to excite cross-coupling terms in~\eqref{eq:sensitivity}.
+
+\textbf{Expected:} Stronger $qr$ terms $\to$ better $J_{xx}$ gradients $\to$ lower error.
+
+\textbf{Observed:} Inertia errors \textit{increased} from 5\% to 46\%.
+
+\subsection{Root Cause}
+
+The simulator uses linearized drag assumptions:
+\begin{equation}
+F_{\text{drag}} = c_d \mathbf{v} |\mathbf{v}|
+\end{equation}
+
+At large angles, nonlinear aerodynamics (blade flapping, gyroscopic effects) dominate. The PINN learns ``effective'' parameters that fit the invalid high-angle data but degrade prediction in the valid operating envelope.
+
+\subsection{Implication}
+
+Increased excitation improves observability only when model fidelity matches the operational regime. For PINN-based system identification:
+\begin{equation}
+\text{Identification accuracy} \propto \min(\text{Observability}, \text{Model fidelity})
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{CONCLUSIONS}
+
+We presented systematic analysis of PINN-based quadrotor system identification, addressing autoregressive stability and parameter observability. Key findings:
+
+\begin{enumerate}
+    \item Single-step accuracy does not predict autoregressive stability; modular and Fourier architectures can destabilize rollouts by $10^2$--$10^6\times$.
+    \item Parameter identification accuracy is bounded by Fisher Information-based observability limits (5\% for inertias at small angles).
+    \item Curriculum learning with scheduled sampling achieves 51$\times$ stability improvement while maintaining accurate identification.
+    \item Aggressive excitation without matched model fidelity degrades rather than improves identification.
+\end{enumerate}
+
+Future work includes real-world validation and MPC integration.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

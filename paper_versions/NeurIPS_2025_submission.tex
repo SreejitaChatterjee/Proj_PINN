@@ -1,0 +1,365 @@
+% NeurIPS 2025 Paper Template
+% Format: 9 pages content + unlimited references/appendix
+% Must use neurips_2025.sty (download from neurips.cc)
+% Font: 10pt Times New Roman, 5.5" x 9" text area
+% Abstract: indented 0.5" on both sides
+
+\documentclass{article}
+
+% Required: Use the neurips_2025 style file
+\usepackage[preprint]{neurips_2025}  % Use [final] for camera-ready
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[hidelinks]{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\title{The Expressivity-Stability Tradeoff in Physics-Informed Neural Networks: Why Complex Architectures Fail at Autoregressive Dynamics Prediction}
+
+% Author info hidden for submission; use for camera-ready
+\author{%
+  Anonymous Author(s) \\
+  \texttt{anonymous@example.com} \\
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Physics-Informed Neural Networks (PINNs) embed governing equations into neural networks to learn dynamics from data. While prior work evaluates PINNs using single-step prediction accuracy, practical deployment in control, simulation, and forecasting requires stable multi-step \textit{autoregressive rollout} where predictions recursively feed as inputs. We demonstrate a fundamental \textit{expressivity-stability tradeoff}: architectural modifications that improve single-step accuracy by 2--10$\times$ can catastrophically destabilize autoregressive rollouts by $10^2$--$10^6\times$, causing prediction errors to explode from centimeters to kilometers within 100 steps. Through systematic experiments on a 12-dimensional nonlinear dynamical system (6-DOF quadrotor), we identify two failure mechanisms: (1) modular architectures break implicit dynamic coupling, causing coordinated subsystem errors to accumulate independently then interact catastrophically, and (2) Fourier feature embeddings suffer severe distribution shift during rollout, where small state perturbations map to large feature-space discontinuities. We propose a stability-oriented training framework combining curriculum learning over increasing horizons, scheduled sampling to expose models to their own errors, and physics-based regularization. This approach achieves 51$\times$ improvement in 100-step prediction accuracy while maintaining parameter identification. Our results challenge the assumption that more expressive architectures yield better dynamics models and establish that standard single-step evaluation metrics fundamentally mislead about autoregressive deployment performance.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{sec:intro}
+
+Learning accurate dynamics models is fundamental to model-based control, simulation, and forecasting. Physics-Informed Neural Networks (PINNs)~\citep{raissi2019physics} have emerged as a principled approach, embedding governing equations directly into neural network training. This physics-constrained learning enables data-efficient training, physically consistent predictions, and simultaneous parameter identification.
+
+However, a critical gap exists between how PINNs are \textit{evaluated} and how they are \textit{deployed}. Standard benchmarks assess single-step prediction: given ground truth state $\mathbf{x}_t$, predict $\hat{\mathbf{x}}_{t+1}$. In contrast, model predictive control, trajectory optimization, and long-horizon simulation require \textit{autoregressive rollout}: predictions $\hat{\mathbf{x}}_{t+1}$ feed back as inputs to predict $\hat{\mathbf{x}}_{t+2}$, compounding errors over dozens to hundreds of steps.
+
+We demonstrate that these evaluation regimes yield fundamentally contradictory conclusions. Specifically, we uncover an \textbf{expressivity-stability tradeoff}: architectural modifications that improve single-step accuracy by 2--10$\times$ can degrade 100-step autoregressive performance by $10^2$--$10^6\times$. A model achieving 0.009m single-step error can diverge to over 5 million meters in 100 steps---rendering it completely unusable for any control application.
+
+\paragraph{Contributions.} This paper makes four contributions:
+
+\begin{enumerate}
+    \item We identify the \textbf{expressivity-stability tradeoff} in physics-informed dynamics learning, showing that architectural expressivity inversely correlates with autoregressive stability (Section~\ref{sec:tradeoff}).
+
+    \item We characterize two \textbf{failure mechanisms}: modular architecture decoupling breaks dynamic coupling essential for stable rollout, and Fourier feature embeddings amplify distribution shift exponentially (Section~\ref{sec:failure_modes}).
+
+    \item We propose a \textbf{stability-oriented training framework} combining curriculum learning, scheduled sampling, and physics-consistent regularization, achieving 51$\times$ improvement over baseline (Section~\ref{sec:method}).
+
+    \item We establish that \textbf{single-step metrics are inadequate} for evaluating dynamics models intended for autoregressive deployment, proposing multi-horizon evaluation protocols (Section~\ref{sec:experiments}).
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Physics-Informed Neural Networks.} \citet{raissi2019physics} introduced PINNs for solving differential equations by embedding physics into training losses. Extensions include learning operators~\citep{lu2021learning}, handling noisy data~\citep{yang2021b}, and applications to fluid dynamics~\citep{cai2021physics}. For robotics, PINNs have been applied to manipulators~\citep{lutter2019deep}, continuum robots~\citep{bensch2024physics}, and multirotors~\citep{serrano2024physics}. However, these works primarily evaluate single-step accuracy rather than multi-step stability.
+
+\paragraph{Distribution Shift in Learned Dynamics.} Model-based reinforcement learning extensively studies compounding errors in learned models~\citep{janner2019trust, chua2018deep}. Ensemble disagreement~\citep{chua2018deep} and model uncertainty~\citep{buckman2018sample} help detect but not prevent divergence. Our work differs by focusing on architectural choices that cause instability independent of model uncertainty.
+
+\paragraph{Exposure Bias and Scheduled Sampling.} Sequence models trained with teacher forcing suffer exposure bias---the train-test distribution mismatch when predictions replace ground truth at inference~\citep{ranzato2015sequence}. Scheduled sampling~\citep{bengio2015scheduled} and DAgger~\citep{ross2011reduction} address this by exposing models to their own predictions during training. We adapt these insights to physics-informed learning, showing they are essential for autoregressive stability.
+
+\paragraph{Fourier Features and Positional Encodings.} Random Fourier features~\citep{rahimi2007random} and learned positional encodings~\citep{tancik2020fourier} improve neural network approximation of high-frequency functions. However, we show these representations suffer catastrophic extrapolation when states drift outside training distributions during autoregressive rollout.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Problem Setting}
+\label{sec:problem}
+
+\subsection{Dynamics Learning Formulation}
+
+Consider a dynamical system with state $\mathbf{x} \in \mathbb{R}^n$ and control $\mathbf{u} \in \mathbb{R}^m$ governed by:
+\begin{equation}
+    \dot{\mathbf{x}} = f(\mathbf{x}, \mathbf{u}; \boldsymbol{\theta})
+\end{equation}
+where $\boldsymbol{\theta}$ denotes unknown physical parameters. Given discrete-time observations, we learn a neural network $g_\phi: \mathbb{R}^{n+m} \to \mathbb{R}^n$ predicting the next state:
+\begin{equation}
+    \hat{\mathbf{x}}_{t+1} = g_\phi(\mathbf{x}_t, \mathbf{u}_t)
+\end{equation}
+
+\subsection{Physics-Informed Training}
+
+A PINN incorporates physical laws through a physics loss term:
+\begin{equation}
+    \mathcal{L}_{\text{physics}} = \left\| \frac{\hat{\mathbf{x}}_{t+1} - \mathbf{x}_t}{\Delta t} - f(\mathbf{x}_t, \mathbf{u}_t; \hat{\boldsymbol{\theta}}) \right\|^2
+\end{equation}
+where $\hat{\boldsymbol{\theta}}$ are learnable parameters. The total loss combines data fitting and physics:
+\begin{equation}
+    \mathcal{L} = \mathcal{L}_{\text{data}} + \lambda_p \mathcal{L}_{\text{physics}}
+\end{equation}
+
+\subsection{Autoregressive Rollout}
+
+For multi-step prediction, the model's outputs recursively feed as inputs:
+\begin{equation}
+    \hat{\mathbf{x}}_{t+k} = g_\phi^{(k)}(\mathbf{x}_t, \mathbf{u}_{t:t+k-1}) = g_\phi(g_\phi^{(k-1)}(\cdot), \mathbf{u}_{t+k-1})
+\end{equation}
+with $g_\phi^{(1)} = g_\phi$. Critically, the model encounters states $\hat{\mathbf{x}}_{t+k}$ that may lie outside the training distribution $p_{\text{train}}(\mathbf{x})$.
+
+\subsection{Experimental System}
+
+We study a 6-DOF quadrotor with 12-dimensional state:
+\begin{equation}
+    \mathbf{x} = [x, y, z, \phi, \theta, \psi, p, q, r, v_x, v_y, v_z]^T
+\end{equation}
+comprising position, Euler angles, angular rates, and body-frame velocities. The control input $\mathbf{u} = [T, \tau_x, \tau_y, \tau_z]^T$ consists of thrust and body torques. This system exhibits strong coupling between translational and rotational dynamics, making it an ideal testbed for studying architectural effects on autoregressive stability.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Expressivity-Stability Tradeoff}
+\label{sec:tradeoff}
+
+\subsection{Experimental Setup}
+
+We compare four PINN architectures with identical physics constraints but different network structures:
+\begin{itemize}
+    \item \textbf{Baseline}: Monolithic 5-layer MLP (256 neurons, 204K parameters)
+    \item \textbf{Modular}: Separate translation/rotation subnetworks (shared input layer)
+    \item \textbf{Fourier}: Periodic encoding $\gamma(\theta) = [\sin(\omega_k\theta), \cos(\omega_k\theta)]_{k=1}^K$ for angular states
+    \item \textbf{Ours}: Curriculum-trained monolithic architecture (Section~\ref{sec:method})
+\end{itemize}
+
+All models are trained on 10 quadrotor trajectories (49,382 samples) with identical hyperparameters except architecture.
+
+\subsection{Main Result: Inverse Correlation}
+
+Table~\ref{tab:main} reveals the expressivity-stability tradeoff: architectures achieving the best single-step accuracy exhibit the worst autoregressive stability.
+
+\begin{table}[t]
+\caption{Single-step accuracy (lower is better) vs. 100-step autoregressive stability. More expressive architectures achieve better single-step but catastrophically worse multi-step performance.}
+\label{tab:main}
+\centering
+\begin{tabular}{lcccc}
+\toprule
+& \multicolumn{2}{c}{\textbf{Single-Step MAE}} & \multicolumn{2}{c}{\textbf{100-Step MAE}} \\
+\textbf{Architecture} & $z$ (m) & $\phi$ (rad) & $z$ (m) & $\phi$ (rad) \\
+\midrule
+Baseline & 0.087 & 0.0008 & 1.49 & 0.018 \\
+Modular & 0.041 & 0.0005 & 30.0 & 0.24 \\
+Fourier & \textbf{0.009} & \textbf{0.0001} & 5.2$\times 10^6$ & 8,596 \\
+\textbf{Ours} & 0.026 & 0.0002 & \textbf{0.029} & \textbf{0.001} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The Fourier architecture achieves 10$\times$ better single-step accuracy than baseline, yet diverges to over 5 million meters in 100 steps---a degradation factor of 3,500,000$\times$. Our approach achieves competitive single-step accuracy while maintaining 51$\times$ better stability than baseline.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Failure Mode Analysis}
+\label{sec:failure_modes}
+
+\subsection{Failure Mode I: Modular Architecture Decoupling}
+
+The modular architecture separates translational dynamics (predicting $z, v_z$) from rotational dynamics (predicting $\phi, \theta, \psi, p, q, r$) into independent subnetworks. While this isolates gradient flows and potentially improves optimization, it breaks the physical coupling:
+\begin{equation}
+    \ddot{z} = -\frac{T \cos\theta \cos\phi}{m} + g
+\end{equation}
+
+Vertical acceleration depends critically on attitude angles $\phi, \theta$. In the modular architecture, these are predicted by a separate module with no gradient connection to the translation predictions.
+
+\paragraph{Failure mechanism.} During autoregressive rollout: (1) small errors in $\phi, \theta$ accumulate in the rotation module; (2) these errors cause thrust projection errors in the translation module; (3) errors accumulate \textit{independently} in each module; (4) when errors become large, they interact \textit{catastrophically}. Figure~\ref{fig:failure}(a) illustrates this decoupling.
+
+\subsection{Failure Mode II: Fourier Feature Extrapolation}
+
+Fourier encoding maps angular states to periodic features:
+\begin{equation}
+    \gamma(\theta) = [\sin(\omega_1 \theta), \cos(\omega_1 \theta), \ldots, \sin(\omega_K \theta), \cos(\omega_K \theta)]
+\end{equation}
+
+These features are highly effective for interpolation within the training distribution. However, during autoregressive rollout, states inevitably drift. For high frequencies $\omega_K$:
+\begin{equation}
+    \|\gamma(\theta + \epsilon) - \gamma(\theta)\|_2 \leq 2\omega_K |\epsilon|
+\end{equation}
+
+A small state perturbation $\epsilon$ causes a feature-space displacement proportional to the highest frequency. When predictions drift outside the training envelope (e.g., $\theta = 0.35$ rad when trained on $|\theta| < 0.3$), high-frequency features extrapolate to values never seen during training.
+
+\paragraph{Feedback loop.} State drift $\to$ large feature-space jump $\to$ poor prediction $\to$ larger drift $\to$ exponential divergence. This explains the 5.2 million meter error: the Fourier architecture enters a catastrophic feedback loop around step 60.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{fig_failure_modes.pdf}
+\caption{Failure mechanisms in autoregressive PINNs. (a) Modular architecture: separate modules break physical coupling; errors accumulate independently then interact catastrophically. (b) Fourier features: small state perturbations map to large feature-space discontinuities, creating exponential feedback during rollout.}
+\label{fig:failure}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Stability-Oriented Training}
+\label{sec:method}
+
+Our approach preserves the monolithic architecture that maintains implicit dynamic coupling, while adding targeted stability mechanisms.
+
+\subsection{Curriculum Learning Over Rollout Horizon}
+
+We progressively extend the training rollout horizon:
+\begin{equation}
+    K(e) = \begin{cases}
+    5 & e < 50 \\
+    10 & 50 \leq e < 100 \\
+    25 & 100 \leq e < 150 \\
+    50 & e \geq 150
+    \end{cases}
+\end{equation}
+
+During training at epoch $e$, we compute loss over $K(e)$-step rollouts:
+\begin{equation}
+    \mathcal{L}_{\text{rollout}}^{(K)} = \frac{1}{K}\sum_{k=1}^{K} \|\hat{\mathbf{x}}_{t+k} - \mathbf{x}_{t+k}\|^2
+\end{equation}
+
+This allows the network to first learn short-term error correction before extending to longer horizons where compounding effects dominate.
+
+\subsection{Scheduled Sampling}
+
+We progressively replace ground truth inputs with model predictions during training:
+\begin{equation}
+    \tilde{\mathbf{x}}_t = \begin{cases}
+    \mathbf{x}_t & \text{w.p. } 1 - p(e) \\
+    \hat{\mathbf{x}}_t & \text{w.p. } p(e)
+    \end{cases}
+\end{equation}
+where $p(e)$ increases linearly from 0 to 0.3 over training. This exposes the network to its own error distribution, bridging the train-test gap inherent in teacher-forced learning.
+
+\subsection{Physics-Consistent Regularization}
+
+\paragraph{Energy Conservation.} We enforce power balance:
+\begin{equation}
+    \mathcal{L}_{\text{energy}} = \left(\frac{dE}{dt} - P_{\text{input}} + P_{\text{drag}}\right)^2
+\end{equation}
+where $E = \frac{1}{2}m\|\mathbf{v}\|^2 + \frac{1}{2}\boldsymbol{\omega}^T\mathbf{J}\boldsymbol{\omega} + mgz$ is total mechanical energy.
+
+\paragraph{Temporal Smoothness.} We penalize unphysical state derivatives:
+\begin{equation}
+    \mathcal{L}_{\text{smooth}} = \sum_i \text{ReLU}\left(\left|\frac{d\hat{x}_i}{dt}\right| - v_{\text{max},i}\right)^2
+\end{equation}
+
+The complete training algorithm is provided in Algorithm~\ref{alg:training} (Appendix).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Experimental Setup}
+
+\paragraph{Data.} 10 quadrotor trajectories with square-wave references ($\pm 20^\circ$ attitudes), 49,382 samples at 1kHz. Realistic motor dynamics (80ms time constant). 80/20 time-based train/test split.
+
+\paragraph{Metrics.} Single-step MAE (teacher-forced) and $K$-step MAE (autoregressive) for $K \in \{1, 10, 50, 100\}$. Parameter identification error versus ground truth.
+
+\paragraph{Baselines.} In addition to the architectural variants above, we compare against: (1) LSTM encoder-decoder, (2) Neural ODE~\citep{chen2018neural} with physics loss.
+
+\subsection{Multi-Horizon Stability}
+
+Table~\ref{tab:multihorizon} shows error growth across prediction horizons on held-out test data.
+
+\begin{table}[t]
+\caption{Multi-horizon evaluation on held-out test set. Our method maintains stable error growth (1.1$\times$ from 1 to 100 steps) while baseline degrades 17$\times$.}
+\label{tab:multihorizon}
+\centering
+\begin{tabular}{lccccc}
+\toprule
+& \multicolumn{4}{c}{\textbf{Position MAE (m)}} & \textbf{Error} \\
+\textbf{Method} & 1-step & 10-step & 50-step & 100-step & \textbf{Growth} \\
+\midrule
+Baseline PINN & 0.087 & 0.162 & 0.521 & 1.49 & 17$\times$ \\
+LSTM & 0.094 & 0.312 & 2.14 & 8.72 & 93$\times$ \\
+Neural ODE & 0.102 & 0.198 & 0.89 & 3.21 & 31$\times$ \\
+\textbf{Ours} & 0.026 & 0.017 & 0.021 & \textbf{0.029} & \textbf{1.1$\times$} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Remarkably, our method achieves \textit{lower} error at 10 steps than at 1 step (0.017m vs 0.026m), demonstrating learned error correction rather than mere memorization.
+
+\subsection{Ablation Study}
+
+Table~\ref{tab:ablation} quantifies each component's contribution. All components are necessary; the combination is synergistic.
+
+\begin{table}[t]
+\caption{Ablation study: contribution of each training component to 100-step stability.}
+\label{tab:ablation}
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Configuration} & \textbf{100-Step MAE (m)} & \textbf{Improvement} \\
+\midrule
+Baseline & 1.49 & -- \\
++ Curriculum learning & 0.82 & 45\% \\
++ Scheduled sampling & 0.45 & 70\% \\
++ Dropout regularization & 0.12 & 92\% \\
++ Energy conservation & \textbf{0.029} & \textbf{98\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Parameter Identification}
+
+Our method simultaneously identifies physical parameters with high accuracy: 0\% error for mass ($m$), thrust coefficient ($k_t$), and torque coefficient ($k_q$); 5\% error for inertias ($J_{xx}, J_{yy}, J_{zz}$). The inertia limit is consistent with Fisher Information analysis showing weak observability at small angles.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{Implications for evaluation.} Standard single-step benchmarks fundamentally mislead about autoregressive deployment. We recommend multi-horizon evaluation with explicit error growth analysis for any dynamics model intended for control applications.
+
+\paragraph{Connection to model-based RL.} Our findings explain why learned dynamics often fail in long-horizon planning~\citep{janner2019trust}. Architectural choices that improve supervised learning metrics may destabilize autoregressive rollout---the regime that matters for control.
+
+\paragraph{Limitations.} Our study uses simulation-generated data for a single dynamical system. While the mechanisms we identify are general, direct real-world validation remains future work. Additionally, our stability-oriented training adds computational cost through multi-step rollouts.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+
+We demonstrated a fundamental expressivity-stability tradeoff in physics-informed neural networks: architectural modifications improving single-step accuracy can catastrophically destabilize autoregressive rollouts. Through systematic analysis, we identified modular decoupling and Fourier extrapolation as primary failure mechanisms. Our curriculum-based training methodology resolves these issues, achieving 51$\times$ stability improvement while maintaining accurate dynamics learning and parameter identification.
+
+These results establish that evaluating learned dynamics models requires multi-step autoregressive assessment---not single-step accuracy---and that training methodology, not architectural expressivity, determines autoregressive stability. We hope this work motivates the community to reconsider evaluation protocols for dynamics models intended for control applications.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgments}
+
+[Omitted for anonymous submission]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% References
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\section{Training Algorithm}
+\label{app:algorithm}
+
+\begin{algorithm}[H]
+\caption{Stability-Oriented PINN Training}
+\label{alg:training}
+\begin{algorithmic}[1]
+\REQUIRE Training data $\mathcal{D}$, curriculum schedule $K(e)$, sampling schedule $p(e)$
+\FOR{epoch $e = 1$ to $E$}
+    \STATE $K \leftarrow K(e)$ \COMMENT{Current rollout horizon}
+    \STATE $p \leftarrow p(e)$ \COMMENT{Current sampling probability}
+    \FOR{batch $(\mathbf{x}_{1:T}, \mathbf{u}_{1:T}) \in \mathcal{D}$}
+        \STATE Initialize $\tilde{\mathbf{x}}_1 = \mathbf{x}_1$
+        \FOR{$k = 1$ to $K$}
+            \STATE $\hat{\mathbf{x}}_{k+1} = g_\phi(\tilde{\mathbf{x}}_k, \mathbf{u}_k)$
+            \STATE $\tilde{\mathbf{x}}_{k+1} = \begin{cases} \mathbf{x}_{k+1} & \text{w.p. } 1-p \\ \hat{\mathbf{x}}_{k+1} & \text{w.p. } p \end{cases}$
+        \ENDFOR
+        \STATE Compute $\mathcal{L} = \mathcal{L}_{\text{data}} + \lambda_p \mathcal{L}_{\text{physics}} + \lambda_e \mathcal{L}_{\text{energy}} + \lambda_s \mathcal{L}_{\text{smooth}}$
+        \STATE Update $\phi$ via gradient descent
+    \ENDFOR
+\ENDFOR
+\end{algorithmic}
+\end{algorithm}
+
+\section{Extended Results}
+\label{app:results}
+
+[Additional tables and figures for supplementary material]
+
+\end{document}
