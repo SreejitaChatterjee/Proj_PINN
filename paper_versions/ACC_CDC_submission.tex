@@ -20,7 +20,7 @@
 \usepackage{algorithmic}
 
 \title{\LARGE \bf
-Observability-Limited Parameter Identification in Physics-Informed Neural Networks: Stability Analysis for Quadrotor System Identification
+Observability Limits of PINN-Based System Identification:\\Fisher Information Bounds and the Excitation Paradox
 }
 
 \author{Sreejita Chatterjee$^{1}$%
@@ -36,23 +36,23 @@ Observability-Limited Parameter Identification in Physics-Informed Neural Networ
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Physics-Informed Neural Networks (PINNs) enable simultaneous dynamics learning and parameter identification by embedding governing equations into neural network training. We present a systematic analysis of PINN-based system identification for 6-DOF quadrotor dynamics, addressing two challenges: autoregressive prediction stability and parameter observability limits. We show that architectural modifications improving single-step prediction can destabilize multi-step rollouts by 100--1,000,000$\times$, with direct implications for model predictive control. We identify modular architecture decoupling and Fourier feature extrapolation as primary failure mechanisms. For parameter identification, we characterize observability using Fisher Information: mass and motor coefficients achieve 0\% error due to strong translational dynamics gradients, while inertia parameters saturate at 5\% error due to weak cross-coupling at small angles ($\pm 20^{\circ}$). A curriculum-based training methodology achieves 51$\times$ stability improvement. Experiments with aggressive maneuvers ($\pm 45$--$60^{\circ}$) paradoxically degraded identification due to simulator-model mismatch, demonstrating that excitation must match model fidelity. These results establish practical bounds for PINN-based system identification in control applications.
+Physics-Informed Neural Networks (PINNs) enable simultaneous dynamics learning and parameter identification by embedding governing equations into neural network training. We present a systematic analysis of the \textit{observability limits} of PINN-based system identification for 6-DOF quadrotor dynamics. Using Fisher Information analysis, we explain why mass and motor coefficients achieve 0\% identification error while inertia parameters saturate at 5\%---matching theoretical observability bounds. Critically, we identify a \textit{physics-data conflict bias}: when the PINN's physics model is incomplete, increased trajectory excitation paradoxically \textit{degrades} parameter identification (5\%$\rightarrow$46\% error) rather than improving it. This occurs because the network learns biased ``effective parameters'' that absorb missing dynamics (e.g., nonlinear aerodynamics). We prove this bias analytically for a 1D toy system and validate it experimentally with aggressive quadrotor maneuvers ($\pm 45$--$60^{\circ}$). These results establish that excitation design must match model fidelity---a fundamental constraint for PINN-based system identification in robotics.
 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{INTRODUCTION}
 
-System identification is fundamental to model-based control of dynamical systems. Physics-Informed Neural Networks (PINNs) offer a learning-based approach that embeds governing equations---such as Newton-Euler dynamics---directly into neural network training~\cite{raissi2019physics}. This enables simultaneous dynamics learning and parameter identification with physical consistency guarantees.
+System identification is fundamental to model-based control. Physics-Informed Neural Networks (PINNs) embed governing equations into neural network training~\cite{raissi2019physics}, enabling simultaneous dynamics learning and parameter identification. However, a critical question remains underexplored: \textit{what are the fundamental limits of PINN-based parameter identification?}
 
-For control applications, however, two critical challenges arise. First, model predictive control (MPC) requires stable \textit{multi-step} predictions, yet PINNs are typically evaluated on \textit{single-step} accuracy. We demonstrate that these metrics can contradict: architectures improving single-step accuracy by 2--10$\times$ may destabilize 100-step rollouts by $10^2$--$10^6\times$. Second, parameter identification accuracy is fundamentally limited by \textit{observability}---the information content in measured trajectories about unknown parameters.
+We address this through two contributions. First, we characterize \textit{observability limits} using Fisher Information: parameters with strong gradients in the dynamics (mass, motor coefficients) achieve near-zero error, while parameters with weak coupling (inertias at small angles) saturate at theoretical bounds. Second, we identify a novel failure mode---\textit{physics-data conflict bias}---where increased excitation \textit{degrades} rather than improves identification when the physics model is incomplete.
 
 The contributions of this paper are:
 \begin{enumerate}
-    \item \textbf{Stability Envelope Analysis}: We introduce $H_\epsilon$ (maximum horizon where error $<\epsilon$) and show architectural expressivity shrinks this by $10^2$--$10^6\times$ (Sec.~\ref{sec:stability}).
-    \item \textbf{Observability-Limited Identification}: Fisher Information analysis explains why mass/motor achieve 0\% error while inertias saturate at 5\% (Sec.~\ref{sec:observability}).
-    \item \textbf{Stability-Oriented Training}: Curriculum protocol enlarging $H_\epsilon$ by 51$\times$ without sacrificing identification (Sec.~\ref{sec:method}).
-    \item \textbf{Physics-Data Conflict Bias}: New failure mode where increased excitation degrades identification (5\%$\rightarrow$46\%) due to model mismatch (Sec.~\ref{sec:mismatch}).
+    \item \textbf{Fisher Information Characterization}: We analyze observability limits explaining differential identification accuracy: 0\% error for mass/motor vs 5\% saturation for inertias (Sec.~\ref{sec:observability}).
+    \item \textbf{Physics-Data Conflict Bias}: We prove that PINNs with incomplete physics learn biased ``effective parameters'' that absorb missing dynamics. Bias \textit{increases} with excitation---contradicting classical system identification intuition (Sec.~\ref{sec:mismatch}).
+    \item \textbf{Analytical Derivation}: We derive closed-form bias expressions for a 1D toy system, showing $\hat{c} \approx 2c \cdot \mathbb{E}[v]$ when quadratic drag is fit with linear model (Sec.~\ref{sec:theory}).
+    \item \textbf{Experimental Validation}: Aggressive trajectories ($\pm 60^{\circ}$) increase inertia error from 5\% to 46\%, validating the excitation paradox (Sec.~\ref{sec:experiments}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

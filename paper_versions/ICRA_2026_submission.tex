@@ -60,13 +60,13 @@ To address these failure modes, we develop a stability-oriented training methodo
 
 The contributions of this paper are:
 \begin{itemize}
-    \item \textbf{Stability Envelope Characterization.} We introduce the stability envelope $H_\epsilon$---the maximum horizon where error remains below threshold $\epsilon$---and show that architectural expressivity shrinks this envelope by 2--6 orders of magnitude. Models with 10$\times$ better single-step accuracy can have $10^6\times$ worse stability (Sec.~\ref{sec:failure_modes}).
+    \item \textbf{Stability Envelope Characterization.} We introduce the stability envelope $H_\epsilon$---the maximum horizon where error remains below threshold $\epsilon$---and show that architectural expressivity shrinks this envelope by 2--6 orders of magnitude (Sec.~\ref{sec:failure_modes}).
 
-    \item \textbf{Expressivity-Stability Tradeoff.} We establish the first empirical demonstration of an inverse relationship between local accuracy and global stability in PINNs, revealing a fundamental tradeoff that our method breaks (Sec.~\ref{sec:failure_modes}).
+    \item \textbf{Expressivity-Stability Tradeoff.} We establish the first empirical demonstration of an inverse relationship between local accuracy and global stability in PINNs. Models with 10$\times$ better single-step accuracy can have $10^6\times$ worse multi-step stability (Sec.~\ref{sec:failure_modes}).
 
-    \item \textbf{Stability-Oriented Curriculum Learning.} We develop a training protocol (horizon curriculum + scheduled sampling + physics regularization) that enlarges the stability envelope by 51$\times$ without sacrificing identification accuracy (Sec.~\ref{sec:methodology}).
+    \item \textbf{Failure Mode Analysis.} We identify two architectural failure mechanisms: modular decoupling breaks physical coupling between subsystems, and Fourier features amplify distribution shift exponentially (Sec.~\ref{sec:failure_modes}).
 
-    \item \textbf{Physics-Data Conflict Bias.} We identify a new failure mode where increased trajectory excitation degrades parameter identification (5\%$\rightarrow$46\% error) because the PINN compensates for missing physics by learning biased ``effective'' parameters (Sec.~\ref{sec:negative_result}).
+    \item \textbf{Stability-Oriented Training.} We develop a curriculum-based protocol that enlarges the stability envelope by 51$\times$ while maintaining accurate dynamics prediction (Sec.~\ref{sec:methodology}).
 \end{itemize}
 
 The remainder of this paper is organized as follows: Sec.~\ref{sec:related_work} reviews related work, Sec.~\ref{sec:problem} formulates the problem, Sec.~\ref{sec:failure_modes} analyzes failure mechanisms, Sec.~\ref{sec:methodology} presents our approach, Sec.~\ref{sec:experiments} provides experimental results, and Sec.~\ref{sec:conclusion} concludes.

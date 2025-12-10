@@ -53,20 +53,16 @@ However, a critical gap exists between how PINNs are \textit{evaluated} and how 
 
 We demonstrate that these evaluation regimes yield fundamentally contradictory conclusions. Specifically, we uncover an \textbf{expressivity-stability tradeoff}: architectural modifications that improve single-step accuracy by 2--10$\times$ can degrade 100-step autoregressive performance by $10^2$--$10^6\times$. A model achieving 0.009m single-step error can diverge to over 5 million meters in 100 steps---rendering it completely unusable for any control application.
 
-\paragraph{Contributions.} This paper makes six contributions:
+\paragraph{Contributions.} This paper makes four contributions:
 
 \begin{enumerate}
     \item \textbf{Stability Envelope Formalization.} We introduce the stability envelope $H_\epsilon$---the maximum prediction horizon where error remains bounded below threshold $\epsilon$---providing the first formal metric for autoregressive stability in PINNs (Section~\ref{sec:tradeoff}).
 
-    \item \textbf{Expressivity-Stability Tradeoff.} We establish the first empirical demonstration of a fundamental inverse relationship between local accuracy and global stability in physics-informed learning (Section~\ref{sec:tradeoff}).
+    \item \textbf{Expressivity-Stability Tradeoff.} We establish the first empirical demonstration of a fundamental inverse relationship between local (single-step) accuracy and global (multi-step) stability in physics-informed learning. We show this tradeoff spans 2--6 orders of magnitude (Section~\ref{sec:tradeoff}).
 
-    \item \textbf{Frequency-Coupling Stability Law.} We propose a theoretical principle: error growth rate $\lambda \propto \omega_{\max} \cdot (1 - \kappa)$, unifying Fourier and modular failure modes under a single framework (Section~\ref{sec:theory}).
+    \item \textbf{Failure Mode Characterization.} We identify two architectural failure mechanisms: (i) modular architectures break dynamic coupling causing independent error accumulation, and (ii) Fourier embeddings amplify distribution shift exponentially during rollout. We unify these under a frequency-coupling stability law (Section~\ref{sec:failure_modes},~\ref{sec:theory}).
 
-    \item \textbf{Physics-Data Conflict Bias.} We prove that PINNs with incomplete physics models learn biased ``effective parameters'' that absorb missing dynamics, and that this bias \textit{increases} with excitation---contradicting classical system identification intuition (Section~\ref{sec:theory}).
-
-    \item \textbf{Stability-Oriented Training.} We develop a training protocol that enlarges the stability envelope by 51$\times$ without sacrificing identification accuracy (Section~\ref{sec:method}).
-
-    \item \textbf{Evaluation Protocol.} We establish that single-step metrics fundamentally mislead about deployment performance (Section~\ref{sec:experiments}).
+    \item \textbf{Stability-Oriented Training.} We develop a curriculum-based training protocol (horizon scheduling + scheduled sampling + physics regularization) that enlarges the stability envelope by 51$\times$ while maintaining accurate dynamics prediction (Section~\ref{sec:method}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -224,23 +220,6 @@ This law unifies our empirical observations:
     \item \textbf{Monolithic MLPs}: $\omega_{\max} \approx 1$, $\kappa \approx 0.8$ $\to$ moderate stability ($H_{0.1} = 63$ steps)
     \item \textbf{Curriculum training}: Keeps predictions near training distribution, effectively reducing $\omega_{\max}$ $\to$ high stability ($H_{0.1} > 100$ steps)
 \end{itemize}
-
-\subsection{Physics-Data Conflict Bias}
-
-\begin{theorem}[Physics-Data Conflict Bias]
-\label{thm:bias}
-Consider a true system $\dot{x} = f(x, u; \theta^*) + g(x)$ where $g(x)$ represents unmodeled dynamics. A PINN trained with incomplete model $\hat{f}(x, u; \hat{\theta})$ learns biased parameters:
-\begin{equation}
-    \hat{\theta} = \theta^* + \Delta\theta(g, \mathcal{D})
-\end{equation}
-where the bias $\|\Delta\theta\|$ increases monotonically with $\|g\|$ over the training distribution $\mathcal{D}$.
-\end{theorem}
-
-\begin{proof}[Proof sketch]
-The PINN minimizes $\mathcal{L} = \|f(x,u;\hat{\theta}) - \dot{x}\|^2$. Substituting $\dot{x} = f(x,u;\theta^*) + g(x)$ gives $\mathcal{L} = \|f(x,u;\hat{\theta}) - f(x,u;\theta^*) - g(x)\|^2$. The optimal $\hat{\theta}$ absorbs $g(x)$ into biased parameters. For a 1D system with quadratic drag $g(x) = cv^2$ fit by linear model $\hat{c}v$: $\hat{c} \approx 2c \cdot \mathbb{E}[v]$, demonstrating bias growth with excitation.
-\end{proof}
-
-\textbf{Implication}: Increased excitation (larger velocities, more aggressive trajectories) \textit{degrades} parameter identification when the physics model is incomplete---the opposite of classical system identification intuition. This explains our experimental result where aggressive maneuvers ($\pm 60^\circ$) increased inertia error from 5\% to 46\%.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Stability-Oriented Training}
