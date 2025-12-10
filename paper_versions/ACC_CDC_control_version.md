@@ -144,14 +144,14 @@ Mass has direct, strong gradient signal; inertias have weak signals at small ang
 
 | Parameter | True Value | Learned | Error |
 |-----------|------------|---------|-------|
-| m | 0.068 kg | 0.0680 kg | 0.00% |
+| m | 0.068 kg | 0.0952 kg | 40.0% |
 | $k_t$ | 0.01 | 0.0100 | 0.00% |
 | $k_q$ | 7.83e-4 | 7.83e-4 | 0.00% |
-| $J_{xx}$ | 6.86e-5 | 7.21e-5 | 5.00% |
-| $J_{yy}$ | 9.20e-5 | 9.66e-5 | 5.00% |
-| $J_{zz}$ | 1.37e-4 | 1.43e-4 | 5.00% |
+| $J_{xx}$ | 6.86e-5 | 1.10e-4 | 60.0% |
+| $J_{yy}$ | 9.20e-5 | 1.40e-4 | 52.3% |
+| $J_{zz}$ | 1.37e-4 | 2.19e-4 | 60.3% |
 
-Results match observability predictions: strong-observable parameters → 0% error; weak-observable → 5% limit.
+Motor coefficients ($k_t$, $k_q$) achieve 0% error. Mass and inertias show significant errors (40-60%) due to observability limitations in small-angle training data.
 
 #### C. Model Mismatch Effect
 Aggressive trajectories (±45-60°) generated to improve inertia observability.

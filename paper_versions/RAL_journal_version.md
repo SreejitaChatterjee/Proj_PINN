@@ -38,7 +38,7 @@ Physics-Informed Neural Networks (PINNs) offer a principled approach to learning
 3. **Simultaneous System Identification:**
    - Joint dynamics learning + parameter identification framework
    - Characterized observability limits through Fisher information
-   - 0% error on mass/motor coefficients, 5% on inertias
+   - 0% error on motor coefficients; 40% on mass; 52-60% on inertias
 
 4. **Observability and Simulation Fidelity Analysis:**
    - Theoretical analysis of inertia parameter observability
@@ -175,13 +175,13 @@ Physics-Informed Neural Networks (PINNs) offer a principled approach to learning
 
 #### D. Parameter Identification Results
 - **Table III:** All 6 parameters
-- Mass, kt, kq: 0.00% error
-- Jxx, Jyy, Jzz: 5.00% error (observability limit)
+- $k_t$, $k_q$: 0.00% error
+- Mass: 40.0% error; $J_{xx}$, $J_{yy}$, $J_{zz}$: 52-60% error (observability limited)
 
-#### E. Observability Validation
-- Fisher information analysis explains 5% inertia limit
-- Mass has 100× stronger gradient signal than inertia
-- Experimental results match theoretical predictions
+#### E. Observability Analysis
+- Fisher information analysis explains inertia identification limitations
+- Motor coefficients have direct gradient signals; mass/inertia gradients are coupled and weak
+- Observability constraints inherent to small-angle training data
 
 #### F. Aggressive Trajectory Experiment (Negative Result)
 - Generated ±45–60° maneuvers for stronger inertia gradients

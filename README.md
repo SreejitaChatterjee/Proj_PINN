@@ -44,7 +44,7 @@ This project implements a PINN that:
 
 ```bash
 # Clone the repository
-git clone https://github.com/SreejitaChatterjee/Proj_PINN.git
+git clone https://github.com/[username]/Proj_PINN.git
 cd Proj_PINN
 
 # Install dependencies
@@ -279,11 +279,11 @@ See [`reports/quadrotor_pinn_report.pdf`](reports/quadrotor_pinn_report.pdf) (78
 If you use this code or methodology in your research, please cite:
 
 ```bibtex
-@software{chatterjee2024quadrotor_pinn,
-  author = {Chatterjee, Sreejita},
+@software{author2024quadrotor_pinn,
+  author = {[Author Last, First]},
   title = {Physics-Informed Neural Networks for Quadrotor Dynamics},
   year = {2024},
-  url = {https://github.com/SreejitaChatterjee/Proj_PINN}
+  url = {https://github.com/[username]/Proj_PINN}
 }
 ```
 
@@ -297,8 +297,8 @@ Contributions, issues, and feature requests are welcome!
 
 ## 📧 Contact
 
-**Author:** Sreejita Chatterjee
-**Repository:** [https://github.com/SreejitaChatterjee/Proj_PINN](https://github.com/SreejitaChatterjee/Proj_PINN)
+**Author:** [Author Name]
+**Repository:** [https://github.com/[username]/Proj_PINN](https://github.com/[username]/Proj_PINN)
 
 ## 🙏 Acknowledgments
 

@@ -75,7 +75,7 @@ def convert_to_ieee_format(input_file, output_file):
     citecolor=blue,
     urlcolor=blue,
     pdftitle={Quadrotor Physics-Informed Neural Network: Advanced Dynamics Prediction and Parameter Identification},
-    pdfauthor={Sreejita Chatterjee},
+    pdfauthor={[Author Name]},
     pdfsubject={Physics-Informed Neural Networks},
     pdfkeywords={quadrotor, PINN, parameter identification, deep learning, robotics}
 }
@@ -86,8 +86,8 @@ def convert_to_ieee_format(input_file, output_file):
 % Title and author
 \title{Quadrotor Physics-Informed Neural Network:\\Advanced Dynamics Prediction and Parameter Identification}
 
-\author{Sreejita~Chatterjee%
-\thanks{S. Chatterjee is with the Department of [Your Department], [Your Institution].}%
+\author{[Author~Name]%
+\thanks{[Author] is with the Department of [Your Department], [Your Institution].}%
 \thanks{Manuscript received [Date]; revised [Date].}}
 
 % Abstract

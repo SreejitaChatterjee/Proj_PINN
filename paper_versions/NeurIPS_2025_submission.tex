@@ -40,7 +40,7 @@
 \maketitle
 
 \begin{abstract}
-Physics-Informed Neural Networks (PINNs) embed governing equations into neural networks to learn dynamics from data. While prior work evaluates PINNs using single-step prediction accuracy, practical deployment in control, simulation, and forecasting requires stable multi-step \textit{autoregressive rollout} where predictions recursively feed as inputs. We demonstrate a fundamental \textit{expressivity-stability tradeoff}: architectural modifications that improve single-step accuracy by 2--10$\times$ can catastrophically destabilize autoregressive rollouts by $10^2$--$10^6\times$, causing prediction errors to explode from centimeters to kilometers within 100 steps. Through systematic experiments on a 12-dimensional nonlinear dynamical system (6-DOF quadrotor), we identify two failure mechanisms: (1) modular architectures break implicit dynamic coupling, causing coordinated subsystem errors to accumulate independently then interact catastrophically, and (2) Fourier feature embeddings suffer severe distribution shift during rollout, where small state perturbations map to large feature-space discontinuities. We propose a stability-oriented training framework combining curriculum learning over increasing horizons, scheduled sampling to expose models to their own errors, and physics-based regularization. This approach achieves 51$\times$ improvement in 100-step prediction accuracy while maintaining parameter identification. Our results challenge the assumption that more expressive architectures yield better dynamics models and establish that standard single-step evaluation metrics fundamentally mislead about autoregressive deployment performance.
+Physics-Informed Neural Networks (PINNs) embed governing equations into neural networks to learn dynamics from data. While prior work evaluates PINNs using single-step prediction accuracy, practical deployment in control requires stable multi-step \textit{autoregressive rollout} where predictions recursively feed as inputs. Through systematic experiments on 6-DOF quadrotor dynamics, we discover a surprising result: \textit{modular architectures that separate translational and rotational dynamics achieve 4.6$\times$ better 100-step stability} (1.11m vs 5.09m MAE) despite the strong physical coupling between these subsystems. This contradicts the intuition that coupled physics requires monolithic networks. The modular approach also uses 65\% fewer parameters (72K vs 205K) while improving both single-step and multi-step accuracy. We compare against Fourier feature embeddings and curriculum-based training, finding neither provides stability improvement on our benchmark. Our results establish that physics-informed architectural separation---not training methodology---is the key to autoregressive stability, and that standard single-step evaluation metrics fundamentally mislead about deployment performance.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -51,7 +51,7 @@ Learning accurate dynamics models is fundamental to model-based control, simulat
 
 However, a critical gap exists between how PINNs are \textit{evaluated} and how they are \textit{deployed}. Standard benchmarks assess single-step prediction: given ground truth state $\mathbf{x}_t$, predict $\hat{\mathbf{x}}_{t+1}$. In contrast, model predictive control, trajectory optimization, and long-horizon simulation require \textit{autoregressive rollout}: predictions $\hat{\mathbf{x}}_{t+1}$ feed back as inputs to predict $\hat{\mathbf{x}}_{t+2}$, compounding errors over dozens to hundreds of steps.
 
-We demonstrate that these evaluation regimes yield fundamentally contradictory conclusions. Specifically, we uncover an \textbf{expressivity-stability tradeoff}: architectural modifications that improve single-step accuracy by 2--10$\times$ can degrade 100-step autoregressive performance by $10^2$--$10^6\times$. A model achieving 0.009m single-step error can diverge to over 5 million meters in 100 steps---rendering it completely unusable for any control application.
+We demonstrate that these evaluation regimes yield fundamentally different conclusions. Surprisingly, we find that modular architectures separating translational and rotational dynamics achieve 4.6$\times$ better 100-step stability (1.11m vs 5.09m MAE) while using 65\% fewer parameters---contradicting the intuition that coupled physics requires monolithic networks.
 
 \paragraph{Contributions.} This paper makes four contributions:
 
@@ -62,7 +62,7 @@ We demonstrate that these evaluation regimes yield fundamentally contradictory c
 
     \item \textbf{Failure Mode Characterization.} We identify two architectural failure mechanisms: (i) modular architectures break dynamic coupling causing independent error accumulation, and (ii) Fourier embeddings amplify distribution shift exponentially during rollout. We unify these under a frequency-coupling stability law (Section~\ref{sec:failure_modes},~\ref{sec:theory}).
 
-    \item \textbf{Stability-Oriented Training.} We develop a curriculum-based training protocol (horizon scheduling + scheduled sampling + physics regularization) that enlarges the stability envelope by 51$\times$ while maintaining accurate dynamics prediction (Section~\ref{sec:method}).
+    \item \textbf{Modular Architecture Design.} We demonstrate that separating translational and rotational dynamics into modular subnetworks achieves 4.6$\times$ better stability than monolithic baselines while using 65\% fewer parameters (Section~\ref{sec:method}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -135,28 +135,28 @@ We compare four PINN architectures with identical physics constraints but differ
 
 All models are trained on 10 quadrotor trajectories (49,382 samples) with identical hyperparameters except architecture.
 
-\subsection{Main Result: Inverse Correlation}
+\subsection{Main Result: Modular Architecture Superiority}
 
-Table~\ref{tab:main} reveals the expressivity-stability tradeoff: architectures achieving the best single-step accuracy exhibit the worst autoregressive stability.
+Table~\ref{tab:main} reveals that the modular architecture achieves the best results across all metrics, contradicting the intuition that coupled physics requires monolithic networks.
 
 \begin{table}[t]
-\caption{Single-step accuracy (lower is better) vs. 100-step autoregressive stability. More expressive architectures achieve better single-step but catastrophically worse multi-step performance.}
+\caption{Architecture comparison: Single-step vs. 100-step autoregressive stability. The modular architecture achieves best results across all metrics.}
 \label{tab:main}
 \centering
 \begin{tabular}{lcccc}
 \toprule
 & \multicolumn{2}{c}{\textbf{Single-Step MAE}} & \multicolumn{2}{c}{\textbf{100-Step MAE}} \\
-\textbf{Architecture} & $z$ (m) & $\phi$ (rad) & $z$ (m) & $\phi$ (rad) \\
+\textbf{Architecture} & $z$ (m) & $\phi$ (rad) & Pos (m) & Att (rad) \\
 \midrule
-Baseline & 0.087 & 0.0008 & 1.49 & 0.018 \\
-Modular & 0.041 & 0.0005 & 30.0 & 0.24 \\
-Fourier & \textbf{0.009} & \textbf{0.0001} & 5.2$\times 10^6$ & 8,596 \\
-\textbf{Ours} & 0.026 & 0.0002 & \textbf{0.029} & \textbf{0.001} \\
+Baseline & 0.079 & 0.0017 & 5.09 & 0.067 \\
+\textbf{Modular} & \textbf{0.058} & \textbf{0.0016} & \textbf{1.11} & \textbf{0.057} \\
+Fourier & 0.076 & 0.0031 & 5.09 & 0.018 \\
+Curriculum & 0.519 & 0.0304 & 4.36 & 0.025 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The Fourier architecture achieves 10$\times$ better single-step accuracy than baseline, yet diverges to over 5 million meters in 100 steps---a degradation factor of 3,500,000$\times$. Our approach achieves competitive single-step accuracy while maintaining 51$\times$ better stability than baseline.
+The modular architecture achieves 4.6$\times$ better 100-step stability (1.11m vs 5.09m) while using 65\% fewer parameters (72K vs 205K). Neither Fourier features nor curriculum training improve stability.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Failure Mode Analysis}
@@ -187,7 +187,7 @@ These features are highly effective for interpolation within the training distri
 
 A small state perturbation $\epsilon$ causes a feature-space displacement proportional to the highest frequency. When predictions drift outside the training envelope (e.g., $\theta = 0.35$ rad when trained on $|\theta| < 0.3$), high-frequency features extrapolate to values never seen during training.
 
-\paragraph{Feedback loop.} State drift $\to$ large feature-space jump $\to$ poor prediction $\to$ larger drift $\to$ exponential divergence. This explains the 5.2 million meter error: the Fourier architecture enters a catastrophic feedback loop around step 60.
+\paragraph{Feedback loop.} State drift $\to$ large feature-space jump $\to$ poor prediction $\to$ larger drift $\to$ potential divergence. In our experiments, Fourier features provided no stability benefit (5.09m vs 5.09m baseline at 100 steps) despite using 48\% more parameters.
 
 \begin{figure}[t]
 \centering
@@ -289,48 +289,47 @@ The complete training algorithm is provided in Algorithm~\ref{alg:training} (App
 Table~\ref{tab:multihorizon} shows error growth across prediction horizons on held-out test data.
 
 \begin{table}[t]
-\caption{Multi-horizon evaluation on held-out test set. Our method maintains stable error growth (1.1$\times$ from 1 to 100 steps) while baseline degrades 17$\times$.}
+\caption{Multi-horizon evaluation on held-out test set. The modular architecture maintains more stable error growth across all horizons.}
 \label{tab:multihorizon}
 \centering
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
-& \multicolumn{4}{c}{\textbf{Position MAE (m)}} & \textbf{Error} \\
-\textbf{Method} & 1-step & 10-step & 50-step & 100-step & \textbf{Growth} \\
+& \multicolumn{4}{c}{\textbf{Position MAE (m)}} \\
+\textbf{Architecture} & 1-step & 10-step & 50-step & 100-step \\
 \midrule
-Baseline PINN & 0.087 & 0.162 & 0.521 & 1.49 & 17$\times$ \\
-LSTM & 0.094 & 0.312 & 2.14 & 8.72 & 93$\times$ \\
-Neural ODE & 0.102 & 0.198 & 0.89 & 3.21 & 31$\times$ \\
-\textbf{Ours} & 0.026 & 0.017 & 0.021 & \textbf{0.029} & \textbf{1.1$\times$} \\
+Baseline & 0.079 & 0.35 & 2.1 & 5.09 \\
+Fourier & 0.076 & 0.34 & 2.0 & 5.09 \\
+Curriculum & 0.519 & 1.5 & 2.8 & 4.36 \\
+\textbf{Modular} & \textbf{0.058} & \textbf{0.12} & \textbf{0.45} & \textbf{1.11} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Remarkably, our method achieves \textit{lower} error at 10 steps than at 1 step (0.017m vs 0.026m), demonstrating learned error correction rather than mere memorization.
+The modular architecture maintains significantly better stability across all prediction horizons.
 
-\subsection{Ablation Study}
+\subsection{Architecture Comparison Summary}
 
-Table~\ref{tab:ablation} quantifies each component's contribution. All components are necessary; the combination is synergistic.
+Table~\ref{tab:ablation} summarizes the key metrics across all architectures.
 
 \begin{table}[t]
-\caption{Ablation study: contribution of each training component to 100-step stability.}
+\caption{Architecture comparison: key metrics summary.}
 \label{tab:ablation}
 \centering
-\begin{tabular}{lcc}
+\begin{tabular}{lccc}
 \toprule
-\textbf{Configuration} & \textbf{100-Step MAE (m)} & \textbf{Improvement} \\
+\textbf{Architecture} & \textbf{100-Step MAE} & \textbf{Params} & \textbf{Stability} \\
 \midrule
-Baseline & 1.49 & -- \\
-+ Curriculum learning & 0.82 & 45\% \\
-+ Scheduled sampling & 0.45 & 70\% \\
-+ Dropout regularization & 0.12 & 92\% \\
-+ Energy conservation & \textbf{0.029} & \textbf{98\%} \\
+Baseline & 5.09m & 205K & 1.0$\times$ \\
+Fourier & 5.09m & 302K & 1.0$\times$ \\
+Curriculum & 4.36m & 205K & 1.2$\times$ \\
+\textbf{Modular} & \textbf{1.11m} & \textbf{72K} & \textbf{4.6$\times$} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \subsection{Parameter Identification}
 
-Our method simultaneously identifies physical parameters with high accuracy: 0\% error for mass ($m$), thrust coefficient ($k_t$), and torque coefficient ($k_q$); 5\% error for inertias ($J_{xx}, J_{yy}, J_{zz}$). The inertia limit is consistent with Fisher Information analysis showing weak observability at small angles.
+The PINN simultaneously identifies physical parameters: 0\% error for thrust coefficient ($k_t$) and torque coefficient ($k_q$); 40\% error for mass ($m$); and 52--60\% error for inertias ($J_{xx}, J_{yy}, J_{zz}$). The larger errors on mass and inertias reflect observability limitations inherent to small-angle maneuvers in the training data.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Discussion}
@@ -345,9 +344,16 @@ Our method simultaneously identifies physical parameters with high accuracy: 0\%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 
-We demonstrated a fundamental expressivity-stability tradeoff in physics-informed neural networks: architectural modifications improving single-step accuracy can catastrophically destabilize autoregressive rollouts. Through systematic analysis, we identified modular decoupling and Fourier extrapolation as primary failure mechanisms. Our curriculum-based training methodology resolves these issues, achieving 51$\times$ stability improvement while maintaining accurate dynamics learning and parameter identification.
+We systematically evaluated four PINN architectures for quadrotor dynamics and discovered that modular architectures achieve 4.6$\times$ better 100-step stability (1.11m vs 5.09m) while using 65\% fewer parameters. This contradicts the intuition that coupled physics requires monolithic networks.
 
-These results establish that evaluating learned dynamics models requires multi-step autoregressive assessment---not single-step accuracy---and that training methodology, not architectural expressivity, determines autoregressive stability. We hope this work motivates the community to reconsider evaluation protocols for dynamics models intended for control applications.
+Key findings:
+\begin{enumerate}
+    \item \textbf{Modular separation helps}: Separating translation/rotation provides beneficial inductive bias despite physical coupling
+    \item \textbf{Simpler is better}: Fewer parameters (72K vs 205K) correlate with better long-horizon stability
+    \item \textbf{Complex approaches don't help}: Neither Fourier features nor curriculum training improve stability
+\end{enumerate}
+
+These results establish that physics-informed architectural design---specifically, separating subsystems---is the key to autoregressive stability, not training methodology. We hope this work motivates the community to reconsider architectural choices for dynamics models intended for control applications.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}

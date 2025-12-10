@@ -38,5 +38,7 @@ def fix_figure_widths(filepath):
         return False
 
 if __name__ == "__main__":
-    filepath = r"C:\Users\sreej\OneDrive\Documents\GitHub\Proj_PINN\reports\quadrotor_pinn_report_IEEE.tex"
+    # Use path relative to script location
+    from pathlib import Path
+    filepath = Path(__file__).parent.parent / "reports" / "quadrotor_pinn_report_IEEE.tex"
     fix_figure_widths(filepath)

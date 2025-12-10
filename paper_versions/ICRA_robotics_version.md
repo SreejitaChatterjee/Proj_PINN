@@ -39,8 +39,8 @@ Physics-Informed Neural Networks (PINNs) promise accurate dynamics models for ro
 
 3. **System Identification Results:**
    - Demonstrated simultaneous dynamics learning + parameter identification
-   - 0% error on mass, thrust/torque coefficients
-   - 5% error on inertia tensor (characterized as observability limit)
+   - 0% error on thrust/torque coefficients ($k_t$, $k_q$)
+   - 40% error on mass, 52-60% error on inertia tensor (observability limited)
 
 4. **Negative Result with Practical Implications:**
    - Aggressive training maneuvers can DEGRADE identification due to sim-model mismatch

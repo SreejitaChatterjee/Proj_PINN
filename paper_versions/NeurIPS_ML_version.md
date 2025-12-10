@@ -130,7 +130,7 @@ Our results challenge the prevailing assumption that more expressive architectur
 
 #### 6.3 Parameter Identification
 - Simultaneous dynamics learning + system identification
-- 0% error on 3/6 parameters, 5% on inertias (characterized limit)
+- 0% error on motor coefficients ($k_t$, $k_q$); 40% error on mass; 52-60% error on inertias
 
 #### 6.4 Analysis: Why Training Methodology > Architecture
 - Dropout regularization effect
