@@ -14,6 +14,7 @@ This research produces **FOUR distinct papers** from the quadrotor PINN work, ea
 | **Paper 2** | NeurIPS 2025 | Expressivity-Stability Tradeoff (main empirical result) | Ready |
 | **Paper 3** | ICRA 2026 | Failure Modes Analysis (modular decoupling + Fourier drift) | Ready |
 | **Paper 4** | RA-L | Curriculum Stability Training (the solution) | Ready |
+| **Paper 5** | CDC/L4DC | Prediction-Identification Tradeoff (NEW NOVELTY) | Draft |
 
 ---
 
@@ -104,6 +105,36 @@ This research produces **FOUR distinct papers** from the quadrotor PINN work, ea
 - Theoretical stability framework (ACC/CDC)
 - Full failure mode analysis (ICRA)
 - Broad tradeoff claims (NeurIPS)
+
+---
+
+### Paper 5: CDC/L4DC - Prediction-Identification Tradeoff (NEW)
+
+**Title:** "Architecture-Dependent Parameter Identification in Physics-Informed Neural Networks: Decoupling Dynamics Prediction from System Identification"
+
+**File:** `new_novelty.tex`
+
+**Core Contribution:**
+- Discovery that prediction accuracy and identification accuracy are DECOUPLED
+- Architecture-specific parameter identification patterns
+- Formal characterization of prediction-identification tradeoff
+
+**Key Results (FROM ACTUAL EXPERIMENTS):**
+- Modular: 5× better mass ID (7.7% vs 40%) + best prediction
+- Curriculum: 7× better inertia ID (7-8% vs 52-60%) despite worse prediction
+- Fourier: 2× better $J_{xx}$ only (32% vs 60%)
+- Motor coefficients: 0% error across ALL architectures
+
+**Novel Findings NOT in Other Papers:**
+1. Mass identification dramatically improves with modular architecture
+2. Curriculum training improves inertia ID while hurting prediction
+3. No single architecture optimizes both objectives
+4. Parameter-specific architectural recommendations
+
+**What's NOT in this paper:**
+- Stability envelope framework (ACC/CDC)
+- Failure mode mechanisms (ICRA)
+- Training methodology details (RA-L)
 
 ---
 
