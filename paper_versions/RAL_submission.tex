@@ -51,12 +51,13 @@ Physics-informed neural networks, quadrotor dynamics, system identification, aut
 
 However, a critical gap exists between how PINNs are evaluated and deployed. Standard benchmarks assess single-step prediction: given ground truth state $\mathbf{x}_t$, predict $\mathbf{x}_{t+1}$. In contrast, MPC and trajectory tracking require \textit{autoregressive rollout}: predictions feed back as inputs, compounding errors over dozens to hundreds of steps. We demonstrate that these evaluation regimes yield contradictory conclusions about model quality.
 
-This paper makes four contributions:
+This paper makes five contributions:
 \begin{enumerate}
-    \item We systematically characterize autoregressive instability in PINNs, demonstrating that single-step metrics are insufficient for control applications (Sec.~\ref{sec:failure}).
-    \item We develop a curriculum-based training methodology achieving 51$\times$ improvement in 100-step stability (Sec.~\ref{sec:method}).
-    \item We demonstrate simultaneous dynamics learning and parameter identification, with 0\% error on mass/motor coefficients and 5\% on inertias (Sec.~\ref{sec:results}).
-    \item We characterize observability limits and document a negative result on aggressive training maneuvers (Sec.~\ref{sec:observability}).
+    \item \textbf{Stability Envelope Characterization}: We introduce $H_\epsilon$, the maximum horizon where error $<\epsilon$, showing that architectural expressivity shrinks this envelope by $10^2$--$10^6\times$ (Sec.~\ref{sec:failure}).
+    \item \textbf{Expressivity-Stability Tradeoff}: We establish the first empirical demonstration of an inverse relationship between single-step accuracy and multi-step stability in PINNs (Sec.~\ref{sec:failure}).
+    \item \textbf{Stability-Oriented Training}: A curriculum protocol (horizon scheduling + scheduled sampling + physics regularization) that enlarges $H_\epsilon$ by 51$\times$ (Sec.~\ref{sec:method}).
+    \item \textbf{Observability-Limited Identification}: We achieve 0\% error on mass/motor coefficients and match the theoretical 5\% Fisher Information bound for inertias (Sec.~\ref{sec:results}).
+    \item \textbf{Physics-Data Conflict Bias}: A new failure mode where excitation degrades identification (5\%$\rightarrow$46\%) due to model mismatch (Sec.~\ref{sec:observability}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

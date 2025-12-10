@@ -49,10 +49,10 @@ For control applications, however, two critical challenges arise. First, model p
 
 The contributions of this paper are:
 \begin{enumerate}
-    \item Stability analysis of autoregressive PINNs, identifying failure mechanisms in modular and Fourier architectures (Sec.~\ref{sec:stability}).
-    \item Fisher Information-based observability analysis explaining differential identification accuracy across parameters (Sec.~\ref{sec:observability}).
-    \item A curriculum-based training methodology achieving 51$\times$ stability improvement with accurate parameter identification (Sec.~\ref{sec:method}).
-    \item Characterization of model mismatch effects on identification from aggressive maneuvers (Sec.~\ref{sec:mismatch}).
+    \item \textbf{Stability Envelope Analysis}: We introduce $H_\epsilon$ (maximum horizon where error $<\epsilon$) and show architectural expressivity shrinks this by $10^2$--$10^6\times$ (Sec.~\ref{sec:stability}).
+    \item \textbf{Observability-Limited Identification}: Fisher Information analysis explains why mass/motor achieve 0\% error while inertias saturate at 5\% (Sec.~\ref{sec:observability}).
+    \item \textbf{Stability-Oriented Training}: Curriculum protocol enlarging $H_\epsilon$ by 51$\times$ without sacrificing identification (Sec.~\ref{sec:method}).
+    \item \textbf{Physics-Data Conflict Bias}: New failure mode where increased excitation degrades identification (5\%$\rightarrow$46\%) due to model mismatch (Sec.~\ref{sec:mismatch}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
