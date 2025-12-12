@@ -1,0 +1,61 @@
+{
+  "PureNN": {
+    "single_step": {
+      "z_mae": 0.07992514967918396,
+      "phi_mae": 0.0011004635598510504
+    },
+    "rollout": {
+      "position_mae": 0.9155609207854726
+    },
+    "n_params": 204812
+  },
+  "PINN_Baseline": {
+    "single_step": {
+      "z_mae": 0.07536498457193375,
+      "phi_mae": 0.001626072684302926
+    },
+    "rollout": {
+      "position_mae": 5.346717632277487
+    },
+    "n_params": 204818
+  },
+  "SmallBaseline_72K": {
+    "single_step": {
+      "z_mae": 0.1470813900232315,
+      "phi_mae": 0.0026449179276823997
+    },
+    "rollout": {
+      "position_mae": 7.394746843610901
+    },
+    "n_params": 53266
+  },
+  "Modular_72K": {
+    "single_step": {
+      "z_mae": 0.063507080078125,
+      "phi_mae": 0.001703283516690135
+    },
+    "rollout": {
+      "position_mae": 1.5123244155742437
+    },
+    "n_params": 71954
+  },
+  "Baseline": {
+    "single_step": {
+      "z_mae": 0.12354853749275208,
+      "phi_mae": 0.0016147640999406576
+    },
+    "rollout": {
+      "position_mae": 4.1161085511259765
+    },
+    "n_params": 204818
+  },
+  "LeastSquares": {
+    "single_step": {
+      "z_mae": 6.601028417207999e-06,
+      "phi_mae": 1.9819864974124357e-05
+    },
+    "rollout": {
+      "position_mae": 0.00019595690537244081
+    }
+  }
+}
