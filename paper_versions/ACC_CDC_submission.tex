@@ -49,7 +49,7 @@ Physics-Informed Neural Networks (PINNs) are increasingly deployed for dynamics 
 
 Physics-Informed Neural Networks (PINNs) embed governing equations into neural network training~\cite{raissi2019physics}, enabling simultaneous dynamics learning and parameter identification. For control applications---particularly model predictive control (MPC)---these models must perform stable \textit{autoregressive rollout}: predictions recursively feed as inputs over horizons of 50--100+ steps.
 
-A critical gap exists in how PINNs are evaluated versus deployed. Standard benchmarks assess single-step prediction: given ground truth $\mathbf{x}_t$, predict $\hat{\mathbf{x}}_{t+1}$. We demonstrate this metric fundamentally misleads about autoregressive deployment. Models achieving 10$\times$ better single-step accuracy can diverge catastrophically within 100 steps.
+A critical gap exists in how PINNs are evaluated versus deployed. Standard benchmarks assess single-step prediction: given ground truth $\mathbf{x}_t$, predict $\hat{\mathbf{x}}_{t+1}$. We demonstrate this metric can mislead about autoregressive deployment, where errors compound over extended horizons.
 
 \textbf{Core Contribution.} We introduce the \textit{stability envelope} $H_\epsilon$ as a formal metric capturing the maximum horizon over which a learned dynamics model maintains bounded prediction error. This framework:
 

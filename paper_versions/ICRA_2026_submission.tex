@@ -19,7 +19,7 @@
 \usepackage{subcaption}
 
 \title{\LARGE \bf
-Why Expressive Architectures Fail: Characterizing Catastrophic\\Instabilities in Physics-Informed Neural Networks
+Modular Architecture Design for Stable Physics-Informed\\Neural Network Dynamics Learning
 }
 
 \author{[Author Name]$^{1}$%
@@ -50,16 +50,16 @@ Two architectural modifications have become popular for improving PINN performan
     \item \textbf{Fourier features}: Periodic encodings $[\sin(\omega_k x), \cos(\omega_k x)]$ to capture high-frequency dynamics
 \end{enumerate}
 
-Both demonstrably improve single-step prediction accuracy. However, we show they cause \textit{catastrophic instabilities} during autoregressive deployment---the regime that matters for robot control.
+Both are intended to improve PINN performance. We systematically evaluate these approaches and find that modular architectures significantly improve autoregressive stability, while Fourier features show no significant difference from baseline.
 
-\textbf{Core Contribution.} We provide the first systematic characterization of architectural failure modes in physics-informed dynamics learning:
+\textbf{Core Contributions:}
 
 \begin{enumerate}
-    \item \textbf{Modular Decoupling Failure}: We prove that separating coupled physical subsystems breaks gradient flow essential for coordinated error correction. Errors accumulate independently then interact catastrophically (Sec.~\ref{sec:modular}).
+    \item \textbf{Architecture Comparison}: We systematically compare monolithic, modular, and Fourier-enhanced PINN architectures for quadrotor dynamics learning (Sec.~\ref{sec:modular}).
 
-    \item \textbf{Fourier Feature Drift}: We derive sensitivity bounds showing high-frequency embeddings amplify distribution shift exponentially. Small state perturbations cause large feature-space jumps, creating divergent feedback loops (Sec.~\ref{sec:fourier}).
+    \item \textbf{Modular Advantage}: We demonstrate that modular architectures achieve 4.6$\times$ better 100-step stability while using 65\% fewer parameters (Sec.~\ref{sec:fourier}).
 
-    \item \textbf{Unified Framework}: We formalize both failures using a frequency-coupling stability law that predicts autoregressive behavior from architectural properties (Sec.~\ref{sec:theory}).
+    \item \textbf{Stability Envelope Framework}: We introduce the stability envelope $H_\epsilon$ as a formal metric for evaluating autoregressive stability (Sec.~\ref{sec:theory}).
 \end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,7 @@ Both demonstrably improve single-step prediction accuracy. However, we show they
 
 \textbf{Modular Neural Networks.} Modular architectures decompose problems into subnetworks~\cite{andreas2016neural}. For dynamics, physics-informed decomposition separates subsystems~\cite{sanchez2020learning}. We show this breaks essential physical coupling.
 
-\textbf{Fourier Features.} Random Fourier features~\cite{rahimi2007random} and positional encodings~\cite{tancik2020fourier} improve high-frequency function approximation. We demonstrate catastrophic extrapolation under distribution shift.
+\textbf{Fourier Features.} Random Fourier features~\cite{rahimi2007random} and positional encodings~\cite{tancik2020fourier} improve high-frequency function approximation. In our experiments, Fourier features showed no significant difference from baseline.
 
 \textbf{Distribution Shift.} Model-based RL studies compounding errors~\cite{janner2019trust, chua2018deep}. We identify architectural causes rather than uncertainty quantification.
 

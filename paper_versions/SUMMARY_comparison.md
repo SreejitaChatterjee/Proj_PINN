@@ -1,20 +1,45 @@
 # Paper Versions Summary: Publication Strategy
 
-## Publication Plan Overview
+## IMPORTANT UPDATE (December 2024)
 
-This research produces **FOUR distinct papers** from the quadrotor PINN work, each with a unique focus to maximize publication output while minimizing reviewer confusion.
+**After reviewing actual experimental data, several claimed results have been corrected:**
+
+### What the Data Actually Shows:
+| Architecture | Single-Step z MAE | 100-Step Position MAE | Parameters |
+|-------------|-------------------|----------------------|------------|
+| Baseline | 0.079m | 5.09m | 205K |
+| Fourier | 0.076m | 5.09m | 302K |
+| **Modular** | **0.058m** | **1.11m** | **72K** |
+
+### Corrected Claims:
+- ~~"3.5 million times worse"~~ - Fourier performs nearly identical to baseline
+- ~~"51x improvement"~~ - Curriculum training gives ~25% improvement in ablation
+- ~~"Expressivity-stability tradeoff"~~ - Not supported; Fourier ≈ Baseline
+
+### Solid Findings:
+1. **Modular architecture is 4.6x better** at 100-step rollout (1.11m vs 5.09m)
+2. **Modular uses 65% fewer parameters** (72K vs 205K)
+3. **Curriculum training provides 25% improvement** in ablation study
+4. **Motor coefficients perfectly identifiable** (0% error)
+5. **Inertias poorly identifiable** (50-60% error, observability limited)
 
 ---
 
-## Paper Distribution by Novelty
+## Publication Plan Overview
+
+This research produces papers from the quadrotor PINN work. The core finding is that **modular architectures outperform monolithic baselines** for autoregressive stability.
+
+---
+
+## Paper Distribution
 
 | Paper | Venue | Core Novelty | Status |
 |-------|-------|--------------|--------|
-| **Paper 1** | ACC/CDC | Stability Envelope $H_\epsilon$ (formal framework) | Ready |
-| **Paper 2** | NeurIPS 2025 | Expressivity-Stability Tradeoff (main empirical result) | Ready |
-| **Paper 3** | ICRA 2026 | Failure Modes Analysis (modular decoupling + Fourier drift) | Ready |
-| **Paper 4** | RA-L | Curriculum Stability Training (the solution) | Ready |
-| **Paper 5** | CDC/L4DC | Prediction-Identification Tradeoff (NEW NOVELTY) | Draft |
+| **Paper 1** | ACC/CDC | Stability Envelope $H_\epsilon$ (formal framework) | Needs revision |
+| **Paper 2** | NeurIPS 2025 | Architecture comparison for stability | Needs revision |
+| **Paper 3** | ICRA 2026 | Modular architecture design | Needs revision |
+| **Paper 4** | RA-L | Practical methodology | Needs revision |
+| **Paper 5** | CDC/L4DC | Prediction-Identification patterns | Draft |
 
 ---
 
@@ -26,171 +51,84 @@ This research produces **FOUR distinct papers** from the quadrotor PINN work, ea
 
 **Core Contribution:**
 - Formal definition of stability envelope $H_\epsilon$
-- Lipschitz stability bounds (Theorem)
-- Frequency-coupling stability law (Proposition)
 - First principled metric for evaluating learned dynamics for control
+- Modular architecture achieves 4.6x better stability
 
 **Key Equations:**
 - $H_\epsilon = \max\{K : \mathbb{E}[\|\hat{\mathbf{x}}_{t+K} - \mathbf{x}_{t+K}\|] < \epsilon\}$
-- Stability bound based on Lipschitz constant
-
-**What's NOT in this paper:**
-- Deep failure mode analysis (saved for ICRA)
-- Detailed curriculum methodology (saved for RA-L)
-- Full tradeoff demonstration (saved for NeurIPS)
 
 ---
 
-### Paper 2: NeurIPS 2025 - Expressivity-Stability Tradeoff
+### Paper 2: Architecture Comparison
 
-**Title:** "The Expressivity-Stability Tradeoff in Physics-Informed Neural Networks: Why Complex Architectures Fail at Autoregressive Dynamics Prediction"
+**Title:** "Physics-Informed Architecture Design for Stable Autoregressive Dynamics Prediction"
 
 **Core Contribution:**
-- First empirical demonstration of inverse relationship between single-step accuracy and multi-step stability
-- 2-6 orders of magnitude tradeoff across architectures
-- Challenge to assumption that more expressive = better
+- Systematic comparison of monolithic, modular, and Fourier-enhanced architectures
+- Finding: Modular is best, Fourier shows no difference from baseline
 
-**Key Results:**
-- Fourier: 10x better 1-step, 3.5M x worse 100-step
-- Modular: 2x better 1-step, 20x worse 100-step
-
-**Supporting (but not main focus):**
-- Stability envelope concept (brief intro)
-- Failure mode overview (not detailed)
-- Curriculum solution (summarized)
+**Key Results (ACTUAL DATA):**
+- Modular: 4.6x better 100-step stability (1.11m vs 5.09m)
+- Fourier: No significant difference from baseline
+- Modular uses 65% fewer parameters
 
 ---
 
-### Paper 3: ICRA 2026 - Failure Modes Analysis
+### Paper 3: ICRA 2026 - Modular Architecture Design
 
-**Title:** "Why Expressive Architectures Fail: Characterizing Catastrophic Instabilities in Physics-Informed Neural Networks"
+**Title:** "Modular Architecture Design for Stable Physics-Informed Neural Network Dynamics Learning"
 
 **Core Contribution:**
-- Deep characterization of **Modular Decoupling** failure
-  - Gradient coupling coefficient $\kappa$
-  - Three-phase error accumulation mechanism
-- Deep characterization of **Fourier Feature Drift**
-  - Sensitivity bounds: $\|\gamma(\theta+\epsilon) - \gamma(\theta)\| \propto \omega_K \epsilon$
-  - Exponential feedback loop analysis
+- Demonstration that separating translation/rotation improves stability
+- Analysis of why modular design helps despite physical coupling
 
 **Key Results:**
-- Modular: Phase 1 (independent), Phase 2 (coupling activation), Phase 3 (catastrophic)
-- Fourier: Diverges at step 60, reaches 5M+ meters by step 100
-
-**What's NOT in this paper:**
-- Stability envelope formalization (ACC/CDC)
-- Full tradeoff analysis (NeurIPS)
-- Detailed training methodology (RA-L)
+- Modular: 4.6x better at 100-step (1.11m vs 5.09m)
+- 65% fewer parameters (72K vs 205K)
 
 ---
 
-### Paper 4: RA-L - Curriculum Stability Training
+### Paper 4: RA-L - Practical Methodology
 
-**Title:** "Curriculum Stability Training for Physics-Informed Neural Networks: Achieving 51x Improvement in Autoregressive Dynamics Prediction"
+**Title:** "Curriculum Training for Physics-Informed Neural Networks"
 
 **Core Contribution:**
-- Complete training methodology (the SOLUTION)
-- Three synergistic components:
-  1. Horizon Curriculum (5→10→25→50 steps)
-  2. Scheduled Sampling (0%→30%)
-  3. Physics-Consistent Regularization (energy + smoothness)
-- Full ablation study showing each component's contribution
+- Training methodology for improved stability
+- Ablation study of training techniques
 
-**Key Results:**
-- 51x improvement in 100-step MAE (0.029m vs 1.49m)
-- 1.1x error growth vs 17x baseline
-- 18% training overhead only
-
-**What's NOT in this paper:**
-- Theoretical stability framework (ACC/CDC)
-- Full failure mode analysis (ICRA)
-- Broad tradeoff claims (NeurIPS)
+**Key Results (ACTUAL DATA from ablation):**
+- Curriculum training: 25% improvement (0.076m vs 0.101m)
+- Scheduled sampling: 10% improvement
+- Dropout/Energy constraints: FAILURE (hurt performance)
 
 ---
 
-### Paper 5: CDC/L4DC - Prediction-Identification Tradeoff (NEW)
+### Paper 5: CDC/L4DC - Prediction-Identification Patterns
 
-**Title:** "Architecture-Dependent Parameter Identification in Physics-Informed Neural Networks: Decoupling Dynamics Prediction from System Identification"
+**Title:** "Architecture-Dependent Parameter Identification in Physics-Informed Neural Networks"
 
 **File:** `new_novelty.tex`
 
 **Core Contribution:**
-- Discovery that prediction accuracy and identification accuracy are DECOUPLED
-- Architecture-specific parameter identification patterns
-- Formal characterization of prediction-identification tradeoff
+- Discovery that prediction accuracy and identification accuracy show different patterns
+- Architecture-specific parameter identification results
 
 **Key Results (FROM ACTUAL EXPERIMENTS):**
-- Modular: 5× better mass ID (7.7% vs 40%) + best prediction
-- Curriculum: 7× better inertia ID (7-8% vs 52-60%) despite worse prediction
-- Fourier: 2× better $J_{xx}$ only (32% vs 60%)
+- Modular: Better mass ID (7.7% vs 40%)
 - Motor coefficients: 0% error across ALL architectures
-
-**Novel Findings NOT in Other Papers:**
-1. Mass identification dramatically improves with modular architecture
-2. Curriculum training improves inertia ID while hurting prediction
-3. No single architecture optimizes both objectives
-4. Parameter-specific architectural recommendations
-
-**What's NOT in this paper:**
-- Stability envelope framework (ACC/CDC)
-- Failure mode mechanisms (ICRA)
-- Training methodology details (RA-L)
+- Inertias: 50-60% error (observability limited at small angles)
 
 ---
 
-## Content Saved for Future Papers
+## Honest Assessment
 
-### Future Paper A: Physics-Data Conflict Bias
-**Venue:** NeurIPS/ICLR (ML theory)
-- Why PINNs learn wrong parameters under model mismatch
-- Effective parameter absorption theory
-- Closed-form bias derivation for toy systems
+**Realistic Venue Targets:**
+- RA-L (Robotics and Automation Letters) - Solid robotics contribution
+- ICRA workshop - Preliminary results
+- CDC/ACC - If theoretical analysis is strengthened
 
-### Future Paper B: Observability-Limited Identification
-**Venue:** ACC/CDC + RA-L
-- Fisher Information limits for PINN-based SysID
-- 5% inertia bound explanation
-- Cramer-Rao connection
-
-### Future Paper C: High-Excitation Paradox
-**Venue:** Robotics-specific (ICRA/IROS)
-- More excitation → worse ID (5%→46%)
-- Trajectory design implications
-- Model fidelity matching requirements
-
----
-
-## Supporting Content Role (All Papers)
-
-**Parameter Identification Results** (supporting only):
-- Mass: 40% error (overestimated)
-- Motor coefficients ($k_t$, $k_q$): 0% error
-- Inertias ($J_{xx}$, $J_{yy}$, $J_{zz}$): 52-60% error
-
-*These results appear in tables but are NOT the main contribution of any current paper. Parameter identification accuracy is limited due to observability constraints.*
-
----
-
-## Submission Timeline Strategy
-
-| Deadline | Venue | Paper |
-|----------|-------|-------|
-| May 2025 | NeurIPS 2025 | Paper 2 (Tradeoff) |
-| Sep 2025 | ICRA 2026 | Paper 3 (Failure Modes) |
-| Sep 2025 | ACC 2026 | Paper 1 (Stability Envelope) |
-| Rolling | RA-L | Paper 4 (Curriculum Training) |
-
----
-
-## Differentiation Strategy
-
-To avoid self-plagiarism concerns:
-
-1. **Different core claims** - Each paper has a distinct main thesis
-2. **Different key figures** - Generate unique visualization for each
-3. **Different theoretical depth** - ACC/CDC most formal, ICRA most practical
-4. **Different baselines** - Vary comparison methods by venue
-5. **Cross-reference appropriately** - Cite own work when published
+**Stretch (need more work):**
+- NeurIPS/ICML - Need breakthrough finding, not incremental improvement
 
 ---
 
@@ -199,41 +137,15 @@ To avoid self-plagiarism concerns:
 ```
 paper_versions/
 ├── ACC_CDC_submission.tex      # Stability Envelope H_epsilon
-├── NeurIPS_2025_submission.tex # Expressivity-Stability Tradeoff
-├── ICRA_2026_submission.tex    # Failure Modes Analysis
-├── RAL_submission.tex          # Curriculum Stability Training
+├── NeurIPS_2025_submission.tex # Architecture comparison
+├── ICRA_2026_submission.tex    # Modular architecture design
+├── RAL_submission.tex          # Practical methodology
+├── new_novelty.tex             # Parameter identification
 └── SUMMARY_comparison.md       # This file
 ```
 
 ---
 
-## Quick Reference: What Goes Where
-
-| Content | ACC/CDC | NeurIPS | ICRA | RA-L |
-|---------|:-------:|:-------:|:----:|:----:|
-| Stability envelope $H_\epsilon$ definition | **MAIN** | Brief | Mentioned | Mentioned |
-| Lipschitz stability theorem | **MAIN** | Brief | - | - |
-| Expressivity-stability tradeoff | Brief | **MAIN** | Supporting | Supporting |
-| 2-6 orders of magnitude claim | Table | **MAIN** | Table | Table |
-| Modular decoupling analysis | Brief | Section | **MAIN** | - |
-| Fourier drift analysis | Brief | Section | **MAIN** | - |
-| Gradient coupling coefficient | Theory | Brief | **MAIN** | - |
-| Frequency-coupling law | Theory | Brief | **MAIN** | - |
-| Horizon curriculum | Brief | Brief | Mentioned | **MAIN** |
-| Scheduled sampling | Brief | Brief | Mentioned | **MAIN** |
-| Physics regularization | Brief | Brief | Mentioned | **MAIN** |
-| Ablation study | Brief | Table | - | **MAIN** |
-| Parameter ID results | Supporting | Supporting | Supporting | Supporting |
-
----
-
 ## Summary
 
-This publication plan extracts **FOUR high-quality papers** from your research:
-
-1. **ACC/CDC**: Theoretical framework (stability envelope)
-2. **NeurIPS**: Big-picture phenomenon (tradeoff)
-3. **ICRA**: Diagnostic analysis (failure modes)
-4. **RA-L**: Practical solution (curriculum training)
-
-Each paper stands alone with a clear, distinct contribution while collectively telling the complete story of autoregressive stability in physics-informed dynamics learning.
+The core finding is that **modular architectures (separating translation/rotation) achieve 4.6x better autoregressive stability while using 65% fewer parameters**. This is a solid empirical result, though not a dramatic breakthrough. The "expressivity-stability tradeoff" narrative is not supported by the data.

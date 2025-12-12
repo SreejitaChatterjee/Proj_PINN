@@ -8,8 +8,8 @@ This project implements a PINN that:
 - **Learns 12-state quadrotor dynamics** (position, orientation, angular rates, velocities)
 - **Identifies 6 physical parameters** (mass, inertias, motor coefficients)
 - **Enforces physics constraints** through custom loss functions
-- **Achieves 51× improvement** over baseline at 100-step prediction horizon
-- **Maintains <5% parameter error** for all learnable parameters
+- **Modular architecture achieves 4.6× better** 100-step stability (1.11m vs 5.09m)
+- **Motor coefficients perfectly identified** (0% error); inertias limited by observability
 
 ### Key Features
 
@@ -22,14 +22,26 @@ This project implements a PINN that:
 
 ## 📊 Results Summary
 
-| Metric | Baseline | Optimized PINN v2 | Improvement |
-|--------|----------|-------------------|-------------|
-| **100-step horizon error** | 1.49 m | 0.029 m | **51× better** |
-| **Altitude MAE** | 0.440 m | 0.022 m | **95% reduction** |
-| **Angular rate MAE** | 0.36-1.31 rad/s | 0.002-0.004 rad/s | **99.5-99.7% reduction** |
-| **Mass identification** | - | **0.07% error** | Near-perfect |
-| **Motor coefficients (kt, kq)** | - | **0.01%, 0.00% error** | Near-perfect |
-| **Inertias (Jxx, Jyy, Jzz)** | 1300-6700% error | **5.00% error** | Observability-limited |
+### Architecture Comparison (from actual experiments)
+
+| Architecture | Single-Step z MAE | 100-Step Position | Parameters |
+|--------------|-------------------|-------------------|------------|
+| Baseline | 0.079 m | 5.09 m | 205K |
+| Fourier | 0.076 m | 5.09 m | 302K |
+| **Modular** | **0.058 m** | **1.11 m** | **72K** |
+
+**Key Finding:** Modular architecture (separating translation/rotation) achieves 4.6× better 100-step stability with 65% fewer parameters.
+
+### Parameter Identification
+
+| Parameter | True Value | Learned | Error |
+|-----------|------------|---------|-------|
+| **Motor kt** | 0.01 | 0.01 | **0%** |
+| **Motor kq** | 7.83×10⁻⁴ | 7.83×10⁻⁴ | **0%** |
+| **Mass** | 0.068 kg | 0.095 kg | 40% |
+| **Jxx, Jyy, Jzz** | - | - | 50-60% |
+
+**Note:** Motor coefficients are perfectly identifiable. Mass and inertias have limited observability at small angles (±20° trajectories).
 
 ## 🚀 Quick Start
 
@@ -264,14 +276,14 @@ See [`reports/quadrotor_pinn_report.pdf`](reports/quadrotor_pinn_report.pdf) (78
 ### Key Sections
 
 1. **Project Overview** - Architecture and objectives
-2. **Implementation Process** - 25-step development pipeline
+2. **Implementation Process** - Development pipeline
 3. **Complete Results** - All performance metrics
-4. **State Analysis** - All 19 variables analyzed
-5. **Visual Results** - 16 comparative trajectory plots
-6. **Baseline Model** - Initial implementation
-7. **Optimization** - Advanced techniques explored
+4. **State Analysis** - All 12 state variables analyzed
+5. **Visual Results** - Comparative trajectory plots
+6. **Architecture Comparison** - Baseline vs Modular vs Fourier
+7. **Ablation Study** - Training technique comparison
 8. **Autoregressive Stability** - Long-horizon prediction analysis
-9. **Optimized PINN v2** - Final solution achieving 51× improvement
+9. **Parameter Identification** - System identification results
 10. **Conclusion** - Summary and future work
 
 ## 🎓 Citation
@@ -312,9 +324,10 @@ This project implements Physics-Informed Neural Networks (PINNs) for quadrotor s
 
 ### Remaining Limitations
 
-1. **Inertia Observability:** Jxx/Jyy/Jzz achieve 5% error (reduced from 1300-6700% baseline), but further improvement limited by fundamental observability at small angles
-2. **Simplified Aerodynamics:** Only linear drag modeled (no blade flapping, ground effect)
-3. **Limited Operating Envelope:** Training focuses on ±20° attitudes
+1. **Inertia Observability:** Jxx/Jyy/Jzz have 50-60% error, limited by weak observability at small angles (±20° trajectories)
+2. **Mass Identification:** 40% error due to coupling with drag and thrust dynamics
+3. **Simplified Aerodynamics:** Only linear drag modeled (no blade flapping, ground effect)
+4. **Limited Operating Envelope:** Training focuses on ±20° attitudes
 
 ### Planned Improvements
 
@@ -344,16 +357,18 @@ This project implements Physics-Informed Neural Networks (PINNs) for quadrotor s
 | **Y Velocity** | 0.012 m/s | 0.027 m/s | 0.990 |
 | **Z Velocity** | 0.040 m/s | 0.074 m/s | 0.999 |
 
-### Parameter Identification
+### Parameter Identification (Actual Results)
 
-| Parameter | True Value | Learned Value | Absolute Error |
-|-----------|------------|---------------|----------------|
-| **Mass (m)** | 0.068 kg | 0.068 kg | **0.07%** |
-| **Thrust coeff (kt)** | 0.01 | 0.01 | **0.01%** |
-| **Torque coeff (kq)** | 7.83×10⁻⁴ | 7.83×10⁻⁴ | **0.00%** |
-| **Jxx** | 6.86×10⁻⁵ | 7.21×10⁻⁵ | **5.00%** |
-| **Jyy** | 9.20×10⁻⁵ | 9.66×10⁻⁵ | **5.00%** |
-| **Jzz** | 1.37×10⁻⁴ | 1.43×10⁻⁴ | **5.00%** |
+| Parameter | True Value | Learned Value | Error |
+|-----------|------------|---------------|-------|
+| **Thrust coeff (kt)** | 0.01 | 0.01 | **0%** |
+| **Torque coeff (kq)** | 7.83×10⁻⁴ | 7.83×10⁻⁴ | **0%** |
+| **Mass (m)** | 0.068 kg | 0.095 kg | 40% |
+| **Jxx** | 6.86×10⁻⁵ | 1.10×10⁻⁴ | 60% |
+| **Jyy** | 9.20×10⁻⁵ | 1.40×10⁻⁴ | 52% |
+| **Jzz** | 1.37×10⁻⁴ | 2.19×10⁻⁴ | 60% |
+
+**Note:** Motor coefficients are perfectly identifiable from thrust dynamics. Mass and inertias have weak observability at small angles (±20°). More aggressive trajectories did not improve identification due to model mismatch (nonlinear aerodynamics not captured by linear drag model).
 
 ---
 

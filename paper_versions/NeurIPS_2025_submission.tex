@@ -27,7 +27,7 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 
-\title{The Expressivity-Stability Tradeoff in Physics-Informed Neural Networks: Why Complex Architectures Fail at Autoregressive Dynamics Prediction}
+\title{Physics-Informed Architecture Design for Stable Autoregressive Dynamics Prediction}
 
 % Author info hidden for submission; use for camera-ready
 \author{%
@@ -40,7 +40,7 @@
 \maketitle
 
 \begin{abstract}
-Physics-Informed Neural Networks (PINNs) embed governing equations into neural networks to learn dynamics from data. While prior work evaluates PINNs using single-step prediction accuracy, practical deployment in control requires stable multi-step \textit{autoregressive rollout} where predictions recursively feed as inputs. Through systematic experiments on 6-DOF quadrotor dynamics, we discover a surprising result: \textit{modular architectures that separate translational and rotational dynamics achieve 4.6$\times$ better 100-step stability} (1.11m vs 5.09m MAE) despite the strong physical coupling between these subsystems. This contradicts the intuition that coupled physics requires monolithic networks. The modular approach also uses 65\% fewer parameters (72K vs 205K) while improving both single-step and multi-step accuracy. We compare against Fourier feature embeddings and curriculum-based training, finding neither provides stability improvement on our benchmark. Our results establish that physics-informed architectural separation---not training methodology---is the key to autoregressive stability, and that standard single-step evaluation metrics fundamentally mislead about deployment performance.
+Physics-Informed Neural Networks (PINNs) embed governing equations into neural networks to learn dynamics from data. While prior work evaluates PINNs using single-step prediction accuracy, practical deployment in control requires stable multi-step \textit{autoregressive rollout} where predictions recursively feed as inputs. Through systematic experiments on 6-DOF quadrotor dynamics, we find that \textit{modular architectures separating translational and rotational dynamics achieve 4.6$\times$ better 100-step stability} (1.11m vs 5.09m position MAE) while using 65\% fewer parameters (72K vs 205K). This suggests that physics-informed architectural design---matching network structure to physical subsystem decomposition---can improve autoregressive stability. We introduce the stability envelope $H_\epsilon$ as a formal metric for evaluating learned dynamics models intended for control applications.
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -58,9 +58,9 @@ We demonstrate that these evaluation regimes yield fundamentally different concl
 \begin{enumerate}
     \item \textbf{Stability Envelope Formalization.} We introduce the stability envelope $H_\epsilon$---the maximum prediction horizon where error remains bounded below threshold $\epsilon$---providing the first formal metric for autoregressive stability in PINNs (Section~\ref{sec:tradeoff}).
 
-    \item \textbf{Expressivity-Stability Tradeoff.} We establish the first empirical demonstration of a fundamental inverse relationship between local (single-step) accuracy and global (multi-step) stability in physics-informed learning. We show this tradeoff spans 2--6 orders of magnitude (Section~\ref{sec:tradeoff}).
+    \item \textbf{Architecture Comparison.} We systematically compare monolithic, modular, and Fourier-enhanced architectures, finding that modular design provides the best stability while Fourier features show no significant difference from baseline (Section~\ref{sec:tradeoff}).
 
-    \item \textbf{Failure Mode Characterization.} We identify two architectural failure mechanisms: (i) modular architectures break dynamic coupling causing independent error accumulation, and (ii) Fourier embeddings amplify distribution shift exponentially during rollout. We unify these under a frequency-coupling stability law (Section~\ref{sec:failure_modes},~\ref{sec:theory}).
+    \item \textbf{Analysis.} We analyze the modular architecture's improved stability and discuss potential mechanisms including reduced parameter count and implicit regularization from architectural constraints (Section~\ref{sec:failure_modes},~\ref{sec:theory}).
 
     \item \textbf{Modular Architecture Design.} We demonstrate that separating translational and rotational dynamics into modular subnetworks achieves 4.6$\times$ better stability than monolithic baselines while using 65\% fewer parameters (Section~\ref{sec:method}).
 \end{enumerate}
@@ -75,7 +75,7 @@ We demonstrate that these evaluation regimes yield fundamentally different concl
 
 \paragraph{Exposure Bias and Scheduled Sampling.} Sequence models trained with teacher forcing suffer exposure bias---the train-test distribution mismatch when predictions replace ground truth at inference~\citep{ranzato2015sequence}. Scheduled sampling~\citep{bengio2015scheduled} and DAgger~\citep{ross2011reduction} address this by exposing models to their own predictions during training. We adapt these insights to physics-informed learning, showing they are essential for autoregressive stability.
 
-\paragraph{Fourier Features and Positional Encodings.} Random Fourier features~\citep{rahimi2007random} and learned positional encodings~\citep{tancik2020fourier} improve neural network approximation of high-frequency functions. However, we show these representations suffer catastrophic extrapolation when states drift outside training distributions during autoregressive rollout.
+\paragraph{Fourier Features and Positional Encodings.} Random Fourier features~\citep{rahimi2007random} and learned positional encodings~\citep{tancik2020fourier} improve neural network approximation of high-frequency functions. In our experiments, Fourier features for angular states showed no significant improvement or degradation compared to baseline.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Problem Setting}
@@ -120,7 +120,7 @@ We study a 6-DOF quadrotor with 12-dimensional state:
 comprising position, Euler angles, angular rates, and body-frame velocities. The control input $\mathbf{u} = [T, \tau_x, \tau_y, \tau_z]^T$ consists of thrust and body torques. This system exhibits strong coupling between translational and rotational dynamics, making it an ideal testbed for studying architectural effects on autoregressive stability.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{The Expressivity-Stability Tradeoff}
+\section{Architecture Comparison for Autoregressive Stability}
 \label{sec:tradeoff}
 
 \subsection{Experimental Setup}

@@ -76,26 +76,25 @@ def plot_stability_envelope(output_dir):
 
     steps = np.arange(0, 101)
 
-    # Error trajectories (from experimental data)
+    # Error trajectories based on actual rollout data
+    # Baseline/Fourier: ~1.6 at 100 steps, Modular: ~0.4 at 100 steps
+    # Using exponential growth model fitted to endpoints
     errors = {
-        'Fourier': 0.001 * np.exp(steps * 0.135),
-        'Modular': 0.001 * np.exp(steps * 0.105),
-        'Baseline': 0.001 * np.exp(steps * 0.074),
-        'Ours': 0.0001 + 0.0289 * (1 - np.exp(-steps / 20.0)),
+        'Baseline': 0.0575 * np.exp(steps * np.log(1.608/0.0575) / 100),
+        'Fourier': 0.057 * np.exp(steps * np.log(1.595/0.057) / 100),
+        'Modular': 0.0218 * np.exp(steps * np.log(0.405/0.0218) / 100),
     }
 
     colors = {
         'Fourier': COLORS['fourier'],
         'Modular': COLORS['modular'],
         'Baseline': COLORS['baseline'],
-        'Ours': COLORS['ours'],
     }
 
     linestyles = {
         'Fourier': ':',
-        'Modular': '--',
+        'Modular': '-',
         'Baseline': '-.',
-        'Ours': '-',
     }
 
     # Left plot: Error trajectories with threshold lines
@@ -103,7 +102,7 @@ def plot_stability_envelope(output_dir):
 
     for name, err in errors.items():
         ax1.semilogy(steps, err, color=colors[name], linestyle=linestyles[name],
-                     linewidth=2.0 if name == 'Ours' else 1.5, label=name)
+                     linewidth=2.0 if name == 'Modular' else 1.5, label=name)
 
     # Add threshold lines
     for eps in thresholds:
@@ -160,7 +159,7 @@ def plot_stability_envelope(output_dir):
     # Print envelope values for paper
     print("\nStability Envelope Values (H_eps in steps):")
     print("-" * 50)
-    for name in ['Fourier', 'Modular', 'Baseline', 'Ours']:
+    for name in ['Baseline', 'Fourier', 'Modular']:
         env = envelope_data[name]
         print(f"{name:12s}: eps=0.1m->{env[0.1]:3d}, eps=0.5m->{env[0.5]:3d}, eps=1.0m->{env[1.0]:3d}")
 
@@ -174,47 +173,35 @@ def plot_expressivity_stability_tradeoff(output_dir):
     """
     fig, ax = plt.subplots(figsize=(COLUMN_WIDTH, COLUMN_HEIGHT))
 
-    # Data from paper tables
-    models = ['Fourier', 'Modular', 'Baseline', 'Ours']
-    single_step_mae = [0.009, 0.041, 0.087, 0.026]  # Better = lower
-    hundred_step_mae = [5.2e6, 30.0, 1.49, 0.029]   # Better = lower
+    # Data from actual experiments (architecture_comparison_results.json)
+    # Single-step: total_mae, Rollout: total (100-step)
+    models = ['Baseline', 'Fourier', 'Modular']
+    single_step_mae = [0.0575, 0.057, 0.0218]  # total_mae from single_step
+    hundred_step_mae = [1.608, 1.595, 0.405]   # total from rollout
 
-    colors_list = [COLORS['fourier'], COLORS['modular'], COLORS['baseline'], COLORS['ours']]
-    markers = ['^', 's', 'o', 'D']
+    colors_list = [COLORS['baseline'], COLORS['fourier'], COLORS['modular']]
+    markers = ['o', '^', 's']
 
     for i, (name, ss, hs) in enumerate(zip(models, single_step_mae, hundred_step_mae)):
         ax.scatter(ss, hs, c=colors_list[i], marker=markers[i], s=100,
                    label=name, edgecolors='black', linewidth=1, zorder=5)
 
-    # Add trend line (excluding Ours which breaks the tradeoff)
-    x_trend = np.array(single_step_mae[:3])
-    y_trend = np.array(hundred_step_mae[:3])
-
-    # Fit power law in log space
-    log_x = np.log10(x_trend)
-    log_y = np.log10(y_trend)
-    coeffs = np.polyfit(log_x, log_y, 1)
-
-    x_line = np.logspace(-2.5, -0.5, 100)
-    y_line = 10**(coeffs[0] * np.log10(x_line) + coeffs[1])
-    ax.plot(x_line, y_line, 'k--', alpha=0.5, linewidth=1, label='Tradeoff trend')
-
-    # Annotate the breakthrough
-    ax.annotate('Breaks\ntradeoff!', xy=(0.026, 0.029),
-                xytext=(0.05, 0.001),
-                fontsize=7, fontweight='bold', color=COLORS['ours'],
-                arrowprops=dict(arrowstyle='->', color=COLORS['ours'], lw=1.5),
-                bbox=dict(boxstyle='round', fc='white', ec=COLORS['ours']))
+    # Annotate modular as the winner
+    ax.annotate('Best:\n4x better rollout\n3x fewer params', xy=(0.0218, 0.405),
+                xytext=(0.008, 0.15),
+                fontsize=7, fontweight='bold', color=COLORS['modular'],
+                arrowprops=dict(arrowstyle='->', color=COLORS['modular'], lw=1.5),
+                bbox=dict(boxstyle='round', fc='white', ec=COLORS['modular']))
 
     ax.set_xlabel('Single-Step MAE (m) ← Better', fontweight='bold')
-    ax.set_ylabel('100-Step MAE (m) ← Better', fontweight='bold')
+    ax.set_ylabel('100-Step Rollout MAE (m) ← Better', fontweight='bold')
     ax.set_xscale('log')
     ax.set_yscale('log')
-    ax.set_xlim([0.005, 0.15])
-    ax.set_ylim([0.01, 1e7])
+    ax.set_xlim([0.01, 0.1])
+    ax.set_ylim([0.1, 5])
     ax.legend(loc='upper left', fontsize=6)
     ax.grid(True, alpha=0.3, which='both')
-    ax.set_title('Expressivity-Stability Tradeoff', fontsize=9, fontweight='bold')
+    ax.set_title('Architecture Comparison: Single-Step vs Rollout', fontsize=9, fontweight='bold')
 
     plt.tight_layout()
     plt.savefig(output_dir / 'fig_expressivity_stability_tradeoff.pdf', format='pdf', dpi=600)
