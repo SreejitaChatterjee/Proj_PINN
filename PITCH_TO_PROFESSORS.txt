@@ -1,0 +1,217 @@
+================================================================================
+              PITCH TO PROFESSORS - PINN FOR QUADROTOR DYNAMICS
+================================================================================
+
+For: Prof. Harikumar Kandath & Prof. Vinod PK (IIIT Hyderabad)
+
+================================================================================
+                              OPENING (30 seconds)
+================================================================================
+
+"I've been working on using Physics-Informed Neural Networks to learn quadrotor
+dynamics. I have some preliminary results showing that how you structure the
+neural network matters a lot for long-horizon prediction stability. I'd like
+your guidance on whether this direction is worth pursuing and what would make
+it publishable."
+
+================================================================================
+                              WHAT I BUILT
+================================================================================
+
+A PINN that:
+- Learns 12-state quadrotor dynamics from simulation data
+- Enforces Newton-Euler physics constraints during training
+- Identifies 6 physical parameters (mass, inertias, motor coefficients)
+
+System: 6-DOF quadrotor with state x = [x, y, z, phi, theta, psi, p, q, r, vx, vy, vz]
+Training data: 10 trajectories, 49,382 samples at 1kHz
+
+================================================================================
+                           THE KEY RESULT
+================================================================================
+
+Architecture              100-Step Error       Parameters
+-----------------------------------------------------------------
+Baseline (monolithic)     5.09 m               205K
+Fourier features          5.09 m               302K
+Curriculum training       4.36 m               205K
+Modular (trans/rot)       1.11 m               72K      <-- BEST
+
+KEY FINDING: Splitting the network into translation and rotation subnetworks
+gives 4.6x better stability with 65% fewer parameters.
+
+================================================================================
+                     THEORETICAL CONTRIBUTION
+                  (From ACC/CDC Paper Draft)
+================================================================================
+
+1. STABILITY ENVELOPE FRAMEWORK
+
+   I introduce a formal metric for autoregressive stability:
+
+   H_epsilon = max{ K : E[||x_hat_{t+K} - x_{t+K}||] < epsilon }
+
+   This captures the maximum prediction horizon where error remains bounded.
+   For control (MPC), we need H_epsilon >= MPC_horizon.
+
+2. LIPSCHITZ STABILITY BOUND
+
+   If the learned model g_phi has Lipschitz constant L:
+   - If L < 1: errors contract, H_epsilon is large
+   - If L > 1: errors grow exponentially, H_epsilon is bounded
+
+   This explains WHY architecture matters for stability.
+
+================================================================================
+                      COUNTER-INTUITIVE FINDING
+                    (From ICRA Paper Draft)
+================================================================================
+
+Quadrotor dynamics have STRONG physical coupling:
+
+   ddot{z} = -T*cos(theta)*cos(phi)/m + g
+
+Vertical acceleration depends directly on attitude angles. The INTUITION is
+that a monolithic network should capture this coupling better.
+
+BUT the data shows the OPPOSITE:
+- Modular (separate trans/rot): 1.11m error at 100 steps
+- Monolithic (coupled):         5.09m error at 100 steps
+
+HYPOTHESIS: The modular architecture provides beneficial inductive bias by:
+- Preventing gradient interference between subsystems
+- Implicitly regularizing through architectural constraints
+- Reducing parameter count (72K vs 205K)
+
+================================================================================
+                     WHAT DOESN'T WORK
+                  (From NeurIPS Paper Draft)
+================================================================================
+
+1. FOURIER FEATURES
+   - Popular in NeRF and implicit representations
+   - Provides ZERO benefit here (5.09m vs 5.09m baseline)
+   - Uses 48% MORE parameters (302K vs 205K)
+
+2. CURRICULUM TRAINING
+   - Progressive extension of rollout horizon
+   - Only 14% improvement (4.36m vs 5.09m)
+   - Not enough to match modular architecture
+
+================================================================================
+                        PARAMETER IDENTIFICATION
+================================================================================
+
+The PINN also identifies physical parameters:
+
+Parameter          Error Rate    Notes
+-----------------------------------------------------------------
+Motor coeff (kt)   0%            Perfectly identifiable
+Torque coeff (kq)  0%            Perfectly identifiable
+Mass (m)           7.7% (mod)    Better with modular
+                   40% (base)    Worse with baseline
+Inertias (J)       50-60%        Observability limited at small angles
+
+================================================================================
+                     WHAT I DON'T HAVE (BEING HONEST)
+================================================================================
+
+- No rigorous proof for WHY modular works (empirical observation)
+- No hardware validation (simulation only)
+- Not tested in actual MPC control loop
+- Not compared to traditional system ID (Kalman, particle filters)
+
+================================================================================
+                           QUESTIONS FOR YOU
+================================================================================
+
+1. Is this direction worth pursuing?
+   The modular result is solid but may be seen as incremental.
+
+2. What would make this publishable?
+   - Theoretical analysis of why modular helps?
+   - Hardware validation on a real quadrotor (Crazyflie)?
+   - Integration with MPC and comparison to baselines?
+
+3. What problems in your research could learned dynamics help with?
+   I'd rather work on something useful to your lab than publish weak
+   standalone work.
+
+================================================================================
+                       SPECIFIC FOR PROF. KANDATH
+================================================================================
+
+Your work on UAV control and MPC is directly relevant. Questions:
+
+- Do you use learned models in your MPC implementations?
+- What are the pain points with traditional system identification?
+- Would a learned dynamics model stable for 100+ steps be useful?
+
+Potential synergy:
+- I provide learned dynamics model
+- You provide MPC framework and hardware platform
+- Joint paper on "Learned Dynamics for Quadrotor MPC"
+
+================================================================================
+                        SPECIFIC FOR PROF. VINOD PK
+================================================================================
+
+Your work on nonlinear dynamics and computational methods could connect:
+
+- Is there interest in physics-informed learning for biological systems?
+- The modular architecture idea could apply to other coupled dynamical systems
+- Stability envelope framework is general (not quadrotor-specific)
+
+================================================================================
+                          PUBLICATION OPTIONS
+================================================================================
+
+Based on what I have, realistic venues are:
+
+VENUE              WHAT'S NEEDED                           DIFFICULTY
+---------------------------------------------------------------------------
+ICRA Workshop      Current results + polish                Low
+RA-L               Hardware validation                     Medium
+ACC/CDC            Stronger theoretical analysis           Medium-High
+ICRA Full          MPC integration + hardware              Medium-High
+NeurIPS/ICML       Breakthrough finding                    Unlikely
+
+================================================================================
+                          WHAT I'M LOOKING FOR
+================================================================================
+
+1. FEEDBACK on whether this has potential
+2. GUIDANCE on what experiments would strengthen it
+3. POTENTIAL COLLABORATION or thesis supervision if interested
+
+================================================================================
+                               THE REPO
+================================================================================
+
+Everything is at: github.com/SreejitaChatterjee/Proj_PINN
+
+Contents:
+- Trained models for all architectures (models/)
+- Training and evaluation scripts (scripts/)
+- Results and figures (results/)
+- Paper drafts (paper_versions/)
+
+================================================================================
+                          HONEST ASSESSMENT
+================================================================================
+
+This is SOLID PRELIMINARY WORK, not a breakthrough.
+
+The modular architecture result is real and reproducible:
+- 4.6x better 100-step stability (1.11m vs 5.09m)
+- 65% fewer parameters (72K vs 205K)
+
+But I need guidance on:
+1. What venue is realistic given current state
+2. What additional experiments are needed
+3. Whether to pivot to a different angle
+
+I'd rather get honest feedback now than waste time on something that
+won't be impactful.
+
+================================================================================
