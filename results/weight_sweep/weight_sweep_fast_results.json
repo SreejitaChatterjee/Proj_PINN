@@ -1,0 +1,32 @@
+{
+  "w0.0": {
+    "physics_weight": 0.0,
+    "sup_loss": 0.0006963417767760386,
+    "single_step_mae": 0.023840731009840965,
+    "rollout_mae": 2.467713262786664
+  },
+  "w0.1": {
+    "physics_weight": 0.1,
+    "sup_loss": 0.0005796926207241793,
+    "single_step_mae": 0.025653745979070663,
+    "rollout_mae": 4.349358112696947
+  },
+  "w1.0": {
+    "physics_weight": 1.0,
+    "sup_loss": 0.0013181992512758436,
+    "single_step_mae": 0.029445137828588486,
+    "rollout_mae": 2.5514531322047844
+  },
+  "w5.0": {
+    "physics_weight": 5.0,
+    "sup_loss": 0.006244215810064229,
+    "single_step_mae": 0.04878934100270271,
+    "rollout_mae": 6.316294574933822
+  },
+  "w20.0": {
+    "physics_weight": 20.0,
+    "sup_loss": 0.006327108856701188,
+    "single_step_mae": 0.04118872433900833,
+    "rollout_mae": 1.5240904958406511
+  }
+}
