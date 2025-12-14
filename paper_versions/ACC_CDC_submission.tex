@@ -41,7 +41,7 @@ The Stability Envelope: A Formal Framework for\\Autoregressive Stability in Phys
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-Training regime---not physics loss itself---is the dominant factor governing autoregressive stability in physics-informed neural networks. In a 6-DOF quadrotor system, we show that naive comparisons between PINNs and pure neural networks are confounded by \textit{early stopping criterion}: when validation loss includes physics terms, models early-stop at suboptimal points for rollout stability. Under fair comparison (supervised-only early stopping), a PINN with physics weight $w=20$ achieves \textbf{38\% better} 100-step stability than the same architecture without physics loss (1.52m vs 2.47m MAE). We introduce the \textit{stability envelope} $H_\epsilon$---the maximum horizon where error remains bounded---as a formal metric linking Lipschitz properties to long-horizon stability. Our ablations reveal that: (1) training regime dominates physics loss effects; (2) physics loss \textit{can help} when training is properly configured; (3) architectural modularity provides additional stability gains independent of physics constraints. These findings clarify when and how physics constraints benefit learned dynamics for control.
+Training regime---not physics loss itself---is the dominant factor governing autoregressive stability in physics-informed neural networks. In a 6-DOF quadrotor system, we show that naive comparisons between PINNs and pure neural networks are confounded by \textit{early stopping criterion}: when validation loss includes physics terms, models early-stop at suboptimal points for rollout stability. Under fair comparison (supervised-only early stopping) with statistical validation (3 seeds, 100 epochs), \textbf{no physics loss achieves best stability} (0.71$\pm$0.10m), while physics loss increases variance across seeds. We introduce the \textit{stability envelope} $H_\epsilon$---the maximum horizon where error remains bounded---as a formal metric linking Lipschitz properties to long-horizon stability. Our ablations reveal that: (1) training regime dominates physics loss effects; (2) physics loss adds variance, not reliability; (3) architectural modularity provides additional stability gains independent of physics constraints. These findings challenge the assumption that physics constraints inherently improve rollout stability.
 
 \end{abstract}
 
@@ -50,14 +50,14 @@ Training regime---not physics loss itself---is the dominant factor governing aut
 
 Physics-Informed Neural Networks (PINNs) embed governing equations into neural network training~\cite{raissi2019physics}, and are widely assumed to improve generalization and long-horizon stability. For control applications---particularly model predictive control (MPC)---learned dynamics must perform stable \textit{autoregressive rollout}: predictions recursively feed as inputs over horizons of 50--100+ steps. The prevailing belief is that physics constraints regularize the learned function, improving rollout stability.
 
-\textbf{We find that training regime matters more than physics loss.} In systematic experiments on 6-DOF quadrotor dynamics, we demonstrate that naive comparisons between PINNs and pure neural networks are confounded by the \textit{early stopping criterion}. When early stopping is based on total loss (supervised + physics), PINNs appear to underperform. However, under fair comparison with supervised-only early stopping, physics loss \textit{improves} 100-step stability by 38\% (1.52m vs 2.47m MAE).
+\textbf{We find that training regime matters more than physics loss.} In systematic experiments on 6-DOF quadrotor dynamics with statistical validation (3 seeds, 100 epochs), we demonstrate that naive comparisons between PINNs and pure neural networks are confounded by the \textit{early stopping criterion}. When early stopping is based on total loss (supervised + physics), PINNs appear to underperform. Under fair comparison with supervised-only early stopping, \textbf{no physics loss achieves best stability} (0.71$\pm$0.10m), while physics loss increases variance across random seeds (w=20: 2.98$\pm$1.45m).
 
 Through theoretical analysis using Lipschitz bounds, we introduce the \textit{stability envelope} $H_\epsilon$---the maximum prediction horizon where error remains bounded below threshold $\epsilon$---as a formal metric linking training choices to long-horizon stability.
 
 \textbf{Core Contributions:}
 \begin{enumerate}
     \item \textbf{Training regime identification}: Early stopping criterion dominates physics loss effects; total-loss early stopping hurts rollout stability (Sec.~\ref{sec:experiments})
-    \item \textbf{Fair physics loss evaluation}: Under proper training, physics loss improves stability by 38\% (Sec.~\ref{sec:experiments})
+    \item \textbf{Statistically robust evaluation}: With 3 seeds and 100 epochs, no physics loss achieves best stability; physics loss adds variance (Sec.~\ref{sec:experiments})
     \item \textbf{Stability envelope framework}: Formal metric $H_\epsilon$ linking Lipschitz constant to usable prediction horizon (Sec.~\ref{sec:framework})
     \item \textbf{Architecture ablation}: Modular design provides additional stability gains independent of physics constraints (Sec.~\ref{sec:experiments})
 \end{enumerate}
@@ -347,24 +347,24 @@ This comparison is \textbf{unfair}: PureNN early-stops on supervised loss, while
 
 \begin{table}[h]
 \centering
-\caption{Fair Comparison: Physics Weight Sweep (Supervised Early Stop)}
+\caption{Robust Weight Sweep (3 seeds, 100 epochs, supervised early stop)}
 \label{tab:weight_sweep}
 \begin{tabular}{lccc}
 \toprule
 \textbf{$w_{\text{phys}}$} & \textbf{Sup Loss} & \textbf{1-Step MAE} & \textbf{100-Step MAE} \\
 \midrule
-0.0 & 0.0007 & 0.024m & 2.47m \\
-0.1 & 0.0006 & 0.026m & 4.35m \\
-1.0 & 0.0013 & 0.029m & 2.55m \\
-5.0 & 0.0062 & 0.049m & 6.32m \\
-\textbf{20.0} & 0.0063 & 0.041m & \textbf{1.52m} \\
+\textbf{0.0} & 0.00023$\pm$0.00001 & 0.016$\pm$0.001m & \textbf{0.71$\pm$0.10m} \\
+1.0 & 0.0019$\pm$0.0013 & 0.033$\pm$0.010m & 3.96$\pm$1.94m \\
+5.0 & 0.0051$\pm$0.00004 & 0.039$\pm$0.001m & 4.41$\pm$0.73m \\
+10.0 & 0.0055$\pm$0.0002 & 0.040$\pm$0.002m & 4.25$\pm$1.01m \\
+20.0 & 0.0093$\pm$0.0027 & 0.042$\pm$0.003m & 2.98$\pm$1.45m \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Key finding}: Under fair comparison, physics loss ($w$=20) achieves \textbf{38\% better} 100-step stability than no physics loss (1.52m vs 2.47m). The relationship is non-monotonic: intermediate weights hurt stability, while high weights help.
+\textbf{Key finding}: Under fair comparison with statistical validation, \textbf{no physics loss (w=0) achieves best stability} (0.71$\pm$0.10m). Physics loss increases both error magnitude and variance: w=20 achieves 2.98$\pm$1.45m---4$\times$ worse mean with 14$\times$ higher standard deviation. Intermediate weights (1--10) consistently hurt stability.
 
-\textbf{Explanation}: High physics weight forces the network to satisfy physical constraints strongly, which acts as implicit regularization on the learned dynamics. The total-loss early stopping criterion causes premature termination before the model converges to a stable solution.
+\textbf{Explanation}: While physics loss constrains the learned dynamics, it also introduces optimization difficulty that manifests as high variance across random seeds. The physics residual creates a competing objective that can prevent convergence to the supervised optimum. Without physics loss, the model consistently finds low-error solutions.
 
 \subsection{Ablation Study: Architecture vs.\ Parameter Count}
 
@@ -554,11 +554,11 @@ We introduced the stability envelope $H_\epsilon$ as a formal metric for autoreg
 
 \begin{enumerate}
     \item \textbf{Training regime dominates}: Early stopping criterion has larger effect than physics loss itself. Total-loss early stopping (supervised + physics) causes premature termination and poor rollout stability. Supervised-only early stopping should be used for autoregressive applications
-    \item \textbf{Physics loss can help}: Under fair comparison (same early stopping), physics loss ($w$=20) improves 100-step stability by 38\% (1.52m vs 2.47m). The effect is non-monotonic: intermediate weights hurt, high weights help
+    \item \textbf{Physics loss adds variance, not reliability}: With statistical validation (3 seeds), no physics loss achieves best stability (0.71$\pm$0.10m). Physics loss increases variance across seeds (w=20: 2.98$\pm$1.45m), making results less reproducible
     \item \textbf{Architecture provides additional gains}: Modular design achieves 4.9$\times$ better stability than parameter-matched monolithic baseline, independent of physics constraints
 \end{enumerate}
 
-\textbf{Practical recommendations}: For autoregressive control applications, (1) use supervised-only early stopping even when training with physics loss; (2) tune physics weight---high values ($w \geq 20$) can improve stability; (3) consider modular architectures that separate coupled subsystems. Future work includes hardware validation and systematic study of physics weight scheduling.
+\textbf{Practical recommendations}: For autoregressive control applications, (1) use supervised-only early stopping; (2) consider omitting physics loss if rollout stability is the primary objective---physics constraints add optimization variance without improving average stability; (3) use modular architectures that separate coupled subsystems for additional gains. Future work includes investigating why physics loss increases variance and whether adaptive weighting schedules can recover reliable benefits.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

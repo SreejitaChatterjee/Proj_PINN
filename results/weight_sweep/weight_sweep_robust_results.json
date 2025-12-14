@@ -1,0 +1,147 @@
+{
+  "w0.0": {
+    "physics_weight": 0.0,
+    "seed_results": [
+      {
+        "seed": 42,
+        "sup_loss": 0.00022886700593155232,
+        "single_step_mae": 0.014662598259747028,
+        "rollout_mae": 0.6323287876134059
+      },
+      {
+        "seed": 123,
+        "sup_loss": 0.00021932939043620795,
+        "single_step_mae": 0.01622677594423294,
+        "rollout_mae": 0.849398030541457
+      },
+      {
+        "seed": 456,
+        "sup_loss": 0.00023150150966735848,
+        "single_step_mae": 0.016580821946263313,
+        "rollout_mae": 0.6540311163142665
+      }
+    ],
+    "sup_loss_mean": 0.00022656596867837292,
+    "sup_loss_std": 5.228843146415572e-06,
+    "single_step_mae_mean": 0.01582339871674776,
+    "single_step_mae_std": 0.000833438827436565,
+    "rollout_mae_mean": 0.7119193114897099,
+    "rollout_mae_std": 0.09761504806070964
+  },
+  "w1.0": {
+    "physics_weight": 1.0,
+    "seed_results": [
+      {
+        "seed": 42,
+        "sup_loss": 0.0037457890478828164,
+        "single_step_mae": 0.04630974307656288,
+        "rollout_mae": 5.278569703782303
+      },
+      {
+        "seed": 123,
+        "sup_loss": 0.000935979505058562,
+        "single_step_mae": 0.023893719539046288,
+        "rollout_mae": 1.2264630193235084
+      },
+      {
+        "seed": 456,
+        "sup_loss": 0.0010717877069650996,
+        "single_step_mae": 0.02948647364974022,
+        "rollout_mae": 5.381613381264981
+      }
+    ],
+    "sup_loss_mean": 0.0019178520866354927,
+    "sup_loss_std": 0.0012937351912574297,
+    "single_step_mae_mean": 0.03322997875511646,
+    "single_step_mae_std": 0.009526450918857732,
+    "rollout_mae_mean": 3.962215368123598,
+    "rollout_mae_std": 1.9349263871167797
+  },
+  "w5.0": {
+    "physics_weight": 5.0,
+    "seed_results": [
+      {
+        "seed": 42,
+        "sup_loss": 0.005021610089064225,
+        "single_step_mae": 0.039660580456256866,
+        "rollout_mae": 5.018490603842741
+      },
+      {
+        "seed": 123,
+        "sup_loss": 0.005112178114550808,
+        "single_step_mae": 0.037147194147109985,
+        "rollout_mae": 3.3829570518261725
+      },
+      {
+        "seed": 456,
+        "sup_loss": 0.0050485956996844245,
+        "single_step_mae": 0.03967268392443657,
+        "rollout_mae": 4.839588136962525
+      }
+    ],
+    "sup_loss_mean": 0.005060794634433152,
+    "sup_loss_std": 3.7967111354323485e-05,
+    "single_step_mae_mean": 0.03882681950926781,
+    "single_step_mae_std": 0.0011876847621565636,
+    "rollout_mae_mean": 4.4136785975438135,
+    "rollout_mae_std": 0.7324805807523173
+  },
+  "w10.0": {
+    "physics_weight": 10.0,
+    "seed_results": [
+      {
+        "seed": 42,
+        "sup_loss": 0.005731139568410898,
+        "single_step_mae": 0.041867490857839584,
+        "rollout_mae": 2.883264053425508
+      },
+      {
+        "seed": 123,
+        "sup_loss": 0.005364238834801599,
+        "single_step_mae": 0.03796666860580444,
+        "rollout_mae": 4.583636585914794
+      },
+      {
+        "seed": 456,
+        "sup_loss": 0.0054344527830264885,
+        "single_step_mae": 0.03929208964109421,
+        "rollout_mae": 5.281556361235393
+      }
+    ],
+    "sup_loss_mean": 0.005509943728746328,
+    "sup_loss_std": 0.00015901404391859507,
+    "single_step_mae_mean": 0.039708749701579414,
+    "single_step_mae_std": 0.001619528278027438,
+    "rollout_mae_mean": 4.249485666858565,
+    "rollout_mae_std": 1.0072054163061304
+  },
+  "w20.0": {
+    "physics_weight": 20.0,
+    "seed_results": [
+      {
+        "seed": 42,
+        "sup_loss": 0.012354645463840765,
+        "single_step_mae": 0.039516739547252655,
+        "rollout_mae": 3.898984042550476
+      },
+      {
+        "seed": 123,
+        "sup_loss": 0.005825209548583728,
+        "single_step_mae": 0.041072480380535126,
+        "rollout_mae": 0.9302747848016922
+      },
+      {
+        "seed": 456,
+        "sup_loss": 0.00964576775063918,
+        "single_step_mae": 0.046145904809236526,
+        "rollout_mae": 4.120978343326058
+      }
+    ],
+    "sup_loss_mean": 0.009275207587687892,
+    "sup_loss_std": 0.0026784783576547077,
+    "single_step_mae_mean": 0.0422450415790081,
+    "single_step_mae_std": 0.0028305044121495035,
+    "rollout_mae_mean": 2.9834123902260754,
+    "rollout_mae_std": 1.4546135540639968
+  }
+}
