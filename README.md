@@ -1,375 +1,258 @@
-# Physics-Informed Neural Networks for Quadrotor Dynamics
+# PINN Framework for Dynamics Learning
 
-A comprehensive implementation of Physics-Informed Neural Networks (PINNs) for learning and predicting quadrotor dynamics with physics constraints and parameter identification.
+A framework for learning dynamical systems with physics-informed neural networks.
 
-## 🎯 Project Overview
-
-This project implements a PINN that:
-- **Learns 12-state quadrotor dynamics** (position, orientation, angular rates, velocities)
-- **Identifies 6 physical parameters** (mass, inertias, motor coefficients)
-- **Enforces physics constraints** through custom loss functions
-- **Modular architecture achieves 4.6× better** 100-step stability (1.11m vs 5.09m)
-- **Motor coefficients perfectly identified** (0% error); inertias limited by observability
-
-### Key Features
-
-✅ **Complete 6-DOF quadrotor dynamics modeling**
-✅ **Physics-informed loss with temporal smoothness constraints**
-✅ **Realistic actuator models** (motor dynamics, slew rate limits)
-✅ **10 diverse training trajectories** with square wave references
-✅ **Comprehensive visualization suite** (176 plots generated)
-✅ **Extensive ablation studies and performance analysis**
-
-## 📊 Results Summary
-
-### Architecture Comparison (from actual experiments)
-
-| Architecture | Single-Step z MAE | 100-Step Position | Parameters |
-|--------------|-------------------|-------------------|------------|
-| Baseline | 0.079 m | 5.09 m | 205K |
-| Fourier | 0.076 m | 5.09 m | 302K |
-| **Modular** | **0.058 m** | **1.11 m** | **72K** |
-
-**Key Finding:** Modular architecture (separating translation/rotation) achieves 4.6× better 100-step stability with 65% fewer parameters.
-
-### Parameter Identification
-
-| Parameter | True Value | Learned | Error |
-|-----------|------------|---------|-------|
-| **Motor kt** | 0.01 | 0.01 | **0%** |
-| **Motor kq** | 7.83×10⁻⁴ | 7.83×10⁻⁴ | **0%** |
-| **Mass** | 0.068 kg | 0.095 kg | 40% |
-| **Jxx, Jyy, Jzz** | - | - | 50-60% |
-
-**Note:** Motor coefficients are perfectly identifiable. Mass and inertias have limited observability at small angles (±20° trajectories).
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Python 3.8+
-- PyTorch 1.9+
-- NumPy, Pandas, Matplotlib
-- Scikit-learn, Joblib
-
-### Installation
+## Quick Start
 
 ```bash
-# Clone the repository
-git clone https://github.com/[username]/Proj_PINN.git
-cd Proj_PINN
+# Install (development mode)
+pip install -e .
 
-# Install dependencies
+# Or install dependencies only
 pip install -r requirements.txt
-```
 
-### Basic Usage
-
-#### 1. Generate Training Data
-
-```bash
-# Generate 10 diverse quadrotor trajectories with realistic physics
-python scripts/generate_quadrotor_data.py
-```
-
-**Output:** `data/quadrotor_training_data.csv` (49,382 samples)
-
-**Features:**
-- 10 trajectories with varying square wave references (1.2s to 5.0s periods)
-- Motor dynamics (80ms time constant)
-- Slew rate limits (15 N/s thrust, 0.5 N·m/s torque)
-- Reference filtering (250ms time constant)
-
-#### 2. Train the PINN Model
-
-```bash
-# Train with physics-informed loss and parameter identification
-python scripts/train.py
+# Run demo (< 30 seconds)
+python demo.py              # Simulated data
+python demo.py --real       # Real EuRoC flight data
 ```
 
 **Output:**
-- `models/quadrotor_pinn.pth` - Trained model weights
-- `models/scalers.pkl` - Input/output scalers
-- Training curves and convergence plots
+```
+PINN Demo: Quadrotor Dynamics Prediction
+[1/3] Loading model... 204,818 parameters
+[2/3] Loading test data... Trajectory 2: 100 timesteps
+[3/3] Running 100-step rollout...
 
-**Training Configuration:**
-- 150 epochs, Adam optimizer (lr=0.0005)
-- Batch size: 64
-- Physics loss weight: 20.0
-- Regularization weight: 1.0
-
-#### 3. Evaluate Model Performance
-
-```bash
-# Evaluate on held-out test trajectories
-python scripts/evaluate.py
+RESULTS
+  100-step rollout errors:
+    Position MAE:  5.83 m
+    Attitude MAE:  0.05 rad (3.10 deg)
 ```
 
-**Output:** Comprehensive metrics (MAE, RMSE, correlation) for all 12 states
+## What This Does
 
-#### 4. Generate Visualizations
+Learns dynamics models from data:
+- **Input**: State + control at time t
+- **Output**: State at time t+1
+- **Physics**: Optional constraint loss enforcing known equations
 
-```bash
-# Generate all 16 time-series comparison plots
-python scripts/generate_all_18_plots.py
+Currently implements **6-DOF quadrotor dynamics** as the reference system.
 
-# Generate individual trajectory plots (160 plots: 10 trajectories × 16 variables)
-python scripts/generate_individual_trajectory_plots.py
+## Research Finding
 
-# Generate comparative plots (16 plots with all 10 trajectories as subplots)
-python scripts/generate_comparative_trajectory_plots.py
-```
+Physics loss doesn't improve autoregressive stability. In rigorous experiments (20 seeds, 100 epochs):
 
-**Output directories:**
-- `results/detailed/` - Individual variable time-series
-- `results/individual_trajectories/` - Per-trajectory analysis
-- `results/comparative_trajectories/` - Side-by-side comparisons
+| Configuration | 100-Step Error | Variance |
+|--------------|----------------|----------|
+| No physics loss | 1.57m | 1.06m |
+| Physics weight=20 | 2.75m | 1.57m |
 
-## 📁 Project Structure
+**Training regime and architecture matter more than physics constraints.**
+
+See `paper_versions/ACC_CDC_submission.tex` for full analysis.
+
+## Project Structure
 
 ```
 Proj_PINN/
-├── data/                          # Training/test data
-│   ├── quadrotor_training_data.csv
-│   └── aggressive_test_trajectories.pkl
-├── models/                        # Trained models and scalers
-│   ├── quadrotor_pinn.pth
-│   └── scalers.pkl
-├── scripts/                       # Main Python scripts
-│   ├── generate_quadrotor_data.py      # Data generation
-│   ├── train.py                        # PINN training
-│   ├── evaluate.py                     # Model evaluation
-│   ├── pinn_model.py                   # PINN architecture
-│   ├── plot_utils.py                   # Plotting utilities
-│   ├── generate_all_18_plots.py        # Generate all plots
-│   ├── generate_individual_trajectory_plots.py
-│   └── generate_comparative_trajectory_plots.py
-├── results/                       # Visualization outputs
-│   ├── detailed/                  # Time-series analysis
-│   ├── individual_trajectories/   # Per-trajectory plots
-│   └── comparative_trajectories/  # Comparative analysis
-├── reports/                       # Documentation
-│   ├── quadrotor_pinn_report.pdf  # Complete technical report (78 pages)
-│   └── quadrotor_pinn_report.tex  # LaTeX source
-└── README.md                      # This file
+├── demo.py                 # Quick demo (start here)
+├── scripts/
+│   ├── pinn_model.py       # PINN architecture
+│   ├── train.py            # Training loop
+│   └── evaluate.py         # Evaluation metrics
+├── models/                 # Trained weights
+├── data/                   # Training/test data
+└── paper_versions/         # Research paper
 ```
 
-## 🔬 Technical Details
+## Real Data: EuRoC MAV Dataset
 
-### PINN Architecture
+Train on real quadrotor flight data from the [EuRoC MAV dataset](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets):
 
-```
-Input (16 features) → [256 neurons, 5 layers, Tanh activation, Dropout 0.3]
-                    → Output (12 states + 6 parameters)
-```
+```bash
+# Download and preprocess (MH_01_easy, ~1GB)
+python scripts/load_euroc.py --sequence MH_01_easy
 
-**Input features:**
-- Current states: x, y, z, φ, θ, ψ, p, q, r, vx, vy, vz (12)
-- Control inputs: thrust, τx, τy, τz (4)
-
-**Output predictions:**
-- Next-step states: x, y, z, φ, θ, ψ, p, q, r, vx, vy, vz (12)
-- Learned parameters: m, Jxx, Jyy, Jzz, kt, kq (6)
-
-### Physics-Informed Loss Function
-
-```
-L_total = L_data + λ_physics·L_physics + λ_reg·L_reg + λ_temporal·L_temporal
+# Available sequences: MH_01_easy, MH_02_easy, MH_03_medium, V1_01_easy, V1_02_medium
 ```
 
-**Components:**
-1. **Data Loss (MSE):** Prediction accuracy on training samples
-2. **Physics Loss:** Violation of quadrotor dynamics equations
-   - Rotational dynamics (Euler equations)
-   - Translational dynamics (Newton's laws)
-   - Position kinematics (body-to-inertial transformation)
-3. **Regularization Loss:** Parameter constraints (bounded ranges)
-4. **Temporal Smoothness:** Derivative consistency constraints
+This provides real IMU + ground truth data for dynamics learning.
 
-**Loss weights:** λ_physics = 20.0, λ_reg = 1.0, λ_temporal = 8.0
+## Training Your Own Model
 
-### Quadrotor Dynamics
+```bash
+# Generate simulated data
+python scripts/generate_quadrotor_data.py
 
-The PINN enforces these physics equations:
+# Train
+python scripts/train_with_diverse_data.py
 
-**Rotational Dynamics (Euler equations):**
-```
-ṗ = (τx + (Jyy - Jzz)qr) / Jxx
-q̇ = (τy + (Jzz - Jxx)pr) / Jyy
-ṙ = (τz + (Jxx - Jyy)pq) / Jzz
+# Evaluate
+python scripts/evaluate_diverse_model.py
 ```
 
-**Translational Dynamics (Newton's laws in body frame):**
-```
-v̇x = (rv_y - qv_z) - g·sin(θ)
-v̇y = (pv_z - rv_x) + g·sin(φ)cos(θ)
-v̇z = (qv_x - pv_y) + g·cos(φ)cos(θ) - T/m
-```
+## API
 
-**Position Kinematics (body to inertial frame):**
-```
-ẋ = R(φ,θ,ψ) · [vx, vy, vz]ᵀ
-```
+### Base Class
 
-## 📈 Trajectory Differentiation
+```python
+from scripts.pinn_base import DynamicsPINN
 
-The 10 training trajectories use diverse square wave references:
+class MySystemPINN(DynamicsPINN):
+    def __init__(self):
+        super().__init__(
+            state_dim=4,
+            control_dim=1,
+            hidden_size=128,
+            learnable_params={'mass': 1.0, 'length': 0.5}
+        )
 
-| Trajectory | Description | Period Range | Amplitude Characteristics |
-|------------|-------------|--------------|--------------------------|
-| 0 | Standard square wave | 2.0-3.0s | ±10° roll, ±5° pitch/yaw, -5 to -3m alt |
-| 1 | Fast aggressive | 1.5-2.5s | ±15° roll, ±8° pitch, ±10° yaw |
-| 2 | Slow gentle | 3.0-4.0s | ±5° roll, ±3° pitch, ±5° yaw |
-| 3 | Asymmetric | 2.0-2.5s | -12° to +8° roll, ±12° yaw |
-| 4 | High amplitude | 1.8-2.2s | ±20° roll, ±10° pitch |
-| 5 | Medium frequency | 2.5-3.5s | ±8° roll, ±4° pitch |
-| 6 | Large asymmetric | 3.0-4.0s | -6° to +12° roll, -8° to +16° yaw |
-| 7 | Very fast high amplitude | 1.2-1.8s | ±18° roll, ±12° pitch, ±15° yaw |
-| 8 | Very slow | 4.0-5.0s | ±6° roll, ±4° pitch |
-| 9 | Mixed frequency | 2.2-3.0s | ±10° roll, ±8° pitch, ±14° yaw |
-
-This diversity ensures comprehensive coverage of the quadrotor's operational envelope.
-
-## 🛠️ Advanced Features
-
-### Curriculum Learning
-
-Progressive multi-step rollout training:
-- Epochs 0-50: 5-step predictions
-- Epochs 50-100: 10-step predictions
-- Epochs 100-150: 25-step predictions
-- Epochs 150-230: 50-step predictions
-- Epochs 230-250: L-BFGS fine-tuning
-
-### Scheduled Sampling
-
-Gradually increases teacher forcing ratio:
-- Starts at 0% (full teacher forcing)
-- Increases to 30% by end of training
-- Improves autoregressive stability
-
-### Realistic Actuator Dynamics
-
-**Motor Time Constant:** 80ms first-order lag
-```
-T_actual(t+dt) = T_actual(t) + (dt/(τ+dt))·(T_cmd - T_actual)
+    def physics_loss(self, inputs, outputs, dt=0.01):
+        # Implement your system's governing equations
+        ...
 ```
 
-**Slew Rate Limits:**
-- Thrust: 15 N/s maximum
-- Torques: 0.5 N·m/s maximum
+### Built-in Systems
 
-**Reference Filtering:** 250ms time constant for smooth setpoint transitions
+```python
+from scripts.pinn_base import PendulumPINN, CartPolePINN
+from scripts.pinn_model import QuadrotorPINN
 
-## 📖 Documentation
+# Simple pendulum (2 states, 1 control)
+pendulum = PendulumPINN()
 
-### Complete Technical Report
+# Cart-pole (4 states, 1 control)
+cartpole = CartPolePINN()
 
-See [`reports/quadrotor_pinn_report.pdf`](reports/quadrotor_pinn_report.pdf) (78 pages) for:
-- Detailed methodology
-- Complete physics derivations
-- Ablation studies
-- Optimization progression
-- Comprehensive results analysis
-- Future work directions
+# Quadrotor (12 states, 4 controls)
+quadrotor = QuadrotorPINN()
 
-### Key Sections
+# Model summary
+print(pendulum.summary())
+```
 
-1. **Project Overview** - Architecture and objectives
-2. **Implementation Process** - Development pipeline
-3. **Complete Results** - All performance metrics
-4. **State Analysis** - All 12 state variables analyzed
-5. **Visual Results** - Comparative trajectory plots
-6. **Architecture Comparison** - Baseline vs Modular vs Fourier
-7. **Ablation Study** - Training technique comparison
-8. **Autoregressive Stability** - Long-horizon prediction analysis
-9. **Parameter Identification** - System identification results
-10. **Conclusion** - Summary and future work
+### Training Loop
 
-## 🎓 Citation
+```python
+model = QuadrotorPINN()
+optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 
-If you use this code or methodology in your research, please cite:
+for epoch in range(100):
+    pred = model(inputs)
+
+    # Supervised loss
+    data_loss = F.mse_loss(pred, targets)
+
+    # Physics loss (optional)
+    phys_loss = model.physics_loss(inputs, pred, dt=0.001)
+
+    loss = data_loss + 0.1 * phys_loss
+    loss.backward()
+    optimizer.step()
+```
+
+### Rollout
+
+```python
+# Autoregressive prediction
+trajectory = model.rollout(initial_state, controls)  # [n_steps, state_dim]
+```
+
+## API Server
+
+```bash
+# Start server
+uvicorn scripts.api:app --reload --port 8000
+
+# Endpoints
+GET  /health              # Health check
+GET  /info/{model}        # Model info
+POST /predict/{model}     # Single-step prediction
+POST /rollout/{model}     # Multi-step rollout
+```
+
+Example request:
+```bash
+curl -X POST http://localhost:8000/predict/quadrotor \
+  -H "Content-Type: application/json" \
+  -d '{"state": [0,0,-1,0,0,0,0,0,0,0,0,0], "control": [0.67,0,0,0]}'
+```
+
+## Docker
+
+```bash
+# Development
+docker-compose up dev
+
+# Production API
+docker-compose up api
+
+# Run tests
+docker-compose run test
+```
+
+## ONNX Export
+
+```bash
+# Export model to ONNX
+python scripts/export.py --model quadrotor --output models/quadrotor.onnx
+
+# Verify export
+python scripts/export.py --model quadrotor --verify
+```
+
+## Experiment Tracking
+
+```python
+from scripts.tracking import ExperimentTracker
+
+# Local logging
+tracker = ExperimentTracker(backend="local")
+
+# Weights & Biases
+tracker = ExperimentTracker(backend="wandb", project="pinn-dynamics")
+
+# MLflow
+tracker = ExperimentTracker(backend="mlflow")
+
+tracker.log_params({"lr": 0.001})
+tracker.log_metrics({"loss": 0.5}, step=1)
+tracker.finish()
+```
+
+## Configuration
+
+```bash
+# Train with config file
+python scripts/train.py --config configs/quadrotor.yaml
+```
+
+See `configs/` for example configurations.
+
+## Testing
+
+```bash
+pytest tests/ -v
+```
+
+## Requirements
+
+- Python 3.8+
+- PyTorch 1.9+
+- NumPy, Pandas, Scikit-learn
+- FastAPI, Uvicorn (for API)
+- See `requirements.txt` for full list
+
+## Citation
 
 ```bibtex
-@software{author2024quadrotor_pinn,
-  author = {[Author Last, First]},
-  title = {Physics-Informed Neural Networks for Quadrotor Dynamics},
+@software{pinn_dynamics_2024,
+  title = {PINN Framework for Dynamics Learning},
   year = {2024},
   url = {https://github.com/[username]/Proj_PINN}
 }
 ```
 
-## 📝 License
+## License
 
-This project is available for academic and research purposes.
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-## 📧 Contact
-
-**Author:** [Author Name]
-**Repository:** [https://github.com/[username]/Proj_PINN](https://github.com/[username]/Proj_PINN)
-
-## 🙏 Acknowledgments
-
-This project implements Physics-Informed Neural Networks (PINNs) for quadrotor system identification and prediction, combining:
-- Deep learning (PyTorch)
-- Classical control theory
-- Nonlinear dynamics
-- Multi-objective optimization
-
-## 🚧 Current Limitations & Future Work
-
-### Remaining Limitations
-
-1. **Inertia Observability:** Jxx/Jyy/Jzz have 50-60% error, limited by weak observability at small angles (±20° trajectories)
-2. **Mass Identification:** 40% error due to coupling with drag and thrust dynamics
-3. **Simplified Aerodynamics:** Only linear drag modeled (no blade flapping, ground effect)
-4. **Limited Operating Envelope:** Training focuses on ±20° attitudes
-
-### Planned Improvements
-
-1. **Aggressive Trajectories:** Add ±45-60° maneuvers for better inertia identification
-2. **Angular Accelerations:** Include ṗ, q̇, ṙ measurements for stronger observability
-3. **Energy Constraints:** Alternative physics formulations for parameter identification
-4. **Real Hardware Validation:** Test on Crazyflie 2.0 platform
-5. **Advanced Aerodynamics:** Blade flapping, ground effect, rotor wash
-6. **Real-time Control:** Online state estimation and MPC integration
-
-## 📊 Performance Metrics
-
-### State Prediction Accuracy
-
-| State | MAE | RMSE | Correlation |
-|-------|-----|------|-------------|
-| **X Position** | 0.023 m | 0.064 m | 0.999 |
-| **Y Position** | 0.031 m | 0.098 m | 0.998 |
-| **Altitude (Z)** | 0.070 m | 0.165 m | 0.999 |
-| **Roll (φ)** | 0.0008 rad (0.045°) | 0.0012 rad | 0.999 |
-| **Pitch (θ)** | 0.0005 rad (0.028°) | 0.0008 rad | 0.999 |
-| **Yaw (ψ)** | 0.0009 rad (0.052°) | 0.0015 rad | 0.999 |
-| **Roll Rate (p)** | 0.0034 rad/s | 0.0054 rad/s | 0.999 |
-| **Pitch Rate (q)** | 0.0014 rad/s | 0.0024 rad/s | 0.999 |
-| **Yaw Rate (r)** | 0.0029 rad/s | 0.0044 rad/s | 0.999 |
-| **X Velocity** | 0.008 m/s | 0.018 m/s | 0.997 |
-| **Y Velocity** | 0.012 m/s | 0.027 m/s | 0.990 |
-| **Z Velocity** | 0.040 m/s | 0.074 m/s | 0.999 |
-
-### Parameter Identification (Actual Results)
-
-| Parameter | True Value | Learned Value | Error |
-|-----------|------------|---------------|-------|
-| **Thrust coeff (kt)** | 0.01 | 0.01 | **0%** |
-| **Torque coeff (kq)** | 7.83×10⁻⁴ | 7.83×10⁻⁴ | **0%** |
-| **Mass (m)** | 0.068 kg | 0.095 kg | 40% |
-| **Jxx** | 6.86×10⁻⁵ | 1.10×10⁻⁴ | 60% |
-| **Jyy** | 9.20×10⁻⁵ | 1.40×10⁻⁴ | 52% |
-| **Jzz** | 1.37×10⁻⁴ | 2.19×10⁻⁴ | 60% |
-
-**Note:** Motor coefficients are perfectly identifiable from thrust dynamics. Mass and inertias have weak observability at small angles (±20°). More aggressive trajectories did not improve identification due to model mismatch (nonlinear aerodynamics not captured by linear drag model).
-
----
-
-**Built with ❤️ using Physics-Informed Neural Networks**
+MIT

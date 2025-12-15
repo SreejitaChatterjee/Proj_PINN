@@ -1,0 +1,54 @@
+# Docker Compose for PINN Dynamics
+
+version: '3.8'
+
+services:
+  # Development environment
+  dev:
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/app
+      - /app/.venv  # Exclude venv from mount
+    ports:
+      - "8888:8888"  # Jupyter
+      - "8000:8000"  # API
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY:-}
+    command: bash
+
+  # Production API server
+  api:
+    build:
+      context: .
+      target: production
+    ports:
+      - "8000:8000"
+    environment:
+      - MODEL_PATH=/app/models/quadrotor_pinn_diverse.pth
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Training job
+  train:
+    build:
+      context: .
+      target: development
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./runs:/app/runs
+    environment:
+      - WANDB_API_KEY=${WANDB_API_KEY:-}
+    command: python scripts/train_with_diverse_data.py
+
+  # Run tests
+  test:
+    build:
+      context: .
+      target: development
+    command: pytest tests/ -v

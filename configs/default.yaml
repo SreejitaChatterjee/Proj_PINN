@@ -1,0 +1,40 @@
+# Default PINN Training Configuration
+# Override these values in system-specific configs
+
+model:
+  hidden_size: 128
+  num_layers: 4
+  dropout: 0.1
+  activation: tanh
+
+training:
+  epochs: 100
+  batch_size: 64
+  learning_rate: 0.001
+  optimizer: adam
+  scheduler:
+    type: cosine
+    T_max: 100
+    eta_min: 1.0e-6
+
+  loss_weights:
+    data: 1.0
+    physics: 0.0
+    temporal: 0.0
+    regularization: 0.0
+
+  early_stopping:
+    patience: 20
+    min_delta: 1.0e-5
+    monitor: val_loss
+
+logging:
+  save_dir: runs/
+  log_every: 10
+  save_every: 50
+  wandb:
+    enabled: false
+    project: pinn-dynamics
+
+seed: 42
+device: auto  # auto, cpu, cuda

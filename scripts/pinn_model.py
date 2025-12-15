@@ -1,55 +1,67 @@
-"""Unified Physics-Informed Neural Network for Quadrotor Dynamics - Full 12-State Model"""
+"""
+Physics-Informed Neural Network for Quadrotor Dynamics
+
+This module provides QuadrotorPINN, a concrete implementation of DynamicsPINN
+for 6-DOF quadrotor dynamics with 12 states and 4 controls.
+
+For the base class and simpler examples (pendulum, cart-pole), see pinn_base.py.
+"""
 import torch
 import torch.nn as nn
 
-class QuadrotorPINN(nn.Module):
+try:
+    from .pinn_base import DynamicsPINN
+except ImportError:
+    from pinn_base import DynamicsPINN
+
+
+class QuadrotorPINN(DynamicsPINN):
+    """
+    PINN for 6-DOF quadrotor dynamics.
+
+    State (12): x, y, z, phi, theta, psi, p, q, r, vx, vy, vz
+    Control (4): thrust, torque_x, torque_y, torque_z
+
+    Learnable parameters: mass, inertias (Jxx, Jyy, Jzz), motor coefficients (kt, kq)
+    """
+
     def __init__(self, input_size=16, hidden_size=256, output_size=12, num_layers=5, dropout=0.1):
-        """
-        Full 6-DOF quadrotor PINN predicting all 12 states:
-        - Positions: x, y, z
-        - Attitudes: phi, theta, psi
-        - Angular rates: p, q, r
-        - Velocities: vx, vy, vz
-
-        Input: 12 states + 4 controls = 16 features
-        Output: 12 next states
-        """
-        super().__init__()
-        layers = [nn.Linear(input_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)]
-        for _ in range(num_layers - 2):
-            layers.extend([nn.Linear(hidden_size, hidden_size), nn.Tanh(), nn.Dropout(dropout)])
-        layers.append(nn.Linear(hidden_size, output_size))
-        self.network = nn.Sequential(*layers)
-
-        # 6 learnable parameters
-        self.params = nn.ParameterDict({
-            'Jxx': nn.Parameter(torch.tensor(6.86e-5)),
-            'Jyy': nn.Parameter(torch.tensor(9.2e-5)),
-            'Jzz': nn.Parameter(torch.tensor(1.366e-4)),
-            'm': nn.Parameter(torch.tensor(0.068)),
-            'kt': nn.Parameter(torch.tensor(0.01)),
-            'kq': nn.Parameter(torch.tensor(7.8263e-4))
-        })
+        # Initialize base class
+        super().__init__(
+            state_dim=12,
+            control_dim=4,
+            hidden_size=hidden_size,
+            num_layers=num_layers,
+            dropout=dropout,
+            learnable_params={
+                'Jxx': 6.86e-5,
+                'Jyy': 9.2e-5,
+                'Jzz': 1.366e-4,
+                'm': 0.068,
+                'kt': 0.01,
+                'kq': 7.8263e-4,
+            }
+        )
 
         self.g = 9.81  # Gravity constant
         self.drag_coeff = 0.05  # Aerodynamic drag coefficient
         self.true_params = {k: v.item() for k, v in self.params.items()}
 
-    def forward(self, x):
-        return self.network(x)
+        # Set parameter bounds
+        self.set_param_bounds({
+            'm': (0.0408, 0.0952),       # +/-40%
+            'Jxx': (2.74e-5, 1.10e-4),   # +/-60%
+            'Jyy': (3.68e-5, 1.47e-4),   # +/-60%
+            'Jzz': (5.46e-5, 2.19e-4),   # +/-60%
+            'kt': (0.0095, 0.0105),      # +/-5%
+            'kq': (7.435e-4, 8.218e-4),  # +/-5%
+        })
 
-    def constrain_parameters(self):
-        with torch.no_grad():
-            bounds = {
-                'm': (0.0408, 0.0952),       # ±40% (relaxed from ±25%) - was hitting lower bound
-                'Jxx': (2.74e-5, 1.10e-4),   # ±60% (relaxed from ±45%) - was hitting upper bound
-                'Jyy': (3.68e-5, 1.47e-4),   # ±60% (relaxed from ±45%) - was hitting upper bound
-                'Jzz': (5.46e-5, 2.19e-4),   # ±60% (relaxed from ±45%) - was hitting upper bound
-                'kt': (0.0095, 0.0105),      # ±5% (kept tight - learned perfectly)
-                'kq': (7.435e-4, 8.218e-4)   # ±5% (kept tight - learned perfectly)
-            }
-            for k, (lo, hi) in bounds.items():
-                self.params[k].clamp_(lo, hi)
+    def get_state_names(self):
+        return ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+
+    def get_control_names(self):
+        return ['thrust', 'torque_x', 'torque_y', 'torque_z']
 
     def physics_loss(self, inputs, outputs, dt=0.001):
         """

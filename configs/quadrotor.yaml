@@ -1,0 +1,104 @@
+# Quadrotor PINN Training Configuration
+
+model:
+  name: quadrotor
+  state_dim: 12
+  control_dim: 4
+  hidden_size: 256
+  num_layers: 5
+  dropout: 0.1
+  activation: tanh
+
+physics:
+  # Learnable parameters (initial values)
+  params:
+    m: 0.068        # mass (kg)
+    Jxx: 6.86e-5    # inertia x (kg*m^2)
+    Jyy: 9.2e-5     # inertia y
+    Jzz: 1.366e-4   # inertia z
+    kt: 0.01        # thrust coefficient
+    kq: 7.8263e-4   # torque coefficient
+
+  # Parameter bounds (for clamping)
+  bounds:
+    m: [0.0408, 0.0952]
+    Jxx: [2.74e-5, 1.10e-4]
+    Jyy: [3.68e-5, 1.47e-4]
+    Jzz: [5.46e-5, 2.19e-4]
+    kt: [0.0095, 0.0105]
+    kq: [7.435e-4, 8.218e-4]
+
+  # Constants
+  g: 9.81
+  drag_coeff: 0.05
+
+training:
+  epochs: 150
+  batch_size: 64
+  learning_rate: 0.0005
+  optimizer: adam
+  scheduler:
+    type: cosine
+    T_max: 150
+    eta_min: 1.0e-6
+
+  # Loss weights
+  loss_weights:
+    data: 1.0
+    physics: 0.0      # Set >0 to enable physics loss
+    temporal: 0.0
+    regularization: 0.0
+
+  # Early stopping
+  early_stopping:
+    patience: 20
+    min_delta: 1.0e-5
+    monitor: val_loss
+
+data:
+  train_path: data/train_set_diverse.csv
+  val_path: data/val_set_diverse.csv
+  test_path: data/test_set_diverse.csv
+  dt: 0.001  # timestep (seconds)
+
+  # State columns
+  state_cols:
+    - x
+    - y
+    - z
+    - roll
+    - pitch
+    - yaw
+    - p
+    - q
+    - r
+    - vx
+    - vy
+    - vz
+
+  # Control columns
+  control_cols:
+    - thrust
+    - torque_x
+    - torque_y
+    - torque_z
+
+evaluation:
+  rollout_steps: 100
+  metrics:
+    - mae
+    - rmse
+    - correlation
+
+logging:
+  save_dir: runs/
+  log_every: 10
+  save_every: 50
+  wandb:
+    enabled: false
+    project: pinn-dynamics
+    entity: null
+
+export:
+  onnx_path: models/quadrotor_pinn.onnx
+  opset_version: 14

@@ -1,0 +1,37 @@
+# Pendulum PINN Training Configuration
+
+model:
+  name: pendulum
+  state_dim: 2
+  control_dim: 1
+  hidden_size: 64
+  num_layers: 3
+  dropout: 0.1
+  activation: tanh
+
+physics:
+  params:
+    g: 9.81
+    L: 1.0
+    m: 1.0
+  bounds:
+    g: [9.0, 10.5]
+    L: [0.5, 2.0]
+    m: [0.5, 2.0]
+
+training:
+  epochs: 100
+  batch_size: 32
+  learning_rate: 0.001
+  optimizer: adam
+
+  loss_weights:
+    data: 1.0
+    physics: 0.1
+
+data:
+  dt: 0.01
+
+logging:
+  wandb:
+    enabled: false

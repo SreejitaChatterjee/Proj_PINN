@@ -1,0 +1,23 @@
+"""
+PINN Dynamics Framework
+
+Physics-Informed Neural Networks for learning dynamical systems.
+
+Quick start:
+    from scripts import QuadrotorPINN, PendulumPINN, CartPolePINN
+
+    model = PendulumPINN()
+    print(model.summary())
+"""
+
+from .pinn_base import DynamicsPINN, PendulumPINN, CartPolePINN
+from .pinn_model import QuadrotorPINN
+
+__all__ = [
+    "DynamicsPINN",
+    "PendulumPINN",
+    "CartPolePINN",
+    "QuadrotorPINN",
+]
+
+__version__ = "0.1.0"
