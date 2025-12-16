@@ -4,7 +4,7 @@ Quick Demo: Physics-Informed Neural Network for Dynamics Learning
 
 Run:
   python demo.py           # Simulated quadrotor data
-  python demo.py --real    # Real EuRoC MAV data
+  python demo.py --real    # Real EuRoC MAV data (trained on real data!)
 
 This demonstrates:
 1. Loading a pre-trained PINN
@@ -14,27 +14,68 @@ This demonstrates:
 
 import argparse
 import torch
+import torch.nn as nn
 import numpy as np
 import joblib
 import sys
 from pathlib import Path
 
-# Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent / "scripts"))
-from pinn_model import QuadrotorPINN
+# Try new package structure first, fall back to legacy scripts
+try:
+    from pinn_dynamics import QuadrotorPINN
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+    from pinn_model import QuadrotorPINN
 
 
-def load_model():
+class EuRoCPINN(nn.Module):
+    """PINN for real EuRoC data (15 inputs: 12 states + 3 IMU accels)."""
+    def __init__(self, input_size=15, hidden_size=256, output_size=12, num_layers=5, dropout=0.1):
+        super().__init__()
+        layers = []
+        layers.append(nn.Linear(input_size, hidden_size))
+        layers.append(nn.LayerNorm(hidden_size))
+        layers.append(nn.SiLU())
+        layers.append(nn.Dropout(dropout))
+        for _ in range(num_layers - 1):
+            layers.append(nn.Linear(hidden_size, hidden_size))
+            layers.append(nn.LayerNorm(hidden_size))
+            layers.append(nn.SiLU())
+            layers.append(nn.Dropout(dropout))
+        layers.append(nn.Linear(hidden_size, output_size))
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x):
+        return self.net(x)
+
+
+def load_model(use_real=False):
     """Load pre-trained model and scalers."""
-    model_path = Path(__file__).parent / "models" / "quadrotor_pinn_diverse.pth"
-    scaler_path = Path(__file__).parent / "models" / "scalers_diverse.pkl"
+    base_path = Path(__file__).parent / "models"
 
-    if not model_path.exists():
-        print(f"Model not found at {model_path}")
-        print("Run: python scripts/train_with_diverse_data.py")
-        sys.exit(1)
+    if use_real:
+        # EuRoC-trained model (15 inputs: states + IMU accels)
+        model_path = base_path / "euroc_pinn.pth"
+        scaler_path = base_path / "euroc_scalers.pkl"
 
-    model = QuadrotorPINN(input_size=16, hidden_size=256, output_size=12)
+        if not model_path.exists():
+            print(f"EuRoC model not found at {model_path}")
+            print("Run: python scripts/train_euroc.py")
+            sys.exit(1)
+
+        model = EuRoCPINN(input_size=15, hidden_size=256, output_size=12)
+    else:
+        # Simulation-trained model (16 inputs: states + controls)
+        model_path = base_path / "quadrotor_pinn_diverse.pth"
+        scaler_path = base_path / "scalers_diverse.pkl"
+
+        if not model_path.exists():
+            print(f"Model not found at {model_path}")
+            print("Run: python scripts/train_with_diverse_data.py")
+            sys.exit(1)
+
+        model = QuadrotorPINN()
+
     model.load_state_dict(torch.load(model_path, map_location='cpu', weights_only=True))
     model.eval()
 
@@ -86,32 +127,38 @@ def load_simulated_data():
 
 def load_euroc_data():
     """Load real EuRoC MAV data."""
-    import pandas as pd
-    data_path = Path(__file__).parent / "data" / "euroc_processed.csv"
+    # Try new package first
+    try:
+        from pinn_dynamics.data import load_euroc
+        data_path = Path(__file__).parent / "data" / "euroc"
+        df = load_euroc('MH_01_easy', str(data_path), dt=0.005, download=False)
+    except (ImportError, FileNotFoundError):
+        # Fall back to legacy loader
+        sys.path.insert(0, str(Path(__file__).parent / "scripts"))
+        from load_euroc import prepare_dynamics_data
 
-    if not data_path.exists():
-        print(f"EuRoC data not found at {data_path}")
-        print("Run: python scripts/load_euroc.py --sequence MH_01_easy")
-        sys.exit(1)
+        data_path = Path(__file__).parent / "data" / "euroc"
+        if not data_path.exists():
+            print(f"EuRoC data not found at {data_path}")
+            print("Download with: python scripts/load_euroc.py")
+            sys.exit(1)
 
-    df = pd.read_csv(data_path)
+        df = prepare_dynamics_data(data_path, dt=0.005)
 
     # Take a 100-step segment from middle of flight
     start_idx = len(df) // 3
     traj = df.iloc[start_idx:start_idx + 100]
 
     state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    # EuRoC uses IMU accelerations as pseudo-controls (no direct motor commands)
-    # Pad with zero torques to match expected input shape
-    controls = np.zeros((len(traj), 4))
-    controls[:, 0] = traj['az'].values  # Use z-accel as pseudo-thrust proxy
+    control_cols = ['ax', 'ay', 'az']  # IMU accelerations as inputs
 
     return {
-        'name': 'EuRoC MH_01_easy (real flight)',
+        'name': 'EuRoC MAV (real flight data)',
         'initial_state': traj[state_cols].iloc[0].values,
-        'controls': controls,
+        'controls': traj[control_cols].values,
         'ground_truth': traj[state_cols].values,
         'state_cols': state_cols,
+        'control_cols': control_cols,
     }
 
 
@@ -124,9 +171,9 @@ def main():
     print("PINN Demo: Quadrotor Dynamics Prediction")
     print("=" * 60)
 
-    # Load model
+    # Load model (different models for sim vs real data)
     print("\n[1/3] Loading model...")
-    model, scalers = load_model()
+    model, scalers = load_model(use_real=args.real)
     n_params = sum(p.numel() for p in model.parameters())
     print(f"      Model loaded: {n_params:,} parameters")
 
@@ -135,7 +182,7 @@ def main():
     if args.real:
         data = load_euroc_data()
         print(f"      Source: {data['name']}")
-        print("      Note: Model trained on sim data, testing on real data (domain gap expected)")
+        print("      Model: Trained on real EuRoC data!")
     else:
         data = load_simulated_data()
         print(f"      Source: {data['name']}")
@@ -156,7 +203,7 @@ def main():
     print("RESULTS")
     print("=" * 60)
     print(f"\n  {n_steps}-step rollout errors:")
-    print(f"    Position MAE:  {pos_error:.4f} m")
+    print(f"    Position MAE:  {pos_error:.4f} m ({pos_error*100:.2f} cm)")
     print(f"    Attitude MAE:  {att_error:.4f} rad ({np.degrees(att_error):.2f} deg)")
 
     # Show state comparison at final step
@@ -172,7 +219,7 @@ def main():
 
     print("\n" + "=" * 60)
     if args.real:
-        print("Demo complete. Sim-to-real gap visible in errors.")
+        print("Demo complete - running on REAL EuRoC flight data!")
     else:
         print("Demo complete. Try: python demo.py --real")
     print("=" * 60)

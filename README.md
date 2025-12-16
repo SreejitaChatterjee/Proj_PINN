@@ -1,257 +1,229 @@
-# PINN Framework for Dynamics Learning
+# PINN Dynamics
 
-A framework for learning dynamical systems with physics-informed neural networks.
+**Learn dynamics models from data with optional physics constraints.**
+
+A production-ready framework for physics-informed neural networks applied to dynamical systems.
+
+## Features
+
+- **Easy System Definition**: Define any dynamical system in <20 lines
+- **Real Data Training**: Train on sensor data without control inputs
+- **Multi-Step Prediction**: Autoregressive rollout with uncertainty quantification
+- **Deployment Ready**: Export to ONNX/TorchScript for embedded systems
+
+## Installation
+
+```bash
+pip install -e .
+```
+
+Or install dependencies only:
+```bash
+pip install -r requirements.txt
+```
 
 ## Quick Start
 
 ```bash
-# Install (development mode)
-pip install -e .
-
-# Or install dependencies only
-pip install -r requirements.txt
-
 # Run demo (< 30 seconds)
-python demo.py              # Simulated data
-python demo.py --real       # Real EuRoC flight data
+python demo.py --real    # Real EuRoC flight data (recommended)
+python demo.py           # Simulated data
 ```
 
 **Output:**
 ```
 PINN Demo: Quadrotor Dynamics Prediction
-[1/3] Loading model... 204,818 parameters
-[2/3] Loading test data... Trajectory 2: 100 timesteps
+[1/3] Loading model... 272,908 parameters
+[2/3] Loading test data... EuRoC MAV (real flight data)
 [3/3] Running 100-step rollout...
 
 RESULTS
-  100-step rollout errors:
-    Position MAE:  5.83 m
-    Attitude MAE:  0.05 rad (3.10 deg)
+  99-step rollout errors:
+    Position MAE:  3.45 cm
+    Attitude MAE:  2.76 deg
 ```
 
-## What This Does
+## Usage
 
-Learns dynamics models from data:
-- **Input**: State + control at time t
-- **Output**: State at time t+1
-- **Physics**: Optional constraint loss enforcing known equations
+### Load a Pre-trained Model
 
-Currently implements **6-DOF quadrotor dynamics** as the reference system.
+```python
+from pinn_dynamics import QuadrotorPINN, Predictor
 
-## Research Finding
+# Load model
+model = QuadrotorPINN()
+model.load_state_dict(torch.load('models/quadrotor_pinn_diverse.pth'))
 
-Physics loss doesn't improve autoregressive stability. In rigorous experiments (20 seeds, 100 epochs):
+# Create predictor
+predictor = Predictor(model, scaler_X, scaler_y)
 
-| Configuration | 100-Step Error | Variance |
-|--------------|----------------|----------|
-| No physics loss | 1.57m | 1.06m |
-| Physics weight=20 | 2.75m | 1.57m |
+# Single-step prediction
+next_state = predictor.predict(state, control)
 
-**Training regime and architecture matter more than physics constraints.**
+# Multi-step rollout
+trajectory = predictor.rollout(initial_state, controls, steps=100)
 
-See `paper_versions/ACC_CDC_submission.tex` for full analysis.
+# With uncertainty quantification
+result = predictor.rollout_with_uncertainty(initial_state, controls, n_samples=50)
+print(f"Mean: {result.mean}, Std: {result.std}")
+```
+
+### Define a Custom System
+
+```python
+from pinn_dynamics import DynamicsPINN
+
+class MyRobot(DynamicsPINN):
+    def __init__(self):
+        super().__init__(
+            state_dim=6,
+            control_dim=2,
+            learnable_params={'mass': 1.0, 'inertia': 0.1}
+        )
+
+    def physics_loss(self, inputs, outputs, dt=0.01):
+        # Your physics equations here
+        x, v = inputs[:, :3], inputs[:, 3:6]
+        force = inputs[:, 6:8]
+
+        accel = force / self.params['mass']
+        v_next_pred = v + accel * dt
+
+        return ((outputs[:, 3:6] - v_next_pred)**2).mean()
+```
+
+### Train a Model
+
+```python
+from pinn_dynamics import QuadrotorPINN, Trainer
+from pinn_dynamics.data import prepare_data
+
+# Load data
+train_loader, val_loader, scaler_X, scaler_y = prepare_data('data/training.csv')
+
+# Create model and trainer
+model = QuadrotorPINN()
+trainer = Trainer(model, device='cuda', lr=0.001)
+
+# Train with physics constraints
+trainer.fit(
+    train_loader, val_loader,
+    epochs=100,
+    weights={'physics': 10.0, 'temporal': 5.0}
+)
+
+# Save
+torch.save(model.state_dict(), 'my_model.pth')
+```
+
+### Export for Deployment
+
+```python
+from pinn_dynamics.inference import export_onnx, export_torchscript
+
+# ONNX (cross-platform)
+export_onnx(model, 'model.onnx')
+
+# TorchScript (C++ inference)
+export_torchscript(model, 'model.pt')
+```
+
+## Built-in Systems
+
+| System | States | Controls | Description |
+|--------|--------|----------|-------------|
+| `QuadrotorPINN` | 12 | 4 | 6-DOF quadrotor with learnable mass/inertia |
+| `PendulumPINN` | 2 | 1 | Simple pendulum |
+| `CartPolePINN` | 4 | 1 | Inverted pendulum on cart |
 
 ## Project Structure
 
 ```
-Proj_PINN/
-├── demo.py                 # Quick demo (start here)
-├── scripts/
-│   ├── pinn_model.py       # PINN architecture
-│   ├── train.py            # Training loop
-│   └── evaluate.py         # Evaluation metrics
-├── models/                 # Trained weights
-├── data/                   # Training/test data
-└── paper_versions/         # Research paper
+pinn_dynamics/           # Framework package
+├── systems/             # System implementations
+│   ├── base.py          # DynamicsPINN base class
+│   ├── quadrotor.py     # QuadrotorPINN
+│   ├── pendulum.py      # PendulumPINN
+│   └── cartpole.py      # CartPolePINN
+├── training/            # Training infrastructure
+│   ├── trainer.py       # Trainer class
+│   └── losses.py        # Loss functions
+├── inference/           # Prediction & export
+│   ├── predictor.py     # High-level predictor
+│   └── export.py        # ONNX/TorchScript export
+├── data/                # Data loading
+│   ├── loaders.py       # Generic CSV loader
+│   └── euroc.py         # EuRoC MAV dataset
+└── utils/               # Utilities
+    └── config.py        # Configuration management
+
+examples/                # Usage examples
+├── quickstart.py        # Load and predict
+├── custom_system.py     # Define your own system
+├── train_model.py       # Train on your data
+├── train_real_data.py   # Train on EuRoC
+└── export_model.py      # Export for deployment
+
+research/                # Research artifacts
+├── paper/               # Publication sources
+├── ablation/            # Ablation studies
+└── weight_sweep/        # Physics weight experiments
 ```
 
 ## Real Data: EuRoC MAV Dataset
 
-Train on real quadrotor flight data from the [EuRoC MAV dataset](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets):
-
-```bash
-# Download and preprocess (MH_01_easy, ~1GB)
-python scripts/load_euroc.py --sequence MH_01_easy
-
-# Available sequences: MH_01_easy, MH_02_easy, MH_03_medium, V1_01_easy, V1_02_medium
-```
-
-This provides real IMU + ground truth data for dynamics learning.
-
-## Training Your Own Model
-
-```bash
-# Generate simulated data
-python scripts/generate_quadrotor_data.py
-
-# Train
-python scripts/train_with_diverse_data.py
-
-# Evaluate
-python scripts/evaluate_diverse_model.py
-```
-
-## API
-
-### Base Class
+Train on real flight data from [ETH Zurich](https://projects.asl.ethz.ch/datasets/doku.php?id=kmavvisualinertialdatasets):
 
 ```python
-from scripts.pinn_base import DynamicsPINN
+from pinn_dynamics.data import load_euroc
 
-class MySystemPINN(DynamicsPINN):
-    def __init__(self):
-        super().__init__(
-            state_dim=4,
-            control_dim=1,
-            hidden_size=128,
-            learnable_params={'mass': 1.0, 'length': 0.5}
-        )
-
-    def physics_loss(self, inputs, outputs, dt=0.01):
-        # Implement your system's governing equations
-        ...
+# Downloads ~1GB automatically
+data = load_euroc('MH_01_easy')
 ```
 
-### Built-in Systems
-
-```python
-from scripts.pinn_base import PendulumPINN, CartPolePINN
-from scripts.pinn_model import QuadrotorPINN
-
-# Simple pendulum (2 states, 1 control)
-pendulum = PendulumPINN()
-
-# Cart-pole (4 states, 1 control)
-cartpole = CartPolePINN()
-
-# Quadrotor (12 states, 4 controls)
-quadrotor = QuadrotorPINN()
-
-# Model summary
-print(pendulum.summary())
-```
-
-### Training Loop
-
-```python
-model = QuadrotorPINN()
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-
-for epoch in range(100):
-    pred = model(inputs)
-
-    # Supervised loss
-    data_loss = F.mse_loss(pred, targets)
-
-    # Physics loss (optional)
-    phys_loss = model.physics_loss(inputs, pred, dt=0.001)
-
-    loss = data_loss + 0.1 * phys_loss
-    loss.backward()
-    optimizer.step()
-```
-
-### Rollout
-
-```python
-# Autoregressive prediction
-trajectory = model.rollout(initial_state, controls)  # [n_steps, state_dim]
-```
+Available sequences: `MH_01_easy`, `MH_02_easy`, `MH_03_medium`, `V1_01_easy`, etc.
 
 ## API Server
 
 ```bash
-# Start server
-uvicorn scripts.api:app --reload --port 8000
-
-# Endpoints
-GET  /health              # Health check
-GET  /info/{model}        # Model info
-POST /predict/{model}     # Single-step prediction
-POST /rollout/{model}     # Multi-step rollout
+uvicorn scripts.api:app --port 8000
 ```
 
-Example request:
-```bash
-curl -X POST http://localhost:8000/predict/quadrotor \
-  -H "Content-Type: application/json" \
-  -d '{"state": [0,0,-1,0,0,0,0,0,0,0,0,0], "control": [0.67,0,0,0]}'
-```
+Endpoints:
+- `GET /health` - Health check
+- `POST /predict/{model}` - Single-step prediction
+- `POST /rollout/{model}` - Multi-step rollout
 
 ## Docker
 
 ```bash
-# Development
-docker-compose up dev
-
-# Production API
-docker-compose up api
-
-# Run tests
-docker-compose run test
+docker-compose up api       # Production API
+docker-compose up dev       # Development environment
+docker-compose run test     # Run tests
 ```
 
-## ONNX Export
+## Research Finding
 
-```bash
-# Export model to ONNX
-python scripts/export.py --model quadrotor --output models/quadrotor.onnx
+> Physics loss doesn't improve autoregressive rollout stability.
+> Training regime and architecture matter more than physics constraints.
 
-# Verify export
-python scripts/export.py --model quadrotor --verify
-```
-
-## Experiment Tracking
-
-```python
-from scripts.tracking import ExperimentTracker
-
-# Local logging
-tracker = ExperimentTracker(backend="local")
-
-# Weights & Biases
-tracker = ExperimentTracker(backend="wandb", project="pinn-dynamics")
-
-# MLflow
-tracker = ExperimentTracker(backend="mlflow")
-
-tracker.log_params({"lr": 0.001})
-tracker.log_metrics({"loss": 0.5}, step=1)
-tracker.finish()
-```
-
-## Configuration
-
-```bash
-# Train with config file
-python scripts/train.py --config configs/quadrotor.yaml
-```
-
-See `configs/` for example configurations.
-
-## Testing
-
-```bash
-pytest tests/ -v
-```
+See `research/paper/` for the full analysis.
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.9+
 - PyTorch 1.9+
 - NumPy, Pandas, Scikit-learn
-- FastAPI, Uvicorn (for API)
-- See `requirements.txt` for full list
+- Optional: FastAPI (API), ONNX (export)
 
-## Citation
+## Examples
 
-```bibtex
-@software{pinn_dynamics_2024,
-  title = {PINN Framework for Dynamics Learning},
-  year = {2024},
-  url = {https://github.com/[username]/Proj_PINN}
-}
-```
+See the `examples/` directory:
+- `quickstart.py` - Load and predict in 10 lines
+- `custom_system.py` - Define a double pendulum
+- `train_model.py` - Train on your own data
+- `train_real_data.py` - Train on EuRoC dataset
+- `export_model.py` - Export for deployment
 
 ## License
 

@@ -18,7 +18,7 @@ long_description = readme_path.read_text(encoding="utf-8") if readme_path.exists
 
 setup(
     name="pinn-dynamics",
-    version="0.1.0",
+    version="1.0.0",
     author="Your Name",
     author_email="your.email@example.com",
     description="Physics-Informed Neural Networks for Dynamics Learning",
@@ -27,12 +27,17 @@ setup(
     url="https://github.com/yourusername/Proj_PINN",
     license="MIT",
 
-    # Package discovery
-    packages=find_packages(include=["scripts", "scripts.*"]),
+    # Package discovery - include both new package and legacy scripts
+    packages=find_packages(include=[
+        "pinn_dynamics",
+        "pinn_dynamics.*",
+        "scripts",
+        "scripts.*",
+    ]),
     py_modules=["demo"],
 
     # Dependencies
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "torch>=1.9.0",
         "numpy>=1.19.0",
@@ -42,13 +47,39 @@ setup(
         "matplotlib>=3.3.0",
         "joblib>=1.0.0",
         "tqdm>=4.50.0",
+        "pyyaml>=5.4.0",
     ],
 
     extras_require={
         "dev": [
             "pytest>=6.0",
+            "pytest-cov",
             "black",
+            "isort",
             "flake8",
+            "mypy",
+            "pre-commit",
+        ],
+        "api": [
+            "fastapi>=0.68.0",
+            "uvicorn>=0.15.0",
+            "pydantic>=1.8.0",
+        ],
+        "export": [
+            "onnx>=1.10.0",
+            "onnxruntime>=1.9.0",
+        ],
+        "tracking": [
+            "wandb>=0.12.0",
+            "mlflow>=1.20.0",
+        ],
+        "all": [
+            "fastapi>=0.68.0",
+            "uvicorn>=0.15.0",
+            "pydantic>=1.8.0",
+            "onnx>=1.10.0",
+            "onnxruntime>=1.9.0",
+            "wandb>=0.12.0",
         ],
     },
 
@@ -61,11 +92,10 @@ setup(
 
     # Classifiers for PyPI
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
@@ -76,6 +106,7 @@ setup(
     # Include non-Python files
     include_package_data=True,
     package_data={
-        "": ["*.csv", "*.pth", "*.pkl"],
+        "": ["*.yaml", "*.csv", "*.pth", "*.pkl"],
+        "pinn_dynamics": ["*.yaml"],
     },
 )
