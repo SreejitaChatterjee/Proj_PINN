@@ -9,10 +9,18 @@ A **production-ready framework** for learning dynamics models from data with opt
 3. **Multi-Step Prediction** - Autoregressive rollout with uncertainty quantification
 4. **Deployment Ready** - Export to ONNX/TorchScript for embedded systems
 
-## Key Research Finding
-Physics loss doesn't improve (and may hurt) autoregressive rollout stability.
-Training regime and architecture matter more than physics constraints.
-See `research/paper/` for the full analysis.
+## Key Research Observation
+In our experiments (w=20, lr=1e-3, 20 seeds), w=0 achieved 1.74±1.03m vs w=20 achieved 2.72±1.54m (p=0.024, d=0.75).
+
+**Important:** This does NOT imply physics loss is harmful in general. The result may be specific to:
+- Our hyperparameter choices (w=20, learning rate, batch size)
+- Our physics loss formulation
+- Our architecture
+
+The higher variance with physics loss (1.54m vs 1.03m) suggests it may require more careful tuning.
+Future work should explore adaptive weighting, alternative formulations, and low-data regimes.
+
+See `paper_versions/ACC_CDC_submission.tex` for the stability envelope framework.
 
 ## Package Structure
 ```

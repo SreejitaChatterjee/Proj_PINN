@@ -18,8 +18,9 @@ Ablation study results comparing different components:
 Physics loss weight experiments showing the relationship between
 physics loss weight and autoregressive rollout stability.
 
-**Key Finding**: Physics loss doesn't improve (and may hurt) autoregressive
-rollout stability. Training regime and architecture matter more.
+**Observation**: In our experiments (w=20, lr=1e-3, 20 seeds), w=0 outperformed w=20.
+This does NOT imply physics loss is harmful in general---it highlights the need
+for careful hyperparameter tuning. See the paper for full caveats.
 
 ### `/experiments/`
 Experimental scripts for architecture comparison and other research.

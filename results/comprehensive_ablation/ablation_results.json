@@ -1,61 +1,118 @@
 {
+  "_metadata": {
+    "status": "PRELIMINARY - DO NOT CITE",
+    "issues": [
+      "Only 3 seeds used (should be 20 to match weight sweep)",
+      "LeastSquares evaluation has bug (impossibly good results)",
+      "Modular vs Baseline comparison contradicts paper claims",
+      "Results being re-run with corrected methodology"
+    ],
+    "corrected_results_location": "results/corrected_ablation/corrected_ablation_results.json"
+  },
   "PureNN": {
     "single_step": {
-      "z_mae": 0.07992514967918396,
-      "phi_mae": 0.0011004635598510504
+      "z_mae": 0.14247797429561615,
+      "phi_mae": 0.0026190876960754395,
+      "total_mae": 0.03214709833264351
     },
     "rollout": {
-      "position_mae": 0.9155609207854726
+      "position_mae": 5.76976578913912,
+      "attitude_mae": 0.12109290990846082
     },
     "n_params": 204812
   },
   "PINN_Baseline": {
     "single_step": {
       "z_mae": 0.07536498457193375,
-      "phi_mae": 0.001626072684302926
+      "phi_mae": 0.001626072684302926,
+      "total_mae": 0.057122230529785156
     },
     "rollout": {
-      "position_mae": 5.346717632277487
+      "position_mae": 5.346717632277487,
+      "attitude_mae": 0.06846900387932978
     },
     "n_params": 204818
   },
   "SmallBaseline_72K": {
     "single_step": {
-      "z_mae": 0.1470813900232315,
-      "phi_mae": 0.0026449179276823997
+      "z_mae": 0.21448488533496857,
+      "phi_mae": 0.002998958108946681,
+      "total_mae": 0.07943058758974075
     },
     "rollout": {
-      "position_mae": 7.394746843610901
+      "position_mae": 0.873149983716251,
+      "attitude_mae": 0.06969013614972203
     },
-    "n_params": 53266
+    "n_params": 53266,
+    "_note": "Single seed only - not statistically validated"
   },
   "Modular_72K": {
     "single_step": {
-      "z_mae": 0.063507080078125,
-      "phi_mae": 0.001703283516690135
+      "z_mae": 0.061578456312417984,
+      "phi_mae": 0.0016510161804035306,
+      "total_mae": 0.02251426875591278
     },
     "rollout": {
-      "position_mae": 1.5123244155742437
+      "position_mae": 1.4863169848380058,
+      "attitude_mae": 0.05512447893067844
     },
-    "n_params": 71954
+    "n_params": 71954,
+    "_note": "Single seed only - not statistically validated"
   },
-  "Baseline": {
-    "single_step": {
-      "z_mae": 0.12354853749275208,
-      "phi_mae": 0.0016147640999406576
-    },
-    "rollout": {
-      "position_mae": 4.1161085511259765
-    },
-    "n_params": 204818
+  "Baseline_MultiSeed": {
+    "z_mae_mean": 0.07485850900411606,
+    "z_mae_std": 0.0034233899787068367,
+    "pos_mae_mean": 1.0274609505541548,
+    "pos_mae_std": 0.37519849193348553,
+    "seeds": [42, 123, 456],
+    "_note": "Only 3 seeds - insufficient for statistical claims",
+    "all_results": [
+      {
+        "single_step": {"z_mae": 0.07005700469017029, "phi_mae": 0.0019199384842067957, "total_mae": 0.05727287754416466},
+        "rollout": {"position_mae": 1.1258605584339094, "attitude_mae": 0.06667974836675286}
+      },
+      {
+        "single_step": {"z_mae": 0.07779644429683685, "phi_mae": 0.0016850810497999191, "total_mae": 0.05238138884305954},
+        "rollout": {"position_mae": 1.4298129159614645, "attitude_mae": 0.06240381348371256}
+      },
+      {
+        "single_step": {"z_mae": 0.07672207802534103, "phi_mae": 0.0018130566459149122, "total_mae": 0.05670447275042534},
+        "rollout": {"position_mae": 0.5267093772670897, "attitude_mae": 0.05118298473096851}
+      }
+    ]
+  },
+  "Modular_MultiSeed": {
+    "z_mae_mean": 0.07957721501588821,
+    "z_mae_std": 0.004697333090007305,
+    "pos_mae_mean": 2.5757414566853205,
+    "pos_mae_std": 0.6104552638861597,
+    "seeds": [42, 123, 456],
+    "_note": "Only 3 seeds - insufficient for statistical claims. NOTE: Modular is WORSE than Baseline!",
+    "all_results": [
+      {
+        "single_step": {"z_mae": 0.07948700338602066, "phi_mae": 0.0017991525819525123, "total_mae": 0.02672259695827961},
+        "rollout": {"position_mae": 1.9461856446891144, "attitude_mae": 0.05426195206927521}
+      },
+      {
+        "single_step": {"z_mae": 0.08537481725215912, "phi_mae": 0.002103798557072878, "total_mae": 0.03494543209671974},
+        "rollout": {"position_mae": 2.378925721698873, "attitude_mae": 0.060182923064664606}
+      },
+      {
+        "single_step": {"z_mae": 0.07386980950832367, "phi_mae": 0.0020741808693856, "total_mae": 0.030772311612963676},
+        "rollout": {"position_mae": 3.4021130036679743, "attitude_mae": 0.06181005023742815}
+      }
+    ]
   },
   "LeastSquares": {
     "single_step": {
       "z_mae": 6.601028417207999e-06,
-      "phi_mae": 1.9819864974124357e-05
+      "phi_mae": 1.9819864974124357e-05,
+      "total_mae": 0.00021063182794023305
     },
     "rollout": {
-      "position_mae": 0.00019595690537244081
-    }
+      "position_mae": 0.00019595690537244081,
+      "attitude_mae": 0.0011682254262268543
+    },
+    "_note": "BUG: These results are impossibly good (0.2mm on 100-step rollout). Evaluation code has error."
   }
 }

@@ -202,12 +202,13 @@ docker-compose up dev       # Development environment
 docker-compose run test     # Run tests
 ```
 
-## Research Finding
+## Research Observation
 
-> Physics loss doesn't improve autoregressive rollout stability.
-> Training regime and architecture matter more than physics constraints.
+In our experiments with specific hyperparameters (w=20, lr=1e-3), we observed w=0 outperforming w=20 for rollout stability. However, this does **not** imply physics loss is harmful in general---the interaction between physics constraints, optimization dynamics, and hyperparameters requires further investigation.
 
-See `research/paper/` for the full analysis.
+The paper introduces the **stability envelope** $H_\epsilon$, a formal metric for evaluating autoregressive stability.
+
+See `paper_versions/` for the full analysis.
 
 ## Requirements
 
