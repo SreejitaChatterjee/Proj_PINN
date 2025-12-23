@@ -41,7 +41,7 @@ The Stability Envelope: A Formal Framework for\\Autoregressive Stability in Phys
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 
-We study autoregressive stability in physics-informed neural networks for dynamics learning. In a 6-DOF quadrotor system, we show that naive comparisons between PINNs and pure neural networks can be confounded by the \textit{early stopping criterion}: when validation loss includes physics terms, models may early-stop at different points than data-only models. We introduce the \textit{stability envelope} $H_\epsilon$---the maximum horizon where error remains bounded---as a formal metric linking Lipschitz properties to long-horizon stability. In our experiments with fixed hyperparameters (20 seeds, 100 epochs), we observed that w=0 achieved 1.74$\pm$1.03m vs w=20 achieved 2.72$\pm$1.54m ($p=0.024$, Cohen's $d=0.75$). However, this does not imply physics loss is harmful in general---the interaction between physics constraints, optimization dynamics, and hyperparameter choices requires further investigation. \textbf{Real data validation} on the EuRoC MAV dataset (269K samples, 11 sequences) achieves 0.053m position error on difficult flight sequences.
+We study autoregressive stability in physics-informed neural networks for dynamics learning. In a 6-DOF quadrotor system, we show that naive comparisons between PINNs and pure neural networks can be confounded by the \textit{early stopping criterion}: when validation loss includes physics terms, models may early-stop at different points than data-only models. We introduce the \textit{stability envelope} $H_\epsilon$---the maximum horizon where error remains bounded---as a formal metric linking Lipschitz properties to long-horizon stability. In our experiments with fixed hyperparameters (20 seeds, 100 epochs), we observed that w=0 achieved 1.74$\pm$1.03m vs w=20 achieved 2.72$\pm$1.54m ($p=0.024$, Cohen's $d=0.75$). We also compared architectures: Modular achieved 1.96$\pm$0.99m vs Baseline 2.65$\pm$1.55m, though this difference is not statistically significant ($p=0.103$). These results do not imply physics loss is harmful or that modular is definitively better---the interaction between physics constraints, architecture, and hyperparameter choices requires further investigation. \textbf{Real data validation} on the EuRoC MAV dataset (269K samples, 11 sequences) achieves 0.053m position error on difficult flight sequences.
 
 \end{abstract}
 
@@ -322,7 +322,7 @@ Curriculum & 0.519 & 0.0304 & 4.36 & 0.025 \\
 \end{tabular}
 \end{table}
 
-\textbf{Observation}: Single-seed results show Modular achieves better single-step accuracy and 100-step stability (1.11m vs 5.09m baseline). However, multi-seed validation is required to confirm this finding---preliminary multi-seed results suggest high variance across seeds.
+\textbf{20-Seed Validation}: With proper multi-seed validation (20 seeds each), Modular achieved 1.96$\pm$0.99m vs Baseline 2.65$\pm$1.55m. However, this difference is \textbf{not statistically significant} (Welch's $t$-test: $t=1.68$, $p=0.103$, Cohen's $d=0.53$). Modular shows a trend toward better performance with lower variance, but we cannot claim it is definitively superior.
 
 \subsection{Ablation Study: Training Regime vs Physics Loss}
 
@@ -362,25 +362,25 @@ This comparison is \textbf{unfair}: PureNN early-stops on supervised loss, while
 
 \textbf{Important caveats}: This observation does \textbf{not} imply physics loss is harmful in general. The result may be specific to: (1) our choice of physics weight w=20; (2) our fixed learning rate; (3) our physics loss formulation; (4) our architecture. Different hyperparameters, adaptive weighting schemes, or alternative physics formulations may yield different results. The higher variance with physics loss (std 1.54m vs 1.03m) suggests the optimization landscape is more complex, which may require careful tuning rather than omission of physics constraints.
 
-\subsection{Ablation Study: Architecture vs.\ Parameter Count}
+\subsection{Ablation Study: Architecture Comparison (20 Seeds)}
 
-To isolate architectural effects from capacity, we compare parameter-matched models. \textbf{Note:} Preliminary single-seed results showed modular advantage, but multi-seed validation (20 seeds) is ongoing. Table~\ref{tab:param_ablation} shows single-seed results which should be interpreted with caution:
+To properly evaluate architectural effects, we conducted a 20-seed ablation study matching the weight sweep protocol. Table~\ref{tab:param_ablation} shows the validated results:
 
 \begin{table}[h]
 \centering
-\caption{Parameter-Matched Comparison (Single Seed - Preliminary)}
+\caption{Architecture Comparison (20 Seeds)}
 \label{tab:param_ablation}
 \begin{tabular}{lccc}
 \toprule
-\textbf{Model} & \textbf{Params} & \textbf{1-Step $z$} & \textbf{100-Step Pos} \\
+\textbf{Model} & \textbf{Params} & \textbf{1-Step MAE} & \textbf{100-Step MAE} \\
 \midrule
-SmallBaseline & 53K & 0.214m & 0.87m \\
-Modular & 72K & 0.062m & 1.49m \\
+Baseline & 205K & 0.045$\pm$0.010 & 2.65$\pm$1.55m \\
+Modular & 72K & 0.023$\pm$0.001 & 1.96$\pm$0.99m \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\textbf{Preliminary observation}: Single-seed results show modular has better single-step accuracy but \textit{worse} rollout stability. Multi-seed validation with 20 seeds (matching the weight sweep protocol) is required before drawing conclusions about architectural effects. The relationship between single-step accuracy and rollout stability is non-trivial.
+\textbf{Statistical analysis}: Welch's $t$-test yields $t=1.68$, $p=0.103$, Cohen's $d=0.53$ (medium effect). The difference is \textbf{not statistically significant} at $\alpha=0.05$. Modular shows consistently better single-step accuracy (0.023 vs 0.045) with much lower variance ($\pm$0.001 vs $\pm$0.010), and a trend toward better rollout stability, but we cannot claim statistical significance for the rollout difference.
 
 \subsection{Real Data Validation: EuRoC MAV Dataset}
 
@@ -592,7 +592,8 @@ We introduced the stability envelope $H_\epsilon$ as a formal metric for autoreg
 
 \begin{enumerate}
     \item \textbf{Early stopping matters}: The choice of early stopping criterion (total loss vs supervised-only) affects PINN vs NN comparisons and should be carefully considered
-    \item \textbf{Empirical observation}: In our specific setup (w=20, lr=$10^{-3}$, 20 seeds), w=0 achieved 1.74$\pm$1.03m vs w=20 achieved 2.72$\pm$1.54m ($p=0.024$, $d=0.75$). This does \textbf{not} imply physics loss is generally harmful---it highlights the need for careful tuning
+    \item \textbf{Physics loss observation}: In our specific setup (w=20, lr=$10^{-3}$, 20 seeds), w=0 achieved 1.74$\pm$1.03m vs w=20 achieved 2.72$\pm$1.54m ($p=0.024$, $d=0.75$). This does \textbf{not} imply physics loss is generally harmful---it highlights the need for careful tuning
+    \item \textbf{Architecture observation}: Modular architecture achieved 1.96$\pm$0.99m vs Baseline 2.65$\pm$1.55m, but this difference is \textbf{not statistically significant} ($p=0.103$). Modular shows lower variance and a trend toward better performance
     \item \textbf{Real data validation}: On EuRoC MAV data, our model achieves 0.053m position error over 100-step rollouts
 \end{enumerate}
 
