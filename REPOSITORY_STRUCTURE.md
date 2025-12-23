@@ -14,11 +14,14 @@ Proj_PINN/
 ├── README.md                   # Main documentation
 ├── requirements.txt            # Python dependencies
 │
-├── data/                       # (Empty - regenerate from scripts)
+├── data/
+│   └── euroc/                        # EuRoC MAV dataset (real flight data)
 │
-├── models/                     # 812 KB
-│   ├── quadrotor_pinn_diverse.pth    # Current model (807KB)
-│   └── scalers_diverse.pkl           # Data scalers (1.5KB)
+├── models/                     # Trained models
+│   ├── euroc_pinn.pth                # EuRoC model (real data) - RECOMMENDED
+│   ├── euroc_scalers.pkl             # EuRoC data scalers
+│   ├── quadrotor_pinn_diverse.pth    # Simulated model
+│   └── scalers_diverse.pkl           # Simulated data scalers
 │
 ├── reports/                    # 7.7 MB
 │   ├── pinn_schematics.pdf           # Diagram for paper
@@ -32,14 +35,13 @@ Proj_PINN/
 │   ├── test_set_trajectories_diverse/    # 6.4 MB (16 PNGs used in paper)
 │   └── training_history_diverse.png      # Training curves
 │
-└── scripts/                    # 644 KB - All Python scripts
-    ├── evaluate_diverse_model.py
-    ├── generate_diverse_test_plots.py
+└── scripts/                    # All Python scripts
+    ├── train_euroc.py              # Train on real EuRoC data (RECOMMENDED)
+    ├── load_euroc.py               # Download/preprocess EuRoC dataset
+    ├── pinn_model.py               # PINN architecture
+    ├── pinn_base.py                # Base class for custom systems
+    ├── train.py                    # Training utilities
     ├── generate_diverse_training_data.py
-    ├── generate_quadrotor_data.py
-    ├── pinn_model.py
-    ├── split_diverse_data.py
-    ├── train_with_diverse_data.py
     └── ... (other scripts)
 ```
 
@@ -85,10 +87,18 @@ Proj_PINN/
 - TRAINING_RESULTS_FINAL.md
 - Old non-IEEE report files
 
-## To Regenerate Data
+## To Train Models
 
-If you need the training data again:
+### Real Data (Recommended)
+```bash
+# Train on EuRoC MAV dataset (downloads automatically)
+python scripts/train_euroc.py
 
+# Run demo with real data
+python demo.py --real
+```
+
+### Simulated Data
 ```bash
 # Generate 100 diverse trajectories
 python scripts/generate_diverse_training_data.py
@@ -99,11 +109,8 @@ python scripts/split_diverse_data.py
 # Train model
 python scripts/train_with_diverse_data.py
 
-# Evaluate on test set
-python scripts/evaluate_diverse_model.py
-
-# Generate plots
-python scripts/generate_diverse_test_plots.py
+# Run demo with simulated data
+python demo.py
 ```
 
 ## Final Statistics

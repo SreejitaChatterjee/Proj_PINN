@@ -1,48 +1,50 @@
-# Quadrotor PINN - Streamlined Codebase
+# Quadrotor PINN - Scripts
 
-## Core Files (4 files, ~400 lines total)
+## Core Files
 
-### `pinn_model.py` (91 lines)
-Unified PINN model with physics losses and parameter identification.
+### Model
+- `pinn_model.py` - PINN architecture for simulated data (16 inputs: states + controls)
+- `pinn_base.py` - Base class for custom dynamics systems
 
-### `train.py` (105 lines)
-Complete training pipeline with data loading, optimization, and loss tracking.
+### Training
+- `train_euroc.py` - **Train on real EuRoC MAV data** (recommended)
+- `train.py` - Train on simulated data
+- `load_euroc.py` - Download and preprocess EuRoC dataset
 
-### `evaluate.py` (75 lines)
-Model evaluation with error metrics and rollout predictions.
-
-### `plot_utils.py` (110 lines)
-All visualization utilities for training curves, state comparisons, and parameter convergence.
+### Data Generation
+- `generate_diverse_training_data.py` - Generate simulated trajectories
 
 ## Quick Start
 
-```python
-# Training
-python train.py
+```bash
+# Train on real EuRoC data (recommended)
+python train_euroc.py
 
-# Evaluation
-python evaluate.py
+# Or train on simulated data
+python generate_diverse_training_data.py
+python train_with_diverse_data.py
 
-# Custom training
-from train import Trainer, prepare_data
-from pinn_model import QuadrotorPINN
-
-train_loader, val_loader = prepare_data('data/quadrotor_training_data.csv')
-model = QuadrotorPINN()
-trainer = Trainer(model)
-trainer.train(train_loader, val_loader, epochs=150)
+# Run demo
+python ../demo.py --real   # EuRoC model
+python ../demo.py          # Simulated model
 ```
 
-## Model Architecture
-- Input: 15 states (z, angles, rates, controls, angular accelerations)
-- Output: 8 next states
-- Parameters: 6 learnable (m, Jxx, Jyy, Jzz, kt, kq) + 1 fixed (g)
-- Physics: Euler rotational dynamics + vertical dynamics
+## Model Architectures
+
+### EuRoC Model (real data)
+- Input: 15 features (12 states + 3 IMU accelerations)
+- Output: 12 next states
+- Data: 138K samples from 5 ETH Zurich MAV sequences
+- Performance: 11cm position MAE on 100-step rollout
+
+### Simulated Model
+- Input: 16 features (12 states + 4 controls)
+- Output: 12 next states
+- Data: 500K samples from numerical simulation
+- Physics: Learnable mass and inertia parameters
 
 ## Loss Components
 1. **Data loss**: MSE between predicted and true states
-2. **Physics loss**: Residuals from physical equations
-3. **Regularization loss**: Pull parameters toward true values
-
-## Legacy Files (Can be deleted)
-All other `.py` files in this directory are redundant and can be removed.
+2. **Kinematic loss**: Position derivatives match velocities
+3. **Smoothness loss**: Penalize unrealistic state jumps
+4. **Physics loss**: (Simulated only) Euler equations residuals
