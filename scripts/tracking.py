@@ -12,11 +12,11 @@ Usage:
     tracker.finish()
 """
 
-import os
 import json
-from pathlib import Path
-from typing import Dict, Any, Optional
+import os
 from abc import ABC, abstractmethod
+from pathlib import Path
+from typing import Any, Dict, Optional
 
 
 class BaseTracker(ABC):
@@ -56,6 +56,7 @@ class WandbTracker(BaseTracker):
     ):
         try:
             import wandb
+
             self.wandb = wandb
         except ImportError:
             raise ImportError("Install wandb: pip install wandb")
@@ -83,6 +84,7 @@ class WandbTracker(BaseTracker):
     def log_model(self, model, name: str = "model"):
         """Log PyTorch model."""
         import torch
+
         path = f"/tmp/{name}.pth"
         torch.save(model.state_dict(), path)
         self.log_artifact(path, name)
@@ -106,6 +108,7 @@ class MLflowTracker(BaseTracker):
     ):
         try:
             import mlflow
+
             self.mlflow = mlflow
         except ImportError:
             raise ImportError("Install mlflow: pip install mlflow")
@@ -135,7 +138,7 @@ class MLflowTracker(BaseTracker):
     def finish(self):
         self.mlflow.end_run()
 
-    def _flatten_dict(self, d: dict, parent_key: str = '', sep: str = '.') -> dict:
+    def _flatten_dict(self, d: dict, parent_key: str = "", sep: str = ".") -> dict:
         items = []
         for k, v in d.items():
             new_key = f"{parent_key}{sep}{k}" if parent_key else k
@@ -151,6 +154,7 @@ class LocalTracker(BaseTracker):
 
     def __init__(self, log_dir: str = "runs", run_name: str = None):
         import datetime
+
         if run_name is None:
             run_name = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
@@ -162,24 +166,26 @@ class LocalTracker(BaseTracker):
 
     def log_params(self, params: Dict[str, Any]):
         self.params.update(params)
-        with open(self.log_dir / "params.json", 'w') as f:
+        with open(self.log_dir / "params.json", "w") as f:
             json.dump(self.params, f, indent=2, default=str)
 
     def log_metrics(self, metrics: Dict[str, float], step: int = None):
         entry = {"step": step, **metrics}
         self.metrics.append(entry)
 
-        with open(self.log_dir / "metrics.jsonl", 'a') as f:
-            f.write(json.dumps(entry) + '\n')
+        with open(self.log_dir / "metrics.jsonl", "a") as f:
+            f.write(json.dumps(entry) + "\n")
 
     def log_artifact(self, path: str, name: str = None):
         import shutil
+
         dest = self.log_dir / (name or Path(path).name)
         shutil.copy(path, dest)
 
     def log_model(self, model, name: str = "model"):
         """Log PyTorch model."""
         import torch
+
         torch.save(model.state_dict(), self.log_dir / f"{name}.pth")
 
     def finish(self):
@@ -189,7 +195,7 @@ class LocalTracker(BaseTracker):
             "final_metrics": self.metrics[-1] if self.metrics else {},
             "log_dir": str(self.log_dir),
         }
-        with open(self.log_dir / "summary.json", 'w') as f:
+        with open(self.log_dir / "summary.json", "w") as f:
             json.dump(summary, f, indent=2)
         print(f"Run saved to {self.log_dir}")
 
@@ -207,28 +213,16 @@ class ExperimentTracker:
         project: str = "pinn-dynamics",
         run_name: str = None,
         config: Dict = None,
-        **kwargs
+        **kwargs,
     ):
         self.backend = backend.lower()
 
         if self.backend == "wandb":
-            self.tracker = WandbTracker(
-                project=project,
-                name=run_name,
-                config=config,
-                **kwargs
-            )
+            self.tracker = WandbTracker(project=project, name=run_name, config=config, **kwargs)
         elif self.backend == "mlflow":
-            self.tracker = MLflowTracker(
-                experiment_name=project,
-                run_name=run_name,
-                **kwargs
-            )
+            self.tracker = MLflowTracker(experiment_name=project, run_name=run_name, **kwargs)
         elif self.backend == "local":
-            self.tracker = LocalTracker(
-                run_name=run_name,
-                **kwargs
-            )
+            self.tracker = LocalTracker(run_name=run_name, **kwargs)
         else:
             raise ValueError(f"Unknown backend: {backend}. Use 'wandb', 'mlflow', or 'local'")
 
@@ -245,17 +239,18 @@ class ExperimentTracker:
         self.tracker.log_artifact(path, name)
 
     def log_model(self, model, name: str = "model"):
-        if hasattr(self.tracker, 'log_model'):
+        if hasattr(self.tracker, "log_model"):
             self.tracker.log_model(model, name)
         else:
             import torch
+
             path = f"/tmp/{name}.pth"
             torch.save(model.state_dict(), path)
             self.tracker.log_artifact(path, name)
 
     def watch(self, model, **kwargs):
         """Watch model (wandb only)."""
-        if hasattr(self.tracker, 'watch'):
+        if hasattr(self.tracker, "watch"):
             self.tracker.watch(model, **kwargs)
 
     def finish(self):
@@ -275,9 +270,12 @@ if __name__ == "__main__":
         tracker.log_params({"lr": 0.001, "epochs": 100})
 
         for epoch in range(5):
-            tracker.log_metrics({
-                "train_loss": 1.0 / (epoch + 1),
-                "val_loss": 1.1 / (epoch + 1),
-            }, step=epoch)
+            tracker.log_metrics(
+                {
+                    "train_loss": 1.0 / (epoch + 1),
+                    "val_loss": 1.1 / (epoch + 1),
+                },
+                step=epoch,
+            )
 
     print("Tracking test complete!")

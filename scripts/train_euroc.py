@@ -11,22 +11,23 @@ Usage:
     python scripts/train_euroc.py --skip-download    # Use existing data
 """
 
+import argparse
+import sys
+from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import numpy as np
-import pandas as pd
-import joblib
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
-from pathlib import Path
-import argparse
-import sys
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
 
 # Add scripts to path
 sys.path.insert(0, str(Path(__file__).parent))
-from load_euroc import download_sequence, prepare_dynamics_data, SEQUENCES
+from load_euroc import SEQUENCES, download_sequence, prepare_dynamics_data
 
 
 class EuRoCPINN(nn.Module):
@@ -95,8 +96,10 @@ class EuRoCPINN(nn.Module):
         pitch_pred = pitch + q * dt
         yaw_pred = yaw + r * dt
 
-        pos_loss = ((x_n - x_pred)**2 + (y_n - y_pred)**2 + (z_n - z_pred)**2).mean()
-        att_loss = ((roll_n - roll_pred)**2 + (pitch_n - pitch_pred)**2 + (yaw_n - yaw_pred)**2).mean()
+        pos_loss = ((x_n - x_pred) ** 2 + (y_n - y_pred) ** 2 + (z_n - z_pred) ** 2).mean()
+        att_loss = (
+            (roll_n - roll_pred) ** 2 + (pitch_n - pitch_pred) ** 2 + (yaw_n - yaw_pred) ** 2
+        ).mean()
 
         return pos_loss + att_loss
 
@@ -105,12 +108,26 @@ class EuRoCPINN(nn.Module):
         state_change = outputs - inputs[:, :12]
 
         # Physical limits on state change rate
-        max_rates = torch.tensor([
-            2.0, 2.0, 2.0,      # Position: 2m per step max
-            0.5, 0.5, 0.5,      # Attitude: 0.5 rad per step max
-            1.0, 1.0, 1.0,      # Angular rate: 1 rad/s per step max
-            2.0, 2.0, 2.0       # Velocity: 2 m/s per step max
-        ], device=inputs.device) * dt
+        max_rates = (
+            torch.tensor(
+                [
+                    2.0,
+                    2.0,
+                    2.0,  # Position: 2m per step max
+                    0.5,
+                    0.5,
+                    0.5,  # Attitude: 0.5 rad per step max
+                    1.0,
+                    1.0,
+                    1.0,  # Angular rate: 1 rad/s per step max
+                    2.0,
+                    2.0,
+                    2.0,  # Velocity: 2 m/s per step max
+                ],
+                device=inputs.device,
+            )
+            * dt
+        )
 
         violations = torch.relu(torch.abs(state_change) - max_rates)
         return violations.pow(2).mean()
@@ -119,19 +136,19 @@ class EuRoCPINN(nn.Module):
 class EuRoCTrainer:
     """Trainer for EuRoC data."""
 
-    def __init__(self, model, device='cpu', lr=0.001):
+    def __init__(self, model, device="cpu", lr=0.001):
         self.model = model.to(device)
         self.device = device
         self.optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
         self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            self.optimizer, mode='min', factor=0.5, patience=15
+            self.optimizer, mode="min", factor=0.5, patience=15
         )
         self.criterion = nn.MSELoss()
-        self.history = {'train': [], 'val': [], 'kinematic': [], 'smooth': []}
+        self.history = {"train": [], "val": [], "kinematic": [], "smooth": []}
 
-    def train_epoch(self, loader, weights={'kinematic': 5.0, 'smooth': 2.0}):
+    def train_epoch(self, loader, weights={"kinematic": 5.0, "smooth": 2.0}):
         self.model.train()
-        losses = {'total': 0, 'data': 0, 'kinematic': 0, 'smooth': 0}
+        losses = {"total": 0, "data": 0, "kinematic": 0, "smooth": 0}
 
         for data, target in loader:
             data, target = data.to(self.device), target.to(self.device)
@@ -147,16 +164,18 @@ class EuRoCTrainer:
             smooth_loss = self.model.smoothness_loss(data, output)
 
             # Combined loss
-            loss = data_loss + weights['kinematic'] * kinematic_loss + weights['smooth'] * smooth_loss
+            loss = (
+                data_loss + weights["kinematic"] * kinematic_loss + weights["smooth"] * smooth_loss
+            )
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
             self.optimizer.step()
 
-            losses['total'] += loss.item()
-            losses['data'] += data_loss.item()
-            losses['kinematic'] += kinematic_loss.item()
-            losses['smooth'] += smooth_loss.item()
+            losses["total"] += loss.item()
+            losses["data"] += data_loss.item()
+            losses["kinematic"] += kinematic_loss.item()
+            losses["smooth"] += smooth_loss.item()
 
         return {k: v / len(loader) for k, v in losses.items()}
 
@@ -175,7 +194,7 @@ class EuRoCTrainer:
         print(f"  Model: {sum(p.numel() for p in self.model.parameters()):,} parameters")
         print(f"  Device: {self.device}")
 
-        best_val = float('inf')
+        best_val = float("inf")
 
         for epoch in range(epochs):
             losses = self.train_epoch(train_loader)
@@ -183,19 +202,21 @@ class EuRoCTrainer:
 
             self.scheduler.step(val_loss)
 
-            self.history['train'].append(losses['total'])
-            self.history['val'].append(val_loss)
-            self.history['kinematic'].append(losses['kinematic'])
-            self.history['smooth'].append(losses['smooth'])
+            self.history["train"].append(losses["total"])
+            self.history["val"].append(val_loss)
+            self.history["kinematic"].append(losses["kinematic"])
+            self.history["smooth"].append(losses["smooth"])
 
             if val_loss < best_val:
                 best_val = val_loss
                 best_epoch = epoch
 
             if epoch % 10 == 0:
-                lr = self.optimizer.param_groups[0]['lr']
-                print(f"Epoch {epoch:3d}: Train={losses['total']:.6f}, Val={val_loss:.6f}, "
-                      f"Kin={losses['kinematic']:.6f}, Smooth={losses['smooth']:.6f}, LR={lr:.2e}")
+                lr = self.optimizer.param_groups[0]["lr"]
+                print(
+                    f"Epoch {epoch:3d}: Train={losses['total']:.6f}, Val={val_loss:.6f}, "
+                    f"Kin={losses['kinematic']:.6f}, Smooth={losses['smooth']:.6f}, LR={lr:.2e}"
+                )
 
         print(f"\nBest validation loss: {best_val:.6f} at epoch {best_epoch}")
         return best_val
@@ -208,8 +229,21 @@ def prepare_euroc_data(data, test_size=0.2, batch_size=64):
     Input: current state (12) + IMU accel (3) = 15 features
     Output: next state (12)
     """
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['ax', 'ay', 'az']
+    state_cols = [
+        "x",
+        "y",
+        "z",
+        "roll",
+        "pitch",
+        "yaw",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
+    control_cols = ["ax", "ay", "az"]
 
     # Build input/output pairs
     X = data[state_cols + control_cols].values[:-1]  # All but last
@@ -219,7 +253,9 @@ def prepare_euroc_data(data, test_size=0.2, batch_size=64):
 
     # Split
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_train, y_train, test_size=0.2, random_state=42
+    )
 
     print(f"  Train: {len(X_train):,}, Val: {len(X_val):,}, Test: {len(X_test):,}")
 
@@ -238,34 +274,48 @@ def prepare_euroc_data(data, test_size=0.2, batch_size=64):
     # DataLoaders
     train_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)),
-        batch_size=batch_size, shuffle=True
+        batch_size=batch_size,
+        shuffle=True,
     )
     val_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)),
-        batch_size=batch_size
+        batch_size=batch_size,
     )
     test_loader = DataLoader(
         TensorDataset(torch.FloatTensor(X_test), torch.FloatTensor(y_test)),
-        batch_size=batch_size
+        batch_size=batch_size,
     )
 
     return train_loader, val_loader, test_loader, scaler_X, scaler_y
 
 
-def evaluate_rollout(model, data, scaler_X, scaler_y, steps=100, device='cpu'):
+def evaluate_rollout(model, data, scaler_X, scaler_y, steps=100, device="cpu"):
     """Evaluate autoregressive rollout on EuRoC data."""
     model.eval()
 
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['ax', 'ay', 'az']
+    state_cols = [
+        "x",
+        "y",
+        "z",
+        "roll",
+        "pitch",
+        "yaw",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
+    control_cols = ["ax", "ay", "az"]
 
     # Start from middle of trajectory
     start_idx = len(data) // 2
 
     # Get initial state and controls for rollout
     initial_state = data[state_cols].values[start_idx]
-    controls = data[control_cols].values[start_idx:start_idx + steps]
-    ground_truth = data[state_cols].values[start_idx:start_idx + steps]
+    controls = data[control_cols].values[start_idx : start_idx + steps]
+    ground_truth = data[state_cols].values[start_idx : start_idx + steps]
 
     # Rollout
     predictions = [initial_state.copy()]
@@ -286,7 +336,7 @@ def evaluate_rollout(model, data, scaler_X, scaler_y, steps=100, device='cpu'):
             current_state = out.copy()
 
     predictions = np.array(predictions)
-    ground_truth = ground_truth[:len(predictions)]
+    ground_truth = ground_truth[: len(predictions)]
 
     # Compute errors
     errors = np.abs(predictions - ground_truth)
@@ -300,14 +350,18 @@ def evaluate_rollout(model, data, scaler_X, scaler_y, steps=100, device='cpu'):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Train PINN on EuRoC dataset')
-    parser.add_argument('--sequence', default='MH_01_easy', choices=list(SEQUENCES.keys()),
-                        help='EuRoC sequence to use')
-    parser.add_argument('--skip-download', action='store_true',
-                        help='Skip download, use existing data')
-    parser.add_argument('--epochs', type=int, default=200,
-                        help='Training epochs')
-    parser.add_argument('--batch-size', type=int, default=64)
+    parser = argparse.ArgumentParser(description="Train PINN on EuRoC dataset")
+    parser.add_argument(
+        "--sequence",
+        default="MH_01_easy",
+        choices=list(SEQUENCES.keys()),
+        help="EuRoC sequence to use",
+    )
+    parser.add_argument(
+        "--skip-download", action="store_true", help="Skip download, use existing data"
+    )
+    parser.add_argument("--epochs", type=int, default=200, help="Training epochs")
+    parser.add_argument("--batch-size", type=int, default=64)
     args = parser.parse_args()
 
     print("=" * 70)
@@ -315,8 +369,8 @@ def main():
     print("=" * 70)
 
     # Paths
-    data_dir = Path(__file__).parent.parent / 'data' / 'euroc'
-    model_dir = Path(__file__).parent.parent / 'models'
+    data_dir = Path(__file__).parent.parent / "data" / "euroc"
+    model_dir = Path(__file__).parent.parent / "models"
     model_dir.mkdir(exist_ok=True)
 
     # Download and prepare data
@@ -338,7 +392,7 @@ def main():
 
     # Train
     print(f"\n[4/4] Training model...")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model = EuRoCPINN(input_size=15, hidden_size=256, output_size=12)
     trainer = EuRoCTrainer(model, device=device)
@@ -351,11 +405,11 @@ def main():
     evaluate_rollout(model, data, scaler_X, scaler_y, steps=100, device=device)
 
     # Save
-    save_path = model_dir / f'euroc_pinn_{args.sequence}.pth'
+    save_path = model_dir / f"euroc_pinn_{args.sequence}.pth"
     torch.save(model.state_dict(), save_path)
 
-    scaler_path = model_dir / f'euroc_scalers_{args.sequence}.pkl'
-    joblib.dump({'scaler_X': scaler_X, 'scaler_y': scaler_y}, scaler_path)
+    scaler_path = model_dir / f"euroc_scalers_{args.sequence}.pkl"
+    joblib.dump({"scaler_X": scaler_X, "scaler_y": scaler_y}, scaler_path)
 
     print(f"\nModel saved to: {save_path}")
     print(f"Scalers saved to: {scaler_path}")
@@ -365,5 +419,5 @@ def main():
     print("=" * 70)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

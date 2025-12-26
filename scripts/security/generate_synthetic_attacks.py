@@ -14,10 +14,11 @@ Usage:
 """
 
 import argparse
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import json
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 
 class SyntheticAttackGenerator:
@@ -58,13 +59,13 @@ class SyntheticAttackGenerator:
             DataFrame with GPS spoofing attack injected
         """
         data = self.clean_data.copy()
-        data['label'] = 0
-        data['attack_type'] = 'Normal'
+        data["label"] = 0
+        data["attack_type"] = "Normal"
 
         # Find attack start/end indices
         n_total = len(data)
         attack_start_idx = int(n_total * attack_start_ratio)
-        dt = data['timestamp'].diff().mean()
+        dt = data["timestamp"].diff().mean()
         attack_duration_samples = int(drift_duration / dt)
         attack_end_idx = min(attack_start_idx + attack_duration_samples, n_total)
 
@@ -75,13 +76,13 @@ class SyntheticAttackGenerator:
         drift_z = np.linspace(0, drift_magnitude * 0.2, n_attack)  # Small z drift
 
         # Inject drift
-        data.loc[attack_start_idx:attack_end_idx-1, 'x'] += drift_x
-        data.loc[attack_start_idx:attack_end_idx-1, 'y'] += drift_y
-        data.loc[attack_start_idx:attack_end_idx-1, 'z'] += drift_z
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += drift_x
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += drift_y
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += drift_z
 
         # Mark as attack
-        data.loc[attack_start_idx:attack_end_idx-1, 'label'] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, 'attack_type'] = 'GPS_Spoofing'
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Spoofing"
 
         return data
 
@@ -111,13 +112,13 @@ class SyntheticAttackGenerator:
             DataFrame with IMU bias attack
         """
         data = self.clean_data.copy()
-        data['label'] = 0
-        data['attack_type'] = 'Normal'
+        data["label"] = 0
+        data["attack_type"] = "Normal"
 
         # Attack window
         n_total = len(data)
         attack_start_idx = int(n_total * attack_start_ratio)
-        dt = data['timestamp'].diff().mean()
+        dt = data["timestamp"].diff().mean()
         attack_duration_samples = int(attack_duration / dt)
         attack_end_idx = min(attack_start_idx + attack_duration_samples, n_total)
 
@@ -126,13 +127,13 @@ class SyntheticAttackGenerator:
         n_attack = attack_end_idx - attack_start_idx
         velocity_change = accel_bias * dt * np.arange(n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, 'vx'] += velocity_change
-        data.loc[attack_start_idx:attack_end_idx-1, 'p'] += gyro_bias
-        data.loc[attack_start_idx:attack_end_idx-1, 'q'] += gyro_bias * 0.7
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_change
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += gyro_bias
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += gyro_bias * 0.7
 
         # Mark as attack
-        data.loc[attack_start_idx:attack_end_idx-1, 'label'] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, 'attack_type'] = 'IMU_Injection'
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Injection"
 
         return data
 
@@ -157,13 +158,13 @@ class SyntheticAttackGenerator:
             DataFrame with sensor dropout attack
         """
         data = self.clean_data.copy()
-        data['label'] = 0
-        data['attack_type'] = 'Normal'
+        data["label"] = 0
+        data["attack_type"] = "Normal"
 
         # Attack window
         n_total = len(data)
         attack_start_idx = int(n_total * attack_start_ratio)
-        dt = data['timestamp'].diff().mean()
+        dt = data["timestamp"].diff().mean()
         attack_duration_samples = int(attack_duration / dt)
         attack_end_idx = min(attack_start_idx + attack_duration_samples, n_total)
 
@@ -172,19 +173,19 @@ class SyntheticAttackGenerator:
         dropout_mask = self.rng.rand(n_attack) < dropout_probability
 
         # Set GPS position/velocity to NaN (sensor failure)
-        data.loc[attack_start_idx:attack_end_idx-1, 'x'] = np.where(
-            dropout_mask, np.nan, data.loc[attack_start_idx:attack_end_idx-1, 'x']
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] = np.where(
+            dropout_mask, np.nan, data.loc[attack_start_idx : attack_end_idx - 1, "x"]
         )
-        data.loc[attack_start_idx:attack_end_idx-1, 'y'] = np.where(
-            dropout_mask, np.nan, data.loc[attack_start_idx:attack_end_idx-1, 'y']
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] = np.where(
+            dropout_mask, np.nan, data.loc[attack_start_idx : attack_end_idx - 1, "y"]
         )
-        data.loc[attack_start_idx:attack_end_idx-1, 'z'] = np.where(
-            dropout_mask, np.nan, data.loc[attack_start_idx:attack_end_idx-1, 'z']
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] = np.where(
+            dropout_mask, np.nan, data.loc[attack_start_idx : attack_end_idx - 1, "z"]
         )
 
         # Mark as attack
-        data.loc[attack_start_idx:attack_end_idx-1, 'label'] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, 'attack_type'] = 'Sensor_Dropout'
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Sensor_Dropout"
 
         return data
 
@@ -207,8 +208,8 @@ class SyntheticAttackGenerator:
             DataFrame with replay attack
         """
         data = self.clean_data.copy()
-        data['label'] = 0
-        data['attack_type'] = 'Normal'
+        data["label"] = 0
+        data["attack_type"] = "Normal"
 
         # Attack window
         n_total = len(data)
@@ -225,25 +226,39 @@ class SyntheticAttackGenerator:
         replay_source_end = replay_source_start + (attack_end_idx - attack_start_idx)
 
         # Replay position/attitude/velocity (GPS + IMU)
-        state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+        state_cols = [
+            "x",
+            "y",
+            "z",
+            "phi",
+            "theta",
+            "psi",
+            "p",
+            "q",
+            "r",
+            "vx",
+            "vy",
+            "vz",
+        ]
         for col in state_cols:
-            data.loc[attack_start_idx:attack_end_idx-1, col] = \
-                data.loc[replay_source_start:replay_source_end-1, col].values
+            data.loc[attack_start_idx : attack_end_idx - 1, col] = data.loc[
+                replay_source_start : replay_source_end - 1, col
+            ].values
 
         # Mark as attack
-        data.loc[attack_start_idx:attack_end_idx-1, 'label'] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, 'attack_type'] = 'Replay_Attack'
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Replay_Attack"
 
         return data
 
     def generate_all_attacks(self) -> dict:
         """Generate all attack types."""
         return {
-            'gps_spoofing': self.gps_spoofing_gradual_drift(),
-            'imu_injection': self.imu_bias_injection(),
-            'sensor_dropout': self.sensor_dropout(),
-            'replay_attack': self.replay_attack(),
-            'clean': self.clean_data.copy(),
+            "gps_spoofing": self.gps_spoofing_gradual_drift(),
+            "imu_injection": self.imu_bias_injection(),
+            "sensor_dropout": self.sensor_dropout(),
+            "replay_attack": self.replay_attack(),
+            "clean": self.clean_data.copy(),
         }
 
 
@@ -302,10 +317,10 @@ def main():
     clean_data = load_euroc_data(input_path)
 
     # Add missing columns if needed
-    if 'label' not in clean_data.columns:
-        clean_data['label'] = 0
-    if 'attack_type' not in clean_data.columns:
-        clean_data['attack_type'] = 'Normal'
+    if "label" not in clean_data.columns:
+        clean_data["label"] = 0
+    if "attack_type" not in clean_data.columns:
+        clean_data["attack_type"] = "Normal"
 
     # Generate attacks
     print("\nGenerating attacks...")
@@ -321,16 +336,18 @@ def main():
         meta = {
             "attack_type": attack_name,
             "n_samples": len(attack_data),
-            "n_attack_samples": int(attack_data['label'].sum()),
-            "attack_ratio": float(attack_data['label'].mean()),
+            "n_attack_samples": int(attack_data["label"].sum()),
+            "attack_ratio": float(attack_data["label"].mean()),
         }
 
         meta_file = output_path / f"{attack_name}_meta.json"
-        with open(meta_file, 'w') as f:
+        with open(meta_file, "w") as f:
             json.dump(meta, f, indent=2)
 
-        print(f"  ✓ {attack_name}: {len(attack_data)} samples "
-              f"({meta['attack_ratio']*100:.1f}% attack)")
+        print(
+            f"  ✓ {attack_name}: {len(attack_data)} samples "
+            f"({meta['attack_ratio']*100:.1f}% attack)"
+        )
 
     print("\n" + "=" * 60)
     print("Attack generation complete!")

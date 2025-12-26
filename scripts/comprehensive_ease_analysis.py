@@ -9,27 +9,28 @@ Runs extensive experiments for the paper:
 5. Statistical inference and effect size analysis
 """
 
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import json
-from pathlib import Path
-from sklearn.preprocessing import StandardScaler
 from scipy import stats
-from datetime import datetime
-import sys
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.append(str(Path(__file__).parent))
 from pinn_architectures import BaselinePINN
 
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'ease_comprehensive'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'ease_comprehensive'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "ease_comprehensive"
+MODELS_DIR = PROJECT_ROOT / "models" / "ease_comprehensive"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -44,41 +45,65 @@ EARLY_STOP_PATIENCE = 40
 N_ROLLOUT_TRAJ = 10
 
 # Use existing 20-seed data where available
-EXISTING_SEEDS = [42, 123, 456, 789, 999, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+EXISTING_SEEDS = [
+    42,
+    123,
+    456,
+    789,
+    999,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+]
 QUICK_SEEDS = [42, 123, 456]  # For new experiments
 
 
 def load_data(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
 
 def load_trajectories(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
-        trajectories.append({
-            'states': df_traj[state_cols].values.astype(np.float32),
-            'controls': df_traj[control_cols].values.astype(np.float32)
-        })
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
+        trajectories.append(
+            {
+                "states": df_traj[state_cols].values.astype(np.float32),
+                "controls": df_traj[control_cols].values.astype(np.float32),
+            }
+        )
     return trajectories
 
 
 class FlexiblePINN(nn.Module):
     """Flexible PINN with configurable depth/width"""
+
     def __init__(self, n_layers=5, hidden_dim=256):
         super().__init__()
         layers = [nn.Linear(16, hidden_dim), nn.ReLU()]
@@ -132,7 +157,7 @@ def train_model(model, train_loader, val_loader, scaler_y, w_phys, lr, seed, pat
     y_mean = torch.FloatTensor(scaler_y.mean_)
     y_scale = torch.FloatTensor(scaler_y.scale_)
 
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     patience_counter = 0
     best_state = None
 
@@ -144,7 +169,7 @@ def train_model(model, train_loader, val_loader, scaler_y, w_phys, lr, seed, pat
             sup_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
             loss = sup_loss
 
-            if w_phys > 0 and hasattr(model, 'physics_loss'):
+            if w_phys > 0 and hasattr(model, "physics_loss"):
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 phys_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
                 loss = sup_loss + w_phys * phys_loss
@@ -153,7 +178,7 @@ def train_model(model, train_loader, val_loader, scaler_y, w_phys, lr, seed, pat
             torch.nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
             optimizer.step()
 
-            if hasattr(model, 'constrain_parameters'):
+            if hasattr(model, "constrain_parameters"):
                 model.constrain_parameters()
 
         # Validation
@@ -225,13 +250,15 @@ def evaluate_model(model, val_loader, val_trajectories, scaler_X, scaler_y, roll
     # Rollout MAE
     pos_errors = []
     for traj in val_trajectories[:N_ROLLOUT_TRAJ]:
-        states, controls = traj['states'], traj['controls']
+        states, controls = traj["states"], traj["controls"]
         if len(states) < rollout_horizon + 1:
             continue
-        predicted = autoregressive_rollout(model, states[0], controls, scaler_X, scaler_y, rollout_horizon)
-        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[:len(predicted), :3])))
+        predicted = autoregressive_rollout(
+            model, states[0], controls, scaler_X, scaler_y, rollout_horizon
+        )
+        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[: len(predicted), :3])))
 
-    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float('inf')
+    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float("inf")
     return single_step_mae, rollout_mae
 
 
@@ -244,16 +271,16 @@ def compute_statistics(values):
     se = std / np.sqrt(n)
     ci95 = 1.96 * se
     return {
-        'mean': float(mean),
-        'std': float(std),
-        'se': float(se),
-        'ci95': float(ci95),
-        'min': float(np.min(arr)),
-        'max': float(np.max(arr)),
-        'median': float(np.median(arr)),
-        'q25': float(np.percentile(arr, 25)),
-        'q75': float(np.percentile(arr, 75)),
-        'n': n
+        "mean": float(mean),
+        "std": float(std),
+        "se": float(se),
+        "ci95": float(ci95),
+        "min": float(np.min(arr)),
+        "max": float(np.max(arr)),
+        "median": float(np.median(arr)),
+        "q25": float(np.percentile(arr, 25)),
+        "q75": float(np.percentile(arr, 75)),
+        "n": n,
     }
 
 
@@ -262,11 +289,13 @@ def welch_ttest(group1, group2):
     t_stat, p_value = stats.ttest_ind(group1, group2, equal_var=False)
 
     # Mann-Whitney U (non-parametric)
-    u_stat, u_p = stats.mannwhitneyu(group1, group2, alternative='two-sided')
+    u_stat, u_p = stats.mannwhitneyu(group1, group2, alternative="two-sided")
 
     # Effect sizes
     n1, n2 = len(group1), len(group2)
-    pooled_std = np.sqrt(((n1-1)*np.var(group1, ddof=1) + (n2-1)*np.var(group2, ddof=1)) / (n1+n2-2))
+    pooled_std = np.sqrt(
+        ((n1 - 1) * np.var(group1, ddof=1) + (n2 - 1) * np.var(group2, ddof=1)) / (n1 + n2 - 2)
+    )
     cohens_d = (np.mean(group1) - np.mean(group2)) / pooled_std if pooled_std > 0 else 0
 
     # Levene's test for variance
@@ -277,15 +306,15 @@ def welch_ttest(group1, group2):
     cv2 = np.std(group2, ddof=1) / np.mean(group2) * 100 if np.mean(group2) > 0 else 0
 
     return {
-        'welch_t': float(t_stat),
-        'welch_p': float(p_value),
-        'mann_whitney_u': float(u_stat),
-        'mann_whitney_p': float(u_p),
-        'cohens_d': float(cohens_d),
-        'levene_stat': float(levene_stat),
-        'levene_p': float(levene_p),
-        'cv1_percent': float(cv1),
-        'cv2_percent': float(cv2)
+        "welch_t": float(t_stat),
+        "welch_p": float(p_value),
+        "mann_whitney_u": float(u_stat),
+        "mann_whitney_p": float(u_p),
+        "cohens_d": float(cohens_d),
+        "levene_stat": float(levene_stat),
+        "levene_p": float(levene_p),
+        "cv1_percent": float(cv1),
+        "cv2_percent": float(cv2),
     }
 
 
@@ -309,49 +338,55 @@ def main():
     y_val_scaled = scaler_y.transform(y_val)
 
     train_dataset = TensorDataset(
-        torch.FloatTensor(X_train_scaled), torch.FloatTensor(y_train_scaled),
-        torch.FloatTensor(X_train), torch.FloatTensor(y_train)
+        torch.FloatTensor(X_train_scaled),
+        torch.FloatTensor(y_train_scaled),
+        torch.FloatTensor(X_train),
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
-        torch.FloatTensor(X_val_scaled), torch.FloatTensor(y_val_scaled),
-        torch.FloatTensor(X_val), torch.FloatTensor(y_val)
+        torch.FloatTensor(X_val_scaled),
+        torch.FloatTensor(y_val_scaled),
+        torch.FloatTensor(X_val),
+        torch.FloatTensor(y_val),
     )
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     print(f"  Train: {len(X_train):,}, Val: {len(X_val):,}")
 
-    all_results = {'metadata': {'timestamp': datetime.now().isoformat()}}
+    all_results = {"metadata": {"timestamp": datetime.now().isoformat()}}
 
     # ========================================================================
     # ANALYSIS 1: Load existing 20-seed weight sweep data
     # ========================================================================
     print("\n[2/6] Loading existing 20-seed weight sweep data...")
 
-    existing_results_path = PROJECT_ROOT / 'results' / 'weight_sweep' / 'weight_sweep_robust_results.json'
+    existing_results_path = (
+        PROJECT_ROOT / "results" / "weight_sweep" / "weight_sweep_robust_results.json"
+    )
     if existing_results_path.exists():
         with open(existing_results_path) as f:
             existing_weight_sweep = json.load(f)
 
-        w0_rollouts = [r['rollout_mae'] for r in existing_weight_sweep['w0.0']['seed_results']]
-        w20_rollouts = [r['rollout_mae'] for r in existing_weight_sweep['w20.0']['seed_results']]
-        w0_single = [r['single_step_mae'] for r in existing_weight_sweep['w0.0']['seed_results']]
-        w20_single = [r['single_step_mae'] for r in existing_weight_sweep['w20.0']['seed_results']]
+        w0_rollouts = [r["rollout_mae"] for r in existing_weight_sweep["w0.0"]["seed_results"]]
+        w20_rollouts = [r["rollout_mae"] for r in existing_weight_sweep["w20.0"]["seed_results"]]
+        w0_single = [r["single_step_mae"] for r in existing_weight_sweep["w0.0"]["seed_results"]]
+        w20_single = [r["single_step_mae"] for r in existing_weight_sweep["w20.0"]["seed_results"]]
 
-        all_results['weight_sweep_20seed'] = {
-            'w0': {
-                'rollout': compute_statistics(w0_rollouts),
-                'single_step': compute_statistics(w0_single),
-                'raw_rollouts': w0_rollouts,
-                'raw_single_step': w0_single
+        all_results["weight_sweep_20seed"] = {
+            "w0": {
+                "rollout": compute_statistics(w0_rollouts),
+                "single_step": compute_statistics(w0_single),
+                "raw_rollouts": w0_rollouts,
+                "raw_single_step": w0_single,
             },
-            'w20': {
-                'rollout': compute_statistics(w20_rollouts),
-                'single_step': compute_statistics(w20_single),
-                'raw_rollouts': w20_rollouts,
-                'raw_single_step': w20_single
+            "w20": {
+                "rollout": compute_statistics(w20_rollouts),
+                "single_step": compute_statistics(w20_single),
+                "raw_rollouts": w20_rollouts,
+                "raw_single_step": w20_single,
             },
-            'comparison': welch_ttest(w0_rollouts, w20_rollouts)
+            "comparison": welch_ttest(w0_rollouts, w20_rollouts),
         }
 
         # Correlation analysis (Simpson's paradox)
@@ -362,11 +397,11 @@ def main():
         w0_r, w0_p = stats.pearsonr(w0_single, w0_rollouts)
         w20_r, w20_p = stats.pearsonr(w20_single, w20_rollouts)
 
-        all_results['correlation_analysis'] = {
-            'overall': {'r': float(overall_r), 'p': float(overall_p)},
-            'w0_within': {'r': float(w0_r), 'p': float(w0_p)},
-            'w20_within': {'r': float(w20_r), 'p': float(w20_p)},
-            'simpsons_paradox': abs(overall_r) > 0.3 and abs(w0_r) < 0.35 and abs(w20_r) < 0.35
+        all_results["correlation_analysis"] = {
+            "overall": {"r": float(overall_r), "p": float(overall_p)},
+            "w0_within": {"r": float(w0_r), "p": float(w0_p)},
+            "w20_within": {"r": float(w20_r), "p": float(w20_p)},
+            "simpsons_paradox": abs(overall_r) > 0.3 and abs(w0_r) < 0.35 and abs(w20_r) < 0.35,
         }
 
         print(f"  w=0:  {np.mean(w0_rollouts):.3f} ± {np.std(w0_rollouts):.3f}m (20 seeds)")
@@ -387,17 +422,26 @@ def main():
 
         for seed in QUICK_SEEDS:
             model = FlexiblePINN(n_layers=5, hidden_dim=256)
-            model, _ = train_model(model, train_loader, val_loader, scaler_y,
-                                   w, BASE_LR, seed, EARLY_STOP_PATIENCE)
-            _, rollout = evaluate_model(model, val_loader, val_trajectories,
-                                        scaler_X, scaler_y, 100)
+            model, _ = train_model(
+                model,
+                train_loader,
+                val_loader,
+                scaler_y,
+                w,
+                BASE_LR,
+                seed,
+                EARLY_STOP_PATIENCE,
+            )
+            _, rollout = evaluate_model(
+                model, val_loader, val_trajectories, scaler_X, scaler_y, 100
+            )
             seed_rollouts.append(rollout)
             print(f"    seed {seed}: {rollout:.3f}m")
 
-        extended_results[f'w{w}'] = compute_statistics(seed_rollouts)
-        extended_results[f'w{w}']['raw'] = seed_rollouts
+        extended_results[f"w{w}"] = compute_statistics(seed_rollouts)
+        extended_results[f"w{w}"]["raw"] = seed_rollouts
 
-    all_results['extended_weight_sweep'] = extended_results
+    all_results["extended_weight_sweep"] = extended_results
 
     # ========================================================================
     # ANALYSIS 3: Learning rate sensitivity
@@ -413,17 +457,26 @@ def main():
 
         for seed in QUICK_SEEDS:
             model = FlexiblePINN(n_layers=5, hidden_dim=256)
-            model, _ = train_model(model, train_loader, val_loader, scaler_y,
-                                   0, lr, seed, EARLY_STOP_PATIENCE)  # w=0
-            _, rollout = evaluate_model(model, val_loader, val_trajectories,
-                                        scaler_X, scaler_y, 100)
+            model, _ = train_model(
+                model,
+                train_loader,
+                val_loader,
+                scaler_y,
+                0,
+                lr,
+                seed,
+                EARLY_STOP_PATIENCE,
+            )  # w=0
+            _, rollout = evaluate_model(
+                model, val_loader, val_trajectories, scaler_X, scaler_y, 100
+            )
             seed_rollouts.append(rollout)
             print(f"    seed {seed}: {rollout:.3f}m")
 
-        lr_results[f'lr{lr}'] = compute_statistics(seed_rollouts)
-        lr_results[f'lr{lr}']['raw'] = seed_rollouts
+        lr_results[f"lr{lr}"] = compute_statistics(seed_rollouts)
+        lr_results[f"lr{lr}"]["raw"] = seed_rollouts
 
-    all_results['learning_rate_sensitivity'] = lr_results
+    all_results["learning_rate_sensitivity"] = lr_results
 
     # ========================================================================
     # ANALYSIS 4: Rollout horizon sensitivity
@@ -435,28 +488,46 @@ def main():
 
     # Train one model per condition
     model_w0 = FlexiblePINN(n_layers=5, hidden_dim=256)
-    model_w0, _ = train_model(model_w0, train_loader, val_loader, scaler_y,
-                              0, BASE_LR, 42, EARLY_STOP_PATIENCE)
+    model_w0, _ = train_model(
+        model_w0,
+        train_loader,
+        val_loader,
+        scaler_y,
+        0,
+        BASE_LR,
+        42,
+        EARLY_STOP_PATIENCE,
+    )
 
     model_w20 = FlexiblePINN(n_layers=5, hidden_dim=256)
-    model_w20, _ = train_model(model_w20, train_loader, val_loader, scaler_y,
-                               20, BASE_LR, 42, EARLY_STOP_PATIENCE)
+    model_w20, _ = train_model(
+        model_w20,
+        train_loader,
+        val_loader,
+        scaler_y,
+        20,
+        BASE_LR,
+        42,
+        EARLY_STOP_PATIENCE,
+    )
 
     for h in horizons:
         print(f"\n  horizon={h}...")
-        _, rollout_w0 = evaluate_model(model_w0, val_loader, val_trajectories,
-                                       scaler_X, scaler_y, h)
-        _, rollout_w20 = evaluate_model(model_w20, val_loader, val_trajectories,
-                                        scaler_X, scaler_y, h)
+        _, rollout_w0 = evaluate_model(
+            model_w0, val_loader, val_trajectories, scaler_X, scaler_y, h
+        )
+        _, rollout_w20 = evaluate_model(
+            model_w20, val_loader, val_trajectories, scaler_X, scaler_y, h
+        )
 
-        horizon_results[f'h{h}'] = {
-            'w0': float(rollout_w0),
-            'w20': float(rollout_w20),
-            'ratio': float(rollout_w20 / rollout_w0) if rollout_w0 > 0 else float('inf')
+        horizon_results[f"h{h}"] = {
+            "w0": float(rollout_w0),
+            "w20": float(rollout_w20),
+            "ratio": (float(rollout_w20 / rollout_w0) if rollout_w0 > 0 else float("inf")),
         }
         print(f"    w=0: {rollout_w0:.3f}m, w=20: {rollout_w20:.3f}m")
 
-    all_results['rollout_horizon_sensitivity'] = horizon_results
+    all_results["rollout_horizon_sensitivity"] = horizon_results
 
     # ========================================================================
     # ANALYSIS 5: Architecture variations
@@ -464,12 +535,12 @@ def main():
     print("\n[6/6] Architecture variations...")
 
     architectures = [
-        {'name': '3layer_128', 'n_layers': 3, 'hidden_dim': 128},
-        {'name': '3layer_256', 'n_layers': 3, 'hidden_dim': 256},
-        {'name': '5layer_128', 'n_layers': 5, 'hidden_dim': 128},
-        {'name': '5layer_256', 'n_layers': 5, 'hidden_dim': 256},
-        {'name': '7layer_256', 'n_layers': 7, 'hidden_dim': 256},
-        {'name': '5layer_512', 'n_layers': 5, 'hidden_dim': 512},
+        {"name": "3layer_128", "n_layers": 3, "hidden_dim": 128},
+        {"name": "3layer_256", "n_layers": 3, "hidden_dim": 256},
+        {"name": "5layer_128", "n_layers": 5, "hidden_dim": 128},
+        {"name": "5layer_256", "n_layers": 5, "hidden_dim": 256},
+        {"name": "7layer_256", "n_layers": 7, "hidden_dim": 256},
+        {"name": "5layer_512", "n_layers": 5, "hidden_dim": 512},
     ]
 
     arch_results = {}
@@ -479,24 +550,33 @@ def main():
         seed_rollouts = []
 
         for seed in QUICK_SEEDS:
-            model = FlexiblePINN(n_layers=arch['n_layers'], hidden_dim=arch['hidden_dim'])
+            model = FlexiblePINN(n_layers=arch["n_layers"], hidden_dim=arch["hidden_dim"])
             n_params = sum(p.numel() for p in model.parameters())
-            model, _ = train_model(model, train_loader, val_loader, scaler_y,
-                                   0, BASE_LR, seed, EARLY_STOP_PATIENCE)
-            _, rollout = evaluate_model(model, val_loader, val_trajectories,
-                                        scaler_X, scaler_y, 100)
+            model, _ = train_model(
+                model,
+                train_loader,
+                val_loader,
+                scaler_y,
+                0,
+                BASE_LR,
+                seed,
+                EARLY_STOP_PATIENCE,
+            )
+            _, rollout = evaluate_model(
+                model, val_loader, val_trajectories, scaler_X, scaler_y, 100
+            )
             seed_rollouts.append(rollout)
             print(f"    seed {seed}: {rollout:.3f}m")
 
-        arch_results[arch['name']] = {
+        arch_results[arch["name"]] = {
             **compute_statistics(seed_rollouts),
-            'n_params': n_params,
-            'n_layers': arch['n_layers'],
-            'hidden_dim': arch['hidden_dim'],
-            'raw': seed_rollouts
+            "n_params": n_params,
+            "n_layers": arch["n_layers"],
+            "hidden_dim": arch["hidden_dim"],
+            "raw": seed_rollouts,
         }
 
-    all_results['architecture_variations'] = arch_results
+    all_results["architecture_variations"] = arch_results
 
     # ========================================================================
     # INFERENCE: Key findings
@@ -508,44 +588,56 @@ def main():
     findings = []
 
     # Finding 1: Physics loss effect
-    if 'weight_sweep_20seed' in all_results:
-        comp = all_results['weight_sweep_20seed']['comparison']
-        w0_mean = all_results['weight_sweep_20seed']['w0']['rollout']['mean']
-        w20_mean = all_results['weight_sweep_20seed']['w20']['rollout']['mean']
+    if "weight_sweep_20seed" in all_results:
+        comp = all_results["weight_sweep_20seed"]["comparison"]
+        w0_mean = all_results["weight_sweep_20seed"]["w0"]["rollout"]["mean"]
+        w20_mean = all_results["weight_sweep_20seed"]["w20"]["rollout"]["mean"]
 
-        findings.append({
-            'id': 'F1',
-            'title': 'Physics Loss Degraded Rollout Performance',
-            'description': f"w=0 achieved {w0_mean:.2f}m vs w=20 at {w20_mean:.2f}m",
-            'effect_size': f"Cohen's d = {comp['cohens_d']:.2f}",
-            'significance': f"p = {comp['welch_p']:.4f}",
-            'interpretation': 'Statistically significant' if comp['welch_p'] < 0.05 else 'Not significant'
-        })
+        findings.append(
+            {
+                "id": "F1",
+                "title": "Physics Loss Degraded Rollout Performance",
+                "description": f"w=0 achieved {w0_mean:.2f}m vs w=20 at {w20_mean:.2f}m",
+                "effect_size": f"Cohen's d = {comp['cohens_d']:.2f}",
+                "significance": f"p = {comp['welch_p']:.4f}",
+                "interpretation": (
+                    "Statistically significant" if comp["welch_p"] < 0.05 else "Not significant"
+                ),
+            }
+        )
 
     # Finding 2: Simpson's paradox
-    if 'correlation_analysis' in all_results:
-        corr = all_results['correlation_analysis']
-        findings.append({
-            'id': 'F2',
-            'title': "Simpson's Paradox in Single-Step vs Rollout Correlation",
-            'description': f"Overall r={corr['overall']['r']:.2f} but within-condition r~0",
-            'w0_correlation': f"r = {corr['w0_within']['r']:.2f}, p = {corr['w0_within']['p']:.3f}",
-            'w20_correlation': f"r = {corr['w20_within']['r']:.2f}, p = {corr['w20_within']['p']:.3f}",
-            'interpretation': 'Single-step does NOT predict rollout within conditions'
-        })
+    if "correlation_analysis" in all_results:
+        corr = all_results["correlation_analysis"]
+        findings.append(
+            {
+                "id": "F2",
+                "title": "Simpson's Paradox in Single-Step vs Rollout Correlation",
+                "description": f"Overall r={corr['overall']['r']:.2f} but within-condition r~0",
+                "w0_correlation": f"r = {corr['w0_within']['r']:.2f}, p = {corr['w0_within']['p']:.3f}",
+                "w20_correlation": f"r = {corr['w20_within']['r']:.2f}, p = {corr['w20_within']['p']:.3f}",
+                "interpretation": "Single-step does NOT predict rollout within conditions",
+            }
+        )
 
     # Finding 3: Variance difference
-    if 'weight_sweep_20seed' in all_results:
-        comp = all_results['weight_sweep_20seed']['comparison']
-        findings.append({
-            'id': 'F3',
-            'title': 'Physics Loss Increases Variance',
-            'description': f"w=20 has {comp['cv2_percent']:.1f}% CV vs w=0 at {comp['cv1_percent']:.1f}% CV",
-            'levene_test': f"Levene's p = {comp['levene_p']:.4f}",
-            'interpretation': 'Significant variance difference' if comp['levene_p'] < 0.05 else 'Not significant'
-        })
+    if "weight_sweep_20seed" in all_results:
+        comp = all_results["weight_sweep_20seed"]["comparison"]
+        findings.append(
+            {
+                "id": "F3",
+                "title": "Physics Loss Increases Variance",
+                "description": f"w=20 has {comp['cv2_percent']:.1f}% CV vs w=0 at {comp['cv1_percent']:.1f}% CV",
+                "levene_test": f"Levene's p = {comp['levene_p']:.4f}",
+                "interpretation": (
+                    "Significant variance difference"
+                    if comp["levene_p"] < 0.05
+                    else "Not significant"
+                ),
+            }
+        )
 
-    all_results['key_findings'] = findings
+    all_results["key_findings"] = findings
 
     for f in findings:
         print(f"\n{f['id']}: {f['title']}")
@@ -555,8 +647,8 @@ def main():
     # ========================================================================
     # Save results
     # ========================================================================
-    results_path = RESULTS_DIR / 'comprehensive_analysis.json'
-    with open(results_path, 'w') as f:
+    results_path = RESULTS_DIR / "comprehensive_analysis.json"
+    with open(results_path, "w") as f:
         json.dump(all_results, f, indent=2)
 
     print(f"\n\nResults saved to: {results_path}")
@@ -565,5 +657,5 @@ def main():
     return all_results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

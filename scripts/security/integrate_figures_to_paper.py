@@ -21,7 +21,7 @@ print("INTEGRATING ALL FIGURES INTO PAPER")
 print("=" * 70)
 
 # Read original paper
-with open(PAPER_FILE, 'r', encoding='utf-8') as f:
+with open(PAPER_FILE, "r", encoding="utf-8") as f:
     content = f.read()
 
 print(f"\nOriginal paper: {len(content)} characters")
@@ -43,8 +43,10 @@ Figure~\ref{fig:architecture} illustrates the complete PINN architecture.
 """
 
 # Find location: after "Parameters: ~330K trainable" in PINN Architecture subsection
-pattern1 = r'(\\textbf\{Parameters:\} \$\\sim\$330K trainable\n)\n(\\subsection\{Training Objective\})'
-replacement1 = r'\1' + arch_figure + r'\2'
+pattern1 = (
+    r"(\\textbf\{Parameters:\} \$\\sim\$330K trainable\n)\n(\\subsection\{Training Objective\})"
+)
+replacement1 = r"\1" + arch_figure + r"\2"
 content = re.sub(pattern1, replacement1, content)
 print("  Added: Architecture diagram")
 
@@ -65,8 +67,8 @@ Figure~\ref{fig:training} visualizes this counter-intuitive result.
 """
 
 # Find location: after "Finding: Pure data-driven..."
-pattern2 = r'(\\textbf\{Finding:\} Pure data-driven significantly outperforms physics-informed \(\$t=-122\.88\$, effect size \$13\.6\\times\$\)\.\n)\n(\\subsection\{Overall Detection Performance\})'
-replacement2 = r'\1' + training_fig + r'\2'
+pattern2 = r"(\\textbf\{Finding:\} Pure data-driven significantly outperforms physics-informed \(\$t=-122\.88\$, effect size \$13\.6\\times\$\)\.\n)\n(\\subsection\{Overall Detection Performance\})"
+replacement2 = r"\1" + training_fig + r"\2"
 content = re.sub(pattern2, replacement2, content)
 print("  Added: Training comparison visualization")
 
@@ -87,8 +89,10 @@ Figure~\ref{fig:roc_pr} shows ROC and Precision-Recall curves for comprehensive 
 """
 
 # Find location: after the itemized key findings list
-pattern3 = r'(\\end\{itemize\}\n)\n(Figure~\\ref\{fig:comparison\} visualizes the F1 vs FPR trade-off\.)'
-replacement3 = r'\1' + roc_pr_fig + r'\2'
+pattern3 = (
+    r"(\\end\{itemize\}\n)\n(Figure~\\ref\{fig:comparison\} visualizes the F1 vs FPR trade-off\.)"
+)
+replacement3 = r"\1" + roc_pr_fig + r"\2"
 content = re.sub(pattern3, replacement3, content)
 print("  Added: ROC and PR curves")
 
@@ -109,8 +113,10 @@ Figure~\ref{fig:confusion} provides detailed classification breakdown.
 """
 
 # Find location: after "Figure~\ref{fig:comparison} visualizes..."
-pattern4 = r'(\\label\{fig:comparison\}\n\\end\{figure\}\n)\n(\\subsection\{Per-Fault-Type Analysis\})'
-replacement4 = r'\1' + conf_mat_fig + r'\2'
+pattern4 = (
+    r"(\\label\{fig:comparison\}\n\\end\{figure\}\n)\n(\\subsection\{Per-Fault-Type Analysis\})"
+)
+replacement4 = r"\1" + conf_mat_fig + r"\2"
 content = re.sub(pattern4, replacement4, content)
 print("  Added: Confusion matrix")
 
@@ -153,8 +159,8 @@ Detection with uncertainty quantification using Monte Carlo dropout (50 forward 
 """
 
 # Find location: after the per-fault figure
-pattern5 = r'(\\label\{fig:perfault\}\n\\end\{figure\}\n)\n(\\section\{Discussion\})'
-replacement5 = r'\1' + comp_cost_section + r'\2'
+pattern5 = r"(\\label\{fig:perfault\}\n\\end\{figure\}\n)\n(\\section\{Discussion\})"
+replacement5 = r"\1" + comp_cost_section + r"\2"
 content = re.sub(pattern5, replacement5, content)
 print("  Added: Computational cost analysis subsection")
 
@@ -165,7 +171,7 @@ print("\n" + "=" * 70)
 print("SAVING INTEGRATED PAPER")
 print("=" * 70)
 
-with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
     f.write(content)
 
 print(f"\nIntegrated paper saved: {OUTPUT_FILE}")

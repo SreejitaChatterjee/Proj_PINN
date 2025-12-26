@@ -7,26 +7,27 @@ Goal: Determine if physics weight causes instability
 - Just measure supervised loss and rollout MAE
 """
 
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import json
-from pathlib import Path
 from sklearn.preprocessing import StandardScaler
-from datetime import datetime
-import sys
+from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.append(str(Path(__file__).parent))
 from pinn_architectures import BaselinePINN
 
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'weight_sweep'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'weight_sweep_fast'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "weight_sweep"
+MODELS_DIR = PROJECT_ROOT / "models" / "weight_sweep_fast"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -46,30 +47,32 @@ SEEDS = [42]  # Just 1 seed for fast results
 
 def load_data(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
 
 def load_trajectories(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
-        trajectories.append({
-            'states': df_traj[state_cols].values.astype(np.float32),
-            'controls': df_traj[control_cols].values.astype(np.float32)
-        })
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
+        trajectories.append(
+            {
+                "states": df_traj[state_cols].values.astype(np.float32),
+                "controls": df_traj[control_cols].values.astype(np.float32),
+            }
+        )
     return trajectories
 
 
@@ -84,7 +87,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys,
     y_mean = torch.FloatTensor(scaler_y.mean_)
     y_scale = torch.FloatTensor(scaler_y.scale_)
 
-    best_val_sup_loss = float('inf')
+    best_val_sup_loss = float("inf")
     patience_counter = 0
 
     for epoch in range(MAX_EPOCHS):
@@ -99,7 +102,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys,
             sup_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
             loss = sup_loss
 
-            if w_phys > 0 and hasattr(model, 'physics_loss'):
+            if w_phys > 0 and hasattr(model, "physics_loss"):
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 phys_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
                 loss = sup_loss + w_phys * phys_loss
@@ -108,7 +111,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys,
             torch.nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
             optimizer.step()
 
-            if hasattr(model, 'constrain_parameters'):
+            if hasattr(model, "constrain_parameters"):
                 model.constrain_parameters()
 
             train_sup_loss += sup_loss.item() * X_scaled.size(0)
@@ -134,7 +137,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys,
         if val_sup_loss < best_val_sup_loss:
             best_val_sup_loss = val_sup_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODELS_DIR / f'PINN_w{w_phys}_s{seed}.pth')
+            torch.save(model.state_dict(), MODELS_DIR / f"PINN_w{w_phys}_s{seed}.pth")
         else:
             patience_counter += 1
 
@@ -142,7 +145,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys,
             print(f"    Early stop at epoch {epoch}")
             break
 
-    model.load_state_dict(torch.load(MODELS_DIR / f'PINN_w{w_phys}_s{seed}.pth'))
+    model.load_state_dict(torch.load(MODELS_DIR / f"PINN_w{w_phys}_s{seed}.pth"))
     return model, best_val_sup_loss
 
 
@@ -183,20 +186,20 @@ def evaluate_model(model, val_loader, val_trajectories, scaler_X, scaler_y):
     # Rollout (just 5 trajectories for speed)
     pos_errors = []
     for traj in val_trajectories[:5]:
-        states, controls = traj['states'], traj['controls']
+        states, controls = traj["states"], traj["controls"]
         if len(states) < 101:
             continue
         predicted = autoregressive_rollout(model, states[0], controls, scaler_X, scaler_y, 100)
-        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[:len(predicted), :3])))
+        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[: len(predicted), :3])))
 
-    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float('inf')
+    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float("inf")
     return single_step_mae, rollout_mae
 
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("FAST PHYSICS WEIGHT SWEEP")
-    print("="*70)
+    print("=" * 70)
     print(f"Weights: {PHYSICS_WEIGHTS}")
     print(f"Seeds: {SEEDS}")
     print(f"Max epochs: {MAX_EPOCHS}")
@@ -216,12 +219,16 @@ def main():
     y_val_scaled = scaler_y.transform(y_val)
 
     train_dataset = TensorDataset(
-        torch.FloatTensor(X_train_scaled), torch.FloatTensor(y_train_scaled),
-        torch.FloatTensor(X_train), torch.FloatTensor(y_train)
+        torch.FloatTensor(X_train_scaled),
+        torch.FloatTensor(y_train_scaled),
+        torch.FloatTensor(X_train),
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
-        torch.FloatTensor(X_val_scaled), torch.FloatTensor(y_val_scaled),
-        torch.FloatTensor(X_val), torch.FloatTensor(y_val)
+        torch.FloatTensor(X_val_scaled),
+        torch.FloatTensor(y_val_scaled),
+        torch.FloatTensor(X_val),
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -246,11 +253,11 @@ def main():
                 model, val_loader, val_trajectories, scaler_X, scaler_y
             )
 
-            results[f'w{w_phys}'] = {
-                'physics_weight': w_phys,
-                'sup_loss': float(best_sup_loss),
-                'single_step_mae': single_mae,
-                'rollout_mae': rollout_mae
+            results[f"w{w_phys}"] = {
+                "physics_weight": w_phys,
+                "sup_loss": float(best_sup_loss),
+                "single_step_mae": single_mae,
+                "rollout_mae": rollout_mae,
             }
 
             print(f"    Sup loss: {best_sup_loss:.6f}")
@@ -258,23 +265,25 @@ def main():
             print(f"    100-step MAE: {rollout_mae:.3f}m")
 
     # Summary
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("WEIGHT SWEEP RESULTS")
-    print("="*70)
+    print("=" * 70)
     print(f"\n{'w_phys':<10} {'Sup Loss':<15} {'1-Step MAE':<15} {'100-Step MAE':<15}")
-    print("-"*55)
+    print("-" * 55)
 
     for w_phys in PHYSICS_WEIGHTS:
-        r = results[f'w{w_phys}']
-        print(f"{w_phys:<10} {r['sup_loss']:<15.6f} {r['single_step_mae']:<15.5f} {r['rollout_mae']:<15.3f}")
+        r = results[f"w{w_phys}"]
+        print(
+            f"{w_phys:<10} {r['sup_loss']:<15.6f} {r['single_step_mae']:<15.5f} {r['rollout_mae']:<15.3f}"
+        )
 
     # Interpretation
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("INTERPRETATION")
-    print("="*70)
+    print("=" * 70)
 
-    rollouts = [results[f'w{w}']['rollout_mae'] for w in PHYSICS_WEIGHTS]
-    sup_losses = [results[f'w{w}']['sup_loss'] for w in PHYSICS_WEIGHTS]
+    rollouts = [results[f"w{w}"]["rollout_mae"] for w in PHYSICS_WEIGHTS]
+    sup_losses = [results[f"w{w}"]["sup_loss"] for w in PHYSICS_WEIGHTS]
 
     # Find best weight
     best_idx = np.argmin(rollouts)
@@ -296,11 +305,13 @@ def main():
 
     # Check supervised loss trend
     if sup_losses[-1] > 2 * sup_losses[0]:
-        print(f"\n--> High physics weight INCREASES supervised loss by {sup_losses[-1]/sup_losses[0]:.1f}x")
+        print(
+            f"\n--> High physics weight INCREASES supervised loss by {sup_losses[-1]/sup_losses[0]:.1f}x"
+        )
         print("    PINN underfits due to physics loss dominance.")
 
     # Save
-    with open(RESULTS_DIR / 'weight_sweep_fast_results.json', 'w') as f:
+    with open(RESULTS_DIR / "weight_sweep_fast_results.json", "w") as f:
         json.dump(results, f, indent=2)
 
     print(f"\nResults saved to: {RESULTS_DIR / 'weight_sweep_fast_results.json'}")
@@ -309,5 +320,5 @@ def main():
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

@@ -4,9 +4,11 @@ Generate realistic quadrotor training data using nonlinear model with PID contro
 Based on nonlinearmodel.m
 """
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
+
 
 class QuadrotorSimulator:
     """Nonlinear quadrotor simulator with PID controllers"""
@@ -37,24 +39,24 @@ class QuadrotorSimulator:
 
         # Controller gains (TUNED for smoother, more realistic response)
         # Anomaly #2 fix: Reduced gains to prevent spiky torque behavior
-        self.k2 = 0.05   # Roll rate controller (reduced from 0.1)
-        self.k1 = 0.8    # Roll angle controller (reduced from 1.0)
+        self.k2 = 0.05  # Roll rate controller (reduced from 0.1)
+        self.k1 = 0.8  # Roll angle controller (reduced from 1.0)
         self.ki = 0.2 * 0.01  # Roll integral gain (reduced from 0.4*0.01)
 
         self.k21 = 0.05  # Pitch rate controller (reduced from 0.1)
-        self.k11 = 0.8   # Pitch angle controller (reduced from 1.0)
+        self.k11 = 0.8  # Pitch angle controller (reduced from 1.0)
         self.ki1 = 0.2 * 0.01  # Pitch integral gain (reduced from 0.4*0.01)
 
         self.k22 = 0.05  # Yaw rate controller (reduced from 0.1)
-        self.k12 = 0.8   # Yaw angle controller (reduced from 1.0)
+        self.k12 = 0.8  # Yaw angle controller (reduced from 1.0)
         self.ki2 = 0.2 * 0.01  # Yaw integral gain (reduced from 0.4*0.01)
 
         # Anomaly #6 fix: Significantly reduced vertical velocity controller gain
         self.kv = -0.25  # Vertical velocity controller (reduced from -0.4)
-        self.kz1 = 1.5   # Altitude P gain (reduced from 2.0)
+        self.kz1 = 1.5  # Altitude P gain (reduced from 2.0)
         self.kz2 = 0.15  # Altitude I gain (reduced from 0.22)
 
-        self.th = 1e-7   # Threshold for zero torque
+        self.th = 1e-7  # Threshold for zero torque
 
         # Anomaly #2 & #3 fix: Motor dynamics - time constants for realistic actuator response
         # Typical quadrotor motor time constant is 50-100ms
@@ -63,7 +65,7 @@ class QuadrotorSimulator:
         # Anomaly #2 & #3 fix: Slew rate limits (maximum rate of change)
         # Prevent instantaneous jumps in thrust and torques
         self.thrust_slew_rate = 15.0  # N/s (thrust can change max 15 N per second)
-        self.torque_slew_rate = 0.5   # N·m/s (torque can change max 0.5 N·m per second)
+        self.torque_slew_rate = 0.5  # N·m/s (torque can change max 0.5 N·m per second)
 
         # Anomaly #1 & #4 fix: Reference trajectory filter
         # Low-pass filter time constant for smooth setpoint transitions
@@ -132,7 +134,9 @@ class QuadrotorSimulator:
         alpha = dt / (time_constant + dt)
         return current_actuator + alpha * (command_actuator - current_actuator)
 
-    def simulate_trajectory(self, phi_config, theta_config, psi_config, z_config, dt=0.001, tend=5.0):
+    def simulate_trajectory(
+        self, phi_config, theta_config, psi_config, z_config, dt=0.001, tend=5.0
+    ):
         """
         Simulate a single trajectory with square wave reference setpoints
 
@@ -184,17 +188,21 @@ class QuadrotorSimulator:
             z_ref_raw = self.square_wave(t, z_config[0], z_config[1], z_config[2])
 
             # Anomaly #1 & #4 fix: Apply low-pass filter for smooth reference transitions
-            phi_ref_filtered = self.low_pass_filter(phi_ref_filtered, phi_ref_raw,
-                                                     self.ref_filter_time_constant, dt)
-            theta_ref_filtered = self.low_pass_filter(theta_ref_filtered, theta_ref_raw,
-                                                       self.ref_filter_time_constant, dt)
-            psi_ref_filtered = self.low_pass_filter(psi_ref_filtered, psi_ref_raw,
-                                                     self.ref_filter_time_constant, dt)
-            z_ref_filtered = self.low_pass_filter(z_ref_filtered, z_ref_raw,
-                                                   self.ref_filter_time_constant, dt)
+            phi_ref_filtered = self.low_pass_filter(
+                phi_ref_filtered, phi_ref_raw, self.ref_filter_time_constant, dt
+            )
+            theta_ref_filtered = self.low_pass_filter(
+                theta_ref_filtered, theta_ref_raw, self.ref_filter_time_constant, dt
+            )
+            psi_ref_filtered = self.low_pass_filter(
+                psi_ref_filtered, psi_ref_raw, self.ref_filter_time_constant, dt
+            )
+            z_ref_filtered = self.low_pass_filter(
+                z_ref_filtered, z_ref_raw, self.ref_filter_time_constant, dt
+            )
 
             # ===== ROLL CONTROLLER =====
-            sump += (phi_ref_filtered - phi)
+            sump += phi_ref_filtered - phi
             pr = self.k1 * (phi_ref_filtered - phi) + self.ki * sump * dt
             tx_cmd = self.k2 * (pr - p)
             tx_cmd = np.clip(tx_cmd, -self.txymax, self.txymax)
@@ -202,7 +210,7 @@ class QuadrotorSimulator:
                 tx_cmd = 0.0
 
             # ===== PITCH CONTROLLER =====
-            sumt += (theta_ref_filtered - theta)
+            sumt += theta_ref_filtered - theta
             qr = self.k11 * (theta_ref_filtered - theta) + self.ki1 * sumt * dt
             ty_cmd = self.k21 * (qr - q)
             ty_cmd = np.clip(ty_cmd, -self.txymax, self.txymax)
@@ -210,7 +218,7 @@ class QuadrotorSimulator:
                 ty_cmd = 0.0
 
             # ===== YAW CONTROLLER =====
-            sumpsi += (psi_ref_filtered - psi)
+            sumpsi += psi_ref_filtered - psi
             rref = self.k12 * (psi_ref_filtered - psi) + self.ki2 * sumpsi * dt
             tz_cmd = self.k22 * (rref - r)
             tz_cmd = np.clip(tz_cmd, -self.tzmax, self.tzmax)
@@ -218,7 +226,7 @@ class QuadrotorSimulator:
                 tz_cmd = 0.0
 
             # ===== ALTITUDE CONTROLLER =====
-            sumz += (z_ref_filtered - z)
+            sumz += z_ref_filtered - z
             vzr = self.kz1 * (z_ref_filtered - z) + self.kz2 * sumz * dt
             T_cmd = self.kv * (vzr - w)  # Note: w is vertical velocity in body frame
             T_cmd = np.clip(T_cmd, self.Tmin, self.Tmax)
@@ -270,23 +278,43 @@ class QuadrotorSimulator:
             # Drag coefficient: 0.05 kg/m (tuned for small quadrotor)
             drag_coeff = 0.05
             udot = r * v - q * w + fx / self.m - self.g * np.sin(theta) - drag_coeff * u * np.abs(u)
-            vdot = p * w - r * u + fy / self.m + self.g * np.cos(theta) * np.sin(phi) - drag_coeff * v * np.abs(v)
-            wdot = q * u - p * v + fz / self.m + self.g * np.cos(theta) * np.cos(phi) - drag_coeff * w * np.abs(w)
+            vdot = (
+                p * w
+                - r * u
+                + fy / self.m
+                + self.g * np.cos(theta) * np.sin(phi)
+                - drag_coeff * v * np.abs(v)
+            )
+            wdot = (
+                q * u
+                - p * v
+                + fz / self.m
+                + self.g * np.cos(theta) * np.cos(phi)
+                - drag_coeff * w * np.abs(w)
+            )
 
             u += udot * dt
             v += vdot * dt
             w += wdot * dt
 
             # Position update
-            xdot = (np.cos(psi) * np.cos(theta)) * u + \
-                   (np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi)) * v + \
-                   (np.sin(psi) * np.sin(phi) + np.cos(psi) * np.sin(theta) * np.cos(phi)) * w
+            xdot = (
+                (np.cos(psi) * np.cos(theta)) * u
+                + (np.cos(psi) * np.sin(theta) * np.sin(phi) - np.sin(psi) * np.cos(phi)) * v
+                + (np.sin(psi) * np.sin(phi) + np.cos(psi) * np.sin(theta) * np.cos(phi)) * w
+            )
 
-            ydot = (np.sin(psi) * np.cos(theta)) * u + \
-                   (np.cos(psi) * np.cos(phi) + np.sin(psi) * np.sin(theta) * np.sin(phi)) * v + \
-                   (np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi)) * w
+            ydot = (
+                (np.sin(psi) * np.cos(theta)) * u
+                + (np.cos(psi) * np.cos(phi) + np.sin(psi) * np.sin(theta) * np.sin(phi)) * v
+                + (np.sin(psi) * np.sin(theta) * np.cos(phi) - np.cos(psi) * np.sin(phi)) * w
+            )
 
-            zdot = -1 * (np.sin(theta) * u - np.cos(theta) * np.sin(phi) * v - np.cos(theta) * np.cos(phi) * w)
+            zdot = -1 * (
+                np.sin(theta) * u
+                - np.cos(theta) * np.sin(phi) * v
+                - np.cos(theta) * np.cos(phi) * w
+            )
 
             x += xdot * dt
             y += ydot * dt
@@ -300,34 +328,36 @@ class QuadrotorSimulator:
             # Store ACTUAL motor outputs (with dynamics), not commanded values
             # Option 1 implementation: Include angular accelerations for improved inertia identification
             # Complete state: 10 predicted states (x, y, z, roll, pitch, yaw, p, q, r, vx, vy, vz)
-            data.append({
-                'timestamp': i * dt,
-                'x': x,  # Horizontal position (m)
-                'y': y,  # Horizontal position (m)
-                'z': z,  # Vertical position (m)
-                'thrust': T_actual,
-                'torque_x': tx_actual,
-                'torque_y': ty_actual,
-                'torque_z': tz_actual,
-                'roll': phi,
-                'pitch': theta,
-                'yaw': psi,
-                'p': p,
-                'q': q,
-                'r': r,
-                'p_dot': pdot,  # Angular acceleration in roll (rad/s²)
-                'q_dot': qdot,  # Angular acceleration in pitch (rad/s²)
-                'r_dot': rdot,  # Angular acceleration in yaw (rad/s²)
-                'vx': xdot,
-                'vy': ydot,
-                'vz': zdot,
-                'mass': self.m,
-                'inertia_xx': self.Jxx,
-                'inertia_yy': self.Jyy,
-                'inertia_zz': self.Jzz,
-                'kt': self.kt,  # Thrust coefficient
-                'kq': self.kq   # Torque coefficient
-            })
+            data.append(
+                {
+                    "timestamp": i * dt,
+                    "x": x,  # Horizontal position (m)
+                    "y": y,  # Horizontal position (m)
+                    "z": z,  # Vertical position (m)
+                    "thrust": T_actual,
+                    "torque_x": tx_actual,
+                    "torque_y": ty_actual,
+                    "torque_z": tz_actual,
+                    "roll": phi,
+                    "pitch": theta,
+                    "yaw": psi,
+                    "p": p,
+                    "q": q,
+                    "r": r,
+                    "p_dot": pdot,  # Angular acceleration in roll (rad/s²)
+                    "q_dot": qdot,  # Angular acceleration in pitch (rad/s²)
+                    "r_dot": rdot,  # Angular acceleration in yaw (rad/s²)
+                    "vx": xdot,
+                    "vy": ydot,
+                    "vz": zdot,
+                    "mass": self.m,
+                    "inertia_xx": self.Jxx,
+                    "inertia_yy": self.Jyy,
+                    "inertia_zz": self.Jzz,
+                    "kt": self.kt,  # Thrust coefficient
+                    "kq": self.kq,  # Torque coefficient
+                }
+            )
 
         return pd.DataFrame(data)
 
@@ -342,75 +372,75 @@ def generate_diverse_trajectories():
     # Issue #6 fix: Reduced altitude setpoints to limit vz to realistic range (±7 m/s)
     trajectories = [
         {
-            'phi': (2.0, -10*np.pi/180, 10*np.pi/180),
-            'theta': (2.5, -5*np.pi/180, 5*np.pi/180),
-            'psi': (3.0, -5*np.pi/180, 5*np.pi/180),
-            'z': (2.0, -5.0, -3.0),
-            'desc': "Standard square wave maneuver"
+            "phi": (2.0, -10 * np.pi / 180, 10 * np.pi / 180),
+            "theta": (2.5, -5 * np.pi / 180, 5 * np.pi / 180),
+            "psi": (3.0, -5 * np.pi / 180, 5 * np.pi / 180),
+            "z": (2.0, -5.0, -3.0),
+            "desc": "Standard square wave maneuver",
         },
         {
-            'phi': (1.5, -15*np.pi/180, 15*np.pi/180),
-            'theta': (2.0, -8*np.pi/180, 8*np.pi/180),
-            'psi': (2.5, -10*np.pi/180, 10*np.pi/180),
-            'z': (1.5, -6.0, -4.0),
-            'desc': "Fast aggressive square waves"
+            "phi": (1.5, -15 * np.pi / 180, 15 * np.pi / 180),
+            "theta": (2.0, -8 * np.pi / 180, 8 * np.pi / 180),
+            "psi": (2.5, -10 * np.pi / 180, 10 * np.pi / 180),
+            "z": (1.5, -6.0, -4.0),
+            "desc": "Fast aggressive square waves",
         },
         {
-            'phi': (3.0, -5*np.pi/180, 5*np.pi/180),
-            'theta': (3.5, -3*np.pi/180, 3*np.pi/180),
-            'psi': (4.0, -5*np.pi/180, 5*np.pi/180),
-            'z': (3.0, -3.0, -2.0),
-            'desc': "Slow gentle square waves"
+            "phi": (3.0, -5 * np.pi / 180, 5 * np.pi / 180),
+            "theta": (3.5, -3 * np.pi / 180, 3 * np.pi / 180),
+            "psi": (4.0, -5 * np.pi / 180, 5 * np.pi / 180),
+            "z": (3.0, -3.0, -2.0),
+            "desc": "Slow gentle square waves",
         },
         {
-            'phi': (2.0, -12*np.pi/180, 8*np.pi/180),
-            'theta': (2.0, -6*np.pi/180, 4*np.pi/180),
-            'psi': (2.5, -12*np.pi/180, 12*np.pi/180),
-            'z': (2.0, -7.0, -5.0),
-            'desc': "Asymmetric square wave maneuvers"
+            "phi": (2.0, -12 * np.pi / 180, 8 * np.pi / 180),
+            "theta": (2.0, -6 * np.pi / 180, 4 * np.pi / 180),
+            "psi": (2.5, -12 * np.pi / 180, 12 * np.pi / 180),
+            "z": (2.0, -7.0, -5.0),
+            "desc": "Asymmetric square wave maneuvers",
         },
         {
-            'phi': (1.8, -20*np.pi/180, 20*np.pi/180),
-            'theta': (2.2, -10*np.pi/180, 10*np.pi/180),
-            'psi': (2.0, -8*np.pi/180, 8*np.pi/180),
-            'z': (1.8, -6.0, -4.0),
-            'desc': "High amplitude square waves"
+            "phi": (1.8, -20 * np.pi / 180, 20 * np.pi / 180),
+            "theta": (2.2, -10 * np.pi / 180, 10 * np.pi / 180),
+            "psi": (2.0, -8 * np.pi / 180, 8 * np.pi / 180),
+            "z": (1.8, -6.0, -4.0),
+            "desc": "High amplitude square waves",
         },
         {
-            'phi': (2.5, -8*np.pi/180, 8*np.pi/180),
-            'theta': (3.0, -4*np.pi/180, 4*np.pi/180),
-            'psi': (3.5, -10*np.pi/180, 10*np.pi/180),
-            'z': (2.5, -4.0, -3.0),
-            'desc': "Medium frequency square waves"
+            "phi": (2.5, -8 * np.pi / 180, 8 * np.pi / 180),
+            "theta": (3.0, -4 * np.pi / 180, 4 * np.pi / 180),
+            "psi": (3.5, -10 * np.pi / 180, 10 * np.pi / 180),
+            "z": (2.5, -4.0, -3.0),
+            "desc": "Medium frequency square waves",
         },
         {
-            'phi': (3.5, -6*np.pi/180, 12*np.pi/180),
-            'theta': (3.0, -7*np.pi/180, 5*np.pi/180),
-            'psi': (4.0, -8*np.pi/180, 16*np.pi/180),
-            'z': (3.5, -8.0, -6.0),
-            'desc': "Large asymmetric square waves"
+            "phi": (3.5, -6 * np.pi / 180, 12 * np.pi / 180),
+            "theta": (3.0, -7 * np.pi / 180, 5 * np.pi / 180),
+            "psi": (4.0, -8 * np.pi / 180, 16 * np.pi / 180),
+            "z": (3.5, -8.0, -6.0),
+            "desc": "Large asymmetric square waves",
         },
         {
-            'phi': (1.2, -18*np.pi/180, 18*np.pi/180),
-            'theta': (1.5, -12*np.pi/180, 12*np.pi/180),
-            'psi': (1.8, -15*np.pi/180, 15*np.pi/180),
-            'z': (1.2, -5.0, -3.0),
-            'desc': "Very fast high amplitude square waves"
+            "phi": (1.2, -18 * np.pi / 180, 18 * np.pi / 180),
+            "theta": (1.5, -12 * np.pi / 180, 12 * np.pi / 180),
+            "psi": (1.8, -15 * np.pi / 180, 15 * np.pi / 180),
+            "z": (1.2, -5.0, -3.0),
+            "desc": "Very fast high amplitude square waves",
         },
         {
-            'phi': (4.0, -6*np.pi/180, 6*np.pi/180),
-            'theta': (4.5, -4*np.pi/180, 4*np.pi/180),
-            'psi': (5.0, -8*np.pi/180, 8*np.pi/180),
-            'z': (4.0, -5.0, -4.0),
-            'desc': "Very slow square waves"
+            "phi": (4.0, -6 * np.pi / 180, 6 * np.pi / 180),
+            "theta": (4.5, -4 * np.pi / 180, 4 * np.pi / 180),
+            "psi": (5.0, -8 * np.pi / 180, 8 * np.pi / 180),
+            "z": (4.0, -5.0, -4.0),
+            "desc": "Very slow square waves",
         },
         {
-            'phi': (2.2, -10*np.pi/180, 10*np.pi/180),
-            'theta': (2.6, -8*np.pi/180, 8*np.pi/180),
-            'psi': (3.0, -14*np.pi/180, 14*np.pi/180),
-            'z': (2.2, -7.0, -5.0),
-            'desc': "Mixed frequency square waves"
-        }
+            "phi": (2.2, -10 * np.pi / 180, 10 * np.pi / 180),
+            "theta": (2.6, -8 * np.pi / 180, 8 * np.pi / 180),
+            "psi": (3.0, -14 * np.pi / 180, 14 * np.pi / 180),
+            "z": (2.2, -7.0, -5.0),
+            "desc": "Mixed frequency square waves",
+        },
     ]
 
     all_data = []
@@ -420,24 +450,34 @@ def generate_diverse_trajectories():
 
     for traj_id, traj_config in enumerate(trajectories):
         print(f"\nTrajectory {traj_id}: {traj_config['desc']}")
-        print(f"  Roll config: period={traj_config['phi'][0]}s, range=[{traj_config['phi'][1]*180/np.pi:.1f}, {traj_config['phi'][2]*180/np.pi:.1f}]deg")
-        print(f"  Pitch config: period={traj_config['theta'][0]}s, range=[{traj_config['theta'][1]*180/np.pi:.1f}, {traj_config['theta'][2]*180/np.pi:.1f}]deg")
-        print(f"  Yaw config: period={traj_config['psi'][0]}s, range=[{traj_config['psi'][1]*180/np.pi:.1f}, {traj_config['psi'][2]*180/np.pi:.1f}]deg")
-        print(f"  Altitude config: period={traj_config['z'][0]}s, range=[{traj_config['z'][1]:.1f}, {traj_config['z'][2]:.1f}]m")
+        print(
+            f"  Roll config: period={traj_config['phi'][0]}s, range=[{traj_config['phi'][1]*180/np.pi:.1f}, {traj_config['phi'][2]*180/np.pi:.1f}]deg"
+        )
+        print(
+            f"  Pitch config: period={traj_config['theta'][0]}s, range=[{traj_config['theta'][1]*180/np.pi:.1f}, {traj_config['theta'][2]*180/np.pi:.1f}]deg"
+        )
+        print(
+            f"  Yaw config: period={traj_config['psi'][0]}s, range=[{traj_config['psi'][1]*180/np.pi:.1f}, {traj_config['psi'][2]*180/np.pi:.1f}]deg"
+        )
+        print(
+            f"  Altitude config: period={traj_config['z'][0]}s, range=[{traj_config['z'][1]:.1f}, {traj_config['z'][2]:.1f}]m"
+        )
 
         # Simulate trajectory
         traj_data = sim.simulate_trajectory(
-            traj_config['phi'],
-            traj_config['theta'],
-            traj_config['psi'],
-            traj_config['z']
+            traj_config["phi"],
+            traj_config["theta"],
+            traj_config["psi"],
+            traj_config["z"],
         )
 
         # Add trajectory ID
-        traj_data['trajectory_id'] = traj_id
+        traj_data["trajectory_id"] = traj_id
 
         print(f"  Generated {len(traj_data)} samples")
-        print(f"  Thrust range: [{traj_data['thrust'].min():.3f}, {traj_data['thrust'].max():.3f}] N")
+        print(
+            f"  Thrust range: [{traj_data['thrust'].min():.3f}, {traj_data['thrust'].max():.3f}] N"
+        )
         print(f"  Altitude range: [{traj_data['z'].min():.3f}, {traj_data['z'].max():.3f}] m")
 
         all_data.append(traj_data)
@@ -446,9 +486,15 @@ def generate_diverse_trajectories():
     combined_data = pd.concat(all_data, ignore_index=True)
 
     print("\n" + "=" * 60)
-    print(f"SUCCESS: Generated {len(combined_data)} total samples across {len(trajectories)} trajectories")
-    print(f"  Overall thrust range: [{combined_data['thrust'].min():.3f}, {combined_data['thrust'].max():.3f}] N")
-    print(f"  Overall altitude range: [{combined_data['z'].min():.3f}, {combined_data['z'].max():.3f}] m")
+    print(
+        f"SUCCESS: Generated {len(combined_data)} total samples across {len(trajectories)} trajectories"
+    )
+    print(
+        f"  Overall thrust range: [{combined_data['thrust'].min():.3f}, {combined_data['thrust'].max():.3f}] N"
+    )
+    print(
+        f"  Overall altitude range: [{combined_data['z'].min():.3f}, {combined_data['z'].max():.3f}] m"
+    )
 
     return combined_data
 
@@ -462,7 +508,7 @@ def main():
     # Save to CSV - Use absolute path
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir.parent
-    output_path = project_root / 'data' / 'quadrotor_training_data.csv'
+    output_path = project_root / "data" / "quadrotor_training_data.csv"
     output_path.parent.mkdir(exist_ok=True, parents=True)
 
     data.to_csv(output_path, index=False)

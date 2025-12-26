@@ -1,31 +1,33 @@
 """
-Fast Jacobian-Only Experiment
+Vectorized Jacobian-Only Experiment
 
 Only trains the Jacobian regularization condition (20 seeds).
 Reuses existing baseline and physics results from weight_sweep_robust.
+Uses torch.func.jacrev + vmap for efficient vectorized Jacobian computation.
 """
 
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import json
-from pathlib import Path
 from sklearn.preprocessing import StandardScaler
-from datetime import datetime
-import sys
+from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.append(str(Path(__file__).parent))
 from pinn_architectures import BaselinePINN
 
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'jacobian_experiment'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'jacobian_experiment'
-EXISTING_RESULTS = PROJECT_ROOT / 'results' / 'weight_sweep' / 'weight_sweep_robust_results.json'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "jacobian_experiment"
+MODELS_DIR = PROJECT_ROOT / "models" / "jacobian_experiment"
+EXISTING_RESULTS = PROJECT_ROOT / "results" / "weight_sweep" / "weight_sweep_robust_results.json"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -42,68 +44,90 @@ EARLY_STOP_PATIENCE = 40
 SEEDS = list(range(42, 62))  # 20 seeds
 N_ROLLOUT_TRAJ = 10
 JACOBIAN_WEIGHT = 0.1
-JACOBIAN_SAMPLES = 16  # Reduced for speed
+JACOBIAN_SAMPLES = 16  # Balanced: rigorous but tractable
 
 
 def load_data(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
 
 def load_trajectories(data_path):
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
-        trajectories.append({
-            'states': df_traj[state_cols].values.astype(np.float32),
-            'controls': df_traj[control_cols].values.astype(np.float32)
-        })
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
+        trajectories.append(
+            {
+                "states": df_traj[state_cols].values.astype(np.float32),
+                "controls": df_traj[control_cols].values.astype(np.float32),
+            }
+        )
     return trajectories
 
 
-def jacobian_stability_loss_fast(model, x_batch, n_samples=JACOBIAN_SAMPLES):
-    """Fast Jacobian regularization using Frobenius norm."""
+def jacobian_stability_loss_vectorized(model, x_batch, n_samples=JACOBIAN_SAMPLES):
+    """Vectorized Jacobian regularization using Frobenius norm.
+
+    Uses torch.func.jacrev + vmap for efficient batch Jacobian computation.
+    Penalizes ||J||_F > tau where tau = sqrt(12) for marginal stability.
+    """
+    from copy import deepcopy
+
+    from torch.func import functional_call, jacrev, vmap
+
     if x_batch.size(0) > n_samples:
         idx = torch.randperm(x_batch.size(0))[:n_samples]
-        x_sample = x_batch[idx].clone().requires_grad_(True)
+        x_sample = x_batch[idx]
     else:
-        x_sample = x_batch.clone().requires_grad_(True)
+        x_sample = x_batch
 
-    y = model(x_sample)
+    # Temporarily set model to eval mode to disable dropout
+    was_training = model.training
+    model.eval()
 
-    # Compute Jacobian norm for first few samples only
-    loss = 0.0
-    n_compute = min(4, x_sample.size(0))
+    # Get model parameters as a dict for functional_call
+    params = dict(model.named_parameters())
+    buffers = dict(model.named_buffers())
 
-    for i in range(n_compute):
-        jac_norm_sq = 0.0
-        for j in range(12):
-            grads = torch.autograd.grad(
-                y[i, j], x_sample,
-                grad_outputs=torch.ones_like(y[i, j]),
-                retain_graph=True,
-                create_graph=True
-            )[0]
-            jac_norm_sq += (grads[i, :12] ** 2).sum()
+    # Create a functional version for jacrev
+    def model_fn(x):
+        return functional_call(model, (params, buffers), x.unsqueeze(0)).squeeze(0)
 
-        jac_norm = torch.sqrt(jac_norm_sq + 1e-8)
-        threshold = np.sqrt(12) * 1.0
-        loss += torch.relu(jac_norm - threshold)
+    # Compute Jacobian for each sample using vmap
+    # jacrev computes dy/dx, vmap parallelizes over batch
+    jacobian_fn = vmap(jacrev(model_fn))
 
-    return loss / n_compute
+    # J shape: (n_samples, 12, 16) - outputs x inputs
+    J = jacobian_fn(x_sample)
+
+    # Restore training mode
+    if was_training:
+        model.train()
+
+    # Extract state-to-state Jacobian (12 outputs, 12 state inputs)
+    J_state = J[:, :, :12]  # (n_samples, 12, 12)
+
+    # Frobenius norm for each sample
+    jac_norms = torch.sqrt((J_state**2).sum(dim=(1, 2)) + 1e-8)  # (n_samples,)
+
+    # Penalize norms above threshold
+    threshold = np.sqrt(12) * 1.0  # Marginal stability
+    loss = torch.relu(jac_norms - threshold).mean()
+
+    return loss
 
 
 def train_jacobian_model(model, train_loader, val_loader, scaler_y, seed):
@@ -114,7 +138,7 @@ def train_jacobian_model(model, train_loader, val_loader, scaler_y, seed):
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=10)
 
-    best_val_sup_loss = float('inf')
+    best_val_sup_loss = float("inf")
     patience_counter = 0
 
     for epoch in range(MAX_EPOCHS):
@@ -127,15 +151,15 @@ def train_jacobian_model(model, train_loader, val_loader, scaler_y, seed):
             y_pred_scaled = model(X_scaled)
             sup_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
 
-            # Add Jacobian regularization
-            jac_loss = jacobian_stability_loss_fast(model, X_scaled)
+            # Add Jacobian regularization (vectorized computation)
+            jac_loss = jacobian_stability_loss_vectorized(model, X_scaled)
             loss = sup_loss + JACOBIAN_WEIGHT * jac_loss
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
             optimizer.step()
 
-            if hasattr(model, 'constrain_parameters'):
+            if hasattr(model, "constrain_parameters"):
                 model.constrain_parameters()
 
             train_sup_loss += sup_loss.item() * X_scaled.size(0)
@@ -158,7 +182,7 @@ def train_jacobian_model(model, train_loader, val_loader, scaler_y, seed):
         val_sup_loss /= n_val
         scheduler.step(val_sup_loss)
 
-        model_path = MODELS_DIR / f'jacobian_s{seed}.pth'
+        model_path = MODELS_DIR / f"jacobian_s{seed}.pth"
 
         if val_sup_loss < best_val_sup_loss:
             best_val_sup_loss = val_sup_loss
@@ -214,20 +238,20 @@ def evaluate_model(model, val_loader, val_trajectories, scaler_X, scaler_y):
     # Rollout MAE
     pos_errors = []
     for traj in val_trajectories[:N_ROLLOUT_TRAJ]:
-        states, controls = traj['states'], traj['controls']
+        states, controls = traj["states"], traj["controls"]
         if len(states) < 101:
             continue
         predicted = autoregressive_rollout(model, states[0], controls, scaler_X, scaler_y, 100)
-        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[:len(predicted), :3])))
+        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[: len(predicted), :3])))
 
-    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float('inf')
+    rollout_mae = float(np.mean(pos_errors)) if pos_errors else float("inf")
 
     return single_step_mae, rollout_mae
 
 
 def main():
     print("=" * 70)
-    print("JACOBIAN-ONLY EXPERIMENT (Fast)")
+    print("JACOBIAN-ONLY EXPERIMENT (Vectorized)")
     print("=" * 70)
     print(f"Seeds: {len(SEEDS)} ({SEEDS[0]}-{SEEDS[-1]})")
     print(f"Jacobian weight: {JACOBIAN_WEIGHT}")
@@ -238,9 +262,11 @@ def main():
         with open(EXISTING_RESULTS) as f:
             existing = json.load(f)
         print(f"\nLoaded existing results from {EXISTING_RESULTS}")
-        baseline_rollouts = [r['rollout_mae'] for r in existing['w0.0']['seed_results']]
-        physics_rollouts = [r['rollout_mae'] for r in existing['w20.0']['seed_results']]
-        print(f"Baseline (w=0): {np.mean(baseline_rollouts):.3f} ± {np.std(baseline_rollouts):.3f}m")
+        baseline_rollouts = [r["rollout_mae"] for r in existing["w0.0"]["seed_results"]]
+        physics_rollouts = [r["rollout_mae"] for r in existing["w20.0"]["seed_results"]]
+        print(
+            f"Baseline (w=0): {np.mean(baseline_rollouts):.3f} ± {np.std(baseline_rollouts):.3f}m"
+        )
         print(f"Physics (w=20): {np.mean(physics_rollouts):.3f} ± {np.std(physics_rollouts):.3f}m")
     else:
         print("WARNING: No existing results found!")
@@ -261,12 +287,16 @@ def main():
     y_val_scaled = scaler_y.transform(y_val)
 
     train_dataset = TensorDataset(
-        torch.FloatTensor(X_train_scaled), torch.FloatTensor(y_train_scaled),
-        torch.FloatTensor(X_train), torch.FloatTensor(y_train)
+        torch.FloatTensor(X_train_scaled),
+        torch.FloatTensor(y_train_scaled),
+        torch.FloatTensor(X_train),
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
-        torch.FloatTensor(X_val_scaled), torch.FloatTensor(y_val_scaled),
-        torch.FloatTensor(X_val), torch.FloatTensor(y_val)
+        torch.FloatTensor(X_val_scaled),
+        torch.FloatTensor(y_val_scaled),
+        torch.FloatTensor(X_val),
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -280,7 +310,7 @@ def main():
     jacobian_results = []
 
     for seed in SEEDS:
-        model_path = MODELS_DIR / f'jacobian_s{seed}.pth'
+        model_path = MODELS_DIR / f"jacobian_s{seed}.pth"
 
         if model_path.exists():
             print(f"\n  Seed {seed}... LOADING")
@@ -295,16 +325,14 @@ def main():
             model, val_loader, val_trajectories, scaler_X, scaler_y
         )
 
-        jacobian_results.append({
-            'seed': seed,
-            'single_step_mae': single_mae,
-            'rollout_mae': rollout_mae
-        })
+        jacobian_results.append(
+            {"seed": seed, "single_step_mae": single_mae, "rollout_mae": rollout_mae}
+        )
 
         print(f"    1-step MAE: {single_mae:.5f}")
         print(f"    100-step MAE: {rollout_mae:.3f}m")
 
-    jacobian_rollouts = [r['rollout_mae'] for r in jacobian_results]
+    jacobian_rollouts = [r["rollout_mae"] for r in jacobian_results]
 
     # Summary
     print("\n" + "=" * 70)
@@ -320,8 +348,12 @@ def main():
     physics_mean = np.mean(physics_rollouts)
     jacobian_mean = np.mean(jacobian_rollouts)
 
-    print(f"\nJacobian vs Baseline: {(baseline_mean - jacobian_mean) / baseline_mean * 100:.1f}% improvement")
-    print(f"Jacobian vs Physics:  {(physics_mean - jacobian_mean) / physics_mean * 100:.1f}% improvement")
+    print(
+        f"\nJacobian vs Baseline: {(baseline_mean - jacobian_mean) / baseline_mean * 100:.1f}% improvement"
+    )
+    print(
+        f"Jacobian vs Physics:  {(physics_mean - jacobian_mean) / physics_mean * 100:.1f}% improvement"
+    )
 
     # Statistical tests
     from scipy import stats
@@ -330,35 +362,45 @@ def main():
     t_pj, p_pj = stats.ttest_ind(physics_rollouts, jacobian_rollouts)
 
     d_bj = (np.mean(baseline_rollouts) - np.mean(jacobian_rollouts)) / np.sqrt(
-        (np.var(baseline_rollouts) + np.var(jacobian_rollouts)) / 2)
+        (np.var(baseline_rollouts) + np.var(jacobian_rollouts)) / 2
+    )
     d_pj = (np.mean(physics_rollouts) - np.mean(jacobian_rollouts)) / np.sqrt(
-        (np.var(physics_rollouts) + np.var(jacobian_rollouts)) / 2)
+        (np.var(physics_rollouts) + np.var(jacobian_rollouts)) / 2
+    )
 
     print(f"\nJacobian vs Baseline: t={t_bj:.3f}, p={p_bj:.4f}, d={d_bj:.3f}")
     print(f"Jacobian vs Physics:  t={t_pj:.3f}, p={p_pj:.4f}, d={d_pj:.3f}")
 
     # Save results
     results = {
-        'jacobian': {
-            'rollout_mean': float(np.mean(jacobian_rollouts)),
-            'rollout_std': float(np.std(jacobian_rollouts)),
-            'seed_results': jacobian_results
+        "jacobian": {
+            "rollout_mean": float(np.mean(jacobian_rollouts)),
+            "rollout_std": float(np.std(jacobian_rollouts)),
+            "seed_results": jacobian_results,
         },
-        'baseline': {
-            'rollout_mean': float(np.mean(baseline_rollouts)),
-            'rollout_std': float(np.std(baseline_rollouts))
+        "baseline": {
+            "rollout_mean": float(np.mean(baseline_rollouts)),
+            "rollout_std": float(np.std(baseline_rollouts)),
         },
-        'physics': {
-            'rollout_mean': float(np.mean(physics_rollouts)),
-            'rollout_std': float(np.std(physics_rollouts))
+        "physics": {
+            "rollout_mean": float(np.mean(physics_rollouts)),
+            "rollout_std": float(np.std(physics_rollouts)),
         },
-        'stats': {
-            'jacobian_vs_baseline': {'t': float(t_bj), 'p': float(p_bj), 'd': float(d_bj)},
-            'jacobian_vs_physics': {'t': float(t_pj), 'p': float(p_pj), 'd': float(d_pj)}
-        }
+        "stats": {
+            "jacobian_vs_baseline": {
+                "t": float(t_bj),
+                "p": float(p_bj),
+                "d": float(d_bj),
+            },
+            "jacobian_vs_physics": {
+                "t": float(t_pj),
+                "p": float(p_pj),
+                "d": float(d_pj),
+            },
+        },
     }
 
-    with open(RESULTS_DIR / 'jacobian_only_results.json', 'w') as f:
+    with open(RESULTS_DIR / "jacobian_only_results.json", "w") as f:
         json.dump(results, f, indent=2)
 
     print(f"\nResults saved to: {RESULTS_DIR / 'jacobian_only_results.json'}")
@@ -367,5 +409,5 @@ def main():
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

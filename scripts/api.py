@@ -13,30 +13,32 @@ Endpoints:
 """
 
 import os
-import torch
-import numpy as np
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import List, Optional
-from contextlib import asynccontextmanager
 
+import numpy as np
+import torch
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 
 # Import models
 try:
+    from .pinn_base import CartPolePINN, PendulumPINN
     from .pinn_model import QuadrotorPINN
-    from .pinn_base import PendulumPINN, CartPolePINN
 except ImportError:
+    from pinn_base import CartPolePINN, PendulumPINN
     from pinn_model import QuadrotorPINN
-    from pinn_base import PendulumPINN, CartPolePINN
 
 
 # ============================================
 # Request/Response Models
 # ============================================
 
+
 class PredictRequest(BaseModel):
     """Single-step prediction request."""
+
     state: List[float] = Field(..., description="Current state vector")
     control: List[float] = Field(..., description="Control input vector")
 
@@ -44,13 +46,14 @@ class PredictRequest(BaseModel):
         json_schema_extra = {
             "example": {
                 "state": [0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                "control": [0.67, 0, 0, 0]
+                "control": [0.67, 0, 0, 0],
             }
         }
 
 
 class PredictResponse(BaseModel):
     """Prediction response."""
+
     next_state: List[float]
     model: str
     state_names: List[str]
@@ -58,6 +61,7 @@ class PredictResponse(BaseModel):
 
 class RolloutRequest(BaseModel):
     """Multi-step rollout request."""
+
     initial_state: List[float]
     controls: List[List[float]] = Field(..., description="Sequence of control inputs")
     n_steps: Optional[int] = Field(None, description="Number of steps (defaults to len(controls))")
@@ -65,12 +69,14 @@ class RolloutRequest(BaseModel):
 
 class RolloutResponse(BaseModel):
     """Rollout response."""
+
     trajectory: List[List[float]]
     n_steps: int
 
 
 class PhysicsLossRequest(BaseModel):
     """Physics loss computation request."""
+
     inputs: List[List[float]] = Field(..., description="Batch of state+control vectors")
     outputs: List[List[float]] = Field(..., description="Batch of predicted next states")
     dt: float = Field(0.001, description="Timestep")
@@ -78,11 +84,13 @@ class PhysicsLossRequest(BaseModel):
 
 class PhysicsLossResponse(BaseModel):
     """Physics loss response."""
+
     loss: float
 
 
 class ModelInfo(BaseModel):
     """Model information."""
+
     name: str
     state_dim: int
     control_dim: int
@@ -108,18 +116,18 @@ def load_models():
     quadrotor = QuadrotorPINN()
 
     if model_path.exists():
-        quadrotor.load_state_dict(torch.load(model_path, map_location='cpu', weights_only=True))
+        quadrotor.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=True))
         print(f"Loaded quadrotor model from {model_path}")
 
     quadrotor.eval()
-    models['quadrotor'] = quadrotor
+    models["quadrotor"] = quadrotor
 
     # Also load simple models (untrained)
-    models['pendulum'] = PendulumPINN()
-    models['pendulum'].eval()
+    models["pendulum"] = PendulumPINN()
+    models["pendulum"].eval()
 
-    models['cartpole'] = CartPolePINN()
-    models['cartpole'].eval()
+    models["cartpole"] = CartPolePINN()
+    models["cartpole"].eval()
 
 
 @asynccontextmanager
@@ -152,7 +160,9 @@ async def health():
 async def model_info(model_name: str = "quadrotor"):
     """Get model information."""
     if model_name not in models:
-        raise HTTPException(404, f"Model '{model_name}' not found. Available: {list(models.keys())}")
+        raise HTTPException(
+            404, f"Model '{model_name}' not found. Available: {list(models.keys())}"
+        )
 
     model = models[model_name]
 
@@ -177,9 +187,14 @@ async def predict(request: PredictRequest, model_name: str = "quadrotor"):
 
     # Validate input dimensions
     if len(request.state) != model.state_dim:
-        raise HTTPException(400, f"State must have {model.state_dim} elements, got {len(request.state)}")
+        raise HTTPException(
+            400, f"State must have {model.state_dim} elements, got {len(request.state)}"
+        )
     if len(request.control) != model.control_dim:
-        raise HTTPException(400, f"Control must have {model.control_dim} elements, got {len(request.control)}")
+        raise HTTPException(
+            400,
+            f"Control must have {model.control_dim} elements, got {len(request.control)}",
+        )
 
     # Predict
     with torch.no_grad():
@@ -207,7 +222,9 @@ async def rollout(request: RolloutRequest, model_name: str = "quadrotor"):
 
     n_steps = request.n_steps or len(request.controls)
     if len(request.controls) < n_steps:
-        raise HTTPException(400, f"Need at least {n_steps} control inputs, got {len(request.controls)}")
+        raise HTTPException(
+            400, f"Need at least {n_steps} control inputs, got {len(request.controls)}"
+        )
 
     # Rollout
     initial_state = torch.tensor(request.initial_state, dtype=torch.float32)
@@ -255,4 +272,5 @@ async def root():
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)

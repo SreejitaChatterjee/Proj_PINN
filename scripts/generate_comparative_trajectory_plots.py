@@ -1,40 +1,45 @@
 """Generate comparative plots showing all 10 trajectories as subplots for each variable"""
-import torch
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import joblib
+
 from pathlib import Path
+
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import torch
 from pinn_model import QuadrotorPINN
 
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent
-MODEL_PATH = PROJECT_ROOT / 'models' / 'quadrotor_pinn.pth'
-DATA_PATH = PROJECT_ROOT / 'data' / 'quadrotor_training_data.csv'
-OUTPUT_DIR = PROJECT_ROOT / 'results' / 'comparative_trajectories'
+MODEL_PATH = PROJECT_ROOT / "models" / "quadrotor_pinn.pth"
+DATA_PATH = PROJECT_ROOT / "data" / "quadrotor_training_data.csv"
+OUTPUT_DIR = PROJECT_ROOT / "results" / "comparative_trajectories"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # Variable definitions with proper names and units
 VARIABLES = [
-    ('x', 'X Position', 'm', 'position'),
-    ('y', 'Y Position', 'm', 'position'),
-    ('z', 'Altitude (Z Position)', 'm', 'position'),
-    ('roll', 'Roll Angle (φ)', 'rad', 'angle'),
-    ('pitch', 'Pitch Angle (θ)', 'rad', 'angle'),
-    ('yaw', 'Yaw Angle (ψ)', 'rad', 'angle'),
-    ('p', 'Roll Rate', 'rad/s', 'rate'),
-    ('q', 'Pitch Rate', 'rad/s', 'rate'),
-    ('r', 'Yaw Rate', 'rad/s', 'rate'),
-    ('vx', 'X Velocity', 'm/s', 'velocity'),
-    ('vy', 'Y Velocity', 'm/s', 'velocity'),
-    ('vz', 'Z Velocity (Vertical)', 'm/s', 'velocity'),
-    ('thrust', 'Total Thrust', 'N', 'control'),
-    ('torque_x', 'Roll Torque (τ_x)', 'N·m', 'control'),
-    ('torque_y', 'Pitch Torque (τ_y)', 'N·m', 'control'),
-    ('torque_z', 'Yaw Torque (τ_z)', 'N·m', 'control'),
+    ("x", "X Position", "m", "position"),
+    ("y", "Y Position", "m", "position"),
+    ("z", "Altitude (Z Position)", "m", "position"),
+    ("roll", "Roll Angle (φ)", "rad", "angle"),
+    ("pitch", "Pitch Angle (θ)", "rad", "angle"),
+    ("yaw", "Yaw Angle (ψ)", "rad", "angle"),
+    ("p", "Roll Rate", "rad/s", "rate"),
+    ("q", "Pitch Rate", "rad/s", "rate"),
+    ("r", "Yaw Rate", "rad/s", "rate"),
+    ("vx", "X Velocity", "m/s", "velocity"),
+    ("vy", "Y Velocity", "m/s", "velocity"),
+    ("vz", "Z Velocity (Vertical)", "m/s", "velocity"),
+    ("thrust", "Total Thrust", "N", "control"),
+    ("torque_x", "Roll Torque (τ_x)", "N·m", "control"),
+    ("torque_y", "Pitch Torque (τ_y)", "N·m", "control"),
+    ("torque_z", "Yaw Torque (τ_z)", "N·m", "control"),
 ]
 
-def generate_predictions_for_trajectory(model, df_traj, scaler_X, scaler_y, predicted_states, input_features):
+
+def generate_predictions_for_trajectory(
+    model, df_traj, scaler_X, scaler_y, predicted_states, input_features
+):
     """Generate predictions for a single trajectory"""
     predictions = []
     with torch.no_grad():
@@ -47,20 +52,21 @@ def generate_predictions_for_trajectory(model, df_traj, scaler_X, scaler_y, pred
 
     # Create predictions DataFrame
     df_pred = pd.DataFrame(predictions, columns=predicted_states)
-    df_pred['timestamp'] = df_traj['timestamp'].iloc[1:].values
+    df_pred["timestamp"] = df_traj["timestamp"].iloc[1:].values
 
     # For control inputs, use ground truth
-    for col in ['thrust', 'torque_x', 'torque_y', 'torque_z']:
+    for col in ["thrust", "torque_x", "torque_y", "torque_z"]:
         if col in df_traj.columns:
             df_pred[col] = df_traj[col].iloc[1:].values
 
     return df_pred
 
+
 def main():
-    print("="*80)
+    print("=" * 80)
     print("GENERATING COMPARATIVE TRAJECTORY PLOTS")
     print("(All 10 trajectories as subplots for each variable)")
-    print("="*80)
+    print("=" * 80)
 
     # Load model
     print(f"\nLoading model from: {MODEL_PATH}")
@@ -69,31 +75,44 @@ def main():
     model.eval()
 
     # Load scalers
-    scaler_path = MODEL_PATH.parent / 'scalers.pkl'
+    scaler_path = MODEL_PATH.parent / "scalers.pkl"
     print(f"Loading scalers from: {scaler_path}")
     scalers = joblib.load(scaler_path)
-    scaler_X, scaler_y = scalers['scaler_X'], scalers['scaler_y']
+    scaler_X, scaler_y = scalers["scaler_X"], scalers["scaler_y"]
 
     # Load data
     print(f"Loading data from: {DATA_PATH}")
     df = pd.read_csv(DATA_PATH)
 
     # Map column names
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
     # Model predicts 12 core states
-    predicted_states = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = predicted_states + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    predicted_states = [
+        "x",
+        "y",
+        "z",
+        "phi",
+        "theta",
+        "psi",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
+    input_features = predicted_states + ["thrust", "torque_x", "torque_y", "torque_z"]
 
     # Get unique trajectory IDs
-    trajectory_ids = sorted(df['trajectory_id'].unique())
+    trajectory_ids = sorted(df["trajectory_id"].unique())
     print(f"\nFound {len(trajectory_ids)} trajectories")
 
     # Pre-process all trajectories
     print("\nPre-processing all trajectories...")
     trajectory_data = {}
     for traj_id in trajectory_ids:
-        df_traj = df[df['trajectory_id'] == traj_id].copy()
+        df_traj = df[df["trajectory_id"] == traj_id].copy()
         df_traj = df_traj.reset_index(drop=True)
 
         # Generate predictions
@@ -102,13 +121,10 @@ def main():
         )
 
         # Rename back for plotting
-        df_traj = df_traj.rename(columns={'phi': 'roll', 'theta': 'pitch', 'psi': 'yaw'})
-        df_pred = df_pred.rename(columns={'phi': 'roll', 'theta': 'pitch', 'psi': 'yaw'})
+        df_traj = df_traj.rename(columns={"phi": "roll", "theta": "pitch", "psi": "yaw"})
+        df_pred = df_pred.rename(columns={"phi": "roll", "theta": "pitch", "psi": "yaw"})
 
-        trajectory_data[traj_id] = {
-            'true': df_traj,
-            'pred': df_pred
-        }
+        trajectory_data[traj_id] = {"true": df_traj, "pred": df_pred}
         print(f"  Trajectory {traj_id}: {len(df_traj)} timesteps")
 
     # Generate comparative plots for each variable
@@ -122,57 +138,71 @@ def main():
         axes = axes.flatten()
 
         # Check if variable is predicted
-        is_predicted = var_name in predicted_states or var_name in ['roll', 'pitch', 'yaw']
+        is_predicted = var_name in predicted_states or var_name in [
+            "roll",
+            "pitch",
+            "yaw",
+        ]
 
         # Plot each trajectory
         for idx, traj_id in enumerate(trajectory_ids):
             ax = axes[idx]
-            df_traj = trajectory_data[traj_id]['true']
-            df_pred = trajectory_data[traj_id]['pred']
+            df_traj = trajectory_data[traj_id]["true"]
+            df_pred = trajectory_data[traj_id]["pred"]
 
             if var_name not in df_traj.columns:
-                ax.text(0.5, 0.5, f'Variable {var_name}\nnot found',
-                       ha='center', va='center', transform=ax.transAxes)
-                ax.set_title(f'Trajectory {traj_id}', fontsize=10, fontweight='bold')
+                ax.text(
+                    0.5,
+                    0.5,
+                    f"Variable {var_name}\nnot found",
+                    ha="center",
+                    va="center",
+                    transform=ax.transAxes,
+                )
+                ax.set_title(f"Trajectory {traj_id}", fontsize=10, fontweight="bold")
                 continue
 
             # Get data
-            time = df_traj['timestamp'].iloc[1:].values
+            time = df_traj["timestamp"].iloc[1:].values
             true_vals = df_traj[var_name].iloc[1:].values
             pred_vals = df_pred[var_name].values
 
             # Plot
-            ax.plot(time, true_vals, 'b-', linewidth=1.2, label='True', alpha=0.8)
+            ax.plot(time, true_vals, "b-", linewidth=1.2, label="True", alpha=0.8)
             if is_predicted:
-                ax.plot(time, pred_vals, 'r--', linewidth=1.0, label='Predicted', alpha=0.8)
+                ax.plot(time, pred_vals, "r--", linewidth=1.0, label="Predicted", alpha=0.8)
 
             # Calculate errors
             if is_predicted:
                 mae = np.mean(np.abs(true_vals - pred_vals))
-                rmse = np.sqrt(np.mean((true_vals - pred_vals)**2))
-                title = f'Trajectory {traj_id}\nMAE: {mae:.4f}, RMSE: {rmse:.4f}'
+                rmse = np.sqrt(np.mean((true_vals - pred_vals) ** 2))
+                title = f"Trajectory {traj_id}\nMAE: {mae:.4f}, RMSE: {rmse:.4f}"
             else:
-                title = f'Trajectory {traj_id}\n(Control Input)'
+                title = f"Trajectory {traj_id}\n(Control Input)"
 
-            ax.set_title(title, fontsize=9, fontweight='bold')
-            ax.set_xlabel('Time (s)', fontsize=8)
-            ax.set_ylabel(f'{var_unit}', fontsize=8)
+            ax.set_title(title, fontsize=9, fontweight="bold")
+            ax.set_xlabel("Time (s)", fontsize=8)
+            ax.set_ylabel(f"{var_unit}", fontsize=8)
             ax.grid(True, alpha=0.3)
             ax.tick_params(labelsize=7)
 
             # Only add legend to first subplot
             if idx == 0:
-                ax.legend(fontsize=8, loc='best')
+                ax.legend(fontsize=8, loc="best")
 
         # Overall title
-        fig.suptitle(f'{var_label} - All 10 Trajectories Comparison',
-                    fontsize=14, fontweight='bold', y=0.995)
+        fig.suptitle(
+            f"{var_label} - All 10 Trajectories Comparison",
+            fontsize=14,
+            fontweight="bold",
+            y=0.995,
+        )
 
         plt.tight_layout(rect=[0, 0, 1, 0.993])
 
         # Save plot
-        output_file = OUTPUT_DIR / f'{plot_num:02d}_{var_name}_all_trajectories.png'
-        plt.savefig(output_file, dpi=150, bbox_inches='tight')
+        output_file = OUTPUT_DIR / f"{plot_num:02d}_{var_name}_all_trajectories.png"
+        plt.savefig(output_file, dpi=150, bbox_inches="tight")
         plt.close()
 
         print(f"      Saved: {output_file.name}")
@@ -184,5 +214,6 @@ def main():
     print(f"  Output directory: {OUTPUT_DIR}")
     print(f"{'='*80}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

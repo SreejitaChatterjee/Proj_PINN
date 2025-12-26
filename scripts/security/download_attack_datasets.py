@@ -12,10 +12,10 @@ Usage:
 
 import argparse
 import os
-import requests
 from pathlib import Path
-from tqdm import tqdm
 
+import requests
+from tqdm import tqdm
 
 DATASETS = {
     "drone_fusion": {
@@ -45,11 +45,12 @@ DATASETS = {
 def download_file(url: str, output_path: Path, chunk_size: int = 8192):
     """Download file with progress bar."""
     response = requests.get(url, stream=True)
-    total_size = int(response.headers.get('content-length', 0))
+    total_size = int(response.headers.get("content-length", 0))
 
-    with open(output_path, 'wb') as f, tqdm(
-        total=total_size, unit='B', unit_scale=True, desc=output_path.name
-    ) as pbar:
+    with (
+        open(output_path, "wb") as f,
+        tqdm(total=total_size, unit="B", unit_scale=True, desc=output_path.name) as pbar,
+    ):
         for chunk in response.iter_content(chunk_size=chunk_size):
             f.write(chunk)
             pbar.update(len(chunk))
@@ -101,13 +102,13 @@ def main():
             continue
 
         # Manual download instructions (IEEE DataPort requires login)
-        if "ieee-dataport.org" in ds_info['url']:
+        if "ieee-dataport.org" in ds_info["url"]:
             print(f"\n   ⚠️  IEEE DataPort datasets require manual download:")
             print(f"   1. Visit: {ds_info['url']}")
             print(f"   2. Sign in (free IEEE account required)")
             print(f"   3. Download dataset")
             print(f"   4. Extract to: {ds_dir.absolute()}")
-            if ds_info['doi']:
+            if ds_info["doi"]:
                 print(f"   DOI: {ds_info['doi']}")
         else:
             # Direct download for public datasets (ALFA)

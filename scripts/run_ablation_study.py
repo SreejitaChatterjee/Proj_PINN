@@ -10,26 +10,27 @@ This script validates the ablation table in the papers:
 
 Each component is added incrementally to show its contribution.
 """
+
+import json
+from datetime import datetime
+from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import joblib
-import json
-from pathlib import Path
-from sklearn.preprocessing import StandardScaler
-from datetime import datetime
-
 from pinn_architectures import BaselinePINN, PhysicsLossMixin
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
 
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'ablation_study'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'ablation_study'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "ablation_study"
+MODELS_DIR = PROJECT_ROOT / "models" / "ablation_study"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -48,17 +49,17 @@ ENERGY_WEIGHT = 5.0
 def load_data(data_path):
     """Load and prepare data from CSV"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
 
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
@@ -66,17 +67,17 @@ def load_data(data_path):
 def load_trajectories(data_path):
     """Load data organized by trajectory for rollout evaluation"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         states = df_traj[state_cols].values.astype(np.float32)
         controls = df_traj[control_cols].values.astype(np.float32)
-        trajectories.append({'states': states, 'controls': controls, 'traj_id': traj_id})
+        trajectories.append({"states": states, "controls": controls, "traj_id": traj_id})
 
     return trajectories
 
@@ -109,21 +110,23 @@ def evaluate_rollout(model, trajectories, scaler_X, scaler_y, n_steps=100):
     position_errors = []
 
     for traj in trajectories[:10]:
-        states = traj['states']
-        controls = traj['controls']
+        states = traj["states"]
+        controls = traj["controls"]
 
         if len(states) < n_steps + 1:
             continue
 
         initial_state = states[0]
-        predicted = autoregressive_rollout(model, initial_state, controls, scaler_X, scaler_y, n_steps)
-        true_states = states[:n_steps + 1]
+        predicted = autoregressive_rollout(
+            model, initial_state, controls, scaler_X, scaler_y, n_steps
+        )
+        true_states = states[: n_steps + 1]
 
         # Position error (x, y, z) - this is what we report in the paper
-        pos_error = np.mean(np.abs(predicted[:, :3] - true_states[:len(predicted), :3]))
+        pos_error = np.mean(np.abs(predicted[:, :3] - true_states[: len(predicted), :3]))
         position_errors.append(pos_error)
 
-    return np.mean(position_errors) if position_errors else float('inf')
+    return np.mean(position_errors) if position_errors else float("inf")
 
 
 def curriculum_horizon(epoch):
@@ -145,8 +148,15 @@ def scheduled_sampling_prob(epoch, max_epochs, final_prob=0.3):
 
 class AblationConfig:
     """Configuration for each ablation variant"""
-    def __init__(self, name, use_curriculum=False, use_scheduled_sampling=False,
-                 use_dropout=False, use_energy_loss=False):
+
+    def __init__(
+        self,
+        name,
+        use_curriculum=False,
+        use_scheduled_sampling=False,
+        use_dropout=False,
+        use_energy_loss=False,
+    ):
         self.name = name
         self.use_curriculum = use_curriculum
         self.use_scheduled_sampling = use_scheduled_sampling
@@ -155,8 +165,15 @@ class AblationConfig:
         self.dropout_rate = 0.3 if use_dropout else 0.0
 
 
-def train_ablation_variant(config, train_loader, val_loader, val_trajectories,
-                           scaler_X, scaler_y, max_epochs=MAX_EPOCHS):
+def train_ablation_variant(
+    config,
+    train_loader,
+    val_loader,
+    val_trajectories,
+    scaler_X,
+    scaler_y,
+    max_epochs=MAX_EPOCHS,
+):
     """Train a single ablation variant"""
     print(f"\n{'='*60}")
     print(f"Training: {config.name}")
@@ -172,14 +189,16 @@ def train_ablation_variant(config, train_loader, val_loader, val_trajectories,
     if config.use_curriculum:
         scheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=max_epochs - 30)
     else:
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=15)
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, mode="min", factor=0.5, patience=15
+        )
 
     y_mean = torch.FloatTensor(scaler_y.mean_)
     y_scale = torch.FloatTensor(scaler_y.scale_)
 
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     patience_counter = 0
-    history = {'train_loss': [], 'val_loss': [], 'rollout_error': []}
+    history = {"train_loss": [], "val_loss": [], "rollout_error": []}
 
     for epoch in range(max_epochs):
         # Get curriculum horizon if enabled
@@ -233,7 +252,9 @@ def train_ablation_variant(config, train_loader, val_loader, val_trajectories,
                 data_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 physics_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
-                val_loss += (data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()) * X_scaled.size(0)
+                val_loss += (
+                    data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()
+                ) * X_scaled.size(0)
 
         val_loss /= len(val_loader.dataset)
 
@@ -246,37 +267,46 @@ def train_ablation_variant(config, train_loader, val_loader, val_trajectories,
         # Track rollout error periodically
         rollout_error = 0
         if epoch % 25 == 0 or epoch == max_epochs - 1:
-            rollout_error = evaluate_rollout(model, val_trajectories, scaler_X, scaler_y, n_steps=100)
+            rollout_error = evaluate_rollout(
+                model, val_trajectories, scaler_X, scaler_y, n_steps=100
+            )
 
-        history['train_loss'].append(train_loss)
-        history['val_loss'].append(val_loss)
-        history['rollout_error'].append(rollout_error)
+        history["train_loss"].append(train_loss)
+        history["val_loss"].append(val_loss)
+        history["rollout_error"].append(rollout_error)
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODELS_DIR / f'{config.name.replace(" ", "_").replace("+", "plus")}.pth')
+            torch.save(
+                model.state_dict(),
+                MODELS_DIR / f'{config.name.replace(" ", "_").replace("+", "plus")}.pth',
+            )
         else:
             patience_counter += 1
 
         if epoch % 25 == 0:
-            print(f"  Epoch {epoch:3d}: train={train_loss:.6f}, val={val_loss:.6f}, rollout={rollout_error:.4f}m")
+            print(
+                f"  Epoch {epoch:3d}: train={train_loss:.6f}, val={val_loss:.6f}, rollout={rollout_error:.4f}m"
+            )
 
         if patience_counter >= EARLY_STOP_PATIENCE:
             print(f"  Early stopping at epoch {epoch}")
             break
 
     # Load best model and evaluate final rollout
-    model.load_state_dict(torch.load(MODELS_DIR / f'{config.name.replace(" ", "_").replace("+", "plus")}.pth'))
+    model.load_state_dict(
+        torch.load(MODELS_DIR / f'{config.name.replace(" ", "_").replace("+", "plus")}.pth')
+    )
     final_rollout = evaluate_rollout(model, val_trajectories, scaler_X, scaler_y, n_steps=100)
 
     return model, final_rollout, history
 
 
 def main():
-    print("="*80)
+    print("=" * 80)
     print("ABLATION STUDY EXPERIMENTS")
-    print("="*80)
+    print("=" * 80)
     print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     # Load data
@@ -300,13 +330,13 @@ def main():
         torch.FloatTensor(X_train_scaled),
         torch.FloatTensor(y_train_scaled),
         torch.FloatTensor(X_train),
-        torch.FloatTensor(y_train)
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
         torch.FloatTensor(X_val_scaled),
         torch.FloatTensor(y_val_scaled),
         torch.FloatTensor(X_val),
-        torch.FloatTensor(y_val)
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -314,16 +344,41 @@ def main():
 
     # Define ablation configurations (cumulative)
     ablation_configs = [
-        AblationConfig("Baseline", use_curriculum=False, use_scheduled_sampling=False,
-                      use_dropout=False, use_energy_loss=False),
-        AblationConfig("+Curriculum", use_curriculum=True, use_scheduled_sampling=False,
-                      use_dropout=False, use_energy_loss=False),
-        AblationConfig("+Sched_Sampling", use_curriculum=True, use_scheduled_sampling=True,
-                      use_dropout=False, use_energy_loss=False),
-        AblationConfig("+Dropout", use_curriculum=True, use_scheduled_sampling=True,
-                      use_dropout=True, use_energy_loss=False),
-        AblationConfig("+Energy_Cons", use_curriculum=True, use_scheduled_sampling=True,
-                      use_dropout=True, use_energy_loss=True),
+        AblationConfig(
+            "Baseline",
+            use_curriculum=False,
+            use_scheduled_sampling=False,
+            use_dropout=False,
+            use_energy_loss=False,
+        ),
+        AblationConfig(
+            "+Curriculum",
+            use_curriculum=True,
+            use_scheduled_sampling=False,
+            use_dropout=False,
+            use_energy_loss=False,
+        ),
+        AblationConfig(
+            "+Sched_Sampling",
+            use_curriculum=True,
+            use_scheduled_sampling=True,
+            use_dropout=False,
+            use_energy_loss=False,
+        ),
+        AblationConfig(
+            "+Dropout",
+            use_curriculum=True,
+            use_scheduled_sampling=True,
+            use_dropout=True,
+            use_energy_loss=False,
+        ),
+        AblationConfig(
+            "+Energy_Cons",
+            use_curriculum=True,
+            use_scheduled_sampling=True,
+            use_dropout=True,
+            use_energy_loss=True,
+        ),
     ]
 
     # Run ablation experiments
@@ -335,47 +390,47 @@ def main():
             config, train_loader, val_loader, val_trajectories, scaler_X, scaler_y
         )
         results[config.name] = {
-            'rollout_mae': rollout_error,
-            'final_train_loss': history['train_loss'][-1],
-            'final_val_loss': history['val_loss'][-1]
+            "rollout_mae": rollout_error,
+            "final_train_loss": history["train_loss"][-1],
+            "final_val_loss": history["val_loss"][-1],
         }
 
     # Print ablation table
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("ABLATION STUDY RESULTS")
-    print("="*80)
+    print("=" * 80)
     print(f"{'Configuration':<25} {'100-Step MAE (m)':<18} {'Improvement':<15}")
-    print("-"*60)
+    print("-" * 60)
 
-    baseline_mae = results['Baseline']['rollout_mae']
+    baseline_mae = results["Baseline"]["rollout_mae"]
     for config in ablation_configs:
-        mae = results[config.name]['rollout_mae']
-        if config.name == 'Baseline':
-            improvement = '--'
+        mae = results[config.name]["rollout_mae"]
+        if config.name == "Baseline":
+            improvement = "--"
         else:
             improvement = f"{(1 - mae/baseline_mae)*100:.0f}%"
         print(f"{config.name:<25} {mae:<18.3f} {improvement:<15}")
 
     # Calculate improvement factor
-    final_mae = results['+Energy_Cons']['rollout_mae']
-    improvement_factor = baseline_mae / final_mae if final_mae > 0 else float('inf')
-    print("-"*60)
+    final_mae = results["+Energy_Cons"]["rollout_mae"]
+    improvement_factor = baseline_mae / final_mae if final_mae > 0 else float("inf")
+    print("-" * 60)
     print(f"Total improvement: {improvement_factor:.1f}x")
 
     # Save results
     print("\n[3/3] Saving results...")
-    with open(RESULTS_DIR / 'ablation_results.json', 'w') as f:
+    with open(RESULTS_DIR / "ablation_results.json", "w") as f:
         json.dump(results, f, indent=2)
 
     print(f"\nResults saved to: {RESULTS_DIR}")
     print(f"Models saved to: {MODELS_DIR}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("ABLATION STUDY COMPLETE")
-    print("="*80)
+    print("=" * 80)
 
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

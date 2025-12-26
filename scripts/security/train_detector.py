@@ -13,18 +13,23 @@ Usage:
 
 import argparse
 import json
+import pickle
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
 from sklearn.preprocessing import StandardScaler
-import pickle
 
-# Import PINN framework
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Import PINN framework (install with: pip install -e .)
+try:
+    from pinn_dynamics import QuadrotorPINN
+except ImportError:
+    import sys
 
-from pinn_dynamics import QuadrotorPINN
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+    from pinn_dynamics import QuadrotorPINN
+
 from pinn_dynamics.training import Trainer
 
 
@@ -49,9 +54,9 @@ def load_alfa_data(data_dir: Path, flight_type: str = "normal"):
         df = pd.read_csv(csv_file)
 
         # Filter by type
-        if flight_type == "normal" and df['label'].iloc[0] == 0:
+        if flight_type == "normal" and df["label"].iloc[0] == 0:
             flights.append(df)
-        elif flight_type == "fault" and df['label'].iloc[0] == 1:
+        elif flight_type == "fault" and df["label"].iloc[0] == 1:
             flights.append(df)
 
     if not flights:
@@ -74,10 +79,10 @@ def prepare_training_data(df: pd.DataFrame):
         X, y, scaler_X, scaler_y
     """
     # State columns (12)
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
 
     # Control columns (4)
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     # Create input (current state + control) and output (next state)
     states = df[state_cols].values[:-1]  # t
@@ -101,13 +106,15 @@ def prepare_training_data(df: pd.DataFrame):
 
 
 def train_pinn(
-    X_train, y_train,
-    X_val, y_val,
+    X_train,
+    y_train,
+    X_val,
+    y_val,
     physics_weight: float = 20.0,
     epochs: int = 100,
     batch_size: int = 32,
     lr: float = 1e-3,
-    device: str = "cuda" if torch.cuda.is_available() else "cpu"
+    device: str = "cuda" if torch.cuda.is_available() else "cpu",
 ):
     """
     Train QuadrotorPINN model.
@@ -140,18 +147,10 @@ def train_pinn(
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
     # Create model
-    model = QuadrotorPINN(
-        hidden_size=256,
-        num_layers=5,
-        dropout=0.1
-    )
+    model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
 
     # Create trainer
-    trainer = Trainer(
-        model=model,
-        lr=lr,
-        device=device
-    )
+    trainer = Trainer(model=model, lr=lr, device=device)
 
     # Set loss weights
     weights = {
@@ -168,7 +167,7 @@ def train_pinn(
         val_loader=val_loader,
         epochs=epochs,
         weights=weights,
-        verbose=False  # Suppress per-epoch output for cleaner logs
+        verbose=False,  # Suppress per-epoch output for cleaner logs
     )
 
     return model, history
@@ -249,7 +248,7 @@ def main():
     print("This ensures statistical significance (p<0.05) for paper.")
 
     results_w0 = []
-    best_loss_w0 = float('inf')
+    best_loss_w0 = float("inf")
     best_model_w0 = None
 
     for seed in range(args.num_seeds):
@@ -258,14 +257,17 @@ def main():
         np.random.seed(seed)
 
         model_w0, history_w0 = train_pinn(
-            X_train, y_train, X_val, y_val,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
             physics_weight=0.0,
             epochs=args.epochs,
             batch_size=args.batch_size,
-            lr=args.lr
+            lr=args.lr,
         )
 
-        final_loss = history_w0['val'][-1] if history_w0['val'] else float('inf')
+        final_loss = history_w0["val"][-1] if history_w0["val"] else float("inf")
         results_w0.append(final_loss)
 
         # Track best model
@@ -285,7 +287,7 @@ def main():
     print(f"\n[4/5] Training PINN w=20 with {args.num_seeds} seeds (EXHAUSTIVE)...")
 
     results_w20 = []
-    best_loss_w20 = float('inf')
+    best_loss_w20 = float("inf")
     best_model_w20 = None
 
     for seed in range(args.num_seeds):
@@ -294,14 +296,17 @@ def main():
         np.random.seed(seed)
 
         model_w20, history_w20 = train_pinn(
-            X_train, y_train, X_val, y_val,
+            X_train,
+            y_train,
+            X_val,
+            y_val,
             physics_weight=20.0,
             epochs=args.epochs,
             batch_size=args.batch_size,
-            lr=args.lr
+            lr=args.lr,
         )
 
-        final_loss = history_w20['val'][-1] if history_w20['val'] else float('inf')
+        final_loss = history_w20["val"][-1] if history_w20["val"] else float("inf")
         results_w20.append(final_loss)
 
         if final_loss < best_loss_w20:
@@ -318,6 +323,7 @@ def main():
 
     # Statistical significance test (paired t-test)
     from scipy import stats
+
     t_stat, p_value = stats.ttest_rel(results_w0, results_w20)
     print(f"\n  Statistical Test (w=0 vs w=20):")
     print(f"    t-statistic: {t_stat:.4f}")
@@ -331,8 +337,8 @@ def main():
     # Save scalers
     print("\n[5/5] Saving scalers and config...")
     scaler_path = output_dir / "scalers.pkl"
-    with open(scaler_path, 'wb') as f:
-        pickle.dump({'scaler_X': scaler_X, 'scaler_y': scaler_y}, f)
+    with open(scaler_path, "wb") as f:
+        pickle.dump({"scaler_X": scaler_X, "scaler_y": scaler_y}, f)
     print(f"Saved: {scaler_path}")
 
     # Save comprehensive results
@@ -348,19 +354,16 @@ def main():
         "num_seeds": args.num_seeds,
         "train_samples": len(X_train),
         "val_samples": len(X_val),
-
         # w=0 results (20 seeds)
         "w0_mean_loss": float(np.mean(results_w0)),
         "w0_std_loss": float(np.std(results_w0)),
         "w0_best_loss": float(best_loss_w0),
         "w0_all_losses": [float(x) for x in results_w0],
-
         # w=20 results (20 seeds)
         "w20_mean_loss": float(np.mean(results_w20)),
         "w20_std_loss": float(np.std(results_w20)),
         "w20_best_loss": float(best_loss_w20),
         "w20_all_losses": [float(x) for x in results_w20],
-
         # Statistical significance
         "t_statistic": float(t_stat),
         "p_value": float(p_value),
@@ -369,7 +372,7 @@ def main():
     }
 
     config_path = output_dir / "training_results.json"
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
     print(f"Saved: {config_path}")
 

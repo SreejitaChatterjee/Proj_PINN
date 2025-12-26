@@ -22,13 +22,14 @@ KEY RESULT:
 This is the "Physics-Data Conflict Bias" - a NEW failure mode.
 """
 
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.optimize import minimize
+
 # Create output directory
-output_dir = Path('results/theoretical_analysis')
+output_dir = Path("results/theoretical_analysis")
 output_dir.mkdir(parents=True, exist_ok=True)
 
 
@@ -57,8 +58,8 @@ def generate_trajectory(m_true, c_true, T_seq, dt=0.01, n_steps=100):
 
     for i in range(n_steps - 1):
         a[i] = true_dynamics(z[i], v[i], T_seq[i], m_true, c_true)
-        v[i+1] = v[i] + a[i] * dt
-        z[i+1] = z[i] + v[i] * dt + 0.5 * a[i] * dt**2
+        v[i + 1] = v[i] + a[i] * dt
+        z[i + 1] = z[i] + v[i] * dt + 0.5 * a[i] * dt**2
 
     a[-1] = true_dynamics(z[-1], v[-1], T_seq[-1], m_true, c_true)
 
@@ -138,14 +139,20 @@ def run_experiment():
     c_true = 0.1  # quadratic drag coefficient
 
     # Test different excitation levels
-    thrust_amplitudes = [5, 10, 20, 40, 60]  # N (more thrust = more velocity = more excitation)
+    thrust_amplitudes = [
+        5,
+        10,
+        20,
+        40,
+        60,
+    ]  # N (more thrust = more velocity = more excitation)
 
     results = {
-        'amplitude': [],
-        'v_rms': [],
-        'm_hat': [],
-        'c_hat': [],
-        'm_error_pct': [],
+        "amplitude": [],
+        "v_rms": [],
+        "m_hat": [],
+        "c_hat": [],
+        "m_error_pct": [],
     }
 
     dt = 0.01
@@ -174,11 +181,11 @@ def run_experiment():
         v_rms = np.sqrt(np.mean(v**2))
         m_error_pct = 100 * abs(m_hat - m_true) / m_true
 
-        results['amplitude'].append(amp)
-        results['v_rms'].append(v_rms)
-        results['m_hat'].append(m_hat)
-        results['c_hat'].append(c_hat)
-        results['m_error_pct'].append(m_error_pct)
+        results["amplitude"].append(amp)
+        results["v_rms"].append(v_rms)
+        results["m_hat"].append(m_hat)
+        results["c_hat"].append(c_hat)
+        results["m_error_pct"].append(m_error_pct)
 
         print(f"{amp:>12.1f} {v_rms:>10.2f} {m_hat:>10.3f} {m_error_pct:>10.1f}% {c_hat:>10.4f}")
 
@@ -202,22 +209,34 @@ def create_figure(results):
 
     # Plot 1: Mass error vs excitation
     ax1 = axes[0]
-    ax1.plot(results['v_rms'], results['m_error_pct'], 'o-',
-             color='#CC3300', linewidth=2, markersize=8)
-    ax1.set_xlabel('Velocity RMS (m/s)', fontweight='bold')
-    ax1.set_ylabel('Mass Error (%)', fontweight='bold')
-    ax1.set_title('(a) Parameter Bias vs Excitation', fontweight='bold')
+    ax1.plot(
+        results["v_rms"],
+        results["m_error_pct"],
+        "o-",
+        color="#CC3300",
+        linewidth=2,
+        markersize=8,
+    )
+    ax1.set_xlabel("Velocity RMS (m/s)", fontweight="bold")
+    ax1.set_ylabel("Mass Error (%)", fontweight="bold")
+    ax1.set_title("(a) Parameter Bias vs Excitation", fontweight="bold")
     ax1.grid(True, alpha=0.3)
-    ax1.set_ylim([0, max(results['m_error_pct']) * 1.2])
+    ax1.set_ylim([0, max(results["m_error_pct"]) * 1.2])
 
     # Plot 2: Effective c_hat vs excitation
     ax2 = axes[1]
-    ax2.plot(results['v_rms'], results['c_hat'], 's-',
-             color='#0066CC', linewidth=2, markersize=8)
-    ax2.axhline(y=0, color='gray', linestyle='--', alpha=0.5)
-    ax2.set_xlabel('Velocity RMS (m/s)', fontweight='bold')
-    ax2.set_ylabel('Learned c_hat', fontweight='bold')
-    ax2.set_title('(b) Effective Drag Parameter', fontweight='bold')
+    ax2.plot(
+        results["v_rms"],
+        results["c_hat"],
+        "s-",
+        color="#0066CC",
+        linewidth=2,
+        markersize=8,
+    )
+    ax2.axhline(y=0, color="gray", linestyle="--", alpha=0.5)
+    ax2.set_xlabel("Velocity RMS (m/s)", fontweight="bold")
+    ax2.set_ylabel("Learned c_hat", fontweight="bold")
+    ax2.set_title("(b) Effective Drag Parameter", fontweight="bold")
     ax2.grid(True, alpha=0.3)
 
     # Plot 3: Schematic of the bias mechanism
@@ -229,18 +248,26 @@ def create_figure(results):
     drag_true = c_true * v_range**2
 
     # Linear approximations at different slopes
-    for c_hat, label, color in [(0.2, 'Low excitation', '#66CCCC'),
-                                  (0.5, 'Med excitation', '#FFCC00'),
-                                  (1.0, 'High excitation', '#CC3300')]:
+    for c_hat, label, color in [
+        (0.2, "Low excitation", "#66CCCC"),
+        (0.5, "Med excitation", "#FFCC00"),
+        (1.0, "High excitation", "#CC3300"),
+    ]:
         drag_approx = c_hat * v_range
-        ax3.plot(v_range, drag_approx, '--', color=color,
-                linewidth=1.5, label=f'Linear fit ({label})')
+        ax3.plot(
+            v_range,
+            drag_approx,
+            "--",
+            color=color,
+            linewidth=1.5,
+            label=f"Linear fit ({label})",
+        )
 
-    ax3.plot(v_range, drag_true, 'k-', linewidth=2.5, label='True: $cv^2$')
-    ax3.set_xlabel('Velocity v (m/s)', fontweight='bold')
-    ax3.set_ylabel('Drag Force', fontweight='bold')
-    ax3.set_title('(c) Model Mismatch Mechanism', fontweight='bold')
-    ax3.legend(fontsize=7, loc='upper left')
+    ax3.plot(v_range, drag_true, "k-", linewidth=2.5, label="True: $cv^2$")
+    ax3.set_xlabel("Velocity v (m/s)", fontweight="bold")
+    ax3.set_ylabel("Drag Force", fontweight="bold")
+    ax3.set_title("(c) Model Mismatch Mechanism", fontweight="bold")
+    ax3.legend(fontsize=7, loc="upper left")
     ax3.grid(True, alpha=0.3)
     ax3.set_xlim([0, 5])
     ax3.set_ylim([0, 3])
@@ -248,8 +275,8 @@ def create_figure(results):
     plt.tight_layout()
 
     # Save
-    plt.savefig(output_dir / 'fig_theoretical_bias.pdf', format='pdf', dpi=300)
-    plt.savefig(output_dir / 'fig_theoretical_bias.png', dpi=300)
+    plt.savefig(output_dir / "fig_theoretical_bias.pdf", format="pdf", dpi=300)
+    plt.savefig(output_dir / "fig_theoretical_bias.png", dpi=300)
     plt.close()
 
     print(f"\nFigure saved to {output_dir / 'fig_theoretical_bias.pdf'}")
@@ -354,7 +381,7 @@ where:
     print(law)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Run the experiment
     results = run_experiment()
 
@@ -368,7 +395,8 @@ if __name__ == '__main__':
     print("\n" + "=" * 70)
     print("DONE: Theoretical analysis complete")
     print("=" * 70)
-    print("""
+    print(
+        """
 This analysis provides:
 
 1. ANALYTICAL DERIVATION of physics-data conflict bias
@@ -385,4 +413,5 @@ This analysis provides:
 
 These additions elevate the paper from:
   "Empirical observation" -> "Theoretical contribution"
-""")
+"""
+    )

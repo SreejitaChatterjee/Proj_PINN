@@ -12,10 +12,11 @@ Example:
             ...
 """
 
-import torch
-import torch.nn as nn
 from abc import ABC, abstractmethod
 from typing import Dict, List, Optional, Tuple
+
+import torch
+import torch.nn as nn
 
 
 class DynamicsPINN(nn.Module, ABC):
@@ -43,8 +44,8 @@ class DynamicsPINN(nn.Module, ABC):
         hidden_size: int = 256,
         num_layers: int = 5,
         dropout: float = 0.1,
-        activation: str = 'tanh',
-        learnable_params: Optional[Dict[str, float]] = None
+        activation: str = "tanh",
+        learnable_params: Optional[Dict[str, float]] = None,
     ):
         super().__init__()
 
@@ -56,9 +57,19 @@ class DynamicsPINN(nn.Module, ABC):
         # Build network
         activation_fn = self._get_activation(activation)
 
-        layers = [nn.Linear(self.input_dim, hidden_size), activation_fn(), nn.Dropout(dropout)]
+        layers = [
+            nn.Linear(self.input_dim, hidden_size),
+            activation_fn(),
+            nn.Dropout(dropout),
+        ]
         for _ in range(num_layers - 2):
-            layers.extend([nn.Linear(hidden_size, hidden_size), activation_fn(), nn.Dropout(dropout)])
+            layers.extend(
+                [
+                    nn.Linear(hidden_size, hidden_size),
+                    activation_fn(),
+                    nn.Dropout(dropout),
+                ]
+            )
         layers.append(nn.Linear(hidden_size, self.output_dim))
 
         self.network = nn.Sequential(*layers)
@@ -73,11 +84,11 @@ class DynamicsPINN(nn.Module, ABC):
     def _get_activation(self, name: str):
         """Get activation function by name."""
         activations = {
-            'tanh': nn.Tanh,
-            'relu': nn.ReLU,
-            'gelu': nn.GELU,
-            'silu': nn.SiLU,
-            'elu': nn.ELU,
+            "tanh": nn.Tanh,
+            "relu": nn.ReLU,
+            "gelu": nn.GELU,
+            "silu": nn.SiLU,
+            "elu": nn.ELU,
         }
         return activations.get(name.lower(), nn.Tanh)
 
@@ -97,7 +108,9 @@ class DynamicsPINN(nn.Module, ABC):
                     self.params[name].clamp_(lo, hi)
 
     @abstractmethod
-    def physics_loss(self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.001) -> torch.Tensor:
+    def physics_loss(
+        self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.001
+    ) -> torch.Tensor:
         """
         Compute physics-informed loss based on governing equations.
 
@@ -153,11 +166,11 @@ class DynamicsPINN(nn.Module, ABC):
 
     def get_state_names(self) -> List[str]:
         """Return names of state variables. Override in subclass."""
-        return [f'x{i}' for i in range(self.state_dim)]
+        return [f"x{i}" for i in range(self.state_dim)]
 
     def get_control_names(self) -> List[str]:
         """Return names of control variables. Override in subclass."""
-        return [f'u{i}' for i in range(self.control_dim)]
+        return [f"u{i}" for i in range(self.control_dim)]
 
     def summary(self) -> str:
         """Return a summary of the model."""
@@ -176,12 +189,13 @@ class DynamicsPINN(nn.Module, ABC):
             for name, param in self.params.items():
                 lines.append(f"    {name}: {param.item():.6g}")
 
-        return '\n'.join(lines)
+        return "\n".join(lines)
 
 
 # =============================================================================
 # Example: Simple Pendulum PINN
 # =============================================================================
+
 
 class PendulumPINN(DynamicsPINN):
     """
@@ -200,19 +214,23 @@ class PendulumPINN(DynamicsPINN):
             hidden_size=hidden_size,
             num_layers=num_layers,
             learnable_params={
-                'g': 9.81,
-                'L': 1.0,
-                'm': 1.0,
+                "g": 9.81,
+                "L": 1.0,
+                "m": 1.0,
+            },
+        )
+
+        self.set_param_bounds(
+            {
+                "g": (9.0, 10.5),
+                "L": (0.5, 2.0),
+                "m": (0.5, 2.0),
             }
         )
 
-        self.set_param_bounds({
-            'g': (9.0, 10.5),
-            'L': (0.5, 2.0),
-            'm': (0.5, 2.0),
-        })
-
-    def physics_loss(self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.01) -> torch.Tensor:
+    def physics_loss(
+        self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.01
+    ) -> torch.Tensor:
         """Enforce pendulum dynamics."""
         # Current state
         theta = inputs[:, 0]
@@ -224,33 +242,31 @@ class PendulumPINN(DynamicsPINN):
         theta_dot_next = outputs[:, 1]
 
         # Physics prediction
-        g, L, m = self.params['g'], self.params['L'], self.params['m']
+        g, L, m = self.params["g"], self.params["L"], self.params["m"]
 
         # theta_ddot = -g/L * sin(theta) + tau / (m * L^2)
-        theta_ddot = -g / L * torch.sin(theta) + tau / (m * L ** 2)
+        theta_ddot = -g / L * torch.sin(theta) + tau / (m * L**2)
 
         # Euler integration
         theta_pred = theta + theta_dot * dt
         theta_dot_pred = theta_dot + theta_ddot * dt
 
         # Loss: predicted vs physics
-        loss = (
-            (theta_next - theta_pred) ** 2 +
-            (theta_dot_next - theta_dot_pred) ** 2
-        ).mean()
+        loss = ((theta_next - theta_pred) ** 2 + (theta_dot_next - theta_dot_pred) ** 2).mean()
 
         return loss
 
     def get_state_names(self) -> List[str]:
-        return ['theta', 'theta_dot']
+        return ["theta", "theta_dot"]
 
     def get_control_names(self) -> List[str]:
-        return ['tau']
+        return ["tau"]
 
 
 # =============================================================================
 # Example: Cart-Pole PINN
 # =============================================================================
+
 
 class CartPolePINN(DynamicsPINN):
     """
@@ -267,17 +283,24 @@ class CartPolePINN(DynamicsPINN):
             hidden_size=hidden_size,
             num_layers=num_layers,
             learnable_params={
-                'g': 9.81,
-                'mc': 1.0,    # cart mass
-                'mp': 0.1,    # pole mass
-                'L': 0.5,     # pole half-length
-            }
+                "g": 9.81,
+                "mc": 1.0,  # cart mass
+                "mp": 0.1,  # pole mass
+                "L": 0.5,  # pole half-length
+            },
         )
 
-    def physics_loss(self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.02) -> torch.Tensor:
+    def physics_loss(
+        self, inputs: torch.Tensor, outputs: torch.Tensor, dt: float = 0.02
+    ) -> torch.Tensor:
         """Enforce cart-pole dynamics."""
         # Current state
-        x, x_dot, theta, theta_dot = inputs[:, 0], inputs[:, 1], inputs[:, 2], inputs[:, 3]
+        x, x_dot, theta, theta_dot = (
+            inputs[:, 0],
+            inputs[:, 1],
+            inputs[:, 2],
+            inputs[:, 3],
+        )
         F = inputs[:, 4]
 
         # Predicted next state
@@ -285,15 +308,15 @@ class CartPolePINN(DynamicsPINN):
         theta_next, theta_dot_next = outputs[:, 2], outputs[:, 3]
 
         # Physics
-        g = self.params['g']
-        mc, mp, L = self.params['mc'], self.params['mp'], self.params['L']
+        g = self.params["g"]
+        mc, mp, L = self.params["mc"], self.params["mp"], self.params["L"]
 
         sin_t, cos_t = torch.sin(theta), torch.cos(theta)
         total_mass = mc + mp
 
         # Cart-pole equations of motion
-        temp = (F + mp * L * theta_dot ** 2 * sin_t) / total_mass
-        theta_ddot = (g * sin_t - cos_t * temp) / (L * (4/3 - mp * cos_t ** 2 / total_mass))
+        temp = (F + mp * L * theta_dot**2 * sin_t) / total_mass
+        theta_ddot = (g * sin_t - cos_t * temp) / (L * (4 / 3 - mp * cos_t**2 / total_mass))
         x_ddot = temp - mp * L * theta_ddot * cos_t / total_mass
 
         # Euler integration
@@ -304,16 +327,16 @@ class CartPolePINN(DynamicsPINN):
 
         # Loss
         loss = (
-            (x_next - x_pred) ** 2 +
-            (x_dot_next - x_dot_pred) ** 2 +
-            (theta_next - theta_pred) ** 2 +
-            (theta_dot_next - theta_dot_pred) ** 2
+            (x_next - x_pred) ** 2
+            + (x_dot_next - x_dot_pred) ** 2
+            + (theta_next - theta_pred) ** 2
+            + (theta_dot_next - theta_dot_pred) ** 2
         ).mean()
 
         return loss
 
     def get_state_names(self) -> List[str]:
-        return ['x', 'x_dot', 'theta', 'theta_dot']
+        return ["x", "x_dot", "theta", "theta_dot"]
 
     def get_control_names(self) -> List[str]:
-        return ['F']
+        return ["F"]

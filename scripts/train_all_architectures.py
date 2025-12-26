@@ -12,27 +12,28 @@ The goal is to validate the claims in the papers about:
 - Failure modes of modular and Fourier architectures
 - Effectiveness of curriculum training
 """
+
+import json
+from datetime import datetime
+from pathlib import Path
+
+import joblib
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import joblib
-import json
-from pathlib import Path
+from pinn_architectures import count_parameters, get_model
 from sklearn.preprocessing import StandardScaler
-from datetime import datetime
-import matplotlib.pyplot as plt
-
-from pinn_architectures import get_model, count_parameters
+from torch.utils.data import DataLoader, TensorDataset
 
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'architecture_comparison'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'architecture_comparison'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "architecture_comparison"
+MODELS_DIR = PROJECT_ROOT / "models" / "architecture_comparison"
 
 # Create directories
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -52,17 +53,17 @@ ENERGY_WEIGHT = 5.0
 def load_data(data_path):
     """Load and prepare data from CSV"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
 
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
@@ -70,17 +71,17 @@ def load_data(data_path):
 def load_trajectories(data_path):
     """Load data organized by trajectory for rollout evaluation"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         states = df_traj[state_cols].values.astype(np.float32)
         controls = df_traj[control_cols].values.astype(np.float32)
-        trajectories.append({'states': states, 'controls': controls, 'traj_id': traj_id})
+        trajectories.append({"states": states, "controls": controls, "traj_id": traj_id})
 
     return trajectories
 
@@ -122,32 +123,34 @@ def autoregressive_rollout(model, initial_state, controls, scaler_X, scaler_y, n
 
 def evaluate_rollout(model, trajectories, scaler_X, scaler_y, n_steps=100):
     """Evaluate autoregressive rollout performance on multiple trajectories"""
-    all_errors = {'position': [], 'attitude': [], 'total': []}
+    all_errors = {"position": [], "attitude": [], "total": []}
 
     for traj in trajectories[:10]:  # Evaluate on first 10 trajectories
-        states = traj['states']
-        controls = traj['controls']
+        states = traj["states"]
+        controls = traj["controls"]
 
         if len(states) < n_steps + 1:
             continue
 
         # Run rollout
         initial_state = states[0]
-        predicted = autoregressive_rollout(model, initial_state, controls, scaler_X, scaler_y, n_steps)
-        true_states = states[:n_steps + 1]
+        predicted = autoregressive_rollout(
+            model, initial_state, controls, scaler_X, scaler_y, n_steps
+        )
+        true_states = states[: n_steps + 1]
 
         # Position error (x, y, z)
-        pos_error = np.mean(np.abs(predicted[:, :3] - true_states[:len(predicted), :3]))
+        pos_error = np.mean(np.abs(predicted[:, :3] - true_states[: len(predicted), :3]))
         # Attitude error (phi, theta, psi)
-        att_error = np.mean(np.abs(predicted[:, 3:6] - true_states[:len(predicted), 3:6]))
+        att_error = np.mean(np.abs(predicted[:, 3:6] - true_states[: len(predicted), 3:6]))
         # Total error
-        total_error = np.mean(np.abs(predicted - true_states[:len(predicted)]))
+        total_error = np.mean(np.abs(predicted - true_states[: len(predicted)]))
 
-        all_errors['position'].append(pos_error)
-        all_errors['attitude'].append(att_error)
-        all_errors['total'].append(total_error)
+        all_errors["position"].append(pos_error)
+        all_errors["attitude"].append(att_error)
+        all_errors["total"].append(total_error)
 
-    return {k: np.mean(v) if v else float('inf') for k, v in all_errors.items()}
+    return {k: np.mean(v) if v else float("inf") for k, v in all_errors.items()}
 
 
 def scheduled_sampling_probability(epoch, max_epochs, final_prob=0.3):
@@ -173,16 +176,24 @@ def curriculum_horizon(epoch):
         return 50
 
 
-def train_standard(model, train_loader, val_loader, scaler_X, scaler_y, model_name, max_epochs=MAX_EPOCHS):
+def train_standard(
+    model,
+    train_loader,
+    val_loader,
+    scaler_X,
+    scaler_y,
+    model_name,
+    max_epochs=MAX_EPOCHS,
+):
     """Standard training without curriculum or scheduled sampling"""
     optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
-    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.5, patience=15)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=15)
 
     y_mean = torch.FloatTensor(scaler_y.mean_)
     y_scale = torch.FloatTensor(scaler_y.scale_)
 
-    history = {'train_loss': [], 'val_loss': [], 'val_physics': []}
-    best_val_loss = float('inf')
+    history = {"train_loss": [], "val_loss": [], "val_physics": []}
+    best_val_loss = float("inf")
     patience_counter = 0
 
     for epoch in range(max_epochs):
@@ -220,7 +231,9 @@ def train_standard(model, train_loader, val_loader, scaler_X, scaler_y, model_na
                 data_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 physics_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
-                val_loss += (data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()) * X_scaled.size(0)
+                val_loss += (
+                    data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()
+                ) * X_scaled.size(0)
                 val_physics += physics_loss.item() * X_scaled.size(0)
 
         val_loss /= len(val_loader.dataset)
@@ -228,14 +241,14 @@ def train_standard(model, train_loader, val_loader, scaler_X, scaler_y, model_na
 
         scheduler.step(val_loss)
 
-        history['train_loss'].append(train_loss)
-        history['val_loss'].append(val_loss)
-        history['val_physics'].append(val_physics)
+        history["train_loss"].append(train_loss)
+        history["val_loss"].append(val_loss)
+        history["val_physics"].append(val_physics)
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODELS_DIR / f'{model_name}.pth')
+            torch.save(model.state_dict(), MODELS_DIR / f"{model_name}.pth")
         else:
             patience_counter += 1
 
@@ -247,12 +260,20 @@ def train_standard(model, train_loader, val_loader, scaler_X, scaler_y, model_na
             break
 
     # Load best model
-    model.load_state_dict(torch.load(MODELS_DIR / f'{model_name}.pth'))
+    model.load_state_dict(torch.load(MODELS_DIR / f"{model_name}.pth"))
     return history
 
 
-def train_curriculum(model, train_loader, val_loader, val_trajectories, scaler_X, scaler_y,
-                     model_name, max_epochs=MAX_EPOCHS):
+def train_curriculum(
+    model,
+    train_loader,
+    val_loader,
+    val_trajectories,
+    scaler_X,
+    scaler_y,
+    model_name,
+    max_epochs=MAX_EPOCHS,
+):
     """
     Curriculum training with scheduled sampling - OUR METHOD
 
@@ -269,8 +290,14 @@ def train_curriculum(model, train_loader, val_loader, val_trajectories, scaler_X
     x_mean = torch.FloatTensor(scaler_X.mean_)
     x_scale = torch.FloatTensor(scaler_X.scale_)
 
-    history = {'train_loss': [], 'val_loss': [], 'val_physics': [], 'rollout_error': [], 'horizon': []}
-    best_val_loss = float('inf')
+    history = {
+        "train_loss": [],
+        "val_loss": [],
+        "val_physics": [],
+        "rollout_error": [],
+        "horizon": [],
+    }
+    best_val_loss = float("inf")
     patience_counter = 0
 
     for epoch in range(max_epochs):
@@ -329,7 +356,9 @@ def train_curriculum(model, train_loader, val_loader, val_trajectories, scaler_X
                 data_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 physics_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
-                val_loss += (data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()) * X_scaled.size(0)
+                val_loss += (
+                    data_loss.item() + PHYSICS_WEIGHT * physics_loss.item()
+                ) * X_scaled.size(0)
                 val_physics += physics_loss.item() * X_scaled.size(0)
 
         val_loss /= len(val_loader.dataset)
@@ -338,35 +367,39 @@ def train_curriculum(model, train_loader, val_loader, val_trajectories, scaler_X
         # Evaluate rollout performance periodically
         rollout_error = 0
         if epoch % 20 == 0:
-            rollout_metrics = evaluate_rollout(model, val_trajectories, scaler_X, scaler_y, n_steps=100)
-            rollout_error = rollout_metrics['position']
+            rollout_metrics = evaluate_rollout(
+                model, val_trajectories, scaler_X, scaler_y, n_steps=100
+            )
+            rollout_error = rollout_metrics["position"]
 
         if epoch < max_epochs - 30:
             scheduler.step()
 
-        history['train_loss'].append(train_loss)
-        history['val_loss'].append(val_loss)
-        history['val_physics'].append(val_physics)
-        history['rollout_error'].append(rollout_error)
-        history['horizon'].append(horizon)
+        history["train_loss"].append(train_loss)
+        history["val_loss"].append(val_loss)
+        history["val_physics"].append(val_physics)
+        history["rollout_error"].append(rollout_error)
+        history["horizon"].append(horizon)
 
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODELS_DIR / f'{model_name}.pth')
+            torch.save(model.state_dict(), MODELS_DIR / f"{model_name}.pth")
         else:
             patience_counter += 1
 
         if epoch % 20 == 0:
-            print(f"  Epoch {epoch:3d}: train={train_loss:.6f}, val={val_loss:.6f}, "
-                  f"horizon={horizon}, ss_prob={ss_prob:.2f}, rollout_pos={rollout_error:.4f}")
+            print(
+                f"  Epoch {epoch:3d}: train={train_loss:.6f}, val={val_loss:.6f}, "
+                f"horizon={horizon}, ss_prob={ss_prob:.2f}, rollout_pos={rollout_error:.4f}"
+            )
 
         if patience_counter >= EARLY_STOP_PATIENCE:
             print(f"  Early stopping at epoch {epoch}")
             break
 
     # Load best model
-    model.load_state_dict(torch.load(MODELS_DIR / f'{model_name}.pth'))
+    model.load_state_dict(torch.load(MODELS_DIR / f"{model_name}.pth"))
     return history
 
 
@@ -390,14 +423,27 @@ def evaluate_single_step(model, val_loader, scaler_y):
     all_true = np.concatenate(all_true)
 
     # Calculate MAE for each state
-    state_names = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_names = [
+        "x",
+        "y",
+        "z",
+        "phi",
+        "theta",
+        "psi",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
     results = {}
     for i, name in enumerate(state_names):
         results[name] = np.mean(np.abs(all_preds[:, i] - all_true[:, i]))
 
-    results['z_mae'] = results['z']
-    results['phi_mae'] = results['phi']
-    results['total_mae'] = np.mean(np.abs(all_preds - all_true))
+    results["z_mae"] = results["z"]
+    results["phi_mae"] = results["phi"]
+    results["total_mae"] = np.mean(np.abs(all_preds - all_true))
 
     return results
 
@@ -407,17 +453,19 @@ def get_learned_parameters(model):
     params = {}
     for name, param in model.params.items():
         params[name] = {
-            'learned': param.item(),
-            'true': model.true_params[name],
-            'error_pct': abs(param.item() - model.true_params[name]) / model.true_params[name] * 100
+            "learned": param.item(),
+            "true": model.true_params[name],
+            "error_pct": abs(param.item() - model.true_params[name])
+            / model.true_params[name]
+            * 100,
         }
     return params
 
 
 def main():
-    print("="*80)
+    print("=" * 80)
     print("ARCHITECTURE COMPARISON EXPERIMENTS")
-    print("="*80)
+    print("=" * 80)
     print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     # Load data
@@ -443,24 +491,24 @@ def main():
         torch.FloatTensor(X_train_scaled),
         torch.FloatTensor(y_train_scaled),
         torch.FloatTensor(X_train),
-        torch.FloatTensor(y_train)
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
         torch.FloatTensor(X_val_scaled),
         torch.FloatTensor(y_val_scaled),
         torch.FloatTensor(X_val),
-        torch.FloatTensor(y_val)
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
     # Save scalers
-    joblib.dump({'scaler_X': scaler_X, 'scaler_y': scaler_y}, MODELS_DIR / 'scalers.pkl')
+    joblib.dump({"scaler_X": scaler_X, "scaler_y": scaler_y}, MODELS_DIR / "scalers.pkl")
 
     # Train all architectures
     results = {}
-    architectures = ['baseline', 'modular', 'fourier', 'curriculum']
+    architectures = ["baseline", "modular", "fourier", "curriculum"]
 
     print("\n[3/5] Training all architectures...")
     for arch in architectures:
@@ -468,81 +516,95 @@ def main():
         print(f"Training {arch.upper()} architecture")
         print(f"{'='*60}")
 
-        model = get_model(arch, dropout=0.3 if arch == 'curriculum' else 0.1)
+        model = get_model(arch, dropout=0.3 if arch == "curriculum" else 0.1)
         n_params = count_parameters(model)
         print(f"  Parameters: {n_params:,}")
 
-        if arch == 'curriculum':
-            history = train_curriculum(model, train_loader, val_loader, val_trajectories,
-                                       scaler_X, scaler_y, arch)
+        if arch == "curriculum":
+            history = train_curriculum(
+                model,
+                train_loader,
+                val_loader,
+                val_trajectories,
+                scaler_X,
+                scaler_y,
+                arch,
+            )
         else:
             history = train_standard(model, train_loader, val_loader, scaler_X, scaler_y, arch)
 
-        results[arch] = {
-            'history': history,
-            'n_params': n_params
-        }
+        results[arch] = {"history": history, "n_params": n_params}
 
     # Evaluate all models
     print("\n[4/5] Evaluating all architectures...")
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("RESULTS SUMMARY")
-    print("="*80)
+    print("=" * 80)
 
     comparison_table = {
-        'Model': [],
-        '1-Step z MAE': [],
-        '1-Step phi MAE': [],
-        '100-Step z MAE': [],
-        '100-Step phi MAE': [],
-        'Mass Error %': [],
-        'Jxx Error %': []
+        "Model": [],
+        "1-Step z MAE": [],
+        "1-Step phi MAE": [],
+        "100-Step z MAE": [],
+        "100-Step phi MAE": [],
+        "Mass Error %": [],
+        "Jxx Error %": [],
     }
 
     for arch in architectures:
         print(f"\n{arch.upper()}:")
 
         # Load trained model
-        model = get_model(arch, dropout=0.3 if arch == 'curriculum' else 0.1)
-        model.load_state_dict(torch.load(MODELS_DIR / f'{arch}.pth'))
+        model = get_model(arch, dropout=0.3 if arch == "curriculum" else 0.1)
+        model.load_state_dict(torch.load(MODELS_DIR / f"{arch}.pth"))
 
         # Single-step evaluation
         single_step = evaluate_single_step(model, val_loader, scaler_y)
-        print(f"  Single-step MAE: z={single_step['z_mae']:.6f}m, phi={single_step['phi_mae']:.6f}rad")
+        print(
+            f"  Single-step MAE: z={single_step['z_mae']:.6f}m, phi={single_step['phi_mae']:.6f}rad"
+        )
 
         # Multi-step rollout evaluation
         rollout_metrics = evaluate_rollout(model, val_trajectories, scaler_X, scaler_y, n_steps=100)
-        print(f"  100-step MAE: pos={rollout_metrics['position']:.4f}m, att={rollout_metrics['attitude']:.4f}rad")
+        print(
+            f"  100-step MAE: pos={rollout_metrics['position']:.4f}m, att={rollout_metrics['attitude']:.4f}rad"
+        )
 
         # Parameter identification
         params = get_learned_parameters(model)
-        print(f"  Parameters: m={params['m']['error_pct']:.1f}%, Jxx={params['Jxx']['error_pct']:.1f}%")
+        print(
+            f"  Parameters: m={params['m']['error_pct']:.1f}%, Jxx={params['Jxx']['error_pct']:.1f}%"
+        )
 
         # Store results
-        results[arch]['single_step'] = single_step
-        results[arch]['rollout'] = rollout_metrics
-        results[arch]['parameters'] = params
+        results[arch]["single_step"] = single_step
+        results[arch]["rollout"] = rollout_metrics
+        results[arch]["parameters"] = params
 
         # Add to comparison table
-        comparison_table['Model'].append(arch.capitalize())
-        comparison_table['1-Step z MAE'].append(single_step['z_mae'])
-        comparison_table['1-Step phi MAE'].append(single_step['phi_mae'])
-        comparison_table['100-Step z MAE'].append(rollout_metrics['position'])
-        comparison_table['100-Step phi MAE'].append(rollout_metrics['attitude'])
-        comparison_table['Mass Error %'].append(params['m']['error_pct'])
-        comparison_table['Jxx Error %'].append(params['Jxx']['error_pct'])
+        comparison_table["Model"].append(arch.capitalize())
+        comparison_table["1-Step z MAE"].append(single_step["z_mae"])
+        comparison_table["1-Step phi MAE"].append(single_step["phi_mae"])
+        comparison_table["100-Step z MAE"].append(rollout_metrics["position"])
+        comparison_table["100-Step phi MAE"].append(rollout_metrics["attitude"])
+        comparison_table["Mass Error %"].append(params["m"]["error_pct"])
+        comparison_table["Jxx Error %"].append(params["Jxx"]["error_pct"])
 
     # Print comparison table
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("COMPARISON TABLE (for paper)")
-    print("="*80)
-    print(f"{'Model':<12} {'1-Step z':<12} {'1-Step phi':<12} {'100-Step z':<12} {'100-Step phi':<12}")
-    print("-"*60)
-    for i, model in enumerate(comparison_table['Model']):
-        print(f"{model:<12} {comparison_table['1-Step z MAE'][i]:<12.4f} "
-              f"{comparison_table['1-Step phi MAE'][i]:<12.6f} "
-              f"{comparison_table['100-Step z MAE'][i]:<12.4f} "
-              f"{comparison_table['100-Step phi MAE'][i]:<12.4f}")
+    print("=" * 80)
+    print(
+        f"{'Model':<12} {'1-Step z':<12} {'1-Step phi':<12} {'100-Step z':<12} {'100-Step phi':<12}"
+    )
+    print("-" * 60)
+    for i, model in enumerate(comparison_table["Model"]):
+        print(
+            f"{model:<12} {comparison_table['1-Step z MAE'][i]:<12.4f} "
+            f"{comparison_table['1-Step phi MAE'][i]:<12.6f} "
+            f"{comparison_table['100-Step z MAE'][i]:<12.4f} "
+            f"{comparison_table['100-Step phi MAE'][i]:<12.4f}"
+        )
 
     # Save results
     print("\n[5/5] Saving results...")
@@ -563,19 +625,19 @@ def main():
 
     results_serializable = convert_to_serializable(results)
 
-    with open(RESULTS_DIR / 'architecture_comparison_results.json', 'w') as f:
+    with open(RESULTS_DIR / "architecture_comparison_results.json", "w") as f:
         json.dump(results_serializable, f, indent=2)
 
     print(f"\nResults saved to: {RESULTS_DIR}")
     print(f"Models saved to: {MODELS_DIR}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("EXPERIMENT COMPLETE")
-    print("="*80)
+    print("=" * 80)
     print(f"Finished: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

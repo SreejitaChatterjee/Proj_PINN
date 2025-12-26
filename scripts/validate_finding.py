@@ -8,27 +8,28 @@ This implements the quick intuition checklist:
 4. Compute gradient norms for both loss components
 """
 
-import torch
-import torch.nn as nn
+import json
+import sys
+from pathlib import Path
+
+import joblib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import joblib
-import json
-from pathlib import Path
-from torch.utils.data import DataLoader, TensorDataset
+import torch
+import torch.nn as nn
 from sklearn.preprocessing import StandardScaler
-import matplotlib.pyplot as plt
-import sys
+from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.append(str(Path(__file__).parent))
 from pinn_architectures import BaselinePINN, ModularPINN, PhysicsLossMixin
 from run_comprehensive_ablations import PureNNBaseline, load_data, load_trajectories
 
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'comprehensive_ablation'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'validation'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+MODELS_DIR = PROJECT_ROOT / "models" / "comprehensive_ablation"
+RESULTS_DIR = PROJECT_ROOT / "results" / "validation"
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -41,7 +42,7 @@ def compute_supervised_loss_only(model, data_loader, scaler_y):
     with torch.no_grad():
         for X_scaled, y_scaled, X_unscaled, y_unscaled in data_loader:
             y_pred_scaled = model(X_scaled)
-            loss = nn.MSELoss(reduction='sum')(y_pred_scaled, y_scaled)
+            loss = nn.MSELoss(reduction="sum")(y_pred_scaled, y_scaled)
             total_loss += loss.item()
             n_samples += X_scaled.size(0)
 
@@ -50,7 +51,7 @@ def compute_supervised_loss_only(model, data_loader, scaler_y):
 
 def compute_physics_residual(model, data_loader, scaler_y):
     """Compute physics residual magnitude"""
-    if not hasattr(model, 'physics_loss'):
+    if not hasattr(model, "physics_loss"):
         return None, None
 
     model.eval()
@@ -90,7 +91,7 @@ def compute_gradient_norms(model, X_scaled, y_scaled, X_unscaled, y_unscaled, sc
 
     # Physics loss gradient (if applicable)
     physics_grad_norm = None
-    if hasattr(model, 'physics_loss'):
+    if hasattr(model, "physics_loss"):
         model.zero_grad()
         y_pred_scaled = model(X_scaled)
         y_pred_unscaled = y_pred_scaled * y_scale + y_mean
@@ -161,9 +162,9 @@ def compute_jacobian_spectral_norm(model, x, scaler_X, scaler_y, n_power_iter=10
 
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("VALIDATION OF COUNTER-INTUITIVE PINN FINDING")
-    print("="*70)
+    print("=" * 70)
 
     # Load data
     print("\n[1] Loading data...")
@@ -181,13 +182,13 @@ def main():
         torch.FloatTensor(X_train_scaled),
         torch.FloatTensor(y_train_scaled),
         torch.FloatTensor(X_train),
-        torch.FloatTensor(y_train)
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
         torch.FloatTensor(X_val_scaled),
         torch.FloatTensor(y_val_scaled),
         torch.FloatTensor(X_val),
-        torch.FloatTensor(y_val)
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=512, shuffle=False)
@@ -196,36 +197,36 @@ def main():
     # Load models
     print("\n[2] Loading models...")
     purenn = PureNNBaseline()
-    purenn.load_state_dict(torch.load(MODELS_DIR / 'PureNN_seed42.pth', map_location='cpu'))
+    purenn.load_state_dict(torch.load(MODELS_DIR / "PureNN_seed42.pth", map_location="cpu"))
 
     pinn = BaselinePINN()
-    pinn.load_state_dict(torch.load(MODELS_DIR / 'PINN_Baseline_seed42.pth', map_location='cpu'))
+    pinn.load_state_dict(torch.load(MODELS_DIR / "PINN_Baseline_seed42.pth", map_location="cpu"))
 
     modular = ModularPINN()
-    modular.load_state_dict(torch.load(MODELS_DIR / 'Modular_72K_seed42.pth', map_location='cpu'))
+    modular.load_state_dict(torch.load(MODELS_DIR / "Modular_72K_seed42.pth", map_location="cpu"))
 
-    models = {'PureNN': purenn, 'PINN': pinn, 'Modular': modular}
+    models = {"PureNN": purenn, "PINN": pinn, "Modular": modular}
 
     # ========================================================================
     # CHECK 1: Compare supervised loss ONLY
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CHECK 1: SUPERVISED LOSS COMPARISON (no physics)")
-    print("="*70)
+    print("=" * 70)
     print("\nIf PINN has HIGHER supervised loss, it's underfitting due to physics loss.")
-    print("-"*70)
+    print("-" * 70)
     print(f"{'Model':<15} {'Train Sup Loss':<18} {'Val Sup Loss':<18}")
-    print("-"*70)
+    print("-" * 70)
 
     results = {}
     for name, model in models.items():
         train_sup_loss = compute_supervised_loss_only(model, train_loader, scaler_y)
         val_sup_loss = compute_supervised_loss_only(model, val_loader, scaler_y)
-        results[name] = {'train_sup_loss': train_sup_loss, 'val_sup_loss': val_sup_loss}
+        results[name] = {"train_sup_loss": train_sup_loss, "val_sup_loss": val_sup_loss}
         print(f"{name:<15} {train_sup_loss:<18.6f} {val_sup_loss:<18.6f}")
 
     # Check if PINN underfits
-    ratio = results['PINN']['val_sup_loss'] / results['PureNN']['val_sup_loss']
+    ratio = results["PINN"]["val_sup_loss"] / results["PureNN"]["val_sup_loss"]
     print(f"\nPINN/PureNN supervised loss ratio: {ratio:.2f}x")
     if ratio > 1.1:
         print("WARNING: PINN has >10% higher supervised loss - may be underfitting!")
@@ -235,32 +236,32 @@ def main():
     # ========================================================================
     # CHECK 2: Physics residual magnitude
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CHECK 2: PHYSICS RESIDUAL MAGNITUDE")
-    print("="*70)
+    print("=" * 70)
     print("\nShould decrease during training if physics loss is working.")
-    print("-"*70)
+    print("-" * 70)
 
     for name, model in models.items():
-        if hasattr(model, 'physics_loss'):
+        if hasattr(model, "physics_loss"):
             mean_res, std_res = compute_physics_residual(model, val_loader, scaler_y)
             print(f"{name}: Physics residual = {mean_res:.6f} +/- {std_res:.6f}")
-            results[name]['physics_residual'] = mean_res
+            results[name]["physics_residual"] = mean_res
 
     # ========================================================================
     # CHECK 3: Gradient norms
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CHECK 3: GRADIENT NORM COMPARISON")
-    print("="*70)
+    print("=" * 70)
     print("\nIf physics grad >> supervised grad, physics loss dominates optimization.")
-    print("-"*70)
+    print("-" * 70)
 
     # Get a batch for gradient computation
     X_batch, y_batch, X_unscaled, y_unscaled = next(iter(train_loader))
 
     print(f"{'Model':<15} {'Sup Grad Norm':<18} {'Phys Grad Norm':<18} {'Ratio':<10}")
-    print("-"*70)
+    print("-" * 70)
 
     for name, model in models.items():
         model.train()  # Enable gradients
@@ -269,26 +270,26 @@ def main():
         )
 
         if phys_norm is not None:
-            ratio = phys_norm / sup_norm if sup_norm > 0 else float('inf')
+            ratio = phys_norm / sup_norm if sup_norm > 0 else float("inf")
             print(f"{name:<15} {sup_norm:<18.4f} {phys_norm:<18.4f} {ratio:<10.2f}")
-            results[name]['sup_grad_norm'] = sup_norm
-            results[name]['phys_grad_norm'] = phys_norm
-            results[name]['grad_ratio'] = ratio
+            results[name]["sup_grad_norm"] = sup_norm
+            results[name]["phys_grad_norm"] = phys_norm
+            results[name]["grad_ratio"] = ratio
 
             if ratio > 5:
                 print(f"  WARNING: Physics gradients dominate by {ratio:.1f}x!")
         else:
             print(f"{name:<15} {sup_norm:<18.4f} {'N/A':<18} {'N/A':<10}")
-            results[name]['sup_grad_norm'] = sup_norm
+            results[name]["sup_grad_norm"] = sup_norm
 
     # ========================================================================
     # CHECK 4: Jacobian spectral norms (sample)
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("CHECK 4: JACOBIAN SPECTRAL NORM (sample of 50 states)")
-    print("="*70)
+    print("=" * 70)
     print("\nIf PINN sigma_max > 1 but PureNN sigma_max <= 1, physics loss causes instability.")
-    print("-"*70)
+    print("-" * 70)
 
     n_samples = 50
     sample_indices = np.random.choice(len(X_val), n_samples, replace=False)
@@ -305,29 +306,29 @@ def main():
         p95_sigma = np.percentile(sigmas, 95)
 
         print(f"{name}: mean={mean_sigma:.3f}, p95={p95_sigma:.3f}, max={max_sigma:.3f}")
-        results[name]['sigma_mean'] = mean_sigma
-        results[name]['sigma_max'] = max_sigma
-        results[name]['sigma_p95'] = p95_sigma
+        results[name]["sigma_mean"] = mean_sigma
+        results[name]["sigma_max"] = max_sigma
+        results[name]["sigma_p95"] = p95_sigma
 
     # ========================================================================
     # SUMMARY AND DIAGNOSIS
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("DIAGNOSIS SUMMARY")
-    print("="*70)
+    print("=" * 70)
 
     issues = []
 
     # Check 1: Supervised loss
-    if results['PINN']['val_sup_loss'] > results['PureNN']['val_sup_loss'] * 1.1:
+    if results["PINN"]["val_sup_loss"] > results["PureNN"]["val_sup_loss"] * 1.1:
         issues.append("PINN underfits supervised loss (>10% higher than PureNN)")
 
     # Check 2: Gradient dominance
-    if 'grad_ratio' in results['PINN'] and results['PINN']['grad_ratio'] > 5:
+    if "grad_ratio" in results["PINN"] and results["PINN"]["grad_ratio"] > 5:
         issues.append(f"Physics gradients dominate by {results['PINN']['grad_ratio']:.1f}x")
 
     # Check 3: Spectral norm
-    if results['PINN']['sigma_max'] > 1.0 and results['PureNN']['sigma_max'] <= 1.0:
+    if results["PINN"]["sigma_max"] > 1.0 and results["PureNN"]["sigma_max"] <= 1.0:
         issues.append("PINN sigma_max > 1 while PureNN <= 1 (physics loss increases Lipschitz)")
 
     if issues:
@@ -346,7 +347,7 @@ def main():
         print("The counter-intuitive finding appears robust.")
 
     # Save results
-    with open(RESULTS_DIR / 'validation_results.json', 'w') as f:
+    with open(RESULTS_DIR / "validation_results.json", "w") as f:
         # Convert numpy types
         def convert(obj):
             if isinstance(obj, (np.float32, np.float64)):
@@ -354,6 +355,7 @@ def main():
             elif isinstance(obj, dict):
                 return {k: convert(v) for k, v in obj.items()}
             return obj
+
         json.dump(convert(results), f, indent=2)
 
     print(f"\nResults saved to: {RESULTS_DIR / 'validation_results.json'}")
@@ -361,5 +363,5 @@ def main():
     return results
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     results = main()

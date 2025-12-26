@@ -4,9 +4,9 @@ Unit tests for PINN models.
 Run: pytest tests/ -v
 """
 
+import numpy as np
 import pytest
 import torch
-import numpy as np
 
 
 class TestDynamicsPINN:
@@ -70,13 +70,13 @@ class TestDynamicsPINN:
 
         model = PendulumPINN()
 
-        assert 'g' in model.params
-        assert 'L' in model.params
-        assert 'm' in model.params
+        assert "g" in model.params
+        assert "L" in model.params
+        assert "m" in model.params
 
         # Check they're trainable
-        assert model.params['g'].requires_grad
-        assert model.params['L'].requires_grad
+        assert model.params["g"].requires_grad
+        assert model.params["L"].requires_grad
 
     def test_param_bounds(self):
         """Test parameter clamping."""
@@ -86,12 +86,12 @@ class TestDynamicsPINN:
 
         # Set param outside bounds
         with torch.no_grad():
-            model.params['g'].fill_(100.0)
+            model.params["g"].fill_(100.0)
 
         model.constrain_parameters()
 
         # Should be clamped to upper bound (10.5)
-        assert model.params['g'].item() <= 10.5
+        assert model.params["g"].item() <= 10.5
 
 
 class TestQuadrotorPINN:
@@ -138,8 +138,8 @@ class TestQuadrotorPINN:
 
         assert len(states) == 12
         assert len(controls) == 4
-        assert 'x' in states
-        assert 'thrust' in controls
+        assert "x" in states
+        assert "thrust" in controls
 
     def test_summary(self):
         """Test model summary."""
@@ -148,8 +148,8 @@ class TestQuadrotorPINN:
         model = QuadrotorPINN()
         summary = model.summary()
 
-        assert 'QuadrotorPINN' in summary
-        assert 'State dim: 12' in summary
+        assert "QuadrotorPINN" in summary
+        assert "State dim: 12" in summary
 
 
 class TestRollout:
@@ -208,8 +208,8 @@ class TestGradients:
         loss.backward()
 
         # Check learnable params have gradients
-        assert model.params['g'].grad is not None
+        assert model.params["g"].grad is not None
 
 
-if __name__ == '__main__':
-    pytest.main([__file__, '-v'])
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

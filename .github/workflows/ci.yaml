@@ -29,10 +29,10 @@ jobs:
         run: black --check --diff scripts/ tests/
 
       - name: Check imports with isort
-        run: isort --check-only --diff scripts/ tests/
+        run: isort --check-only --diff --profile black scripts/ tests/
 
       - name: Lint with flake8
-        run: flake8 scripts/ tests/ --max-line-length=100 --ignore=E501,W503
+        run: flake8 scripts/ tests/
 
   # ============================================
   # Unit Tests

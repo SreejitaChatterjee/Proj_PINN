@@ -15,25 +15,37 @@ Usage:
 """
 
 import argparse
+import json
+import pickle
+import time
+from collections import defaultdict
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import pickle
-import json
-from collections import defaultdict
-import time
 
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Import PINN framework (install with: pip install -e .)
+try:
+    from pinn_dynamics.security.baselines import (
+        Chi2Detector,
+        IsolationForestDetector,
+        KalmanResidualDetector,
+        LSTMAutoencoder,
+        OneClassSVMDetector,
+    )
+except ImportError:
+    import sys
 
-from pinn_dynamics.security.baselines import (
-    KalmanResidualDetector,
-    LSTMAutoencoder,
-    Chi2Detector,
-    IsolationForestDetector,
-    OneClassSVMDetector
-)
-from pinn_dynamics.security.evaluation import DetectionEvaluator, BenchmarkSuite
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+    from pinn_dynamics.security.baselines import (
+        KalmanResidualDetector,
+        LSTMAutoencoder,
+        Chi2Detector,
+        IsolationForestDetector,
+        OneClassSVMDetector,
+    )
+
+from pinn_dynamics.security.evaluation import BenchmarkSuite, DetectionEvaluator
 
 
 def load_fault_scenarios(data_dir: Path):
@@ -50,12 +62,8 @@ def load_fault_scenarios(data_dir: Path):
         if len(df) == 0:
             continue
 
-        fault_type = df['fault_type'].iloc[0]
-        scenarios[fault_type].append({
-            'name': csv_file.stem,
-            'data': df,
-            'fault_type': fault_type
-        })
+        fault_type = df["fault_type"].iloc[0]
+        scenarios[fault_type].append({"name": csv_file.stem, "data": df, "fault_type": fault_type})
 
     print(f"Loaded fault scenarios:")
     for fault_type, flights in scenarios.items():
@@ -66,8 +74,8 @@ def load_fault_scenarios(data_dir: Path):
 
 def prepare_training_data(data_dir: Path):
     """Prepare training data from normal flights."""
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     normal_flights = []
     for csv_file in data_dir.glob("*no_failure*.csv"):
@@ -89,21 +97,21 @@ def prepare_training_data(data_dir: Path):
 
 def prepare_test_data(df: pd.DataFrame):
     """Convert dataframe to test format."""
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     states = df[state_cols].values[:-1]
     controls = df[control_cols].values[:-1]
     next_states = df[state_cols].values[1:]
-    labels = df['label'].values[:-1]
-    timestamps = df['timestamp'].values[:-1]
+    labels = df["label"].values[:-1]
+    timestamps = df["timestamp"].values[:-1]
 
     return states, controls, next_states, labels, timestamps
 
 
 def evaluate_detector(detector, scenario, threshold=None):
     """Evaluate a detector on a single scenario."""
-    df = scenario['data']
+    df = scenario["data"]
     states, controls, next_states, labels, timestamps = prepare_test_data(df)
 
     # Detect anomalies
@@ -134,7 +142,7 @@ def evaluate_detector(detector, scenario, threshold=None):
     return metrics, scores, threshold
 
 
-def tune_threshold_on_validation(detector, val_scenarios, metric='f1'):
+def tune_threshold_on_validation(detector, val_scenarios, metric="f1"):
     """Tune threshold on validation set."""
     print(f"  Tuning threshold...")
 
@@ -142,7 +150,7 @@ def tune_threshold_on_validation(detector, val_scenarios, metric='f1'):
     all_labels = []
 
     for scenario in val_scenarios[:5]:  # Use first 5 flights for tuning
-        df = scenario['data']
+        df = scenario["data"]
         states, controls, next_states, labels, _ = prepare_test_data(df)
 
         scores = []
@@ -173,7 +181,7 @@ def tune_threshold_on_validation(detector, val_scenarios, metric='f1'):
         recall = TP / (TP + FN) if (TP + FN) > 0 else 0
         f1 = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0
 
-        if metric == 'f1' and f1 > best_metric_value:
+        if metric == "f1" and f1 > best_metric_value:
             best_metric_value = f1
             best_threshold = thresh
 
@@ -222,37 +230,37 @@ def main():
     print("\n[3.1/5] Kalman Filter Residuals")
     kalman = KalmanResidualDetector(state_dim=12, control_dim=4)
     kalman.fit(states_train, controls_train, next_states_train)
-    detectors['Kalman'] = kalman
+    detectors["Kalman"] = kalman
 
     # 2. Chi-squared (no training needed, just compute covariance)
     print("\n[3.2/5] Chi-squared Test")
     chi2 = Chi2Detector(state_dim=12, control_dim=4)
     chi2.fit(states_train, controls_train, next_states_train)
-    detectors['Chi2'] = chi2
+    detectors["Chi2"] = chi2
 
     # 3. LSTM Autoencoder
     print("\n[3.3/5] LSTM Autoencoder")
     print("  Training LSTM (this may take a while)...")
     lstm = LSTMAutoencoder(state_dim=12, control_dim=4, hidden_size=64, num_layers=2)
     lstm.fit(states_train, controls_train, next_states_train, epochs=50, batch_size=32)
-    detectors['LSTM'] = lstm
+    detectors["LSTM"] = lstm
 
     # 4. Isolation Forest
     print("\n[3.4/5] Isolation Forest")
     iforest = IsolationForestDetector(contamination=0.1)
     iforest.fit(states_train, controls_train, next_states_train)
-    detectors['IForest'] = iforest
+    detectors["IForest"] = iforest
 
     # 5. One-Class SVM
     print("\n[3.5/5] One-Class SVM")
     print("  Training SVM (this may take a while)...")
-    svm = OneClassSVMDetector(nu=0.1, kernel='rbf')
+    svm = OneClassSVMDetector(nu=0.1, kernel="rbf")
     svm.fit(states_train, controls_train, next_states_train)
-    detectors['SVM'] = svm
+    detectors["SVM"] = svm
 
     # Save trained models
-    models_path = output_dir / 'trained_baselines.pkl'
-    with open(models_path, 'wb') as f:
+    models_path = output_dir / "trained_baselines.pkl"
+    with open(models_path, "wb") as f:
         pickle.dump(detectors, f)
     print(f"\n  Saved trained models: {models_path}")
 
@@ -278,39 +286,49 @@ def main():
 
             for flight in flights:
                 metrics, scores, _ = evaluate_detector(detector, flight, threshold)
-                results_by_method[method_name].append({
-                    'flight': flight['name'],
-                    'fault_type': fault_type,
-                    **metrics.to_dict()
-                })
+                results_by_method[method_name].append(
+                    {
+                        "flight": flight["name"],
+                        "fault_type": fault_type,
+                        **metrics.to_dict(),
+                    }
+                )
 
         # Compute average metrics
         avg_metrics = {
-            'accuracy': np.mean([r['accuracy'] for r in results_by_method[method_name]]),
-            'precision': np.mean([r['precision'] for r in results_by_method[method_name]]),
-            'recall': np.mean([r['recall'] for r in results_by_method[method_name]]),
-            'f1': np.mean([r['f1'] for r in results_by_method[method_name]]),
-            'fpr': np.mean([r['fpr'] for r in results_by_method[method_name]]),
-            'mean_inference_time': np.mean([r['mean_inference_time'] for r in results_by_method[method_name]]),
+            "accuracy": np.mean([r["accuracy"] for r in results_by_method[method_name]]),
+            "precision": np.mean([r["precision"] for r in results_by_method[method_name]]),
+            "recall": np.mean([r["recall"] for r in results_by_method[method_name]]),
+            "f1": np.mean([r["f1"] for r in results_by_method[method_name]]),
+            "fpr": np.mean([r["fpr"] for r in results_by_method[method_name]]),
+            "mean_inference_time": np.mean(
+                [r["mean_inference_time"] for r in results_by_method[method_name]]
+            ),
         }
 
-        print(f"    Average F1: {avg_metrics['f1']:.3f}, "
-              f"Precision: {avg_metrics['precision']:.3f}, "
-              f"Recall: {avg_metrics['recall']:.3f}")
+        print(
+            f"    Average F1: {avg_metrics['f1']:.3f}, "
+            f"Precision: {avg_metrics['precision']:.3f}, "
+            f"Recall: {avg_metrics['recall']:.3f}"
+        )
 
         # Add to benchmark suite
         from pinn_dynamics.security.evaluation import DetectionMetrics
+
         avg_metrics_obj = DetectionMetrics(
-            accuracy=avg_metrics['accuracy'],
-            precision=avg_metrics['precision'],
-            recall=avg_metrics['recall'],
-            f1=avg_metrics['f1'],
-            fpr=avg_metrics['fpr'],
-            tpr=avg_metrics['recall'],
-            specificity=1 - avg_metrics['fpr'],
-            balanced_accuracy=(avg_metrics['recall'] + (1 - avg_metrics['fpr'])) / 2,
-            TP=0, TN=0, FP=0, FN=0,  # Aggregated, so individual counts not meaningful
-            mean_inference_time=avg_metrics['mean_inference_time']
+            accuracy=avg_metrics["accuracy"],
+            precision=avg_metrics["precision"],
+            recall=avg_metrics["recall"],
+            f1=avg_metrics["f1"],
+            fpr=avg_metrics["fpr"],
+            tpr=avg_metrics["recall"],
+            specificity=1 - avg_metrics["fpr"],
+            balanced_accuracy=(avg_metrics["recall"] + (1 - avg_metrics["fpr"])) / 2,
+            TP=0,
+            TN=0,
+            FP=0,
+            FN=0,  # Aggregated, so individual counts not meaningful
+            mean_inference_time=avg_metrics["mean_inference_time"],
         )
         benchmark.add_result(method_name, avg_metrics_obj)
 

@@ -6,17 +6,18 @@ Redesign tables for IEEE format - make them concise, professional, and readable.
 import re
 from pathlib import Path
 
+
 def redesign_ieee_tables(input_file, output_file):
     """Redesign tables to be concise and IEEE-appropriate."""
 
-    with open(input_file, 'r', encoding='utf-8') as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
 
     # Strategy: Replace verbose tables with compact, professional IEEE tables
     # Use normalsize font and increased row spacing for readability
 
     # Replace Phase 1 table
-    phase1_replacement = r'''\subsection{Phase 1: Data Generation \& Preparation}
+    phase1_replacement = r"""\subsection{Phase 1: Data Generation \& Preparation}
 
 \begin{table*}[!t]
 \centering
@@ -37,13 +38,13 @@ def redesign_ieee_tables(input_file, output_file):
 \end{table*}
 
 \textit{Note: PID tracking achieves transient response <0.5s.}
-'''
+"""
 
-    phase1_pattern = r'\\subsection\{Phase 1: Data Generation.*?\\textit\{Note:.*?\}'
+    phase1_pattern = r"\\subsection\{Phase 1: Data Generation.*?\\textit\{Note:.*?\}"
     content = re.sub(phase1_pattern, phase1_replacement, content, flags=re.DOTALL)
 
     # Replace Phase 2 table
-    phase2_replacement = r'''\subsection{Phase 2: PINN Architecture Development}
+    phase2_replacement = r"""\subsection{Phase 2: PINN Architecture Development}
 
 \begin{table*}[!t]
 \centering
@@ -62,13 +63,13 @@ def redesign_ieee_tables(input_file, output_file):
 \bottomrule
 \end{tabular}
 \end{table*}
-'''
+"""
 
-    phase2_pattern = r'\\subsection\{Phase 2: PINN Architecture Development\}.*?\\end\{table\*\}'
+    phase2_pattern = r"\\subsection\{Phase 2: PINN Architecture Development\}.*?\\end\{table\*\}"
     content = re.sub(phase2_pattern, phase2_replacement, content, flags=re.DOTALL)
 
     # Replace Phase 3 table
-    phase3_replacement = r'''\subsection{Phase 3: Model Evolution \& Optimization}
+    phase3_replacement = r"""\subsection{Phase 3: Model Evolution \& Optimization}
 
 \begin{table*}[!t]
 \centering
@@ -88,13 +89,13 @@ def redesign_ieee_tables(input_file, output_file):
 \bottomrule
 \end{tabular}
 \end{table*}
-'''
+"""
 
-    phase3_pattern = r'\\subsection\{Phase 3: Model Evolution.*?\\end\{table\*\}'
+    phase3_pattern = r"\\subsection\{Phase 3: Model Evolution.*?\\end\{table\*\}"
     content = re.sub(phase3_pattern, phase3_replacement, content, flags=re.DOTALL)
 
     # Replace Phase 4 table
-    phase4_replacement = r'''\subsection{Phase 4: Comprehensive Evaluation}
+    phase4_replacement = r"""\subsection{Phase 4: Comprehensive Evaluation}
 
 \begin{table*}[!t]
 \centering
@@ -113,13 +114,13 @@ def redesign_ieee_tables(input_file, output_file):
 \bottomrule
 \end{tabular}
 \end{table*}
-'''
+"""
 
-    phase4_pattern = r'\\subsection\{Phase 4: Comprehensive Evaluation\}.*?\\end\{table\*\}'
+    phase4_pattern = r"\\subsection\{Phase 4: Comprehensive Evaluation\}.*?\\end\{table\*\}"
     content = re.sub(phase4_pattern, phase4_replacement, content, flags=re.DOTALL)
 
     # Replace Phase 5 table
-    phase5_replacement = r'''\subsection{Phase 5: Results Visualization \& Documentation}
+    phase5_replacement = r"""\subsection{Phase 5: Results Visualization \& Documentation}
 
 \begin{table*}[!t]
 \centering
@@ -138,12 +139,12 @@ def redesign_ieee_tables(input_file, output_file):
 \bottomrule
 \end{tabular}
 \end{table*}
-'''
+"""
 
-    phase5_pattern = r'\\subsection\{Phase 5: Results Visualization.*?\\end\{table\*\}'
+    phase5_pattern = r"\\subsection\{Phase 5: Results Visualization.*?\\end\{table\*\}"
     content = re.sub(phase5_pattern, phase5_replacement, content, flags=re.DOTALL)
 
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         f.write(content)
 
     print(f"[OK] Redesigned tables for IEEE format")
@@ -151,14 +152,15 @@ def redesign_ieee_tables(input_file, output_file):
     print(f"[OK] All tables use table* (span both columns)")
     print(f"[OK] Normal font size with 1.4x row spacing for readability")
 
+
 def main():
     PROJECT_ROOT = Path(__file__).parent.parent
-    input_file = PROJECT_ROOT / 'reports' / 'quadrotor_pinn_report_IEEE.tex'
-    output_file = PROJECT_ROOT / 'reports' / 'quadrotor_pinn_report_IEEE_redesigned.tex'
+    input_file = PROJECT_ROOT / "reports" / "quadrotor_pinn_report_IEEE.tex"
+    output_file = PROJECT_ROOT / "reports" / "quadrotor_pinn_report_IEEE_redesigned.tex"
 
-    print("="*80)
+    print("=" * 80)
     print("REDESIGNING TABLES FOR IEEE FORMAT")
-    print("="*80)
+    print("=" * 80)
     print("\nImprovements:")
     print("  - Compact two-column spanning tables (table*)")
     print("  - Normal font size (readable)")
@@ -170,12 +172,14 @@ def main():
 
     # Replace original with redesigned version
     import shutil
+
     shutil.move(str(output_file), str(input_file))
     print(f"[OK] Updated {input_file.name}")
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("TABLE REDESIGN COMPLETE")
-    print("="*80)
+    print("=" * 80)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

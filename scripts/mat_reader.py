@@ -11,12 +11,13 @@ Usage:
     python mat_reader.py ../data/quad_failure/m1.mat
 """
 
-from pymatreader import read_mat
-from tabulate import tabulate
+import os
+import sys
+
 import numpy as np
 import pandas as pd
-import sys
-import os
+from pymatreader import read_mat
+from tabulate import tabulate
 
 
 def display_mat_contents(mat_data, max_rows=10):
@@ -47,9 +48,14 @@ def display_mat_contents(mat_data, max_rows=10):
 
         # Case 2: Dictionary / MATLAB struct
         elif isinstance(value, dict):
-            table = [[k, str(type(v).__name__),
-                     v.shape if isinstance(v, np.ndarray) else "N/A"]
-                    for k, v in value.items()]
+            table = [
+                [
+                    k,
+                    str(type(v).__name__),
+                    v.shape if isinstance(v, np.ndarray) else "N/A",
+                ]
+                for k, v in value.items()
+            ]
             print(tabulate(table, headers=["Field", "Type", "Shape"], tablefmt="grid"))
 
         # Case 3: Scalar or other type
@@ -74,8 +80,8 @@ def extract_timeseries(mat_data):
     Returns a DataFrame with time, states, and controls if available.
     """
     # Common variable names in quadrotor data
-    possible_time = ['t', 'time', 'Time', 'timestamp']
-    possible_states = ['x', 'state', 'states', 'X', 'pos', 'position']
+    possible_time = ["t", "time", "Time", "timestamp"]
+    possible_states = ["x", "state", "states", "X", "pos", "position"]
 
     result = {}
 
@@ -105,19 +111,19 @@ if __name__ == "__main__":
     print(f"Loading: {mat_file_path}")
     mat_data = read_mat(mat_file_path)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("STRUCTURE OVERVIEW")
-    print("="*60)
+    print("=" * 60)
     print_dict_recursive(mat_data)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("DETAILED CONTENTS")
-    print("="*60)
+    print("=" * 60)
     display_mat_contents(mat_data)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("EXTRACTED TIME SERIES")
-    print("="*60)
+    print("=" * 60)
     extracted = extract_timeseries(mat_data)
     for name, arr in extracted.items():
         print(f"  {name}: shape={arr.shape}")

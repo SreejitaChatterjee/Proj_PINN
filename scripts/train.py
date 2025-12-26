@@ -1,27 +1,49 @@
 """Unified training script for quadrotor PINN"""
+
+from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
 import torch
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import joblib
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
-from pathlib import Path
 from pinn_model import QuadrotorPINN
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
+
 
 class Trainer:
-    def __init__(self, model, device='cpu', lr=0.001):
+    def __init__(self, model, device="cpu", lr=0.001):
         self.model = model.to(device)
         self.device = device
         self.optimizer = optim.Adam(model.parameters(), lr=lr)
-        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(self.optimizer, mode='min',
-                                                               factor=0.5, patience=20)
+        self.scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            self.optimizer, mode="min", factor=0.5, patience=20
+        )
         self.criterion = torch.nn.MSELoss()
-        self.history = {'train': [], 'val': [], 'physics': [], 'temporal': [], 'stability': [], 'reg': [], 'energy': []}
+        self.history = {
+            "train": [],
+            "val": [],
+            "physics": [],
+            "temporal": [],
+            "stability": [],
+            "reg": [],
+            "energy": [],
+        }
 
-    def train_epoch(self, loader, weights={'physics': 10.0, 'temporal': 20.0, 'stability': 5.0, 'reg': 1.0, 'energy': 5.0},
-                    scheduled_sampling_prob=0.0):
+    def train_epoch(
+        self,
+        loader,
+        weights={
+            "physics": 10.0,
+            "temporal": 20.0,
+            "stability": 5.0,
+            "reg": 1.0,
+            "energy": 5.0,
+        },
+        scheduled_sampling_prob=0.0,
+    ):
         """
         Train for one epoch with scheduled sampling.
 
@@ -29,7 +51,14 @@ class Trainer:
                                 increases over training to improve autoregressive performance
         """
         self.model.train()
-        losses = {'total': 0, 'physics': 0, 'temporal': 0, 'stability': 0, 'reg': 0, 'energy': 0}
+        losses = {
+            "total": 0,
+            "physics": 0,
+            "temporal": 0,
+            "stability": 0,
+            "reg": 0,
+            "energy": 0,
+        }
 
         for data, target in loader:
             data, target = data.to(self.device), target.to(self.device)
@@ -52,26 +81,28 @@ class Trainer:
             energy_loss = self.model.energy_conservation_loss(data, output)
 
             # Rebalanced: reduced physics (20->10), increased temporal (15->20), added stability + energy
-            loss = (data_loss +
-                    weights['physics']*physics_loss +
-                    weights['temporal']*temporal_loss +
-                    weights['stability']*stability_loss +
-                    weights['reg']*reg_loss +
-                    weights['energy']*energy_loss)
+            loss = (
+                data_loss
+                + weights["physics"] * physics_loss
+                + weights["temporal"] * temporal_loss
+                + weights["stability"] * stability_loss
+                + weights["reg"] * reg_loss
+                + weights["energy"] * energy_loss
+            )
 
             loss.backward()
             torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
             self.optimizer.step()
             self.model.constrain_parameters()
 
-            losses['total'] += loss.item()
-            losses['physics'] += physics_loss.item()
-            losses['temporal'] += temporal_loss.item()
-            losses['stability'] += stability_loss.item()
-            losses['reg'] += reg_loss.item()
-            losses['energy'] += energy_loss.item()
+            losses["total"] += loss.item()
+            losses["physics"] += physics_loss.item()
+            losses["temporal"] += temporal_loss.item()
+            losses["stability"] += stability_loss.item()
+            losses["reg"] += reg_loss.item()
+            losses["energy"] += energy_loss.item()
 
-        return {k: v/len(loader) for k, v in losses.items()}
+        return {k: v / len(loader) for k, v in losses.items()}
 
     def validate(self, loader):
         self.model.eval()
@@ -83,7 +114,13 @@ class Trainer:
         return total_loss / len(loader)
 
     def train(self, train_loader, val_loader, epochs=250, weights=None):
-        weights = weights or {'physics': 10.0, 'temporal': 12.0, 'stability': 5.0, 'reg': 1.0, 'energy': 5.0}
+        weights = weights or {
+            "physics": 10.0,
+            "temporal": 12.0,
+            "stability": 5.0,
+            "reg": 1.0,
+            "energy": 5.0,
+        }
         print(f"Training for {epochs} epochs with IMPROVED architecture:")
         print(f"  - Model: 256 neurons, 5 layers, dropout=0.1")
         print(f"  - Loss weights: {weights}")
@@ -102,15 +139,23 @@ class Trainer:
             self.scheduler.step(val_loss)
 
             for k in self.history:
-                self.history[k].append(val_loss if k == 'val' else losses.get(k.replace('train', 'total'), 0))
+                self.history[k].append(
+                    val_loss if k == "val" else losses.get(k.replace("train", "total"), 0)
+                )
 
             if epoch % 10 == 0:
-                print(f"Epoch {epoch:03d}: Train={losses['total']:.4f}, Val={val_loss:.6f}, "
-                      f"Physics={losses['physics']:.4f}, Temporal={losses['temporal']:.4f}, "
-                      f"Stability={losses['stability']:.4f}, Energy={losses['energy']:.4f}, "
-                      f"Reg={losses['reg']:.4f}, SS_prob={scheduled_sampling_prob:.2f}")
+                print(
+                    f"Epoch {epoch:03d}: Train={losses['total']:.4f}, Val={val_loss:.6f}, "
+                    f"Physics={losses['physics']:.4f}, Temporal={losses['temporal']:.4f}, "
+                    f"Stability={losses['stability']:.4f}, Energy={losses['energy']:.4f}, "
+                    f"Reg={losses['reg']:.4f}, SS_prob={scheduled_sampling_prob:.2f}"
+                )
                 if epoch % 30 == 0:
-                    print(f"  Params: " + ", ".join(f"{k}={v.item():.2e}" for k, v in self.model.params.items()))
+                    print(
+                        f"  Params: "
+                        + ", ".join(f"{k}={v.item():.2e}" for k, v in self.model.params.items())
+                    )
+
 
 def create_sequences(traj_data, seq_len=10):
     """
@@ -131,7 +176,7 @@ def create_sequences(traj_data, seq_len=10):
     for i in range(T - 1):
         # State sequence: states from (i-seq_len+1) to i (inclusive)
         start_idx = max(0, i - seq_len + 1)
-        state_window = traj_data[start_idx:i+1, :12]  # Get states only (12 states)
+        state_window = traj_data[start_idx : i + 1, :12]  # Get states only (12 states)
 
         # Pad with first state if at trajectory start
         if len(state_window) < seq_len:
@@ -140,9 +185,10 @@ def create_sequences(traj_data, seq_len=10):
 
         X_seq.append(state_window)
         X_ctrl.append(traj_data[i, 12:])  # Current controls (last 4 dims)
-        y.append(traj_data[i+1, :12])  # Next state (first 12 dims)
+        y.append(traj_data[i + 1, :12])  # Next state (first 12 dims)
 
     return np.array(X_seq), np.array(X_ctrl), np.array(y)
+
 
 def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
     """
@@ -162,37 +208,68 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
     """
     df = pd.read_csv(csv_path)
     # Rename columns to match expected names (data generator uses roll/pitch/yaw)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
     # Full 12-state model: positions (x,y,z), attitudes (phi,theta,psi), rates (p,q,r), velocities (vx,vy,vz)
-    features = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz', 'thrust', 'torque_x', 'torque_y', 'torque_z']
+    features = [
+        "x",
+        "y",
+        "z",
+        "phi",
+        "theta",
+        "psi",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+        "thrust",
+        "torque_x",
+        "torque_y",
+        "torque_z",
+    ]
 
     if not use_sequences:
         # Original single-timestep preparation
         X, y = [], []
-        for traj_id in df['trajectory_id'].unique():
-            traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
+        for traj_id in df["trajectory_id"].unique():
+            traj = df[df["trajectory_id"] == traj_id].sort_values("timestamp")
             traj_data = traj[features].values
             X.append(traj_data[:-1])  # All but last
             y.append(traj_data[1:, :12])  # All but first, only first 12 features (states)
 
         X, y = np.vstack(X), np.vstack(y)
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=42)
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.2, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=test_size, random_state=42
+        )
+        X_train, X_val, y_train, y_val = train_test_split(
+            X_train, y_train, test_size=0.2, random_state=42
+        )
 
         scaler_X, scaler_y = StandardScaler(), StandardScaler()
         X_train, y_train = scaler_X.fit_transform(X_train), scaler_y.fit_transform(y_train)
         X_val, y_val = scaler_X.transform(X_val), scaler_y.transform(y_val)
 
-        return (DataLoader(TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)), batch_size=64, shuffle=True),
-                DataLoader(TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)), batch_size=64),
-                scaler_X, scaler_y)
+        return (
+            DataLoader(
+                TensorDataset(torch.FloatTensor(X_train), torch.FloatTensor(y_train)),
+                batch_size=64,
+                shuffle=True,
+            ),
+            DataLoader(
+                TensorDataset(torch.FloatTensor(X_val), torch.FloatTensor(y_val)),
+                batch_size=64,
+            ),
+            scaler_X,
+            scaler_y,
+        )
 
     else:
         # Sequence-based preparation for hybrid PINN+LSTM
         X_seq_all, X_ctrl_all, y_all = [], [], []
 
-        for traj_id in df['trajectory_id'].unique():
-            traj = df[df['trajectory_id'] == traj_id].sort_values('timestamp')
+        for traj_id in df["trajectory_id"].unique():
+            traj = df[df["trajectory_id"] == traj_id].sort_values("timestamp")
             traj_data = traj[features].values
 
             X_seq, X_ctrl, y = create_sequences(traj_data, seq_len)
@@ -209,8 +286,16 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
         train_idx, test_idx = train_test_split(indices, test_size=test_size, random_state=42)
         train_idx, val_idx = train_test_split(train_idx, test_size=0.2, random_state=42)
 
-        X_seq_train, X_ctrl_train, y_train = X_seq_all[train_idx], X_ctrl_all[train_idx], y_all[train_idx]
-        X_seq_val, X_ctrl_val, y_val = X_seq_all[val_idx], X_ctrl_all[val_idx], y_all[val_idx]
+        X_seq_train, X_ctrl_train, y_train = (
+            X_seq_all[train_idx],
+            X_ctrl_all[train_idx],
+            y_all[train_idx],
+        )
+        X_seq_val, X_ctrl_val, y_val = (
+            X_seq_all[val_idx],
+            X_ctrl_all[val_idx],
+            y_all[val_idx],
+        )
 
         # Normalize: fit scalers on flattened training data
         scaler_seq = StandardScaler()
@@ -221,11 +306,15 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
         N_train, seq_len_dim, state_dim = X_seq_train.shape
         X_seq_train_flat = X_seq_train.reshape(-1, state_dim)
         scaler_seq.fit(X_seq_train_flat)
-        X_seq_train_scaled = scaler_seq.transform(X_seq_train_flat).reshape(N_train, seq_len_dim, state_dim)
+        X_seq_train_scaled = scaler_seq.transform(X_seq_train_flat).reshape(
+            N_train, seq_len_dim, state_dim
+        )
 
         N_val = X_seq_val.shape[0]
         X_seq_val_flat = X_seq_val.reshape(-1, state_dim)
-        X_seq_val_scaled = scaler_seq.transform(X_seq_val_flat).reshape(N_val, seq_len_dim, state_dim)
+        X_seq_val_scaled = scaler_seq.transform(X_seq_val_flat).reshape(
+            N_val, seq_len_dim, state_dim
+        )
 
         # Scale controls and targets
         X_ctrl_train = scaler_ctrl.fit_transform(X_ctrl_train)
@@ -234,10 +323,14 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
         y_val = scaler_y.transform(y_val)
 
         # Create DataLoaders with tuple datasets (seq, ctrl, target)
-        train_dataset = [(torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
-                         for seq, ctrl, tgt in zip(X_seq_train_scaled, X_ctrl_train, y_train)]
-        val_dataset = [(torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
-                       for seq, ctrl, tgt in zip(X_seq_val_scaled, X_ctrl_val, y_val)]
+        train_dataset = [
+            (torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
+            for seq, ctrl, tgt in zip(X_seq_train_scaled, X_ctrl_train, y_train)
+        ]
+        val_dataset = [
+            (torch.FloatTensor(seq), torch.FloatTensor(ctrl), torch.FloatTensor(tgt))
+            for seq, ctrl, tgt in zip(X_seq_val_scaled, X_ctrl_val, y_val)
+        ]
 
         # Custom collate function to handle tuple data
         def collate_fn(batch):
@@ -251,26 +344,29 @@ def prepare_data(csv_path, test_size=0.2, use_sequences=False, seq_len=10):
 
         return train_loader, val_loader, scaler_seq, scaler_ctrl, scaler_y
 
+
 if __name__ == "__main__":
-    data_path = Path(__file__).parent.parent / 'data' / 'quadrotor_training_data.csv'
+    data_path = Path(__file__).parent.parent / "data" / "quadrotor_training_data.csv"
     train_loader, val_loader, scaler_X, scaler_y = prepare_data(data_path)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
     model = QuadrotorPINN()  # Now: 256 neurons, 5 layers, dropout
     trainer = Trainer(model, device)
     trainer.train(train_loader, val_loader, epochs=250)
 
-    save_path = Path(__file__).parent.parent / 'models' / 'quadrotor_pinn.pth'
+    save_path = Path(__file__).parent.parent / "models" / "quadrotor_pinn.pth"
     save_path.parent.mkdir(exist_ok=True)
     torch.save(model.state_dict(), save_path)
 
     # Save scalers for evaluation
-    scaler_path = save_path.parent / 'scalers.pkl'
-    joblib.dump({'scaler_X': scaler_X, 'scaler_y': scaler_y}, scaler_path)
+    scaler_path = save_path.parent / "scalers.pkl"
+    joblib.dump({"scaler_X": scaler_X, "scaler_y": scaler_y}, scaler_path)
 
     print(f"\nModel saved to {save_path}")
     print(f"Scalers saved to {scaler_path}")
     print("\nFinal parameters:")
     for k, v in model.params.items():
-        print(f"{k}: {v.item():.6e} (true: {model.true_params[k]:.6e}, error: {abs(v.item()-model.true_params[k])/model.true_params[k]*100:.1f}%)")
+        print(
+            f"{k}: {v.item():.6e} (true: {model.true_params[k]:.6e}, error: {abs(v.item()-model.true_params[k])/model.true_params[k]*100:.1f}%)"
+        )

@@ -10,11 +10,12 @@ Output: CSV files compatible with existing PINN data loaders
 """
 
 import argparse
-import pandas as pd
-import numpy as np
-from pathlib import Path
-from typing import Tuple, Optional
 import json
+from pathlib import Path
+from typing import Optional, Tuple
+
+import numpy as np
+import pandas as pd
 
 
 def extract_state_from_imu_gps(
@@ -35,56 +36,73 @@ def extract_state_from_imu_gps(
     """
     # Synchronize timestamps (nearest neighbor)
     merged = pd.merge_asof(
-        gps_data.sort_values('timestamp'),
-        imu_data.sort_values('timestamp'),
-        on='timestamp',
-        direction='nearest',
-        tolerance=0.05  # 50ms tolerance
+        gps_data.sort_values("timestamp"),
+        imu_data.sort_values("timestamp"),
+        on="timestamp",
+        direction="nearest",
+        tolerance=0.05,  # 50ms tolerance
     )
 
     # Convert GPS (lat/lon) to local frame (meters)
     # Simple ENU conversion (good enough for local flights)
-    lat0, lon0 = merged['lat'].iloc[0], merged['lon'].iloc[0]
+    lat0, lon0 = merged["lat"].iloc[0], merged["lon"].iloc[0]
     R_earth = 6371000  # meters
 
-    merged['x'] = (merged['lon'] - lon0) * np.cos(np.deg2rad(lat0)) * R_earth
-    merged['y'] = (merged['lat'] - lat0) * R_earth
-    merged['z'] = merged['alt'] - merged['alt'].iloc[0]
+    merged["x"] = (merged["lon"] - lon0) * np.cos(np.deg2rad(lat0)) * R_earth
+    merged["y"] = (merged["lat"] - lat0) * R_earth
+    merged["z"] = merged["alt"] - merged["alt"].iloc[0]
 
     # Angular rates from gyro (already body frame)
-    merged['p'] = merged['gx']
-    merged['q'] = merged['gy']
-    merged['r'] = merged['gz']
+    merged["p"] = merged["gx"]
+    merged["q"] = merged["gy"]
+    merged["r"] = merged["gz"]
 
     # Estimate attitude from accelerometer (static assumption)
     # phi (roll) from ay, theta (pitch) from ax
     g = 9.81
-    merged['phi'] = np.arctan2(merged['ay'], merged['az'])
-    merged['theta'] = np.arctan2(-merged['ax'], np.sqrt(merged['ay']**2 + merged['az']**2))
+    merged["phi"] = np.arctan2(merged["ay"], merged["az"])
+    merged["theta"] = np.arctan2(-merged["ax"], np.sqrt(merged["ay"] ** 2 + merged["az"] ** 2))
 
     # Yaw from magnetometer (if available)
     if mag_data is not None:
         mag_merged = pd.merge_asof(
-            merged, mag_data.sort_values('timestamp'),
-            on='timestamp', direction='nearest', tolerance=0.05
+            merged,
+            mag_data.sort_values("timestamp"),
+            on="timestamp",
+            direction="nearest",
+            tolerance=0.05,
         )
         # Simple 2D magnetometer heading
-        mag_merged['psi'] = np.arctan2(mag_merged['my'], mag_merged['mx'])
+        mag_merged["psi"] = np.arctan2(mag_merged["my"], mag_merged["mx"])
         merged = mag_merged
     else:
         # Integrate gyro yaw (drift alert!)
-        dt = merged['timestamp'].diff().fillna(0)
-        merged['psi'] = (merged['r'] * dt).cumsum()
+        dt = merged["timestamp"].diff().fillna(0)
+        merged["psi"] = (merged["r"] * dt).cumsum()
 
     # Velocity from GPS (already in NED/ENU)
     # Note: May need body-to-inertial rotation
     # For now, assume GPS velocity is in body frame (common for UAV datasets)
-    merged['vx'] = merged.get('vx', 0)
-    merged['vy'] = merged.get('vy', 0)
-    merged['vz'] = merged.get('vz', 0)
+    merged["vx"] = merged.get("vx", 0)
+    merged["vy"] = merged.get("vy", 0)
+    merged["vz"] = merged.get("vz", 0)
 
     # Select final state vector
-    state_columns = ['timestamp', 'x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_columns = [
+        "timestamp",
+        "x",
+        "y",
+        "z",
+        "phi",
+        "theta",
+        "psi",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
     return merged[state_columns]
 
 
@@ -102,11 +120,11 @@ def add_attack_labels(
     Returns:
         DataFrame with added 'label' column (0=normal, 1=attack)
     """
-    state_df['label'] = 0  # Default: normal
+    state_df["label"] = 0  # Default: normal
 
     for start, end in attack_intervals:
-        mask = (state_df['timestamp'] >= start) & (state_df['timestamp'] <= end)
-        state_df.loc[mask, 'label'] = 1
+        mask = (state_df["timestamp"] >= start) & (state_df["timestamp"] <= end)
+        state_df.loc[mask, "label"] = 1
 
     return state_df
 
@@ -125,23 +143,24 @@ def synthesize_controls(state_df: pd.DataFrame) -> pd.DataFrame:
         DataFrame with added control columns
     """
     # Simple finite difference for derivatives
-    dt = state_df['timestamp'].diff().fillna(0.01)
+    dt = state_df["timestamp"].diff().fillna(0.01)
 
     # Estimate thrust from vertical acceleration
-    dvz_dt = state_df['vz'].diff() / dt
+    dvz_dt = state_df["vz"].diff() / dt
     m_est = 0.068  # kg (typical quadrotor)
     g = 9.81
-    state_df['thrust'] = m_est * (dvz_dt + g)
+    state_df["thrust"] = m_est * (dvz_dt + g)
 
     # Estimate torques from angular accelerations
-    J_est = {'xx': 6.86e-5, 'yy': 9.2e-5, 'zz': 1.366e-4}
-    state_df['torque_x'] = J_est['xx'] * state_df['p'].diff() / dt
-    state_df['torque_y'] = J_est['yy'] * state_df['q'].diff() / dt
-    state_df['torque_z'] = J_est['zz'] * state_df['r'].diff() / dt
+    J_est = {"xx": 6.86e-5, "yy": 9.2e-5, "zz": 1.366e-4}
+    state_df["torque_x"] = J_est["xx"] * state_df["p"].diff() / dt
+    state_df["torque_y"] = J_est["yy"] * state_df["q"].diff() / dt
+    state_df["torque_z"] = J_est["zz"] * state_df["r"].diff() / dt
 
     # Fill NaNs (first row)
-    state_df[['thrust', 'torque_x', 'torque_y', 'torque_z']] = \
-        state_df[['thrust', 'torque_x', 'torque_y', 'torque_z']].fillna(0)
+    state_df[["thrust", "torque_x", "torque_y", "torque_z"]] = state_df[
+        ["thrust", "torque_x", "torque_y", "torque_z"]
+    ].fillna(0)
 
     return state_df
 
@@ -177,10 +196,10 @@ def process_drone_fusion_dataset(input_dir: Path, output_dir: Path):
         if attack_meta.exists():
             with open(attack_meta) as f:
                 attack_info = json.load(f)
-                attack_intervals = attack_info.get('intervals', [])
+                attack_intervals = attack_info.get("intervals", [])
         else:
             # Assume second half is attack (common in datasets)
-            total_time = state_df['timestamp'].max()
+            total_time = state_df["timestamp"].max()
             attack_intervals = [(total_time / 2, total_time)]
 
         # Add labels
@@ -197,12 +216,14 @@ def process_drone_fusion_dataset(input_dir: Path, output_dir: Path):
         # Save metadata
         meta = {
             "scenario": scenario.name,
-            "attack_type": attack_info.get('type', 'unknown') if attack_meta.exists() else 'unknown',
+            "attack_type": (
+                attack_info.get("type", "unknown") if attack_meta.exists() else "unknown"
+            ),
             "attack_intervals": attack_intervals,
             "n_samples": len(state_df),
-            "attack_ratio": state_df['label'].mean(),
+            "attack_ratio": state_df["label"].mean(),
         }
-        with open(output_dir / f"{scenario.name}_meta.json", 'w') as f:
+        with open(output_dir / f"{scenario.name}_meta.json", "w") as f:
             json.dump(meta, f, indent=2)
 
 

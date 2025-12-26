@@ -10,27 +10,28 @@ For each, measure:
 - Jacobian spectral norm (L_phi)
 """
 
+import json
+import sys
+from datetime import datetime
+from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-import pandas as pd
-import numpy as np
-import joblib
-import json
-from pathlib import Path
 from sklearn.preprocessing import StandardScaler
-from datetime import datetime
-import sys
+from torch.utils.data import DataLoader, TensorDataset
 
 sys.path.append(str(Path(__file__).parent))
 from pinn_architectures import BaselinePINN, ModularPINN
 
 PROJECT_ROOT = Path(__file__).parent.parent
-TRAIN_DATA = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_DATA = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-RESULTS_DIR = PROJECT_ROOT / 'results' / 'weight_sweep'
-MODELS_DIR = PROJECT_ROOT / 'models' / 'weight_sweep'
+TRAIN_DATA = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_DATA = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+RESULTS_DIR = PROJECT_ROOT / "results" / "weight_sweep"
+MODELS_DIR = PROJECT_ROOT / "models" / "weight_sweep"
 
 RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
@@ -51,17 +52,17 @@ SEEDS = [42, 123, 456]  # 3 seeds for statistics
 def load_data(data_path):
     """Load data from CSV"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    input_features = state_cols + ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    input_features = state_cols + ["thrust", "torque_x", "torque_y", "torque_z"]
 
     X, y = [], []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         for i in range(len(df_traj) - 1):
             X.append(df_traj.iloc[i][input_features].values)
-            y.append(df_traj.iloc[i+1][state_cols].values)
+            y.append(df_traj.iloc[i + 1][state_cols].values)
 
     return np.array(X, dtype=np.float32), np.array(y, dtype=np.float32)
 
@@ -69,23 +70,22 @@ def load_data(data_path):
 def load_trajectories(data_path):
     """Load trajectories for rollout evaluation"""
     df = pd.read_csv(data_path)
-    df = df.rename(columns={'roll': 'phi', 'pitch': 'theta', 'yaw': 'psi'})
+    df = df.rename(columns={"roll": "phi", "pitch": "theta", "yaw": "psi"})
 
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     trajectories = []
-    for traj_id in df['trajectory_id'].unique():
-        df_traj = df[df['trajectory_id'] == traj_id].reset_index(drop=True)
+    for traj_id in df["trajectory_id"].unique():
+        df_traj = df[df["trajectory_id"] == traj_id].reset_index(drop=True)
         states = df_traj[state_cols].values.astype(np.float32)
         controls = df_traj[control_cols].values.astype(np.float32)
-        trajectories.append({'states': states, 'controls': controls})
+        trajectories.append({"states": states, "controls": controls})
 
     return trajectories
 
 
-def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
-                               w_phys, seed, model_name):
+def train_with_physics_weight(model, train_loader, val_loader, scaler_y, w_phys, seed, model_name):
     """Train model with specific physics weight"""
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -96,9 +96,9 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
     y_mean = torch.FloatTensor(scaler_y.mean_)
     y_scale = torch.FloatTensor(scaler_y.scale_)
 
-    best_val_sup_loss = float('inf')
+    best_val_sup_loss = float("inf")
     patience_counter = 0
-    history = {'train_sup': [], 'train_phys': [], 'val_sup': [], 'val_phys': []}
+    history = {"train_sup": [], "train_phys": [], "val_sup": [], "val_phys": []}
 
     for epoch in range(MAX_EPOCHS):
         # Training
@@ -115,7 +115,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
             loss = sup_loss
 
             # Add physics loss if w_phys > 0 and model supports it
-            if w_phys > 0 and hasattr(model, 'physics_loss'):
+            if w_phys > 0 and hasattr(model, "physics_loss"):
                 y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                 phys_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
                 loss = sup_loss + w_phys * phys_loss
@@ -125,7 +125,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
             torch.nn.utils.clip_grad_norm_(model.parameters(), GRADIENT_CLIP)
             optimizer.step()
 
-            if hasattr(model, 'constrain_parameters'):
+            if hasattr(model, "constrain_parameters"):
                 model.constrain_parameters()
 
             train_sup_loss += sup_loss.item() * X_scaled.size(0)
@@ -144,7 +144,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
                 y_pred_scaled = model(X_scaled)
                 sup_loss = nn.MSELoss()(y_pred_scaled, y_scaled)
 
-                if w_phys > 0 and hasattr(model, 'physics_loss'):
+                if w_phys > 0 and hasattr(model, "physics_loss"):
                     y_pred_unscaled = y_pred_scaled * y_scale + y_mean
                     phys_loss = model.physics_loss(X_unscaled, y_pred_unscaled)
                     val_phys_loss += phys_loss.item() * X_scaled.size(0)
@@ -158,15 +158,15 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
         # Use SUPERVISED loss for scheduler and early stopping
         scheduler.step(val_sup_loss)
 
-        history['train_sup'].append(train_sup_loss)
-        history['train_phys'].append(train_phys_loss)
-        history['val_sup'].append(val_sup_loss)
-        history['val_phys'].append(val_phys_loss)
+        history["train_sup"].append(train_sup_loss)
+        history["train_phys"].append(train_phys_loss)
+        history["val_sup"].append(val_sup_loss)
+        history["val_phys"].append(val_phys_loss)
 
         if val_sup_loss < best_val_sup_loss:
             best_val_sup_loss = val_sup_loss
             patience_counter = 0
-            torch.save(model.state_dict(), MODELS_DIR / f'{model_name}_w{w_phys}_s{seed}.pth')
+            torch.save(model.state_dict(), MODELS_DIR / f"{model_name}_w{w_phys}_s{seed}.pth")
         else:
             patience_counter += 1
 
@@ -178,7 +178,7 @@ def train_with_physics_weight(model, train_loader, val_loader, scaler_y,
             break
 
     # Load best model
-    model.load_state_dict(torch.load(MODELS_DIR / f'{model_name}_w{w_phys}_s{seed}.pth'))
+    model.load_state_dict(torch.load(MODELS_DIR / f"{model_name}_w{w_phys}_s{seed}.pth"))
     return model, history
 
 
@@ -235,9 +235,9 @@ def compute_jacobian_spectral_norm(model, X_sample, scaler_X, n_samples=100, n_i
         sigmas.append(max_ratio)
 
     return {
-        'mean': np.mean(sigmas),
-        'p95': np.percentile(sigmas, 95),
-        'max': np.max(sigmas)
+        "mean": np.mean(sigmas),
+        "p95": np.percentile(sigmas, 95),
+        "max": np.max(sigmas),
     }
 
 
@@ -265,31 +265,31 @@ def evaluate_model(model, val_loader, val_trajectories, scaler_X, scaler_y, X_va
     # Rollout
     pos_errors = []
     for traj in val_trajectories[:10]:
-        states, controls = traj['states'], traj['controls']
+        states, controls = traj["states"], traj["controls"]
         if len(states) < 101:
             continue
         predicted = autoregressive_rollout(model, states[0], controls, scaler_X, scaler_y, 100)
-        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[:len(predicted), :3])))
+        pos_errors.append(np.mean(np.abs(predicted[:, :3] - states[: len(predicted), :3])))
 
-    rollout_mae = np.mean(pos_errors) if pos_errors else float('inf')
+    rollout_mae = np.mean(pos_errors) if pos_errors else float("inf")
 
     # Jacobian
     sigma_stats = compute_jacobian_spectral_norm(model, X_val, scaler_X)
 
     return {
-        'single_step_mae': float(single_step_mae),
-        'z_mae': float(z_mae),
-        'rollout_mae': float(rollout_mae),
-        'sigma_mean': float(sigma_stats['mean']),
-        'sigma_p95': float(sigma_stats['p95']),
-        'sigma_max': float(sigma_stats['max'])
+        "single_step_mae": float(single_step_mae),
+        "z_mae": float(z_mae),
+        "rollout_mae": float(rollout_mae),
+        "sigma_mean": float(sigma_stats["mean"]),
+        "sigma_p95": float(sigma_stats["p95"]),
+        "sigma_max": float(sigma_stats["max"]),
     }
 
 
 def main():
-    print("="*70)
+    print("=" * 70)
     print("PHYSICS WEIGHT SWEEP EXPERIMENT")
-    print("="*70)
+    print("=" * 70)
     print(f"Weights: {PHYSICS_WEIGHTS}")
     print(f"Seeds: {SEEDS}")
     print(f"Started: {datetime.now().strftime('%H:%M:%S')}")
@@ -311,13 +311,13 @@ def main():
         torch.FloatTensor(X_train_scaled),
         torch.FloatTensor(y_train_scaled),
         torch.FloatTensor(X_train),
-        torch.FloatTensor(y_train)
+        torch.FloatTensor(y_train),
     )
     val_dataset = TensorDataset(
         torch.FloatTensor(X_val_scaled),
         torch.FloatTensor(y_val_scaled),
         torch.FloatTensor(X_val),
-        torch.FloatTensor(y_val)
+        torch.FloatTensor(y_val),
     )
 
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True)
@@ -337,14 +337,13 @@ def main():
             model = BaselinePINN()
 
             model, history = train_with_physics_weight(
-                model, train_loader, val_loader, scaler_y,
-                w_phys, seed, 'PINN'
+                model, train_loader, val_loader, scaler_y, w_phys, seed, "PINN"
             )
 
             results = evaluate_model(model, val_loader, val_trajectories, scaler_X, scaler_y, X_val)
-            results['seed'] = seed
-            results['final_sup_loss'] = history['val_sup'][-1]
-            results['final_phys_loss'] = history['val_phys'][-1] if w_phys > 0 else 0
+            results["seed"] = seed
+            results["final_sup_loss"] = history["val_sup"][-1]
+            results["final_phys_loss"] = history["val_phys"][-1] if w_phys > 0 else 0
 
             all_results[w_phys].append(results)
 
@@ -355,44 +354,48 @@ def main():
     # ========================================================================
     # SUMMARY TABLE
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("WEIGHT SWEEP RESULTS SUMMARY")
-    print("="*70)
-    print(f"\n{'w_phys':<10} {'1-Step MAE':<15} {'100-Step MAE':<15} {'sigma_max':<12} {'sup_loss':<12}")
-    print("-"*70)
+    print("=" * 70)
+    print(
+        f"\n{'w_phys':<10} {'1-Step MAE':<15} {'100-Step MAE':<15} {'sigma_max':<12} {'sup_loss':<12}"
+    )
+    print("-" * 70)
 
     summary = {}
     for w_phys in PHYSICS_WEIGHTS:
         results_list = all_results[w_phys]
-        single_mae = np.mean([r['single_step_mae'] for r in results_list])
-        rollout_mae = np.mean([r['rollout_mae'] for r in results_list])
-        sigma_max = np.mean([r['sigma_max'] for r in results_list])
-        sup_loss = np.mean([r['final_sup_loss'] for r in results_list])
+        single_mae = np.mean([r["single_step_mae"] for r in results_list])
+        rollout_mae = np.mean([r["rollout_mae"] for r in results_list])
+        sigma_max = np.mean([r["sigma_max"] for r in results_list])
+        sup_loss = np.mean([r["final_sup_loss"] for r in results_list])
 
-        single_std = np.std([r['single_step_mae'] for r in results_list])
-        rollout_std = np.std([r['rollout_mae'] for r in results_list])
+        single_std = np.std([r["single_step_mae"] for r in results_list])
+        rollout_std = np.std([r["rollout_mae"] for r in results_list])
 
-        print(f"{w_phys:<10} {single_mae:.5f}+/-{single_std:.5f}  {rollout_mae:.3f}+/-{rollout_std:.3f}m  {sigma_max:.3f}       {sup_loss:.5f}")
+        print(
+            f"{w_phys:<10} {single_mae:.5f}+/-{single_std:.5f}  {rollout_mae:.3f}+/-{rollout_std:.3f}m  {sigma_max:.3f}       {sup_loss:.5f}"
+        )
 
         summary[w_phys] = {
-            'single_step_mae_mean': single_mae,
-            'single_step_mae_std': single_std,
-            'rollout_mae_mean': rollout_mae,
-            'rollout_mae_std': rollout_std,
-            'sigma_max_mean': sigma_max,
-            'sup_loss_mean': sup_loss
+            "single_step_mae_mean": single_mae,
+            "single_step_mae_std": single_std,
+            "rollout_mae_mean": rollout_mae,
+            "rollout_mae_std": rollout_std,
+            "sigma_max_mean": sigma_max,
+            "sup_loss_mean": sup_loss,
         }
 
     # ========================================================================
     # INTERPRETATION
     # ========================================================================
-    print("\n" + "="*70)
+    print("\n" + "=" * 70)
     print("INTERPRETATION")
-    print("="*70)
+    print("=" * 70)
 
     # Check if H_epsilon decreases with physics weight
-    rollouts = [summary[w]['rollout_mae_mean'] for w in PHYSICS_WEIGHTS]
-    if all(rollouts[i] <= rollouts[i+1] for i in range(len(rollouts)-1)):
+    rollouts = [summary[w]["rollout_mae_mean"] for w in PHYSICS_WEIGHTS]
+    if all(rollouts[i] <= rollouts[i + 1] for i in range(len(rollouts) - 1)):
         print("\n--> H_epsilon MONOTONICALLY DECREASES with physics weight.")
         print("    Physics loss causally hurts rollout stability!")
     else:
@@ -400,15 +403,21 @@ def main():
         print("    The effect depends on tuning; intermediate weights may be optimal.")
 
     # Check supervised loss
-    sup_losses = [summary[w]['sup_loss_mean'] for w in PHYSICS_WEIGHTS]
+    sup_losses = [summary[w]["sup_loss_mean"] for w in PHYSICS_WEIGHTS]
     if sup_losses[-1] > 2 * sup_losses[0]:
         print("\n--> High physics weight causes supervised loss to INCREASE.")
         print("    PINN is underfitting due to physics loss dominance.")
 
     # Save results
-    with open(RESULTS_DIR / 'weight_sweep_results.json', 'w') as f:
-        json.dump({'all_results': {str(k): v for k, v in all_results.items()},
-                   'summary': {str(k): v for k, v in summary.items()}}, f, indent=2)
+    with open(RESULTS_DIR / "weight_sweep_results.json", "w") as f:
+        json.dump(
+            {
+                "all_results": {str(k): v for k, v in all_results.items()},
+                "summary": {str(k): v for k, v in summary.items()},
+            },
+            f,
+            indent=2,
+        )
 
     print(f"\nResults saved to: {RESULTS_DIR / 'weight_sweep_results.json'}")
     print(f"Finished: {datetime.now().strftime('%H:%M:%S')}")
@@ -416,5 +425,5 @@ def main():
     return all_results, summary
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     all_results, summary = main()

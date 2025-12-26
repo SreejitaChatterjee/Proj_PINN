@@ -12,19 +12,20 @@ Improvements:
 7. Curriculum learning (easy → difficult)
 """
 
+import sys
+from pathlib import Path
+
+import joblib
+import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
-import numpy as np
-import pandas as pd
-import joblib
 from sklearn.preprocessing import StandardScaler
-from pathlib import Path
-import sys
+from torch.utils.data import DataLoader, Dataset
 
 sys.path.insert(0, str(Path(__file__).parent))
-from load_euroc import download_sequence, prepare_dynamics_data, SEQUENCES
+from load_euroc import SEQUENCES, download_sequence, prepare_dynamics_data
 
 
 class SequenceDataset(Dataset):
@@ -35,25 +36,42 @@ class SequenceDataset(Dataset):
         self.augment = augment
         self.noise_std = noise_std
 
-        state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-        control_cols = ['ax', 'ay', 'az']
+        state_cols = [
+            "x",
+            "y",
+            "z",
+            "roll",
+            "pitch",
+            "yaw",
+            "p",
+            "q",
+            "r",
+            "vx",
+            "vy",
+            "vz",
+        ]
+        control_cols = ["ax", "ay", "az"]
 
         # Group by sequence to avoid cross-sequence samples
         self.samples = []
-        for seq in data['sequence'].unique():
-            seq_data = data[data['sequence'] == seq].sort_values('timestamp')
+        for seq in data["sequence"].unique():
+            seq_data = data[data["sequence"] == seq].sort_values("timestamp")
             states = seq_data[state_cols].values
             controls = seq_data[control_cols].values
 
             # Create sliding windows
             for i in range(seq_len, len(states) - 1):
-                self.samples.append({
-                    'state_seq': states[i-seq_len:i],  # Past states
-                    'control_seq': controls[i-seq_len:i],  # Past controls
-                    'current_control': controls[i],  # Current control
-                    'target': states[i+1],  # Next state
-                    'multi_step_targets': states[i+1:min(i+6, len(states))]  # Next 5 states
-                })
+                self.samples.append(
+                    {
+                        "state_seq": states[i - seq_len : i],  # Past states
+                        "control_seq": controls[i - seq_len : i],  # Past controls
+                        "current_control": controls[i],  # Current control
+                        "target": states[i + 1],  # Next state
+                        "multi_step_targets": states[
+                            i + 1 : min(i + 6, len(states))
+                        ],  # Next 5 states
+                    }
+                )
 
     def __len__(self):
         return len(self.samples)
@@ -61,10 +79,10 @@ class SequenceDataset(Dataset):
     def __getitem__(self, idx):
         sample = self.samples[idx]
 
-        state_seq = torch.FloatTensor(sample['state_seq'])
-        control_seq = torch.FloatTensor(sample['control_seq'])
-        current_control = torch.FloatTensor(sample['current_control'])
-        target = torch.FloatTensor(sample['target'])
+        state_seq = torch.FloatTensor(sample["state_seq"])
+        control_seq = torch.FloatTensor(sample["control_seq"])
+        current_control = torch.FloatTensor(sample["current_control"])
+        target = torch.FloatTensor(sample["target"])
 
         # Data augmentation: add noise
         if self.augment:
@@ -84,8 +102,16 @@ class AdvancedEuRoCPINN(nn.Module):
     - Angle-aware loss handling
     """
 
-    def __init__(self, state_dim=12, control_dim=3, hidden_size=256, lstm_hidden=128,
-                 num_layers=4, dropout=0.1, seq_len=10):
+    def __init__(
+        self,
+        state_dim=12,
+        control_dim=3,
+        hidden_size=256,
+        lstm_hidden=128,
+        num_layers=4,
+        dropout=0.1,
+        seq_len=10,
+    ):
         super().__init__()
 
         self.state_dim = state_dim
@@ -100,14 +126,14 @@ class AdvancedEuRoCPINN(nn.Module):
             num_layers=2,
             batch_first=True,
             dropout=dropout,
-            bidirectional=True
+            bidirectional=True,
         )
         self.control_lstm = nn.LSTM(
             input_size=control_dim,
             hidden_size=lstm_hidden // 2,
             num_layers=1,
             batch_first=True,
-            dropout=dropout
+            dropout=dropout,
         )
 
         # Combined input: LSTM outputs + current control
@@ -117,20 +143,20 @@ class AdvancedEuRoCPINN(nn.Module):
         self.input_proj = nn.Sequential(
             nn.Linear(lstm_output_size, hidden_size),
             nn.LayerNorm(hidden_size),
-            nn.SiLU()
+            nn.SiLU(),
         )
 
         # Residual blocks
-        self.res_blocks = nn.ModuleList([
-            ResidualBlock(hidden_size, dropout) for _ in range(num_layers)
-        ])
+        self.res_blocks = nn.ModuleList(
+            [ResidualBlock(hidden_size, dropout) for _ in range(num_layers)]
+        )
 
         # Output head
         self.output_head = nn.Sequential(
             nn.Linear(hidden_size, hidden_size // 2),
             nn.SiLU(),
             nn.Dropout(dropout),
-            nn.Linear(hidden_size // 2, state_dim)
+            nn.Linear(hidden_size // 2, state_dim),
         )
 
         # Learnable residual scaling
@@ -189,7 +215,7 @@ class ResidualBlock(nn.Module):
             nn.SiLU(),
             nn.Dropout(dropout),
             nn.Linear(hidden_size * 2, hidden_size),
-            nn.Dropout(dropout)
+            nn.Dropout(dropout),
         )
 
     def forward(self, x):
@@ -210,7 +236,7 @@ def angle_loss(pred, target):
 class AdvancedTrainer:
     """Trainer with all improvements."""
 
-    def __init__(self, model, device='cpu', lr=0.001):
+    def __init__(self, model, device="cpu", lr=0.001):
         self.model = model.to(device)
         self.device = device
         self.optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=1e-4)
@@ -244,10 +270,10 @@ class AdvancedTrainer:
         total_loss = pos_loss + att_loss + rate_loss + vel_loss
 
         return total_loss, {
-            'pos': pos_loss.item(),
-            'att': att_loss.item(),
-            'rate': rate_loss.item(),
-            'vel': vel_loss.item()
+            "pos": pos_loss.item(),
+            "att": att_loss.item(),
+            "rate": rate_loss.item(),
+            "vel": vel_loss.item(),
         }
 
     def train_epoch(self, loader):
@@ -294,77 +320,89 @@ class AdvancedTrainer:
 
 def download_all_sequences():
     """Download all 11 EuRoC sequences."""
-    data_dir = Path(__file__).parent.parent / 'data' / 'euroc'
+    data_dir = Path(__file__).parent.parent / "data" / "euroc"
     all_data = []
 
     # Sort by difficulty for curriculum learning
     difficulty_order = [
-        'MH_01_easy', 'MH_02_easy', 'V1_01_easy', 'V2_01_easy',  # Easy
-        'MH_03_medium', 'V1_02_medium', 'V2_02_medium',  # Medium
-        'MH_04_difficult', 'MH_05_difficult', 'V1_03_difficult', 'V2_03_difficult'  # Difficult
+        "MH_01_easy",
+        "MH_02_easy",
+        "V1_01_easy",
+        "V2_01_easy",  # Easy
+        "MH_03_medium",
+        "V1_02_medium",
+        "V2_02_medium",  # Medium
+        "MH_04_difficult",
+        "MH_05_difficult",
+        "V1_03_difficult",
+        "V2_03_difficult",  # Difficult
     ]
 
     for seq_name in difficulty_order:
-        print(f'\n[{seq_name}]')
+        print(f"\n[{seq_name}]")
         try:
             seq_dir = download_sequence(seq_name, data_dir)
             data = prepare_dynamics_data(seq_dir, dt=0.005)
-            data['sequence'] = seq_name
-            data['difficulty'] = 'easy' if 'easy' in seq_name else ('medium' if 'medium' in seq_name else 'difficult')
+            data["sequence"] = seq_name
+            data["difficulty"] = (
+                "easy"
+                if "easy" in seq_name
+                else ("medium" if "medium" in seq_name else "difficult")
+            )
             all_data.append(data)
-            print(f'  Loaded {len(data):,} samples')
+            print(f"  Loaded {len(data):,} samples")
         except Exception as e:
-            print(f'  Error: {e}')
+            print(f"  Error: {e}")
 
     if all_data:
         combined = pd.concat(all_data, ignore_index=True)
-        combined.to_csv(data_dir / 'all_sequences_full.csv', index=False)
-        print(f'\nTotal: {len(combined):,} samples from {len(all_data)} sequences')
+        combined.to_csv(data_dir / "all_sequences_full.csv", index=False)
+        print(f"\nTotal: {len(combined):,} samples from {len(all_data)} sequences")
         return combined
     return None
 
 
 def main():
-    print('=' * 70)
-    print('ADVANCED EuRoC TRAINING - ALL IMPROVEMENTS')
-    print('=' * 70)
+    print("=" * 70)
+    print("ADVANCED EuRoC TRAINING - ALL IMPROVEMENTS")
+    print("=" * 70)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f'Device: {device}')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Device: {device}")
 
-    data_dir = Path(__file__).parent.parent / 'data' / 'euroc'
-    model_dir = Path(__file__).parent.parent / 'models'
+    data_dir = Path(__file__).parent.parent / "data" / "euroc"
+    model_dir = Path(__file__).parent.parent / "models"
 
     # Check if full dataset exists, otherwise download
-    full_data_path = data_dir / 'all_sequences_full.csv'
+    full_data_path = data_dir / "all_sequences_full.csv"
     if full_data_path.exists():
-        print('\n[1/5] Loading existing dataset...')
+        print("\n[1/5] Loading existing dataset...")
         data = pd.read_csv(full_data_path)
     else:
-        print('\n[1/5] Downloading all 11 sequences...')
+        print("\n[1/5] Downloading all 11 sequences...")
         data = download_all_sequences()
 
-    print(f'  Total samples: {len(data):,}')
+    print(f"  Total samples: {len(data):,}")
     print(f'  Sequences: {data["sequence"].nunique()}')
 
     # Curriculum learning: train in phases
-    print('\n[2/5] Preparing data with curriculum learning...')
+    print("\n[2/5] Preparing data with curriculum learning...")
 
     # Phase 1: Easy sequences only
-    easy_data = data[data['difficulty'] == 'easy']
+    easy_data = data[data["difficulty"] == "easy"]
     # Phase 2: Easy + Medium
-    medium_data = data[data['difficulty'].isin(['easy', 'medium'])]
+    medium_data = data[data["difficulty"].isin(["easy", "medium"])]
     # Phase 3: All data
     all_data = data
 
     phases = [
-        ('Easy', easy_data, 100),
-        ('Medium', medium_data, 100),
-        ('Full', all_data, 200)
+        ("Easy", easy_data, 100),
+        ("Medium", medium_data, 100),
+        ("Full", all_data, 200),
     ]
 
     # Create model
-    print('\n[3/5] Creating advanced model...')
+    print("\n[3/5] Creating advanced model...")
     model = AdvancedEuRoCPINN(
         state_dim=12,
         control_dim=3,
@@ -372,22 +410,22 @@ def main():
         lstm_hidden=128,
         num_layers=4,
         dropout=0.1,
-        seq_len=10
+        seq_len=10,
     )
 
     n_params = sum(p.numel() for p in model.parameters())
-    print(f'  Parameters: {n_params:,}')
+    print(f"  Parameters: {n_params:,}")
 
     trainer = AdvancedTrainer(model, device=device)
 
     # Curriculum training
-    print('\n[4/5] Training with curriculum learning...')
+    print("\n[4/5] Training with curriculum learning...")
 
     scaler_X = StandardScaler()
     scaler_y = StandardScaler()
 
     for phase_name, phase_data, epochs in phases:
-        print(f'\n--- Phase: {phase_name} ({len(phase_data):,} samples, {epochs} epochs) ---')
+        print(f"\n--- Phase: {phase_name} ({len(phase_data):,} samples, {epochs} epochs) ---")
 
         # Create datasets
         train_data = phase_data.sample(frac=0.8, random_state=42)
@@ -399,7 +437,7 @@ def main():
         train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True, num_workers=0)
         val_loader = DataLoader(val_dataset, batch_size=64, num_workers=0)
 
-        best_val = float('inf')
+        best_val = float("inf")
         for epoch in range(epochs):
             train_loss = trainer.train_epoch(train_loader)
             val_loss = trainer.validate(val_loader)
@@ -409,52 +447,78 @@ def main():
                 best_state = {k: v.cpu().clone() for k, v in model.state_dict().items()}
 
             if epoch % 25 == 0:
-                lr = trainer.optimizer.param_groups[0]['lr']
-                print(f'  Epoch {epoch:3d}: Train={train_loss:.6f}, Val={val_loss:.6f}, LR={lr:.2e}')
+                lr = trainer.optimizer.param_groups[0]["lr"]
+                print(
+                    f"  Epoch {epoch:3d}: Train={train_loss:.6f}, Val={val_loss:.6f}, LR={lr:.2e}"
+                )
 
         model.load_state_dict(best_state)
-        print(f'  Best val loss: {best_val:.6f}')
+        print(f"  Best val loss: {best_val:.6f}")
 
     # Save model
-    print('\n[5/5] Saving model...')
-    torch.save(model.state_dict(), model_dir / 'euroc_pinn_advanced.pth')
+    print("\n[5/5] Saving model...")
+    torch.save(model.state_dict(), model_dir / "euroc_pinn_advanced.pth")
 
     # Also save a simplified version for demo compatibility
-    print('\nSaving simplified wrapper for demo...')
-    torch.save({
-        'model_state': model.state_dict(),
-        'config': {
-            'state_dim': 12,
-            'control_dim': 3,
-            'hidden_size': 256,
-            'lstm_hidden': 128,
-            'num_layers': 4,
-            'seq_len': 10
-        }
-    }, model_dir / 'euroc_pinn_advanced_full.pth')
+    print("\nSaving simplified wrapper for demo...")
+    torch.save(
+        {
+            "model_state": model.state_dict(),
+            "config": {
+                "state_dim": 12,
+                "control_dim": 3,
+                "hidden_size": 256,
+                "lstm_hidden": 128,
+                "num_layers": 4,
+                "seq_len": 10,
+            },
+        },
+        model_dir / "euroc_pinn_advanced_full.pth",
+    )
 
     # Evaluate
-    print('\n' + '=' * 70)
-    print('EVALUATION')
-    print('=' * 70)
+    print("\n" + "=" * 70)
+    print("EVALUATION")
+    print("=" * 70)
 
     model.eval()
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['ax', 'ay', 'az']
+    state_cols = [
+        "x",
+        "y",
+        "z",
+        "roll",
+        "pitch",
+        "yaw",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
+    control_cols = ["ax", "ay", "az"]
 
-    for seq in data['sequence'].unique():
-        seq_data = data[data['sequence'] == seq].sort_values('timestamp')
+    for seq in data["sequence"].unique():
+        seq_data = data[data["sequence"] == seq].sort_values("timestamp")
         if len(seq_data) < 120:
             continue
 
         start_idx = len(seq_data) // 2
 
         # Build initial sequence
-        state_seq = torch.FloatTensor(seq_data[state_cols].values[start_idx-10:start_idx]).unsqueeze(0).to(device)
-        control_seq = torch.FloatTensor(seq_data[control_cols].values[start_idx-10:start_idx]).unsqueeze(0).to(device)
+        state_seq = (
+            torch.FloatTensor(seq_data[state_cols].values[start_idx - 10 : start_idx])
+            .unsqueeze(0)
+            .to(device)
+        )
+        control_seq = (
+            torch.FloatTensor(seq_data[control_cols].values[start_idx - 10 : start_idx])
+            .unsqueeze(0)
+            .to(device)
+        )
 
-        controls = seq_data[control_cols].values[start_idx:start_idx+100]
-        ground_truth = seq_data[state_cols].values[start_idx:start_idx+100]
+        controls = seq_data[control_cols].values[start_idx : start_idx + 100]
+        ground_truth = seq_data[state_cols].values[start_idx : start_idx + 100]
 
         predictions = []
 
@@ -466,23 +530,29 @@ def main():
 
                 # Update sequences
                 state_seq = torch.cat([state_seq[:, 1:, :], pred.unsqueeze(1)], dim=1)
-                control_seq = torch.cat([control_seq[:, 1:, :], current_control.unsqueeze(1)], dim=1)
+                control_seq = torch.cat(
+                    [control_seq[:, 1:, :], current_control.unsqueeze(1)], dim=1
+                )
 
         predictions = np.array(predictions)
-        gt = ground_truth[:len(predictions)]
+        gt = ground_truth[: len(predictions)]
         pos_mae = np.mean(np.abs(predictions[:, :3] - gt[:, :3]))
 
         # Angle-aware attitude error
-        att_diff = np.abs(np.arctan2(np.sin(predictions[:, 3:6] - gt[:, 3:6]),
-                                      np.cos(predictions[:, 3:6] - gt[:, 3:6])))
+        att_diff = np.abs(
+            np.arctan2(
+                np.sin(predictions[:, 3:6] - gt[:, 3:6]),
+                np.cos(predictions[:, 3:6] - gt[:, 3:6]),
+            )
+        )
         att_mae = np.mean(att_diff)
 
-        print(f'  {seq:18s}: Pos={pos_mae:.4f}m, Att={np.degrees(att_mae):.2f}°')
+        print(f"  {seq:18s}: Pos={pos_mae:.4f}m, Att={np.degrees(att_mae):.2f}°")
 
-    print('\n' + '=' * 70)
-    print('TRAINING COMPLETE')
-    print('=' * 70)
+    print("\n" + "=" * 70)
+    print("TRAINING COMPLETE")
+    print("=" * 70)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -7,42 +7,46 @@ Preserves ALL content, figures, tables, and data points.
 import re
 from pathlib import Path
 
+
 def convert_to_ieee_format(input_file, output_file):
     """Convert LaTeX report to IEEE format while preserving all content."""
 
-    with open(input_file, 'r', encoding='utf-8') as f:
+    with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
 
     # Extract the main content (from \section{Project Overview} to \end{document})
-    main_start = content.find(r'\section{Project Overview}')
-    main_end = content.find(r'\end{document}')
+    main_start = content.find(r"\section{Project Overview}")
+    main_end = content.find(r"\end{document}")
     main_content = content[main_start:main_end]
 
     # IEEE-specific conversions
     # 1. Convert longtable to regular table with small font
-    main_content = main_content.replace(r'\begin{longtable}', r'\begin{table*}[!t]' + '\n' + r'\centering' + '\n' + r'\scriptsize')
-    main_content = main_content.replace(r'\end{longtable}', r'\end{table*}')
+    main_content = main_content.replace(
+        r"\begin{longtable}",
+        r"\begin{table*}[!t]" + "\n" + r"\centering" + "\n" + r"\scriptsize",
+    )
+    main_content = main_content.replace(r"\end{longtable}", r"\end{table*}")
 
     # 2. Convert \section[] to \section{}
-    main_content = re.sub(r'\\section\[([^\]]+)\]\{([^\}]+)\}', r'\\section{\2}', main_content)
+    main_content = re.sub(r"\\section\[([^\]]+)\]\{([^\}]+)\}", r"\\section{\2}", main_content)
 
     # 3. Convert figures to IEEE style (remove [H], use [!t])
-    main_content = main_content.replace(r'\begin{figure}[H]', r'\begin{figure}[!t]')
-    main_content = main_content.replace(r'\begin{figure*}[H]', r'\begin{figure*}[!t]')
+    main_content = main_content.replace(r"\begin{figure}[H]", r"\begin{figure}[!t]")
+    main_content = main_content.replace(r"\begin{figure*}[H]", r"\begin{figure*}[!t]")
 
     # 4. Remove custom spacing commands
-    main_content = re.sub(r'\\vspace\{[^\}]+\}', '', main_content)
-    main_content = re.sub(r'\\addlinespace\[([^\]]+)\]', '', main_content)
+    main_content = re.sub(r"\\vspace\{[^\}]+\}", "", main_content)
+    main_content = re.sub(r"\\addlinespace\[([^\]]+)\]", "", main_content)
 
     # 5. Convert \texttt to \textit for IEEE style
     # (Keep \texttt for actual code, but use IEEE formatting)
 
     # 6. Remove \newpage commands (let IEEE handle page breaks)
-    main_content = main_content.replace(r'\newpage', '')
+    main_content = main_content.replace(r"\newpage", "")
 
     # 7. Convert custom column types to IEEE standard
-    main_content = re.sub(r'P\{([^\}]+)\}', r'p{\1}', main_content)
-    main_content = re.sub(r'C\{([^\}]+)\}', r'c', main_content)
+    main_content = re.sub(r"P\{([^\}]+)\}", r"p{\1}", main_content)
+    main_content = re.sub(r"C\{([^\}]+)\}", r"c", main_content)
 
     # 8. Add table captions at the top (IEEE style)
     # IEEE tables have captions above the table
@@ -50,7 +54,7 @@ def convert_to_ieee_format(input_file, output_file):
     # 9. Convert title page to IEEE format (already done in template)
 
     # IEEE template header (create fresh)
-    ieee_header = r'''\documentclass[journal]{IEEEtran}
+    ieee_header = r"""\documentclass[journal]{IEEEtran}
 
 % Essential packages
 \usepackage[utf8]{inputenc}
@@ -105,13 +109,13 @@ Physics-informed neural networks, quadrotor dynamics, parameter identification, 
 \IEEEdisplaynontitleabstractindextext
 \IEEEpeerreviewmaketitle
 
-'''
+"""
 
     # Combine IEEE header with converted content
-    full_ieee_content = ieee_header + '\n\n' + main_content + '\n\n\\end{document}\n'
+    full_ieee_content = ieee_header + "\n\n" + main_content + "\n\n\\end{document}\n"
 
     # Write the complete IEEE version
-    with open(output_file, 'w', encoding='utf-8') as f:
+    with open(output_file, "w", encoding="utf-8") as f:
         f.write(full_ieee_content)
 
     print(f"[OK] Converted {input_file.name} to IEEE format")
@@ -119,14 +123,15 @@ Physics-informed neural networks, quadrotor dynamics, parameter identification, 
     print(f"[OK] All content, figures, tables, and data points preserved")
     print(f"[OK] Total content lines: {len(full_ieee_content.splitlines())}")
 
+
 def main():
     PROJECT_ROOT = Path(__file__).parent.parent
-    input_file = PROJECT_ROOT / 'reports' / 'quadrotor_pinn_report.tex'
-    output_file = PROJECT_ROOT / 'reports' / 'quadrotor_pinn_report_IEEE.tex'
+    input_file = PROJECT_ROOT / "reports" / "quadrotor_pinn_report.tex"
+    output_file = PROJECT_ROOT / "reports" / "quadrotor_pinn_report_IEEE.tex"
 
-    print("="*80)
+    print("=" * 80)
     print("CONVERTING REPORT TO IEEE FORMAT")
-    print("="*80)
+    print("=" * 80)
     print(f"\nInput:  {input_file}")
     print(f"Output: {output_file}")
     print("\nConversion strategy:")
@@ -139,9 +144,10 @@ def main():
 
     convert_to_ieee_format(input_file, output_file)
 
-    print("\n" + "="*80)
+    print("\n" + "=" * 80)
     print("CONVERSION COMPLETE")
-    print("="*80)
+    print("=" * 80)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

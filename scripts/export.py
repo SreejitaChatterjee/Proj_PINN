@@ -12,8 +12,9 @@ Or programmatically:
 """
 
 import argparse
-import torch
 from pathlib import Path
+
+import torch
 
 
 def export_to_onnx(
@@ -40,7 +41,7 @@ def export_to_onnx(
 
     # Infer input shape from model
     if input_shape is None:
-        if hasattr(model, 'input_dim'):
+        if hasattr(model, "input_dim"):
             input_shape = (1, model.input_dim)
         else:
             raise ValueError("Cannot infer input shape. Provide input_shape argument.")
@@ -50,10 +51,7 @@ def export_to_onnx(
 
     # Default dynamic axes for batch dimension
     if dynamic_axes is None:
-        dynamic_axes = {
-            'input': {0: 'batch_size'},
-            'output': {0: 'batch_size'}
-        }
+        dynamic_axes = {"input": {0: "batch_size"}, "output": {0: "batch_size"}}
 
     # Export
     output_path = Path(output_path)
@@ -66,8 +64,8 @@ def export_to_onnx(
         export_params=True,
         opset_version=opset_version,
         do_constant_folding=True,
-        input_names=['input'],
-        output_names=['output'],
+        input_names=["input"],
+        output_names=["output"],
         dynamic_axes=dynamic_axes,
         dynamo=False,  # Use legacy export for compatibility
     )
@@ -121,7 +119,7 @@ def export_quadrotor_model(
 
     # Load model
     model = QuadrotorPINN()
-    model.load_state_dict(torch.load(model_path, map_location='cpu', weights_only=True))
+    model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=True))
     model.eval()
 
     # Export
@@ -129,33 +127,38 @@ def export_quadrotor_model(
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Export PINN model to ONNX')
-    parser.add_argument('--model', default='quadrotor', choices=['quadrotor', 'pendulum', 'cartpole'])
-    parser.add_argument('--weights', default=None, help='Path to model weights')
-    parser.add_argument('--output', default=None, help='Output ONNX path')
-    parser.add_argument('--verify', action='store_true', help='Verify exported model')
+    parser = argparse.ArgumentParser(description="Export PINN model to ONNX")
+    parser.add_argument(
+        "--model", default="quadrotor", choices=["quadrotor", "pendulum", "cartpole"]
+    )
+    parser.add_argument("--weights", default=None, help="Path to model weights")
+    parser.add_argument("--output", default=None, help="Output ONNX path")
+    parser.add_argument("--verify", action="store_true", help="Verify exported model")
     args = parser.parse_args()
 
     # Select model
-    if args.model == 'quadrotor':
+    if args.model == "quadrotor":
         from pinn_model import QuadrotorPINN
+
         model = QuadrotorPINN()
         weights = args.weights or "models/quadrotor_pinn_diverse.pth"
         output = args.output or "models/quadrotor_pinn.onnx"
-    elif args.model == 'pendulum':
+    elif args.model == "pendulum":
         from pinn_base import PendulumPINN
+
         model = PendulumPINN()
         weights = args.weights
         output = args.output or "models/pendulum_pinn.onnx"
-    elif args.model == 'cartpole':
+    elif args.model == "cartpole":
         from pinn_base import CartPolePINN
+
         model = CartPolePINN()
         weights = args.weights
         output = args.output or "models/cartpole_pinn.onnx"
 
     # Load weights if provided
     if weights and Path(weights).exists():
-        model.load_state_dict(torch.load(weights, map_location='cpu', weights_only=True))
+        model.load_state_dict(torch.load(weights, map_location="cpu", weights_only=True))
         print(f"Loaded weights from {weights}")
 
     # Export
@@ -167,5 +170,5 @@ def main():
         verify_onnx(onnx_path, test_input)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

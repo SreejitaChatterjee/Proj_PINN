@@ -12,25 +12,31 @@ Usage:
 
 import argparse
 import json
+import pickle
+from collections import defaultdict
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
-import pickle
-from collections import defaultdict
 
-import sys
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Import PINN framework (install with: pip install -e .)
+try:
+    from pinn_dynamics import Predictor, QuadrotorPINN
+except ImportError:
+    import sys
 
-from pinn_dynamics import QuadrotorPINN, Predictor
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+    from pinn_dynamics import QuadrotorPINN, Predictor
+
 from pinn_dynamics.security import AnomalyDetector
-from pinn_dynamics.security.evaluation import DetectionEvaluator, BenchmarkSuite
 from pinn_dynamics.security.baselines import (
-    KalmanResidualDetector,
     Chi2Detector,
     IsolationForestDetector,
-    OneClassSVMDetector
+    KalmanResidualDetector,
+    OneClassSVMDetector,
 )
+from pinn_dynamics.security.evaluation import BenchmarkSuite, DetectionEvaluator
 
 
 def load_trained_model(model_path: Path, scalers_path: Path, device: str = "cpu"):
@@ -41,11 +47,11 @@ def load_trained_model(model_path: Path, scalers_path: Path, device: str = "cpu"
     model.eval()
 
     # Load scalers
-    with open(scalers_path, 'rb') as f:
+    with open(scalers_path, "rb") as f:
         scalers = pickle.load(f)
 
-    scaler_X = scalers['scaler_X']
-    scaler_y = scalers['scaler_y']
+    scaler_X = scalers["scaler_X"]
+    scaler_y = scalers["scaler_y"]
 
     print(f"Loaded model from {model_path}")
 
@@ -72,12 +78,8 @@ def load_fault_scenarios(data_dir: Path):
         if len(df) == 0:
             continue
 
-        fault_type = df['fault_type'].iloc[0]
-        scenarios[fault_type].append({
-            'name': csv_file.stem,
-            'data': df,
-            'fault_type': fault_type
-        })
+        fault_type = df["fault_type"].iloc[0]
+        scenarios[fault_type].append({"name": csv_file.stem, "data": df, "fault_type": fault_type})
 
     print(f"\nLoaded fault scenarios:")
     for fault_type, flights in scenarios.items():
@@ -88,31 +90,26 @@ def load_fault_scenarios(data_dir: Path):
 
 def prepare_test_data(df: pd.DataFrame):
     """Convert dataframe to test format (states, controls, labels)."""
-    state_cols = ['x', 'y', 'z', 'phi', 'theta', 'psi', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    control_cols = ['thrust', 'torque_x', 'torque_y', 'torque_z']
+    state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
 
     states = df[state_cols].values[:-1]
     controls = df[control_cols].values[:-1]
     next_states = df[state_cols].values[1:]
-    labels = df['label'].values[:-1]
-    timestamps = df['timestamp'].values[:-1]
+    labels = df["label"].values[:-1]
+    timestamps = df["timestamp"].values[:-1]
 
     return states, controls, next_states, labels, timestamps
 
 
-def evaluate_on_scenario(
-    detector: AnomalyDetector,
-    scenario: dict,
-    scaler_X,
-    scaler_y
-):
+def evaluate_on_scenario(detector: AnomalyDetector, scenario: dict, scaler_X, scaler_y):
     """
     Evaluate detector on a single fault scenario.
 
     Returns:
         Detection metrics
     """
-    df = scenario['data']
+    df = scenario["data"]
     states, controls, next_states, labels, timestamps = prepare_test_data(df)
 
     # Prepare inputs (scale them)
@@ -125,11 +122,7 @@ def evaluate_on_scenario(
     scores = []
 
     for i in range(len(states)):
-        result = detector.detect(
-            states[i],
-            controls[i],
-            next_states[i]
-        )
+        result = detector.detect(states[i], controls[i], next_states[i])
         results.append(result.is_anomaly)
         scores.append(result.total_score)
 
@@ -143,12 +136,7 @@ def evaluate_on_scenario(
     return metrics, scores
 
 
-def run_full_evaluation(
-    model_path: Path,
-    data_dir: Path,
-    output_dir: Path,
-    threshold: float = 3.0
-):
+def run_full_evaluation(model_path: Path, data_dir: Path, output_dir: Path, threshold: float = 3.0):
     """
     Run complete evaluation on all fault scenarios.
     """
@@ -200,28 +188,32 @@ def run_full_evaluation(
         for flight in flights:
             metrics, scores = evaluate_on_scenario(detector, flight, scaler_X, scaler_y)
             fault_metrics.append(metrics)
-            all_results.append({
-                'flight': flight['name'],
-                'fault_type': fault_type,
-                **metrics.to_dict()
-            })
+            all_results.append(
+                {
+                    "flight": flight["name"],
+                    "fault_type": fault_type,
+                    **metrics.to_dict(),
+                }
+            )
 
         # Average metrics across flights of this type
         if fault_metrics:
             avg_metrics = {
-                'accuracy': np.mean([m.accuracy for m in fault_metrics]),
-                'precision': np.mean([m.precision for m in fault_metrics]),
-                'recall': np.mean([m.recall for m in fault_metrics]),
-                'f1': np.mean([m.f1 for m in fault_metrics]),
-                'fpr': np.mean([m.fpr for m in fault_metrics]),
-                'tpr': np.mean([m.tpr for m in fault_metrics]),
-                'n_flights': len(flights)
+                "accuracy": np.mean([m.accuracy for m in fault_metrics]),
+                "precision": np.mean([m.precision for m in fault_metrics]),
+                "recall": np.mean([m.recall for m in fault_metrics]),
+                "f1": np.mean([m.f1 for m in fault_metrics]),
+                "fpr": np.mean([m.fpr for m in fault_metrics]),
+                "tpr": np.mean([m.tpr for m in fault_metrics]),
+                "n_flights": len(flights),
             }
             results_by_fault[fault_type] = avg_metrics
 
-            print(f"    F1: {avg_metrics['f1']:.3f}, "
-                  f"Precision: {avg_metrics['precision']:.3f}, "
-                  f"Recall: {avg_metrics['recall']:.3f}")
+            print(
+                f"    F1: {avg_metrics['f1']:.3f}, "
+                f"Precision: {avg_metrics['precision']:.3f}, "
+                f"Recall: {avg_metrics['recall']:.3f}"
+            )
 
     # Save results
     print("\n[5/5] Saving results...")
@@ -232,21 +224,21 @@ def run_full_evaluation(
     print(f"  Saved: {output_dir / 'per_flight_results.csv'}")
 
     # Save per-fault-type results
-    with open(output_dir / "per_fault_type_results.json", 'w') as f:
+    with open(output_dir / "per_fault_type_results.json", "w") as f:
         json.dump(results_by_fault, f, indent=2)
     print(f"  Saved: {output_dir / 'per_fault_type_results.json'}")
 
     # Overall statistics
     overall = {
-        'mean_f1': np.mean([m['f1'] for m in results_by_fault.values()]),
-        'mean_precision': np.mean([m['precision'] for m in results_by_fault.values()]),
-        'mean_recall': np.mean([m['recall'] for m in results_by_fault.values()]),
-        'mean_fpr': np.mean([m['fpr'] for m in results_by_fault.values()]),
-        'total_flights_tested': sum(m['n_flights'] for m in results_by_fault.values()),
-        'fault_types_tested': len(results_by_fault)
+        "mean_f1": np.mean([m["f1"] for m in results_by_fault.values()]),
+        "mean_precision": np.mean([m["precision"] for m in results_by_fault.values()]),
+        "mean_recall": np.mean([m["recall"] for m in results_by_fault.values()]),
+        "mean_fpr": np.mean([m["fpr"] for m in results_by_fault.values()]),
+        "total_flights_tested": sum(m["n_flights"] for m in results_by_fault.values()),
+        "fault_types_tested": len(results_by_fault),
     }
 
-    with open(output_dir / "overall_results.json", 'w') as f:
+    with open(output_dir / "overall_results.json", "w") as f:
         json.dump(overall, f, indent=2)
     print(f"  Saved: {output_dir / 'overall_results.json'}")
 
@@ -264,9 +256,11 @@ def run_full_evaluation(
 
     print("\nPer-Fault-Type Performance:")
     for fault_type, metrics in sorted(results_by_fault.items()):
-        print(f"  {fault_type:20s}: F1={metrics['f1']:.3f}, "
-              f"Precision={metrics['precision']:.3f}, "
-              f"Recall={metrics['recall']:.3f}")
+        print(
+            f"  {fault_type:20s}: F1={metrics['f1']:.3f}, "
+            f"Precision={metrics['precision']:.3f}, "
+            f"Recall={metrics['recall']:.3f}"
+        )
 
     print(f"\nResults saved to: {output_dir.absolute()}")
 

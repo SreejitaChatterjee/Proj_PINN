@@ -10,10 +10,11 @@ Usage:
     print(cfg.model.hidden_size)
 """
 
-import yaml
-from pathlib import Path
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import yaml
 
 
 class ConfigDict(dict):
@@ -50,13 +51,13 @@ def load_config(config_path: str, defaults_path: str = None) -> ConfigDict:
         defaults_path = Path(__file__).parent.parent / "configs" / "default.yaml"
 
     if Path(defaults_path).exists():
-        with open(defaults_path, 'r') as f:
+        with open(defaults_path, "r") as f:
             config = yaml.safe_load(f) or {}
 
     # Load and merge specific config
     config_path = Path(config_path)
     if config_path.exists():
-        with open(config_path, 'r') as f:
+        with open(config_path, "r") as f:
             specific = yaml.safe_load(f) or {}
         config = deep_merge(config, specific)
     else:
@@ -80,13 +81,14 @@ def save_config(config: dict, path: str):
     """Save configuration to YAML file."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, 'w') as f:
+    with open(path, "w") as f:
         yaml.dump(dict(config), f, default_flow_style=False)
 
 
 def get_device(device_str: str = "auto") -> str:
     """Get compute device."""
     import torch
+
     if device_str == "auto":
         return "cuda" if torch.cuda.is_available() else "cpu"
     return device_str

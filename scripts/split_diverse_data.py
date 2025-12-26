@@ -1,14 +1,16 @@
 """Create proper time-series train/validation/test split for diverse dataset"""
-import pandas as pd
-import numpy as np
+
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
 
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent
-DATA_PATH = PROJECT_ROOT / 'data' / 'quadrotor_training_data_diverse.csv'
-TRAIN_OUTPUT = PROJECT_ROOT / 'data' / 'train_set_diverse.csv'
-VAL_OUTPUT = PROJECT_ROOT / 'data' / 'val_set_diverse.csv'
-TEST_OUTPUT = PROJECT_ROOT / 'data' / 'test_set_diverse.csv'
+DATA_PATH = PROJECT_ROOT / "data" / "quadrotor_training_data_diverse.csv"
+TRAIN_OUTPUT = PROJECT_ROOT / "data" / "train_set_diverse.csv"
+VAL_OUTPUT = PROJECT_ROOT / "data" / "val_set_diverse.csv"
+TEST_OUTPUT = PROJECT_ROOT / "data" / "test_set_diverse.csv"
 
 # Split configuration (by trajectory, not by samples)
 # Train: 70%, Val: 15%, Test: 15%
@@ -16,11 +18,12 @@ TRAIN_RATIO = 0.70
 VAL_RATIO = 0.15
 TEST_RATIO = 0.15
 
+
 def main():
-    print("="*80)
+    print("=" * 80)
     print("CREATING TRAIN/VAL/TEST SPLIT FOR DIVERSE DATASET")
     print("(Splitting by ENTIRE TRAJECTORIES)")
-    print("="*80)
+    print("=" * 80)
 
     # Load data
     print(f"\nLoading data from: {DATA_PATH}")
@@ -28,7 +31,7 @@ def main():
     print(f"Total samples: {len(df):,}")
 
     # Get trajectory information
-    trajectory_ids = sorted(df['trajectory_id'].unique())
+    trajectory_ids = sorted(df["trajectory_id"].unique())
     n_trajectories = len(trajectory_ids)
     print(f"Total trajectories: {n_trajectories}")
 
@@ -48,8 +51,8 @@ def main():
 
     # Split trajectory IDs
     train_traj_ids = shuffled_ids[:n_train]
-    val_traj_ids = shuffled_ids[n_train:n_train+n_val]
-    test_traj_ids = shuffled_ids[n_train+n_val:]
+    val_traj_ids = shuffled_ids[n_train : n_train + n_val]
+    test_traj_ids = shuffled_ids[n_train + n_val :]
 
     print(f"\nFirst/Last trajectory IDs in each split:")
     print(f"  Train: {train_traj_ids[0]} ... {train_traj_ids[-1]}")
@@ -57,9 +60,9 @@ def main():
     print(f"  Test:  {test_traj_ids[0]} ... {test_traj_ids[-1]}")
 
     # Create splits
-    df_train = df[df['trajectory_id'].isin(train_traj_ids)].copy()
-    df_val = df[df['trajectory_id'].isin(val_traj_ids)].copy()
-    df_test = df[df['trajectory_id'].isin(test_traj_ids)].copy()
+    df_train = df[df["trajectory_id"].isin(train_traj_ids)].copy()
+    df_val = df[df["trajectory_id"].isin(val_traj_ids)].copy()
+    df_test = df[df["trajectory_id"].isin(test_traj_ids)].copy()
 
     # Display statistics
     print(f"\n{'='*80}")
@@ -112,5 +115,6 @@ def main():
     print(f"\nNext: Retrain model with this diverse dataset")
     print(f"{'='*80}")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()

@@ -10,11 +10,12 @@ Converts to QuadrotorPINN format:
     Label (1): [0=normal, 1=attack]
 """
 
-import pandas as pd
-import numpy as np
-from pathlib import Path
 import json
+from pathlib import Path
 from typing import Tuple
+
+import numpy as np
+import pandas as pd
 
 
 def load_uav_ids_file(file_path: Path) -> pd.DataFrame:
@@ -47,37 +48,37 @@ def convert_to_pinn_format(df: pd.DataFrame) -> pd.DataFrame:
     pinn_df = pd.DataFrame()
 
     # Timestamp
-    pinn_df['timestamp'] = df['timestamp']
+    pinn_df["timestamp"] = df["timestamp"]
 
     # Position (convert GPS to local ENU frame)
-    lat0, lon0, alt0 = df['lat'].iloc[0], df['lon'].iloc[0], df['alt'].iloc[0]
+    lat0, lon0, alt0 = df["lat"].iloc[0], df["lon"].iloc[0], df["alt"].iloc[0]
     R_earth = 6371000  # meters
 
-    pinn_df['x'] = (df['lon'] - lon0) * np.cos(np.deg2rad(lat0)) * R_earth
-    pinn_df['y'] = (df['lat'] - lat0) * R_earth
-    pinn_df['z'] = df['alt'] - alt0
+    pinn_df["x"] = (df["lon"] - lon0) * np.cos(np.deg2rad(lat0)) * R_earth
+    pinn_df["y"] = (df["lat"] - lat0) * R_earth
+    pinn_df["z"] = df["alt"] - alt0
 
     # Attitude (convert degrees to radians)
-    pinn_df['phi'] = np.deg2rad(df['roll'])
-    pinn_df['theta'] = np.deg2rad(df['pitch'])
-    pinn_df['psi'] = np.deg2rad(df['yaw'])
+    pinn_df["phi"] = np.deg2rad(df["roll"])
+    pinn_df["theta"] = np.deg2rad(df["pitch"])
+    pinn_df["psi"] = np.deg2rad(df["yaw"])
 
     # Angular rates (rad/s)
-    pinn_df['p'] = np.deg2rad(df['gx'])  # Gyro x → roll rate
-    pinn_df['q'] = np.deg2rad(df['gy'])  # Gyro y → pitch rate
-    pinn_df['r'] = np.deg2rad(df['gz'])  # Gyro z → yaw rate
+    pinn_df["p"] = np.deg2rad(df["gx"])  # Gyro x → roll rate
+    pinn_df["q"] = np.deg2rad(df["gy"])  # Gyro y → pitch rate
+    pinn_df["r"] = np.deg2rad(df["gz"])  # Gyro z → yaw rate
 
     # Velocity (body frame, m/s)
-    pinn_df['vx'] = df['vx']
-    pinn_df['vy'] = df['vy']
-    pinn_df['vz'] = df['vz']
+    pinn_df["vx"] = df["vx"]
+    pinn_df["vy"] = df["vy"]
+    pinn_df["vz"] = df["vz"]
 
     # Labels (0=normal, 1=attack)
-    if 'attack_type' in df.columns:
-        pinn_df['label'] = (df['attack_type'] != 'Normal').astype(int)
-        pinn_df['attack_type'] = df['attack_type']
+    if "attack_type" in df.columns:
+        pinn_df["label"] = (df["attack_type"] != "Normal").astype(int)
+        pinn_df["attack_type"] = df["attack_type"]
     else:
-        pinn_df['label'] = 0  # Assume all normal if no label
+        pinn_df["label"] = 0  # Assume all normal if no label
 
     # Estimate controls from state changes
     pinn_df = estimate_controls(pinn_df)
@@ -91,7 +92,7 @@ def estimate_controls(df: pd.DataFrame) -> pd.DataFrame:
 
     Since UAV-IDS doesn't provide motor commands, estimate from dynamics.
     """
-    dt = df['timestamp'].diff().fillna(0.01)
+    dt = df["timestamp"].diff().fillna(0.01)
 
     # Physical parameters (DJI Phantom 3)
     m = 1.28  # kg (mass)
@@ -99,23 +100,24 @@ def estimate_controls(df: pd.DataFrame) -> pd.DataFrame:
     Jxx, Jyy, Jzz = 0.0123, 0.0123, 0.0224  # kg*m^2 (inertia)
 
     # Estimate thrust from vertical acceleration + gravity
-    dvz = df['vz'].diff() / dt
-    df['thrust'] = m * (dvz + g)
+    dvz = df["vz"].diff() / dt
+    df["thrust"] = m * (dvz + g)
 
     # Estimate torques from angular accelerations
-    df['torque_x'] = Jxx * df['p'].diff() / dt
-    df['torque_y'] = Jyy * df['q'].diff() / dt
-    df['torque_z'] = Jzz * df['r'].diff() / dt
+    df["torque_x"] = Jxx * df["p"].diff() / dt
+    df["torque_y"] = Jyy * df["q"].diff() / dt
+    df["torque_z"] = Jzz * df["r"].diff() / dt
 
     # Fill NaNs (first row)
-    df[['thrust', 'torque_x', 'torque_y', 'torque_z']] = \
-        df[['thrust', 'torque_x', 'torque_y', 'torque_z']].fillna(0)
+    df[["thrust", "torque_x", "torque_y", "torque_z"]] = df[
+        ["thrust", "torque_x", "torque_y", "torque_z"]
+    ].fillna(0)
 
     # Clip unrealistic values
-    df['thrust'] = df['thrust'].clip(0, 20)  # 0-20N
-    df['torque_x'] = df['torque_x'].clip(-1, 1)  # ±1 N*m
-    df['torque_y'] = df['torque_y'].clip(-1, 1)
-    df['torque_z'] = df['torque_z'].clip(-0.5, 0.5)
+    df["thrust"] = df["thrust"].clip(0, 20)  # 0-20N
+    df["torque_x"] = df["torque_x"].clip(-1, 1)  # ±1 N*m
+    df["torque_y"] = df["torque_y"].clip(-1, 1)
+    df["torque_z"] = df["torque_z"].clip(-0.5, 0.5)
 
     return df
 
@@ -128,17 +130,17 @@ def split_by_attack_type(df: pd.DataFrame, output_dir: Path):
         df: Preprocessed dataframe
         output_dir: Output directory
     """
-    if 'attack_type' not in df.columns:
+    if "attack_type" not in df.columns:
         # Save all as single file
         output_file = output_dir / "all_data.csv"
         df.to_csv(output_file, index=False)
         print(f"  Saved: {output_file}")
         return
 
-    attack_types = df['attack_type'].unique()
+    attack_types = df["attack_type"].unique()
 
     for attack_type in attack_types:
-        subset = df[df['attack_type'] == attack_type]
+        subset = df[df["attack_type"] == attack_type]
 
         # Create filename
         filename = f"{attack_type.lower().replace(' ', '_')}.csv"
@@ -151,15 +153,17 @@ def split_by_attack_type(df: pd.DataFrame, output_dir: Path):
         meta = {
             "attack_type": attack_type,
             "n_samples": len(subset),
-            "attack_ratio": subset['label'].mean(),
-            "duration_seconds": subset['timestamp'].max() - subset['timestamp'].min(),
+            "attack_ratio": subset["label"].mean(),
+            "duration_seconds": subset["timestamp"].max() - subset["timestamp"].min(),
         }
 
         meta_file = output_dir / f"{attack_type.lower().replace(' ', '_')}_meta.json"
-        with open(meta_file, 'w') as f:
+        with open(meta_file, "w") as f:
             json.dump(meta, f, indent=2)
 
-        print(f"  Saved: {output_file} ({len(subset)} samples, {meta['attack_ratio']*100:.1f}% attacks)")
+        print(
+            f"  Saved: {output_file} ({len(subset)} samples, {meta['attack_ratio']*100:.1f}% attacks)"
+        )
 
 
 def create_train_val_test_split(
@@ -189,8 +193,8 @@ def create_train_val_test_split(
     n_val = int(n_total * val_ratio)
 
     train_df = normal_df.iloc[:n_train]
-    val_normal_df = normal_df.iloc[n_train:n_train + n_val]
-    test_normal_df = normal_df.iloc[n_train + n_val:]
+    val_normal_df = normal_df.iloc[n_train : n_train + n_val]
+    test_normal_df = normal_df.iloc[n_train + n_val :]
 
     # Load attack data
     attack_files = list(output_dir.glob("*.csv"))

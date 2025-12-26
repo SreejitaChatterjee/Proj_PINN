@@ -8,19 +8,23 @@ Measures:
 4. Throughput (samples per second)
 """
 
-import torch
-import torch.nn as nn
-import numpy as np
-import time
 import json
 import pickle
 import sys
+import time
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+import numpy as np
+import torch
+import torch.nn as nn
 
-from pinn_dynamics import QuadrotorPINN, Predictor
+# Import PINN framework (install with: pip install -e .)
+try:
+    from pinn_dynamics import Predictor, QuadrotorPINN
+except ImportError:
+    sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+    from pinn_dynamics import QuadrotorPINN, Predictor
+
 from pinn_dynamics.security.anomaly_detector import AnomalyDetector
 
 print("=" * 60)
@@ -45,11 +49,7 @@ if not model_path.exists():
     sys.exit(1)
 
 # Create model architecture (matching trained model)
-model = QuadrotorPINN(
-    hidden_size=256,
-    num_layers=5,
-    dropout=0.1
-)
+model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
 
 # Load weights
 model.load_state_dict(torch.load(model_path, weights_only=False))
@@ -60,21 +60,18 @@ print(f"  Architecture: 5 layers x 256 hidden units")
 
 # Load scalers
 scalers_path = MODELS_DIR / "scalers.pkl"
-with open(scalers_path, 'rb') as f:
+with open(scalers_path, "rb") as f:
     scalers = pickle.load(f)
 
-scaler_X = scalers['scaler_X']
-scaler_y = scalers['scaler_y']
+scaler_X = scalers["scaler_X"]
+scaler_y = scalers["scaler_y"]
 
 # Create predictor
 predictor = Predictor(model, scaler_X, scaler_y, device="cpu")
 
 # Create detector
 detector = AnomalyDetector(
-    predictor=predictor,
-    threshold=0.1707,
-    use_physics=False,
-    n_mc_samples=50
+    predictor=predictor, threshold=0.1707, use_physics=False, n_mc_samples=50
 )
 
 print("  Detector initialized (MC samples: 50)")
@@ -155,7 +152,9 @@ print(f"  Throughput: {throughput:.1f} samples/sec")
 realtime_freq = 100  # Hz
 realtime_budget = 1000 / realtime_freq  # ms
 realtime_capable = mean_time < realtime_budget
-print(f"  Real-time capable at {realtime_freq} Hz: {realtime_capable} ({mean_time:.2f} ms < {realtime_budget:.2f} ms budget)")
+print(
+    f"  Real-time capable at {realtime_freq} Hz: {realtime_capable} ({mean_time:.2f} ms < {realtime_budget:.2f} ms budget)"
+)
 
 # ============================================================================
 # 4. DETECTION TIME WITH MC DROPOUT
@@ -190,6 +189,7 @@ print(f"  Detection throughput: {detection_throughput:.1f} samples/sec")
 # ============================================================================
 print("\n[5/5] Estimating FLOPs...")
 
+
 def count_flops(model, input_dim):
     """Estimate FLOPs for feed-forward pass."""
     total_flops = 0
@@ -208,6 +208,7 @@ def count_flops(model, input_dim):
 
     return total_flops
 
+
 input_dim = 16  # 12 states + 4 controls
 flops = count_flops(model, input_dim)
 gflops = flops / 1e9
@@ -225,7 +226,7 @@ results = {
         "file_size_mb": round(model_size_mb, 3),
         "total_parameters": total_params,
         "trainable_parameters": trainable_params,
-        "parameters_memory_mb": round(params_memory_mb, 3)
+        "parameters_memory_mb": round(params_memory_mb, 3),
     },
     "inference_time_ms": {
         "mean": round(mean_time, 4),
@@ -233,33 +234,33 @@ results = {
         "min": round(min_time, 4),
         "max": round(max_time, 4),
         "p95": round(p95_time, 4),
-        "p99": round(p99_time, 4)
+        "p99": round(p99_time, 4),
     },
     "detection_time_ms": {
         "mean": round(mean_det_time, 4),
         "std": round(std_det_time, 4),
         "mc_samples": 50,
-        "overhead_factor": round(mean_det_time / mean_time, 2)
+        "overhead_factor": round(mean_det_time / mean_time, 2),
     },
     "throughput": {
         "inference_samples_per_sec": round(throughput, 1),
-        "detection_samples_per_sec": round(detection_throughput, 1)
+        "detection_samples_per_sec": round(detection_throughput, 1),
     },
     "real_time_capability": {
         "target_frequency_hz": realtime_freq,
         "time_budget_ms": realtime_budget,
         "mean_inference_time_ms": round(mean_time, 4),
         "capable": str(realtime_capable),
-        "headroom_factor": round(realtime_budget / mean_time, 2)
+        "headroom_factor": round(realtime_budget / mean_time, 2),
     },
     "computational_complexity": {
         "flops_per_forward_pass": flops,
-        "gflops": round(gflops, 6)
-    }
+        "gflops": round(gflops, 6),
+    },
 }
 
 output_file = RESULTS_DIR / "computational_costs.json"
-with open(output_file, 'w') as f:
+with open(output_file, "w") as f:
     json.dump(results, f, indent=2)
 
 print(f"  Saved: {output_file}")
@@ -282,7 +283,9 @@ if realtime_capable:
     print(f"  ✓ Suitable for embedded UAV autopilots (100 Hz control loop)")
     print(f"  ✓ {round(realtime_budget / mean_time, 1)}x time budget remaining for other tasks")
 else:
-    print(f"  X Exceeds 100 Hz time budget by {round((mean_time - realtime_budget) / realtime_budget * 100, 1)}%")
+    print(
+        f"  X Exceeds 100 Hz time budget by {round((mean_time - realtime_budget) / realtime_budget * 100, 1)}%"
+    )
     print(f"  Recommendation: Reduce MC samples or use GPU acceleration")
 
 print(f"\nResults saved to: {output_file}")
