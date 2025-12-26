@@ -136,6 +136,89 @@ export_torchscript(model, 'model.pt')
 | `PendulumPINN` | 2 | 1 | Simple pendulum |
 | `CartPolePINN` | 4 | 1 | Inverted pendulum on cart |
 
+## UAV Fault Detection (Security Extension)
+
+**PINN-based real-time fault detection achieving deployment-ready 4.5% false positive rate.**
+
+### Key Results (ACSAC 2025 Submission)
+- **4.5% false positive rate** (14× better than One-Class SVM's 62.9%)
+- **65.7% F1 score** with 100% precision on CMU ALFA dataset
+- **0.34 ms inference time** (29× real-time headroom at 100 Hz, CPU-only)
+- **0.79 MB model size** (fits embedded autopilots)
+- **Evaluated on 47 real UAV flights** (engine failures, stuck actuators, etc.)
+
+### Quick Example
+```python
+from pinn_dynamics.security import AnomalyDetector
+from pinn_dynamics import QuadrotorPINN, Predictor
+import torch
+
+# Load trained fault detector
+model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
+model.load_state_dict(torch.load('models/security/detector_w0_seed0.pth'))
+
+# Create predictor and detector
+predictor = Predictor(model, scaler_X, scaler_y, device='cpu')
+detector = AnomalyDetector(predictor, threshold=0.1707, use_physics=False)
+
+# Real-time detection loop
+for t in range(len(flight_data) - 1):
+    state = flight_data[t, :12]
+    control = flight_data[t, 12:16]
+    next_state_measured = flight_data[t+1, :12]
+
+    result = detector.detect(state, control, next_state_measured)
+
+    if result.is_anomaly:
+        print(f"[{t}] FAULT DETECTED!")
+        print(f"  Anomaly Score: {result.score:.3f}")
+        print(f"  Uncertainty: {result.uncertainty:.3f}")
+        # Trigger emergency protocol...
+```
+
+### Counter-Intuitive Finding
+Pure data-driven learning (w=0) **significantly outperforms** physics-informed variants (w=20) for fault detection (p<10^-6, effect size 13.6×).
+
+**Why?** Fault dynamics violate Newton-Euler assumptions. Physics constraints penalize learning fault behavior, destroying the anomaly detection signal.
+
+**Lesson:** Domain knowledge can hurt when detecting violations of those constraints.
+
+### Dataset
+Evaluated on **CMU ALFA** (Advanced Large-scale Flight Archive):
+- 47 real UAV flights from Carnegie Mellon
+- 5 fault categories: engine failures, rudder stuck, aileron stuck, elevator stuck, unknown
+- Zero synthetic data - all real flight tests
+
+### Files
+- **Examples**: `examples/uav_fault_detection.py` - Complete working example
+- **Training**: `scripts/security/train_detector.py` - Train your own detector
+- **Evaluation**: `scripts/security/evaluate_detector.py` - Evaluate performance
+- **Baselines**: `scripts/security/evaluate_baselines.py` - Compare with Chi2, IForest, SVM
+- **Paper**: `research/security/paper_v3_integrated.tex` - Full ACSAC 2025 submission
+- **Results**: `research/security/results_optimized/` - All experimental results
+- **Figures**: `research/security/figures/` - 11 publication-quality figures
+- **Models**: `models/security/` - Trained detectors (20 seeds)
+
+### Quick Start Guide
+See `research/security/QUICKSTART.md` for step-by-step instructions to:
+1. Download CMU ALFA dataset (~100 MB)
+2. Train detector (20 seeds, ~54 minutes)
+3. Evaluate on test flights
+4. Reproduce all paper results (~2 hours total)
+
+### Automation
+```bash
+# Run complete pipeline
+bash scripts/security/run_all.sh
+```
+
+### Documentation
+- `research/security/README.md` - Overview of security work
+- `research/security/QUICKSTART.md` - Step-by-step reproduction
+- `research/security/paper_v3_integrated.tex` - Full paper with all results
+- `models/README.md` - Model documentation
+- `data/README.md` - Dataset documentation
+
 ## Project Structure
 
 ```

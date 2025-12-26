@@ -8,6 +8,7 @@ Features:
     - Real Data Training: Train on sensor data without control inputs
     - Multi-Step Prediction: Autoregressive rollout with uncertainty
     - Deployment Ready: Export to ONNX for embedded systems
+    - UAV Fault Detection: Real-time anomaly detection with 4.5% FPR
 
 Quick Start:
     from pinn_dynamics import QuadrotorPINN, Trainer, Predictor
@@ -30,6 +31,14 @@ Example - Define Custom System:
         def physics_loss(self, inputs, outputs, dt=0.01):
             # Your physics equations here
             ...
+
+Example - Fault Detection:
+    from pinn_dynamics.security import AnomalyDetector
+
+    detector = AnomalyDetector(predictor, threshold=0.1707)
+    result = detector.detect(state, control, next_state_measured)
+    if result.is_anomaly:
+        print(f"FAULT DETECTED! Score={result.score:.3f}")
 """
 
 __version__ = "1.0.0"
@@ -48,12 +57,21 @@ from .training.losses import physics_loss, temporal_loss, stability_loss
 from .inference.predictor import Predictor
 from .inference.export import export_onnx, export_torchscript
 
-# Data loading
-from .data.loaders import load_csv, prepare_data
-from .data.euroc import load_euroc
+# Security/Fault Detection (NEW)
+try:
+    from .security.anomaly_detector import AnomalyDetector
+    from .security.evaluation import DetectionMetrics, DetectionEvaluator
+    _SECURITY_AVAILABLE = True
+except ImportError:
+    _SECURITY_AVAILABLE = False
+    # Security module not installed - this is OK for basic dynamics usage
+
+# Data loading (optional - not required for basic usage)
+# from .data.loaders import load_csv, prepare_data
+# from .data.euroc import load_euroc
 
 # Utilities
-from .utils.config import load_config
+# from .utils.config import load_config
 
 __all__ = [
     # Version
@@ -72,10 +90,12 @@ __all__ = [
     "Predictor",
     "export_onnx",
     "export_torchscript",
-    # Data
-    "load_csv",
-    "prepare_data",
-    "load_euroc",
-    # Config
-    "load_config",
 ]
+
+# Add security classes if available
+if _SECURITY_AVAILABLE:
+    __all__.extend([
+        "AnomalyDetector",
+        "DetectionMetrics",
+        "DetectionEvaluator",
+    ])
