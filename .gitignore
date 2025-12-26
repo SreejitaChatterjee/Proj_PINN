@@ -62,10 +62,6 @@ desktop.ini
 # Data (large)
 data/
 
-# Large model files (use Git LFS for these)
-models/fault_detection_advanced/*.pth
-models/security/*.pth
-
 # Cache directories
 .pytest_cache/
 .mypy_cache/
