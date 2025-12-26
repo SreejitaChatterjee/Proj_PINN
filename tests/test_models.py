@@ -8,14 +8,15 @@ import numpy as np
 import pytest
 import torch
 
+from pinn_dynamics import QuadrotorPINN
+from pinn_dynamics.systems import CartPolePINN, PendulumPINN
+
 
 class TestDynamicsPINN:
     """Tests for base DynamicsPINN class."""
 
     def test_pendulum_init(self):
         """Test PendulumPINN initialization."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         assert model.state_dim == 2
         assert model.control_dim == 1
@@ -24,8 +25,6 @@ class TestDynamicsPINN:
 
     def test_pendulum_forward(self):
         """Test PendulumPINN forward pass."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         x = torch.randn(32, 3)  # batch of state + control
         y = model(x)
@@ -35,8 +34,6 @@ class TestDynamicsPINN:
 
     def test_pendulum_physics_loss(self):
         """Test PendulumPINN physics loss computation."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         x = torch.randn(32, 3)
         y = model(x)
@@ -48,16 +45,12 @@ class TestDynamicsPINN:
 
     def test_cartpole_init(self):
         """Test CartPolePINN initialization."""
-        from scripts.pinn_base import CartPolePINN
-
         model = CartPolePINN()
         assert model.state_dim == 4
         assert model.control_dim == 1
 
     def test_cartpole_forward(self):
         """Test CartPolePINN forward pass."""
-        from scripts.pinn_base import CartPolePINN
-
         model = CartPolePINN()
         x = torch.randn(16, 5)
         y = model(x)
@@ -66,8 +59,6 @@ class TestDynamicsPINN:
 
     def test_learnable_params(self):
         """Test learnable physical parameters."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
 
         assert "g" in model.params
@@ -80,8 +71,6 @@ class TestDynamicsPINN:
 
     def test_param_bounds(self):
         """Test parameter clamping."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
 
         # Set param outside bounds
@@ -99,16 +88,12 @@ class TestQuadrotorPINN:
 
     def test_init(self):
         """Test QuadrotorPINN initialization."""
-        from scripts.pinn_model import QuadrotorPINN
-
         model = QuadrotorPINN()
         assert model.state_dim == 12
         assert model.control_dim == 4
 
     def test_forward(self):
         """Test QuadrotorPINN forward pass."""
-        from scripts.pinn_model import QuadrotorPINN
-
         model = QuadrotorPINN()
         x = torch.randn(8, 16)  # 12 states + 4 controls
         y = model(x)
@@ -117,8 +102,6 @@ class TestQuadrotorPINN:
 
     def test_physics_loss(self):
         """Test QuadrotorPINN physics loss."""
-        from scripts.pinn_model import QuadrotorPINN
-
         model = QuadrotorPINN()
         x = torch.randn(8, 16)
         y = model(x)
@@ -129,8 +112,6 @@ class TestQuadrotorPINN:
 
     def test_state_names(self):
         """Test state/control name introspection."""
-        from scripts.pinn_model import QuadrotorPINN
-
         model = QuadrotorPINN()
 
         states = model.get_state_names()
@@ -143,8 +124,6 @@ class TestQuadrotorPINN:
 
     def test_summary(self):
         """Test model summary."""
-        from scripts.pinn_model import QuadrotorPINN
-
         model = QuadrotorPINN()
         summary = model.summary()
 
@@ -157,8 +136,6 @@ class TestRollout:
 
     def test_rollout_shape(self):
         """Test rollout output shape."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         initial_state = torch.randn(2)
         controls = torch.randn(50, 1)
@@ -169,8 +146,6 @@ class TestRollout:
 
     def test_rollout_batched(self):
         """Test batched rollout."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         initial_state = torch.randn(4, 2)  # batch of 4
         controls = torch.randn(4, 50, 1)
@@ -185,8 +160,6 @@ class TestGradients:
 
     def test_backward_pass(self):
         """Test gradients flow through model."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         x = torch.randn(32, 3, requires_grad=True)
         y = model(x)
@@ -199,8 +172,6 @@ class TestGradients:
 
     def test_physics_loss_gradients(self):
         """Test gradients flow through physics loss."""
-        from scripts.pinn_base import PendulumPINN
-
         model = PendulumPINN()
         x = torch.randn(32, 3)
         y = model(x)
