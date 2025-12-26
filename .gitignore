@@ -58,4 +58,37 @@ training_log*.txt
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Data (large)
 data/
+
+# Large model files (use Git LFS for these)
+models/fault_detection_advanced/*.pth
+models/security/*.pth
+
+# Cache directories
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Coverage
+.coverage
+htmlcov/
+coverage.xml
+
+# Virtual environments
+venv/
+env/
+.env/
+
+# Misc wastes
+*.bak
+*.orig
+*_backup*
+*_old*
+*.temp
