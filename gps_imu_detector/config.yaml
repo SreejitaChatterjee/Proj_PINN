@@ -1,10 +1,12 @@
 # GPS-IMU Anomaly Detector Configuration
+# Complete configuration for Phases 0-5
 
 # Dataset settings
 data:
   euroc_path: "../data/euroc/all_sequences.csv"
   padre_path: "../data/PADRE_dataset"
   px4_path: "../data/px4_sitl"  # For transfer testing
+  blackbird_path: "../data/blackbird"  # Additional transfer dataset
 
   # Sequence-wise split (LOSO-CV)
   cv_folds: 5
@@ -14,7 +16,7 @@ data:
   sample_rate_hz: 200
   dt: 0.005
 
-# Feature extraction
+# Feature extraction (Phase 1-2)
 features:
   # Multi-scale windows (in samples at 200Hz)
   windows: [5, 10, 25, 50, 100, 200]
@@ -28,7 +30,7 @@ features:
   # Streaming mode for real-time
   streaming: true
 
-# Physics residuals
+# Physics residuals (Phase 1-2)
 physics:
   # Analytic constraints
   use_bounded_jerk: true
@@ -45,7 +47,7 @@ physics:
   pinn_num_layers: 2
   pinn_checkpoint: null  # Path to pretrained PINN
 
-# EKF settings
+# EKF settings (Phase 1-2)
 ekf:
   # State: [pos(3), vel(3), attitude(3), gyro_bias(3), accel_bias(3)]
   state_dim: 15
@@ -64,7 +66,7 @@ ekf:
   nis_dof: 6
   nis_alpha: 0.05
 
-# ML detector model
+# ML detector model (Phase 1-2)
 model:
   # Architecture: 1D CNN + GRU
   cnn_channels: [32, 64]
@@ -79,7 +81,7 @@ model:
   # Regularization
   dropout: 0.1
 
-# Hybrid scoring
+# Hybrid scoring (Phase 1-2)
 scoring:
   # Weights (calibrated on validation)
   weight_pinn: 0.25
@@ -90,7 +92,7 @@ scoring:
   # Normalization
   normalize_scores: true
 
-# Training
+# Training (Phase 1-2)
 training:
   batch_size: 64
   learning_rate: 0.001
@@ -106,7 +108,7 @@ training:
   # Seeds for reproducibility
   seed: 42
 
-# Attack generation
+# Attack generation (Phase 1-2)
 attacks:
   types:
     - bias
@@ -125,31 +127,111 @@ attacks:
     ramp_duration_s: 10.0
     intermittent_prob: 0.1
 
-# Optimization
+# Phase 3: Hardening and Robustness
+hardening:
+  # Hard negative mining
+  hard_negatives:
+    n_attempts: 20
+    target_evasion: 0.9
+    attack_types:
+      - ar1_drift_slow
+      - ar1_drift_medium
+      - coordinated_high
+      - coordinated_med
+      - intermittent_sparse
+      - intermittent_dense
+      - below_threshold
+
+  # Adversarial training
+  adversarial:
+    enabled: true
+    epsilon_values: [0.01, 0.05, 0.1, 0.2]
+    pgd_steps: 20
+    step_size: 0.01
+
+  # Domain randomization
+  domain_randomization:
+    enabled: true
+    noise_scale_range: [0.5, 2.0]
+    jitter_std: 0.001
+    augment_prob: 0.5
+
+  # Transfer evaluation
+  transfer:
+    source_dataset: "euroc"
+    target_datasets: ["px4_sitl", "blackbird"]
+    compute_mmd: true
+    compute_coral: true
+
+  # Attribution heads
+  attribution:
+    attack_types: 7  # Number of attack type classes
+    n_sensors: 5  # Number of sensor groups
+
+  # Curriculum learning
+  curriculum:
+    enabled: true
+    n_iterations: 5
+    hard_negative_sample_ratio: 0.3
+
+# Phase 4: Quantization and Optimization
 optimization:
   # Quantization
   quantize: true
   quantize_bits: 8
+  quantize_method: "dynamic"  # dynamic, static
 
   # Target latency
   target_latency_ms: 5.0
 
   # Export formats
   export_onnx: true
+  export_torchscript: true
   export_tflite: false
 
-# Evaluation
+  # Latency benchmarking
+  benchmark:
+    warmup_iterations: 10
+    benchmark_iterations: 100
+
+  # Streaming inference
+  streaming:
+    buffer_size: 1
+    maintain_hidden_state: true
+
+# Phase 5: Rigorous Evaluation
 evaluation:
   # Metrics at fixed FPR
   fpr_thresholds: [0.01, 0.05, 0.10]
 
   # Bootstrap for confidence intervals
-  bootstrap_samples: 1000
+  bootstrap_samples: 100
   confidence_level: 0.95
 
   # Per-attack breakdown
   report_per_attack: true
   report_worst_case: true
+
+  # Detection delay
+  compute_detection_delay: true
+
+  # Ablation studies
+  ablation:
+    enabled: true
+    variants:
+      - name: "full_model"
+        cnn_channels: [32, 64]
+        gru_hidden_size: 64
+      - name: "small_cnn"
+        cnn_channels: [16, 32]
+        gru_hidden_size: 64
+      - name: "small_all"
+        cnn_channels: [16, 32]
+        gru_hidden_size: 32
+
+  # Output
+  output_format: "json"
+  save_fold_results: true
 
 # Logging
 logging:
