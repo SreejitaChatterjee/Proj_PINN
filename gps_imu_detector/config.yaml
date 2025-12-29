@@ -1,0 +1,159 @@
+# GPS-IMU Anomaly Detector Configuration
+
+# Dataset settings
+data:
+  euroc_path: "../data/euroc/all_sequences.csv"
+  padre_path: "../data/PADRE_dataset"
+  px4_path: "../data/px4_sitl"  # For transfer testing
+
+  # Sequence-wise split (LOSO-CV)
+  cv_folds: 5
+  test_sequences: ["V1_02_medium"]  # Hold-out for final eval
+
+  # Sampling
+  sample_rate_hz: 200
+  dt: 0.005
+
+# Feature extraction
+features:
+  # Multi-scale windows (in samples at 200Hz)
+  windows: [5, 10, 25, 50, 100, 200]
+
+  # Feature types
+  use_mean: true
+  use_std: true
+  use_max: true
+  use_cumsum: true
+
+  # Streaming mode for real-time
+  streaming: true
+
+# Physics residuals
+physics:
+  # Analytic constraints
+  use_bounded_jerk: true
+  max_jerk: 100.0  # m/s^3
+
+  use_energy_conservation: true
+  energy_tolerance: 0.1
+
+  use_pos_vel_acc_consistency: true
+
+  # PINN (optional, CPU budget permitting)
+  use_pinn: true
+  pinn_hidden_size: 64
+  pinn_num_layers: 2
+  pinn_checkpoint: null  # Path to pretrained PINN
+
+# EKF settings
+ekf:
+  # State: [pos(3), vel(3), attitude(3), gyro_bias(3), accel_bias(3)]
+  state_dim: 15
+
+  # Process noise
+  process_noise_pos: 0.01
+  process_noise_vel: 0.1
+  process_noise_att: 0.01
+  process_noise_bias: 0.001
+
+  # Measurement noise
+  meas_noise_pos: 0.1
+  meas_noise_vel: 0.05
+
+  # NIS threshold (chi-squared)
+  nis_dof: 6
+  nis_alpha: 0.05
+
+# ML detector model
+model:
+  # Architecture: 1D CNN + GRU
+  cnn_channels: [32, 64]
+  cnn_kernel_size: 3
+
+  gru_hidden_size: 64
+  gru_num_layers: 1
+
+  # Output
+  num_classes: 1  # Binary anomaly detection
+
+  # Regularization
+  dropout: 0.1
+
+# Hybrid scoring
+scoring:
+  # Weights (calibrated on validation)
+  weight_pinn: 0.25
+  weight_ekf_nis: 0.25
+  weight_ml: 0.25
+  weight_temporal: 0.25
+
+  # Normalization
+  normalize_scores: true
+
+# Training
+training:
+  batch_size: 64
+  learning_rate: 0.001
+  epochs: 100
+  early_stopping_patience: 10
+
+  # Contamination (domain prior, NOT tuned on attacks)
+  contamination: 0.05
+
+  # Hard negative mining
+  hard_negative_ratio: 0.2
+
+  # Seeds for reproducibility
+  seed: 42
+
+# Attack generation
+attacks:
+  types:
+    - bias
+    - drift
+    - ramp
+    - noise
+    - coordinated
+    - intermittent
+
+  # Magnitude ranges
+  magnitudes: [0.1, 0.25, 0.5, 1.0, 2.0, 4.0]
+
+  # Stealth parameters
+  stealth:
+    ar1_coefficient: 0.99  # For slow drift
+    ramp_duration_s: 10.0
+    intermittent_prob: 0.1
+
+# Optimization
+optimization:
+  # Quantization
+  quantize: true
+  quantize_bits: 8
+
+  # Target latency
+  target_latency_ms: 5.0
+
+  # Export formats
+  export_onnx: true
+  export_tflite: false
+
+# Evaluation
+evaluation:
+  # Metrics at fixed FPR
+  fpr_thresholds: [0.01, 0.05, 0.10]
+
+  # Bootstrap for confidence intervals
+  bootstrap_samples: 1000
+  confidence_level: 0.95
+
+  # Per-attack breakdown
+  report_per_attack: true
+  report_worst_case: true
+
+# Logging
+logging:
+  level: INFO
+  save_dir: "./experiments"
+  save_models: true
+  save_plots: true
