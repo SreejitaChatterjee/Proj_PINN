@@ -202,13 +202,15 @@ b639367 Add GPS-IMU anomaly detector framework (Phases 0-2)
 gps_imu_detector/
 ├── src/           # 17 modules (~6,000 lines)
 ├── scripts/       # 2 utility scripts (~700 lines)
+├── ci/            # CI pipeline (leakage_check.sh)
+├── profile/       # Profiling report template
 ├── tests/         # 91 tests (~900 lines)
 ├── docs/          # 2 protocol documents
 ├── config.yaml    # Full configuration
 └── requirements.txt  # Pinned dependencies
 ```
 
-**Total: ~8,864 lines of production-ready code with 91 tests**
+**Total: ~9,100 lines of production-ready code with 91 tests**
 
 ---
 

@@ -179,6 +179,8 @@ GPS-IMU Signals (200 Hz)
 gps_imu_detector/
 ├── src/           # 17 modules (~6,000 lines)
 ├── scripts/       # CI gate, demo scripts (~700 lines)
+├── ci/            # CI pipeline (leakage_check.sh)
+├── profile/       # Profiling report template
 ├── tests/         # 91 tests (~900 lines)
 ├── docs/          # Evaluation protocol, reproducibility
 ├── config.yaml    # Full configuration
@@ -187,6 +189,8 @@ gps_imu_detector/
 
 ### Git Commits
 ```
+808bbf8 Add missing CI and profiling artifacts
+fbaac47 Update documentation for roadmap P0-P5 complete
 41a824f Add missing roadmap priority items (P0-P5)
 8f34f2f Update all documentation for Phases 0-5 complete
 1b898dd Add Phase 5: Rigorous Evaluation module
