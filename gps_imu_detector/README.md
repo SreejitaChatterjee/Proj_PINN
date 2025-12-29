@@ -3,7 +3,7 @@
 A physics-first, multi-scale unsupervised fusion detector for GPS-IMU anomaly detection.
 Optimized for real-time inference at 200 Hz on commodity CPUs.
 
-## Project Status: Phases 0-5 Complete
+## Project Status: Complete (Phases 0-5 + Roadmap P0-P5)
 
 | Phase | Description | Status | Lines |
 |-------|-------------|--------|-------|
@@ -12,7 +12,8 @@ Optimized for real-time inference at 200 Hz on commodity CPUs.
 | 3 | Hardening & Robustness | Complete | ~800 |
 | 4 | Quantization & Optimization | Complete | ~600 |
 | 5 | Rigorous Evaluation | Complete | ~999 |
-| **Total** | | **Complete** | **~5,974** |
+| P0-P5 | Roadmap Priority Items | Complete | ~2,890 |
+| **Total** | | **Complete** | **~8,864** |
 
 ## Novelty Claim
 
@@ -21,7 +22,8 @@ Physics-first multi-scale unsupervised fusion combining:
 - EKF integrity proxies (NIS)
 - Multi-scale statistical features
 - Hard negative mining for robustness
-- Adversarial training for worst-case performance
+- Minimax calibration for worst-case recall
+- Explainable per-alarm attribution
 
 Yields superior worst-case recall and cross-domain robustness for GPS-IMU anomaly detection.
 
@@ -29,7 +31,7 @@ Yields superior worst-case recall and cross-domain robustness for GPS-IMU anomal
 
 ```
 gps_imu_detector/
-├── src/                        # Core implementation (~5,000 lines)
+├── src/                        # Core implementation (~6,000 lines)
 │   ├── data_loader.py              # Sequence-aware LOSO-CV splits
 │   ├── feature_extractor.py        # Streaming O(1) multi-scale features
 │   ├── physics_residuals.py        # Analytic + lightweight PINN residuals
@@ -43,7 +45,13 @@ gps_imu_detector/
 │   ├── hardened_training.py        # Curriculum learning + hard negatives
 │   ├── quantization.py             # INT8/ONNX/TorchScript export
 │   ├── inference.py                # Real-time streaming pipeline
-│   └── evaluate.py                 # Rigorous LOSO-CV evaluation
+│   ├── evaluate.py                 # Rigorous LOSO-CV evaluation
+│   ├── minimax_calibration.py      # Worst-case recall optimization (P2)
+│   ├── operational_metrics.py      # Latency CDF, FA/hour, delay (P3)
+│   └── explainable_alarms.py       # Per-alarm attribution (P4)
+├── scripts/                    # Utility scripts
+│   ├── ci_circular_check.py        # CI gate - fail if circular sensors (P0)
+│   └── demo_reproduce_figure.py    # Reproduce paper figures (P5)
 ├── data/                       # Dataset storage
 ├── experiments/                # Experiment configs and logs
 ├── results/                    # Evaluation results (JSON)
@@ -51,11 +59,13 @@ gps_imu_detector/
 ├── docs/                       # Documentation
 │   ├── EVALUATION_PROTOCOL.md      # Strict evaluation rules
 │   └── REPRODUCIBILITY_CHECKLIST.md
-└── tests/                      # Unit and integration tests (~600 lines)
+└── tests/                      # Unit and integration tests (~900 lines)
     ├── test_pipeline.py            # Phase 0-2 tests (15 tests)
     ├── test_hardening.py           # Phase 3 tests (19 tests)
     ├── test_optimization.py        # Phase 4 tests (11 tests)
-    └── test_evaluation.py          # Phase 5 tests (12 tests)
+    ├── test_evaluation.py          # Phase 5 tests (12 tests)
+    ├── test_leakage.py             # Leakage detection tests (13 tests)
+    └── test_roadmap_items.py       # Roadmap P0-P5 tests (20 tests)
 ```
 
 ## Quick Start
@@ -64,7 +74,10 @@ gps_imu_detector/
 # Install dependencies
 pip install -r requirements.txt
 
-# Run all tests (57 tests)
+# Run CI gate (check for circular sensors)
+python scripts/ci_circular_check.py --data /path/to/data.csv
+
+# Run all tests (91 tests)
 python -m pytest tests/ -v
 
 # Train detector with LOSO-CV
@@ -73,18 +86,23 @@ python src/train.py --config config.yaml --data /path/to/data
 # Run rigorous evaluation
 python src/evaluate.py --data /path/to/data --output ./results
 
+# Reproduce paper figures
+python scripts/demo_reproduce_figure.py --output ./figures
+
 # Export for deployment
 python src/inference.py --export --format onnx
 ```
 
 ## Key Design Principles
 
-1. **No Circular Sensors**: Never derive sensor from ground truth
+1. **No Circular Sensors**: Never derive sensor from ground truth (CI gate enforced)
 2. **Sequence-Wise Splits**: LOSO-CV to prevent temporal leakage
 3. **Train-Only Preprocessing**: Scalers fit on training normal data only
 4. **Domain-Knowledge Thresholds**: Contamination from priors, not tuned on attacks
 5. **CPU-First**: All components optimized for <5ms per timestep
 6. **Hardening**: Iterative hard negative mining for worst-case robustness
+7. **Minimax Calibration**: Optimize for worst-case recall, not average
+8. **Explainability**: Per-alarm attribution to PINN/EKF/ML/temporal
 
 ## Architecture
 
@@ -107,10 +125,10 @@ Raw Sensors (200 Hz)
             └─→ <100K params, <5ms inference
                     │
                     ▼
-            Hybrid Scorer (calibrated fusion)
+            Minimax Calibrated Fusion
                     │
                     ▼
-            Anomaly Score [0, 1]
+            Anomaly Score [0, 1] + Explanation
 ```
 
 ### Hardening Pipeline (Phase 3)
@@ -132,15 +150,27 @@ Hard Negative Generator
     Hardened Detector
 ```
 
+## Roadmap Priority Items (P0-P5)
+
+| Priority | Item | Module | Description |
+|----------|------|--------|-------------|
+| P0 | CI Gate | `scripts/ci_circular_check.py` | Auto-fail if circular sensors detected |
+| P1 | Leakage Tests | `tests/test_leakage.py` | 13 tests for data leakage detection |
+| P2 | Minimax Calibration | `src/minimax_calibration.py` | Optimize worst-case recall |
+| P3 | Operational Metrics | `src/operational_metrics.py` | Latency CDF, FA/hour, delay |
+| P4 | Explainable Alarms | `src/explainable_alarms.py` | Per-alarm attribution |
+| P5 | Demo Script | `scripts/demo_reproduce_figure.py` | Reproduce paper figures |
+
 ## Target Metrics
 
 | Metric | Target | Notes |
 |--------|--------|-------|
 | Latency | ≤5ms | Per timestep on 4-core CPU |
 | Recall@5%FPR | ≥95% | On validated attack suite |
-| Worst-case Recall | ≥80% | Across all attack types |
+| Worst-case Recall | ≥80% | Across all attack types (minimax) |
 | Cross-dataset Drop | ≤10% | After domain adaptation |
 | Model Size | <1MB | For embedded deployment |
+| False Alarms | <100/hour | At 200Hz sample rate |
 
 ## Attack Catalog
 
@@ -188,15 +218,24 @@ Hard Negative Generator
 - Ablation studies (model size variants)
 - Latency benchmarks vs 5ms target
 
+### Roadmap P0-P5: Priority Items
+- `MinimaxCalibrator`: Differential evolution for worst-case recall
+- `OperationalProfiler`: Latency CDF, false alarms/hour, detection delay
+- `AlarmExplainer`: Per-alarm attribution to component sources
+- `RuleFusionExplainer`: Interpretable rule-based explanations
+- `CircularSensorChecker`: CI gate with Pearson correlation test
+
 ## Test Coverage
 
 ```
 tests/test_pipeline.py      - 15 tests (Phase 0-2)
 tests/test_hardening.py     - 19 tests (Phase 3)
-tests/test_optimization.py  - 11 tests (Phase 4, 2 skipped for Python 3.14)
+tests/test_optimization.py  - 11 tests (Phase 4)
 tests/test_evaluation.py    - 12 tests (Phase 5)
+tests/test_leakage.py       - 13 tests (P1: Leakage detection)
+tests/test_roadmap_items.py - 20 tests (P0-P5: Roadmap items)
 ─────────────────────────────────────────────────
-Total                       - 57 tests
+Total                       - 91 tests (all passing)
 ```
 
 ## References
@@ -205,3 +244,4 @@ Total                       - 57 tests
 2. ALFA Dataset: Keipour et al., IJRR 2021
 3. Physics-Informed Neural Networks: Raissi et al., JCP 2019
 4. Adversarial Robustness: Madry et al., ICLR 2018
+5. Minimax Optimization: Boyd & Vandenberghe, Convex Optimization, 2004

@@ -69,7 +69,19 @@ Both tracks are ready for paper submission.
 | 3 | Hardening | Complete | ~800 lines |
 | 4 | Optimization | Complete | ~600 lines |
 | 5 | Evaluation | Complete | ~999 lines |
-| **Total** | | **Complete** | **~5,974 lines** |
+| P0-P5 | Roadmap Priority Items | Complete | ~2,890 lines |
+| **Total** | | **Complete** | **~8,864 lines** |
+
+### Roadmap Priority Items (P0-P5)
+
+| Priority | Item | Status |
+|----------|------|--------|
+| P0 | CI Gate for Circular Sensors | Complete |
+| P1 | Leakage Tests (corr > 0.9 FAIL) | Complete |
+| P2 | Minimax Calibration | Complete |
+| P3 | Operational Metrics | Complete |
+| P4 | Explainable Alarms | Complete |
+| P5 | Demo Script | Complete |
 
 ### Architecture
 
@@ -103,7 +115,13 @@ GPS-IMU Signals (200 Hz)
    - INT8 quantization
    - ONNX/TorchScript export
    - <5ms latency target
-   - 57 tests passing
+   - 91 tests passing
+
+4. **Novelty Contributions (P0-P5)**
+   - Minimax calibration: Optimize for worst-case recall, not average
+   - Explainable alarms: Per-alarm attribution to PINN/EKF/ML/temporal
+   - CI gate: Automated circular sensor detection
+   - Operational metrics: Latency CDF, false alarms/hour, detection delay
 
 ### Attack Coverage
 
@@ -159,8 +177,9 @@ GPS-IMU Signals (200 Hz)
 ### Location
 ```
 gps_imu_detector/
-├── src/           # 14 modules (~5,000 lines)
-├── tests/         # 57 tests (~600 lines)
+├── src/           # 17 modules (~6,000 lines)
+├── scripts/       # CI gate, demo scripts (~700 lines)
+├── tests/         # 91 tests (~900 lines)
 ├── docs/          # Evaluation protocol, reproducibility
 ├── config.yaml    # Full configuration
 └── requirements.txt
@@ -168,6 +187,8 @@ gps_imu_detector/
 
 ### Git Commits
 ```
+41a824f Add missing roadmap priority items (P0-P5)
+8f34f2f Update all documentation for Phases 0-5 complete
 1b898dd Add Phase 5: Rigorous Evaluation module
 e932b97 Add Phase 4: Quantization and Optimization modules
 135aad1 Add Phase 3: Hardening and Robustness modules
@@ -198,7 +219,7 @@ Both research tracks demonstrate rigorous, publication-ready work:
 - **GPS-IMU track**: Ready for evaluation and second paper
 
 All code is:
-- Tested (57 passing tests)
+- Tested (91 passing tests)
 - Documented (evaluation protocol, reproducibility checklist)
 - Version controlled (Git commits)
 - Ready for reproduction
