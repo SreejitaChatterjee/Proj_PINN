@@ -52,6 +52,10 @@ gps_imu_detector/
 ├── scripts/                    # Utility scripts
 │   ├── ci_circular_check.py        # CI gate - fail if circular sensors (P0)
 │   └── demo_reproduce_figure.py    # Reproduce paper figures (P5)
+├── ci/                         # CI pipeline scripts
+│   └── leakage_check.sh            # Full leakage audit (grep + correlation + pytest)
+├── profile/                    # Profiling artifacts
+│   └── profile_report.md           # Latency, memory, CPU spec template
 ├── data/                       # Dataset storage
 ├── experiments/                # Experiment configs and logs
 ├── results/                    # Evaluation results (JSON)
