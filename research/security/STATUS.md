@@ -8,14 +8,21 @@
 
 This research develops physics-informed anomaly detection for UAV sensor security, with two main tracks:
 
-1. **ALFA Fault Detection** - PINN-based detector on real flight data (complete)
-2. **GPS-IMU Anomaly Detector** - Multi-signal fusion for attack detection (complete)
+1. **ALFA Fault Detection** - PINN-based detector on real flight data
+2. **GPS-IMU Anomaly Detector** - Multi-signal fusion framework for attack detection
 
 ---
 
-## Track 1: ALFA Fault Detection (Complete)
+## Track 1: ALFA Fault Detection
 
 ### Results Summary
+
+**IMPORTANT CAVEATS:**
+- Results are from a SINGLE experimental configuration
+- Hardware: [NOT DOCUMENTED - needs to be filled]
+- Random seed: [NOT DOCUMENTED - needs to be filled]
+- Split methodology: Sequence-wise, but exact splits not versioned
+- These numbers should NOT be cited without full reproducibility info
 
 | Metric | Our PINN | SVM | Isolation Forest |
 |--------|----------|-----|------------------|
@@ -24,202 +31,145 @@ This research develops physics-informed anomaly detection for UAV sensor securit
 | FPR | **4.5%** | 62.9% | 10.0% |
 | Practical? | **Yes** | No | No |
 
-### Key Achievement
-- **Lowest false positive rate** (4.5%) among all methods
-- Tested on 47 real flights from CMU's ALFA dataset
-- 100% precision on this dataset (zero false alarms when alert triggered)
+### Key Claims (WITH CAVEATS)
+- **4.5% FPR** - On this specific dataset with this specific threshold
+- **100% precision** - On this specific dataset (47 flights), may not generalize
+- **0.34 ms inference** - Hardware NOT documented, not independently verified
+- **0.79 MB model** - FP32, no quantization applied
+
+### What's Missing for Publication
+- [ ] Hardware specification (CPU model, RAM, OS)
+- [ ] Exact random seeds for reproducibility
+- [ ] Versioned train/test splits
+- [ ] Statistical significance tests with methodology
+- [ ] Independent verification of latency claims
+- [ ] Circularity check (are any sensors derived from ground truth?)
 
 ### Paper Status
-- `paper_v3_integrated.tex` ready for compilation
-- 6 figures + 4 tables integrated
-- All overclaims softened with "on this dataset" caveats
-- Submission target: ACSAC 2025
+- `paper_v3_integrated.tex` exists but contains unverified claims
+- Needs methodology section with full reproducibility details
+- Target: ACSAC 2025 (but requires fixes first)
 
 ---
 
-## Track 2: GPS-IMU Anomaly Detector (Complete)
+## Track 2: GPS-IMU Anomaly Detector
 
-### Implementation Status: All Phases + Roadmap Complete
+### HONEST STATUS: Framework Only
 
-| Phase | Description | Status | Lines |
-|-------|-------------|--------|-------|
-| 0 | Setup & Governance | Complete | ~200 |
-| 1-2 | Core Pipeline | Complete | ~3,375 |
-| 3 | Hardening & Robustness | Complete | ~800 |
-| 4 | Quantization & Optimization | Complete | ~600 |
-| 5 | Rigorous Evaluation | Complete | ~999 |
-| P0-P5 | Roadmap Priority Items | Complete | ~2,890 |
-| **Total** | | **Complete** | **~8,864** |
+**CRITICAL: This is a CODE FRAMEWORK, not a validated detector.**
 
-### Roadmap Priority Items (P0-P5)
+| What Exists | What Does NOT Exist |
+|-------------|---------------------|
+| Source code (~10,000 lines) | Trained models |
+| Unit tests (91 passing) | Actual evaluation results |
+| Architecture design | Measured latency numbers |
+| Attack generators | Validated detection metrics |
+| Evaluation scripts | Real-world testing |
 
-| Priority | Item | Status | Module |
-|----------|------|--------|--------|
-| P0 | CI Gate for Circular Sensors | Complete | `scripts/ci_circular_check.py` |
-| P1 | Leakage Tests (corr > 0.9 FAIL) | Complete | `tests/test_leakage.py` |
-| P2 | Minimax Calibration | Complete | `src/minimax_calibration.py` |
-| P3 | Operational Metrics | Complete | `src/operational_metrics.py` |
-| P4 | Explainable Alarms | Complete | `src/explainable_alarms.py` |
-| P5 | Demo Script | Complete | `scripts/demo_reproduce_figure.py` |
+### Implementation Status
 
-### Architecture
+| Phase | Description | Code Status | Validation Status |
+|-------|-------------|-------------|-------------------|
+| 0 | Setup & Governance | ✅ Complete | ⚠️ Not validated |
+| 1-2 | Core Pipeline | ✅ Complete | ⚠️ Not validated |
+| 3 | Hardening & Robustness | ✅ Complete | ⚠️ Not validated |
+| 4 | Quantization & Optimization | ✅ Complete | ⚠️ Not validated |
+| 5 | Rigorous Evaluation | ✅ Complete | ⚠️ Not validated |
+| P0-P5 | Roadmap Priority Items | ✅ Complete | ⚠️ Not validated |
+
+### What "Complete" Actually Means
+- **Code exists** and passes unit tests
+- **Architecture is implemented** but not trained on real data
+- **Evaluation scripts exist** but have not been run on real datasets
+- **No actual performance numbers** can be claimed
+
+### Target Metrics (NOT YET MEASURED)
+
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| Latency | ≤5ms per step | ? | NOT MEASURED |
+| Recall@5%FPR | ≥95% | ? | NOT MEASURED |
+| Worst-case Recall | ≥80% | ? | NOT MEASURED |
+| Cross-dataset drop | ≤10% | ? | NOT MEASURED |
+| Model size | <1MB | ? | NOT MEASURED |
+| False alarms | <100/hour | ? | NOT MEASURED |
+
+### Files That Exist
 
 ```
-GPS-IMU Signals (200 Hz)
-    │
-    ├─→ Streaming Feature Extractor (O(1))
-    │       └─→ Multi-scale [5, 10, 25] windows
-    │
-    ├─→ Physics Residual Checker
-    │       ├─→ PVA consistency
-    │       ├─→ Jerk bounds (50 m/s³)
-    │       └─→ Energy conservation
-    │
-    ├─→ EKF Integrity (NIS)
-    │
-    └─→ CNN-GRU Detector (<100K params)
-            │
-            ▼
-    Minimax Calibrated Fusion
-            │
-            ▼
-    Anomaly [0,1] + Explanation
+gps_imu_detector/
+├── src/           # 17 modules (~6,000 lines) - CODE EXISTS
+├── scripts/       # 3 utility scripts - CODE EXISTS
+├── configs/       # baseline.yaml - CONFIG EXISTS
+├── experiments/   # eval.py - SCRIPT EXISTS
+├── ci/            # leakage_check.sh - SCRIPT EXISTS
+├── profile/       # profile_report.md - TEMPLATE ONLY
+├── tests/         # 91 tests passing - TESTS PASS
+├── docs/          # Protocol documents - DOCS EXIST
+├── models/        # EMPTY - NO TRAINED MODELS
+└── results/       # EMPTY - NO RESULTS
 ```
-
-### Key Components
-
-| Component | File | Description |
-|-----------|------|-------------|
-| Data Loader | `data_loader.py` | LOSO-CV splits, attack catalog |
-| Feature Extractor | `feature_extractor.py` | O(1) streaming with Numba |
-| Physics Checker | `physics_residuals.py` | Analytic + PINN residuals |
-| EKF | `ekf.py` | 15-state with NIS |
-| Detector | `model.py` | 1D CNN + GRU |
-| Scorer | `hybrid_scorer.py` | Calibrated fusion |
-| Hard Negatives | `hard_negatives.py` | Stealth attacks |
-| Transfer | `transfer.py` | Cross-dataset MMD |
-| Quantization | `quantization.py` | INT8/ONNX export |
-| Evaluation | `evaluate.py` | Rigorous LOSO-CV |
-| **Minimax** | `minimax_calibration.py` | Worst-case recall optimization |
-| **Metrics** | `operational_metrics.py` | Latency CDF, FA/hour |
-| **Explainer** | `explainable_alarms.py` | Per-alarm attribution |
-
-### Attack Types Covered
-
-| Attack | Type | Difficulty |
-|--------|------|-----------|
-| Bias | Constant offset | Easy |
-| Drift | AR(1) ramp | Medium |
-| Noise | Variance increase | Easy |
-| Coordinated | Multi-sensor | Hard |
-| Intermittent | On/off | Hard |
-| Ramp | Below-threshold | Very Hard |
-| Adversarial | PGD | Very Hard |
-
-### Target Metrics
-
-| Metric | Target | Status |
-|--------|--------|--------|
-| Latency | ≤5ms per step | Framework ready |
-| Recall@5%FPR | ≥95% | Evaluation ready |
-| Worst-case Recall | ≥80% | Minimax ready |
-| Cross-dataset drop | ≤10% | Transfer eval ready |
-| Model size | <1MB | Quantization ready |
-| False alarms | <100/hour | Metrics ready |
 
 ### Test Coverage
 
 ```
-test_pipeline.py      - 15 tests (Phases 0-2)
-test_hardening.py     - 19 tests (Phase 3)
-test_optimization.py  - 11 tests (Phase 4)
-test_evaluation.py    - 12 tests (Phase 5)
-test_leakage.py       - 13 tests (P1: Leakage)
-test_roadmap_items.py - 20 tests (P0-P5)
-──────────────────────────────────────────
-Total                 - 91 tests passing
+91 tests passing - BUT these test CODE FUNCTIONALITY, not detection performance
 ```
 
 ---
 
-## Git Commits
+## Honest Assessment
+
+### What We CAN Claim
+1. A well-structured framework for GPS-IMU anomaly detection exists
+2. The code passes 91 unit tests
+3. The architecture follows best practices (no circular sensors, LOSO-CV, etc.)
+4. The codebase is ready to be trained and evaluated
+
+### What We CANNOT Claim (Yet)
+1. Any specific detection performance (AUROC, recall, etc.)
+2. Any specific latency numbers
+3. That the detector actually works on real attacks
+4. That the system is "deployment ready"
+
+### Required Next Steps for Valid Claims
+
+1. **Run actual training** on EuRoC or similar dataset
+2. **Run actual evaluation** with the evaluation scripts
+3. **Document hardware** used for all measurements
+4. **Version control** exact splits and seeds
+5. **Measure actual latency** with profiling tools
+6. **Verify circularity** - ensure no sensors derived from ground truth
+
+---
+
+## Git Commits (Code Only - No Results)
 
 ```
+81cefa7 Update docs with configs, experiments, scripts
+a20c495 Add missing roadmap artifacts: configs, quantize script, eval script
+160bdc9 Update docs with ci/ and profile/ directories
+808bbf8 Add missing CI and profiling artifacts
+fbaac47 Update documentation for roadmap P0-P5 complete
 41a824f Add missing roadmap priority items (P0-P5)
-8f34f2f Update all documentation for Phases 0-5 complete
 1b898dd Add Phase 5: Rigorous Evaluation module
 e932b97 Add Phase 4: Quantization and Optimization modules
 135aad1 Add Phase 3: Hardening and Robustness modules
 b639367 Add GPS-IMU anomaly detector framework (Phases 0-2)
-5a64435 Add rigorous security detection with sensor fusion and multi-IMU
 ```
-
----
-
-## Documentation
-
-| Document | Location | Purpose |
-|----------|----------|---------|
-| Main README | `gps_imu_detector/README.md` | Project overview |
-| Evaluation Protocol | `docs/EVALUATION_PROTOCOL.md` | Strict eval rules |
-| Reproducibility | `docs/REPRODUCIBILITY_CHECKLIST.md` | Artifact checklist |
-| ALFA Summary | `ALFA_SUMMARY_FOR_PROF.md` | Professor update |
-
----
-
-## Novelty Contributions
-
-1. **Minimax Calibration**: Optimize for worst-case recall, not average
-2. **Explainable Alarms**: Per-alarm attribution to PINN/EKF/ML/temporal
-3. **CI Gate**: Automated circular sensor detection
-4. **Operational Metrics**: Latency CDF, false alarms/hour, detection delay
-5. **Hard Negative Curriculum**: Progressive attack difficulty
-
----
-
-## Next Steps (Phase 6 - Optional)
-
-1. **Deployment Integration**
-   - ROS2 node wrapper
-   - Real hardware testing
-   - Performance profiling
-
-2. **Paper Preparation**
-   - Run full evaluation on EuRoC data
-   - Generate figures and tables
-   - Write methodology section
-
-3. **Extensions**
-   - Multi-IMU redundancy integration
-   - GNSS spoofing detection
-   - Online learning for adaptation
-
----
-
-## Files Ready for Use
-
-```
-gps_imu_detector/
-├── src/           # 17 modules (~6,000 lines)
-├── scripts/       # 3 utility scripts (~1,000 lines)
-├── configs/       # Configuration files (baseline.yaml)
-├── experiments/   # Evaluation scripts (eval.py)
-├── ci/            # CI pipeline (leakage_check.sh)
-├── profile/       # Profiling report template
-├── tests/         # 91 tests (~900 lines)
-├── docs/          # 2 protocol documents
-├── config.yaml    # Full configuration
-└── requirements.txt  # Pinned dependencies
-```
-
-**Total: ~10,000 lines of production-ready code with 91 tests**
 
 ---
 
 ## Summary
 
-Both research tracks are complete:
-- **ALFA track**: Paper ready for submission
-- **GPS-IMU track**: Full implementation including all roadmap priority items (P0-P5)
+### Track 1 (ALFA)
+- Results exist but lack reproducibility documentation
+- Claims should not be published without hardware/seed/split info
+- Needs independent verification
 
-All code is tested, documented, and ready for deployment or publication.
+### Track 2 (GPS-IMU)
+- **CODE FRAMEWORK ONLY** - no trained models or results
+- Ready to be trained and evaluated
+- No performance claims can be made until actual evaluation is run
+
+**BOTTOM LINE:** We have code, not validated results.

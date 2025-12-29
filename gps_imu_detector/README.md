@@ -1,21 +1,27 @@
 # GPS-IMU Anomaly Detector
 
-A physics-first, multi-scale unsupervised fusion detector for GPS-IMU anomaly detection.
-Optimized for real-time inference at 200 Hz on commodity CPUs.
+A physics-first, multi-scale unsupervised fusion framework for GPS-IMU anomaly detection.
+Designed for real-time inference at 200 Hz on commodity CPUs.
 
-## Project Status: Complete (Phases 0-5 + Roadmap P0-P5)
+## IMPORTANT: This is a CODE FRAMEWORK
 
-| Phase | Description | Status | Lines |
-|-------|-------------|--------|-------|
-| 0 | Setup & Governance | Complete | ~200 |
-| 1-2 | Core Pipeline | Complete | ~3,375 |
-| 3 | Hardening & Robustness | Complete | ~800 |
-| 4 | Quantization & Optimization | Complete | ~600 |
-| 5 | Rigorous Evaluation | Complete | ~999 |
-| P0-P5 | Roadmap Priority Items | Complete | ~2,890 |
-| **Total** | | **Complete** | **~8,864** |
+**What exists:** ~10,000 lines of code, 91 passing tests
+**What does NOT exist:** Trained models, validated results, measured performance
 
-## Novelty Claim
+This framework is ready to be trained and evaluated, but NO performance claims can be made until actual evaluation is run.
+
+## Project Status: Code Complete, Validation Pending
+
+| Phase | Description | Code Status | Validated |
+|-------|-------------|-------------|-----------|
+| 0 | Setup & Governance | ✅ Complete | ⚠️ No |
+| 1-2 | Core Pipeline | ✅ Complete | ⚠️ No |
+| 3 | Hardening & Robustness | ✅ Complete | ⚠️ No |
+| 4 | Quantization & Optimization | ✅ Complete | ⚠️ No |
+| 5 | Rigorous Evaluation | ✅ Complete | ⚠️ No |
+| P0-P5 | Roadmap Priority Items | ✅ Complete | ⚠️ No |
+
+## Architecture (Implemented, Not Validated)
 
 Physics-first multi-scale unsupervised fusion combining:
 - PINN residuals (physics violations)
@@ -25,7 +31,7 @@ Physics-first multi-scale unsupervised fusion combining:
 - Minimax calibration for worst-case recall
 - Explainable per-alarm attribution
 
-Yields superior worst-case recall and cross-domain robustness for GPS-IMU anomaly detection.
+**Note:** The architecture is implemented but NOT validated on real data.
 
 ## Directory Structure
 
@@ -178,16 +184,18 @@ Hard Negative Generator
 | P4 | Explainable Alarms | `src/explainable_alarms.py` | Per-alarm attribution |
 | P5 | Demo Script | `scripts/demo_reproduce_figure.py` | Reproduce paper figures |
 
-## Target Metrics
+## Target Metrics (NOT YET MEASURED)
 
-| Metric | Target | Notes |
-|--------|--------|-------|
-| Latency | ≤5ms | Per timestep on 4-core CPU |
-| Recall@5%FPR | ≥95% | On validated attack suite |
-| Worst-case Recall | ≥80% | Across all attack types (minimax) |
-| Cross-dataset Drop | ≤10% | After domain adaptation |
-| Model Size | <1MB | For embedded deployment |
-| False Alarms | <100/hour | At 200Hz sample rate |
+**These are TARGETS, not achieved results. No evaluation has been run.**
+
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| Latency | ≤5ms | ? | NOT MEASURED |
+| Recall@5%FPR | ≥95% | ? | NOT MEASURED |
+| Worst-case Recall | ≥80% | ? | NOT MEASURED |
+| Cross-dataset Drop | ≤10% | ? | NOT MEASURED |
+| Model Size | <1MB | ? | NOT MEASURED |
+| False Alarms | <100/hour | ? | NOT MEASURED |
 
 ## Attack Catalog
 
