@@ -1,0 +1,179 @@
+================================================================================
+ANOMALY DETECTION APPROACH COMPARISON
+================================================================================
+
+Three approaches evaluated with rigorous Leave-One-Sequence-Out Cross-Validation
+on EuRoC MAV dataset (5 sequences, 138K samples) and PADRE dataset (4 IMUs).
+
+================================================================================
+SUMMARY TABLE
+================================================================================
+
+                        Raw Features    PINN-Residual    Sensor Fusion    Multi-IMU
+------------------------------------------------------------------------------------------
+Overall Recall              22.7%           11.2%            49.0%          69.5%
+Bias Attack Recall           3.1%            0.1%            36.2%          67.9%
+False Positive Rate          6.5%           14.0%             7.5%          ~5.0%
+------------------------------------------------------------------------------------------
+
+================================================================================
+APPROACH 1: RAW MULTI-SCALE FEATURES
+================================================================================
+
+Method:
+- Extract statistical features (mean, std, max-diff) at multiple window sizes
+- Train IsolationForest on raw sensor data features
+- Detect anomalies as statistical outliers
+
+Strengths:
++ Simple implementation
++ Low FPR (6.5%)
++ Works for high-magnitude noise attacks
+
+Weaknesses:
+- Cannot detect constant bias (3.1% recall)
+- Cannot detect slow drift
+- Features are blind to constant offsets
+
+Results by Attack:
+  noise:       60.1%
+  drift:       51.9%
+  jump:        20.9%
+  oscillation:  3.7%
+  bias:         3.1%
+
+================================================================================
+APPROACH 2: PINN-RESIDUAL FEATURES
+================================================================================
+
+Method:
+- Use trained PINN to predict next state from current state
+- Compute residual: actual_next - predicted_next
+- Extract features from residuals, detect anomalies
+
+Hypothesis (FAILED):
+- PINN learns physics, attacks violate physics -> detectable
+
+Why It Failed:
+- Bias applied to ENTIRE sequence (input AND "ground truth")
+- PINN learns mapping, not physics constraints
+- Self-consistency cannot detect systematic bias
+
+Results:
+  Overall: 11.2% (WORSE than raw features)
+  Bias:    0.1% (WORSE than raw features)
+  FPR:    14.0% (WORSE than raw features)
+
+Conclusion: PINN-residual approach is INFERIOR to raw features.
+
+================================================================================
+APPROACH 3: SENSOR FUSION (Cross-Modal Consistency)
+================================================================================
+
+Method:
+- Exploits kinematic constraints:
+  * d(attitude)/dt should match angular rates (p, q, r)
+  * d(velocity)/dt should match accelerations (ax, ay, az)
+  * d(position)/dt should match velocities (vx, vy, vz)
+- Bias on ONE modality creates inconsistency
+
+Why It Works:
+- Bias attack on roll doesn't change angular rate p
+- Integration of p won't match biased roll change
+- This INCONSISTENCY is detectable
+
+Results by Attack (EuRoC, LOSO-CV):
+  bias_velocity:    100.0%  (velocity-accel inconsistency)
+  noise:            100.0%  (all channels affected)
+  bias_rates:        15.3%  (rate-attitude inconsistency)
+  bias_attitude:     14.8%  (attitude-rate inconsistency)
+  bias_position:     14.8%  (position-velocity inconsistency)
+  coordinated:       14.8%  (sophisticated, maintains consistency)
+
+Key Result: 36.2% bias recall vs 3.1% for raw features (11.7x improvement)
+
+================================================================================
+APPROACH 4: MULTI-IMU REDUNDANCY (PADRE Dataset)
+================================================================================
+
+Method:
+- PADRE has 4 IMUs (one per motor arm: A, B, C, D)
+- Each IMU: accelerometer (aX, aY, aZ) + gyroscope (gX, gY, gZ)
+- Cross-IMU consistency: all 4 should measure SIMILAR values
+- Attack on ONE IMU creates deviation from consensus
+
+Why It Works:
+- Redundant sensors enable voting/consensus
+- Single-sensor attack becomes outlier vs 3 healthy sensors
+- Even sophisticated attacks hard to coordinate perfectly
+
+Results - Real Motor Faults:
+  20.3% recall on actual PADRE hardware faults
+
+Results - Synthetic Single-IMU Attacks:
+  bias (accel):       67.5%
+  bias (gyro):        68.3%
+  noise:              74.3%
+  scale:              67.8%
+  coordinated (all):  51.1%
+
+Average Single-IMU Attack: 69.5%
+
+Key Result: 67.9% bias recall vs 3.1% baseline (21.9x improvement)
+
+================================================================================
+KEY IMPROVEMENTS OVER BASELINE
+================================================================================
+
+                        Baseline    Sensor Fusion    Multi-IMU
+Bias Detection:           3.1%         36.2%          67.9%
+Improvement:               -           11.7x          21.9x
+
+================================================================================
+RECOMMENDATIONS
+================================================================================
+
+1. FOR PLATFORMS WITH REDUNDANT IMUS (Best):
+   - Use Multi-IMU consensus approach
+   - 69.5% single-sensor attack detection
+   - 51.1% even for coordinated attacks
+   - Works on real hardware faults
+
+2. FOR SINGLE-IMU PLATFORMS:
+   - Use Sensor Fusion (cross-modal consistency)
+   - 36.2% bias detection
+   - Requires position, velocity, attitude, rates, accelerations
+
+3. DEFENSE IN DEPTH:
+   - Combine multiple detectors
+   - Raw features for noise/drift
+   - Sensor fusion for single-modal bias
+   - Multi-IMU for single-sensor compromise
+
+4. LIMITATIONS:
+   - Perfect detection requires external reference (GPS, visual odometry)
+   - Coordinated attacks still challenging (14.8% - 51.1%)
+   - No silver bullet without redundancy
+
+================================================================================
+FILES GENERATED
+================================================================================
+
+1. Raw Features:
+   models/security/rigorous_evaluation/HONEST_RESULTS.txt
+
+2. PINN-Residual:
+   models/security/pinn_residual/PINN_RESIDUAL_RESULTS.txt
+   models/security/pinn_residual/PINN_RESIDUAL_ANALYSIS.txt
+
+3. Sensor Fusion:
+   models/security/sensor_fusion_v3/SENSOR_FUSION_RESULTS.txt
+
+4. Multi-IMU:
+   models/security/multi_imu/MULTI_IMU_RESULTS.txt
+
+5. Comparison Reports:
+   models/security/DETECTION_COMPARISON_REPORT.txt (this file)
+   models/security/FINAL_COMPARISON_ALL_METHODS.txt
+
+================================================================================

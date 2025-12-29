@@ -1,0 +1,48 @@
+
+================================================================================
+SENSOR FUSION ANOMALY DETECTION RESULTS
+================================================================================
+
+METHODOLOGY:
+Cross-modal consistency checking exploits the fact that bias attacks
+typically affect ONE sensor modality but NOT its derivative/integral.
+
+Consistency Checks:
+1. Attitude-Rate: d(attitude)/dt should match angular rates (p, q, r)
+2. Velocity-Acceleration: d(velocity)/dt should match accelerations
+3. Position-Velocity: d(position)/dt should match velocities
+
+Attack Types Tested:
+- bias_attitude: Bias roll/pitch, leave rates unchanged -> DETECTABLE
+- bias_velocity: Bias vx/vy, leave accelerations unchanged -> DETECTABLE
+- bias_position: Bias x/y, leave velocities unchanged -> DETECTABLE
+- bias_rates: Bias p/q, leave attitudes unchanged -> DETECTABLE
+- noise: Random noise on all channels
+- coordinated_bias: Sophisticated attack maintaining consistency -> HARD
+
+RESULTS (LOSO-CV):
+- Average FPR: 7.5%
+- Overall Recall: 49.0%
+- Average Bias Recall: 36.2%
+
+Per-Attack Type:
+  bias_attitude       : 14.8%
+  bias_velocity       : 100.0%
+  bias_position       : 14.8%
+  bias_rates          : 15.3%
+  noise               : 100.0%
+  coordinated_bias    : 14.8%
+
+COMPARISON:
+                        Raw Features    PINN-Residual    Sensor Fusion
+  Overall Recall:           22.7%           11.2%          49.0%
+  Bias Recall:               3.1%            0.1%          36.2%
+  FPR:                       6.5%           14.0%          7.5%
+
+KEY INSIGHT:
+Sensor fusion can detect bias attacks that evade single-sensor detectors
+by exploiting INCONSISTENCY between sensor modalities.
+
+LIMITATION:
+Coordinated attacks that maintain cross-modal consistency are still hard
+to detect without external reference (e.g., GPS, visual odometry).

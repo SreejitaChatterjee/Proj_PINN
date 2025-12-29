@@ -1,0 +1,50 @@
+
+================================================================================
+ROOT CAUSE ANALYSIS SUMMARY
+================================================================================
+
+WHY NOISE WORKS (60% recall):
+- Noise INCREASES variance at all timescales
+- std_w* features directly measure this
+- Large magnitude noise exceeds normal variance significantly
+
+WHY BIAS FAILS (3% recall):
+- Bias is CONSTANT OFFSET
+- Does NOT change variance (std features unchanged)
+- Mean shift is within normal operating range
+- Multi-scale features are BLIND to constant offsets
+
+WHY 0.25x FAILS (3% recall):
+- Perturbations are smaller than normal variation
+- Z-scores < 1 (within 1 std of normal)
+- Statistically indistinguishable from normal data
+
+WHY CROSS-DATASET FAILS (3.3% recall):
+- EuRoC and PADRE have different:
+  - Sensor characteristics
+  - Flight dynamics
+  - State representations
+  - Sampling rates
+- Features trained on EuRoC are MEANINGLESS for PADRE
+
+FUNDAMENTAL LIMITATION:
+Multi-scale statistical features can only detect attacks that
+CHANGE STATISTICAL PROPERTIES (variance, autocorrelation).
+They CANNOT detect:
+- Constant offsets (bias)
+- Slow drifts (within variance)
+- Coordinated attacks (maintain statistics)
+
+SOLUTION: PHYSICS-BASED DETECTION
+Instead of detecting statistical anomalies in raw data,
+detect PHYSICS VIOLATIONS:
+1. Use PINN to predict expected next state
+2. Compute residual = actual - predicted
+3. Residuals should be near-zero for normal data
+4. ANY attack causes physics violation -> residual spike
+5. Apply anomaly detection to residuals
+
+This approach should:
+- Detect bias (violates dynamics)
+- Detect low-magnitude attacks (still violate physics)
+- Generalize across platforms (physics is universal)
