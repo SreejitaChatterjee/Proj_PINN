@@ -178,7 +178,9 @@ GPS-IMU Signals (200 Hz)
 ```
 gps_imu_detector/
 ├── src/           # 17 modules (~6,000 lines)
-├── scripts/       # CI gate, demo scripts (~700 lines)
+├── scripts/       # quantize.py, CI gate, demo (~1,000 lines)
+├── configs/       # baseline.yaml configuration
+├── experiments/   # eval.py per-attack evaluation
 ├── ci/            # CI pipeline (leakage_check.sh)
 ├── profile/       # Profiling report template
 ├── tests/         # 91 tests (~900 lines)
