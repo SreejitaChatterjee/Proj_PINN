@@ -1,0 +1,110 @@
+# Baseline Configuration for GPS-IMU Anomaly Detector
+# Usage: python src/train.py --config configs/baseline.yaml
+
+# Data settings
+data:
+  sample_rate_hz: 200
+  sequence_length: 1000
+  overlap: 0.5
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+# Feature extraction
+features:
+  windows: [5, 10, 25, 50, 100, 200]
+  channels:
+    - position: [x, y, z]
+    - velocity: [vx, vy, vz]
+    - attitude: [roll, pitch, yaw]
+    - angular_rates: [p, q, r]
+    - acceleration: [ax, ay, az]
+  # BANNED - never use derived sensors
+  banned_columns:
+    - baro_alt
+    - barometer
+    - mag_heading
+    - magnetometer
+    - derived_*
+    - synthetic_*
+    - gt_*
+
+# Physics residuals
+physics:
+  jerk_bound: 50.0  # m/s^3
+  energy_window: 10
+  pva_tolerance: 0.1
+  use_pinn: true
+  pinn_hidden: [32, 32]
+
+# EKF settings
+ekf:
+  state_dim: 15  # pos(3) + vel(3) + attitude(3) + bias_acc(3) + bias_gyro(3)
+  process_noise: 0.01
+  measurement_noise: 0.1
+  initial_covariance: 1.0
+
+# Model architecture
+model:
+  type: cnn_gru
+  conv_channels: [32, 64]
+  kernel_size: 3
+  gru_hidden: 64
+  gru_layers: 1
+  dropout: 0.2
+  output_dim: 1
+
+# Training settings
+training:
+  epochs: 100
+  batch_size: 64
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  early_stopping_patience: 10
+  cv_folds: 5
+  sequence_wise_split: true  # CRITICAL: prevent temporal leakage
+
+# Hybrid scoring
+scoring:
+  weights:
+    pinn: 0.25
+    ekf: 0.25
+    ml: 0.25
+    temporal: 0.25
+  target_fpr: 0.05
+  calibration_method: minimax  # 'standard' or 'minimax'
+
+# Hard negative mining
+hardening:
+  enabled: true
+  iterations: 3
+  attacks:
+    - ar1_drift
+    - coordinated
+    - intermittent
+    - ramp
+    - adversarial
+  adversarial_epsilon: 0.1
+
+# Quantization
+quantization:
+  method: dynamic  # 'dynamic', 'static', or 'none'
+  dtype: int8
+  accuracy_drop_threshold: 0.02  # max 2% drop
+
+# Output settings
+output:
+  model_dir: models/
+  results_dir: results/
+  checkpoint_name: baseline.pth
+  onnx_name: baseline.onnx
+
+# Reproducibility
+seed: 42
+deterministic: true
+
+# Logging
+logging:
+  level: INFO
+  save_metrics: true
+  tensorboard: false

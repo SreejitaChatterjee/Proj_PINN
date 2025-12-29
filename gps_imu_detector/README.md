@@ -51,13 +51,17 @@ gps_imu_detector/
 │   └── explainable_alarms.py       # Per-alarm attribution (P4)
 ├── scripts/                    # Utility scripts
 │   ├── ci_circular_check.py        # CI gate - fail if circular sensors (P0)
+│   ├── quantize.py                 # ONNX export and quantization
 │   └── demo_reproduce_figure.py    # Reproduce paper figures (P5)
+├── configs/                    # Configuration files
+│   └── baseline.yaml               # Baseline training config
+├── experiments/                # Evaluation scripts
+│   └── eval.py                     # Per-attack ROC/PR, recall@FPR, latency CDF
 ├── ci/                         # CI pipeline scripts
 │   └── leakage_check.sh            # Full leakage audit (grep + correlation + pytest)
 ├── profile/                    # Profiling artifacts
 │   └── profile_report.md           # Latency, memory, CPU spec template
 ├── data/                       # Dataset storage
-├── experiments/                # Experiment configs and logs
 ├── results/                    # Evaluation results (JSON)
 ├── models/                     # Trained model artifacts
 ├── docs/                       # Documentation
@@ -84,11 +88,20 @@ python scripts/ci_circular_check.py --data /path/to/data.csv
 # Run all tests (91 tests)
 python -m pytest tests/ -v
 
-# Train detector with LOSO-CV
-python src/train.py --config config.yaml --data /path/to/data
+# Train baseline model
+python src/train.py --config configs/baseline.yaml
 
-# Run rigorous evaluation
-python src/evaluate.py --data /path/to/data --output ./results
+# Evaluate on test split
+python experiments/eval.py --split test --out results/baseline
+
+# Quantize and export to ONNX
+python scripts/quantize.py --model models/baseline.pth --out models/baseline.onnx --int8
+
+# Benchmark latency
+python scripts/quantize.py --model models/baseline.pth --out models/baseline.onnx --benchmark
+
+# Full CI leakage check
+./ci/leakage_check.sh data/
 
 # Reproduce paper figures
 python scripts/demo_reproduce_figure.py --output ./figures
