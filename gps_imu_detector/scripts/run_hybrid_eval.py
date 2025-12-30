@@ -141,7 +141,8 @@ def compute_ml_scores(
     for traj in trajectories:
         traj_tensor = torch.tensor(traj, dtype=torch.float32)
 
-        for i in range(len(traj)):
+        # Skip first sample to match EKF (which needs initialization)
+        for i in range(1, len(traj)):
             x_t = traj_tensor[i:i+1]
             ici = detector.compute_ici(x_t)
             all_scores.append(ici.item())
@@ -250,14 +251,16 @@ def main():
         ekf_scores = compute_ekf_scores(ekf_detector, [traj])
         ml_scores = compute_ml_scores(ml_detector, [traj])
 
-        # Only use attack window samples
-        attack_window = mask[1:]  # Skip first (initialization)
-        if len(attack_window) > len(ekf_scores):
-            attack_window = attack_window[:len(ekf_scores)]
+        # Both EKF and ML now skip first sample, so use mask[1:]
+        attack_mask = mask[1:]  # Skip first (initialization)
 
-        ekf_attack_all.extend(ekf_scores[attack_window].tolist())
-        ml_attack_all.extend(ml_scores[attack_window].tolist())
-        attack_label_all.extend([label] * int(np.sum(attack_window)))
+        # Ensure mask matches score length
+        min_len = min(len(attack_mask), len(ekf_scores), len(ml_scores))
+        attack_mask = attack_mask[:min_len]
+
+        ekf_attack_all.extend(ekf_scores[:min_len][attack_mask].tolist())
+        ml_attack_all.extend(ml_scores[:min_len][attack_mask].tolist())
+        attack_label_all.extend([label] * int(np.sum(attack_mask)))
 
     ekf_attack = np.array(ekf_attack_all)
     ml_attack = np.array(ml_attack_all)
