@@ -84,6 +84,8 @@ We have two research tracks for UAV sensor security:
 
 ### Validated Metrics (2025-12-30)
 
+**CRITICAL: Only tested simple CNN-GRU baseline. Physics components NOT validated.**
+
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
 | Latency (P99) | ≤5ms | 2.69ms | **PASS** |
@@ -91,7 +93,12 @@ We have two research tracks for UAV sensor security:
 | Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
 | Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
 
-**Key Finding:** Latency/size targets MET. Detection does NOT work with simple unsupervised approach.
+**What Was NOT Tested:**
+- physics_residuals.py - ❌ NOT validated on real data
+- ekf.py - ❌ NOT validated on real data
+- hybrid_scorer.py - ❌ NOT validated on real data
+
+**Key Finding:** Simple CNN-GRU = random chance. Physics components (main contribution) are UNTESTED.
 
 ### Code Deliverables
 

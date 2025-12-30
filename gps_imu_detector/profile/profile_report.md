@@ -4,6 +4,11 @@
 **Commit:** See git log
 **Author:** Validated automatically
 
+## CRITICAL CAVEAT
+
+**This report validates ONLY a simple CNN-GRU baseline.**
+**The physics components (PINN, EKF, hybrid scorer) were NOT tested on real data.**
+
 ---
 
 ## 1. Hardware Specification

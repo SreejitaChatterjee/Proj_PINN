@@ -186,7 +186,12 @@ Hard Negative Generator
 
 ## Validated Metrics (2025-12-30)
 
-**Evaluation run on EuRoC MAV dataset with seed=42, 3 train / 2 test sequences.**
+**IMPORTANT: This evaluation tested ONLY a simple CNN-GRU baseline.**
+**The physics components (PINN residuals, EKF, hybrid scoring) were NOT validated.**
+
+### What Was Tested
+
+A simple CNN(32)-GRU(32)-FC(1) baseline trained unsupervised on normal data only.
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
@@ -194,9 +199,18 @@ Hard Negative Generator
 | Model Size | <1MB | 0.03MB | **PASS** |
 | Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
 | Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
-| Worst-case Recall | ≥80% | 1.4% | **FAIL** |
 
-### Detection Performance (Per-Attack)
+### What Was NOT Tested
+
+| Component | Code Exists | Validated on Real Data |
+|-----------|-------------|------------------------|
+| physics_residuals.py | ✅ | ❌ NO |
+| ekf.py | ✅ | ❌ NO |
+| hybrid_scorer.py | ✅ | ❌ NO |
+| feature_extractor.py | ✅ | ❌ NO |
+| Integrated pipeline | ✅ | ❌ NO |
+
+### Detection Performance (Simple Baseline Only)
 
 | Attack | AUROC | Recall@5%FPR |
 |--------|-------|--------------|
@@ -206,7 +220,7 @@ Hard Negative Generator
 | coordinated | 0.456 | 3.2% |
 | intermittent | 0.439 | 3.3% |
 
-**Interpretation:** The simple unsupervised CNN-GRU trained only on normal data does NOT effectively detect attacks. AUROC of 0.454 is worse than random (0.5). This validates that the infrastructure works but the simple unsupervised approach is insufficient for detection.
+**Interpretation:** The simple unsupervised CNN-GRU baseline does NOT detect attacks (AUROC 0.454 = random). The physics-based components that are the main contribution of this framework have NOT been validated yet.
 
 ## Attack Catalog
 

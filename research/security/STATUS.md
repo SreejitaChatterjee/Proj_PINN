@@ -85,7 +85,8 @@ This research develops physics-informed anomaly detection for UAV sensor securit
 
 ### Validated Metrics (2025-12-30)
 
-**Evaluation completed on EuRoC MAV dataset.**
+**CRITICAL: Only a simple CNN-GRU baseline was tested.**
+**The physics components (PINN, EKF, hybrid scorer) were NOT validated.**
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
@@ -93,9 +94,18 @@ This research develops physics-informed anomaly detection for UAV sensor securit
 | Model Size | <1MB | 0.03MB | **PASS** |
 | Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
 | Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
-| Worst-case Recall | ≥80% | 1.4% | **FAIL** |
 
-**Key Finding:** The simple unsupervised CNN-GRU trained only on normal data does NOT detect attacks (AUROC 0.454 = random chance). Infrastructure works; detection approach needs improvement.
+### What Was NOT Validated
+
+| Component | Code Exists | Tested on Real Data |
+|-----------|-------------|---------------------|
+| physics_residuals.py | ✅ | ❌ NO |
+| ekf.py | ✅ | ❌ NO |
+| hybrid_scorer.py | ✅ | ❌ NO |
+| feature_extractor.py | ✅ | ❌ NO |
+| Integrated pipeline | ✅ | ❌ NO |
+
+**Key Finding:** Simple CNN-GRU baseline = random chance (AUROC 0.454). The physics-based components that are the main contribution are UNTESTED on real data.
 
 ### Files That Exist
 
