@@ -1,8 +1,17 @@
-# Claims Registry
+# Claims Registry (Track A Only)
 
-**Version:** 1.1
+**Version:** 1.2
 **Last Updated:** 2025-12-30
 **Status:** FROZEN
+**Track:** A (Detectability & Self-Healing)
+
+---
+
+## Scope Guard
+
+> This work focuses on detectability limits under unlabeled, adversarial spoofing. Supervised fault classification (Track B) and engineered security pipelines (Track C) address different problems and are intentionally excluded from this document.
+
+See `USAGE.md` for track definitions.
 
 ---
 
