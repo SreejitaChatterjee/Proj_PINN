@@ -82,14 +82,16 @@ We have two research tracks for UAV sensor security:
 | Quantization | ✅ | ❌ |
 | Evaluation | ✅ | ❌ |
 
-### Target Metrics (NOT MEASURED)
+### Validated Metrics (2025-12-30)
 
-| Metric | Target | Actual |
-|--------|--------|--------|
-| Latency | ≤5ms | ? |
-| Recall@5%FPR | ≥95% | ? |
-| Worst-case Recall | ≥80% | ? |
-| Model size | <1MB | ? |
+| Metric | Target | Actual | Status |
+|--------|--------|--------|--------|
+| Latency (P99) | ≤5ms | 2.69ms | **PASS** |
+| Model Size | <1MB | 0.03MB | **PASS** |
+| Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
+| Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
+
+**Key Finding:** Latency/size targets MET. Detection does NOT work with simple unsupervised approach.
 
 ### Code Deliverables
 
@@ -107,19 +109,21 @@ gps_imu_detector/
 
 ---
 
-## What We CAN Honestly Claim
+## What We CAN Honestly Claim (With Evidence)
 
 1. We built a well-structured framework for GPS-IMU anomaly detection
 2. The code follows best practices (no circular sensors, LOSO-CV)
 3. 91 unit tests pass
-4. The framework is ready for training and evaluation
+4. **Latency:** 2.69ms P99 - MEETS target of <5ms
+5. **Model size:** 0.03MB - MEETS target of <1MB
+6. Evaluation infrastructure works and produces reproducible results
 
 ## What We CANNOT Claim
 
-1. Any specific detection performance numbers
-2. Any validated latency measurements
-3. That the system "works" on real attacks
-4. That it's "deployment ready"
+1. **Detection does NOT work:** AUROC 0.454 is worse than random (0.5)
+2. **Recall is terrible:** 1.4% at 5% FPR (target was ≥95%)
+3. The simple unsupervised CNN-GRU approach is NOT sufficient
+4. NOT deployment-ready for attack detection
 
 ---
 
@@ -143,17 +147,26 @@ gps_imu_detector/
 
 ## Recommendation
 
-**Be honest:** We have a solid code framework, but we don't have validated results yet.
+**Honest Assessment:** We have validated infrastructure, but the detection approach needs work.
 
-The code infrastructure is strong:
-- Clean architecture
-- Proper evaluation methodology built-in
+**What's Good:**
+- Clean architecture and code
+- Proper evaluation methodology
+- Latency and model size targets MET
 - Reproducibility mechanisms in place
 
-But we need to actually run the experiments before claiming any results.
+**What Needs Work:**
+- Detection performance is random-level (AUROC 0.454)
+- Simple unsupervised CNN-GRU is NOT sufficient
+- Need physics-based or supervised approach
 
-**Next step:** Run the evaluation pipeline on real data and document everything.
+**Next Steps:**
+1. Implement PINN-based physics residuals for unsupervised detection
+2. Try supervised approach with labeled attack data
+3. Implement hybrid scoring combining physics + ML
 
 ---
 
-*This summary reflects the honest state of the research as of December 2024.*
+*Updated: 2025-12-30 with validated evaluation results.*
+*Hardware: AMD64 Family 25 Model 80, Windows 11, Python 3.14.0, PyTorch 2.9.0*
+*Seed: 42, Train: 3 sequences, Test: 2 sequences*

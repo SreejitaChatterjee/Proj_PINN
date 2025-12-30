@@ -83,16 +83,19 @@ This research develops physics-informed anomaly detection for UAV sensor securit
 - **Evaluation scripts exist** but have not been run on real datasets
 - **No actual performance numbers** can be claimed
 
-### Target Metrics (NOT YET MEASURED)
+### Validated Metrics (2025-12-30)
+
+**Evaluation completed on EuRoC MAV dataset.**
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Latency | ≤5ms per step | ? | NOT MEASURED |
-| Recall@5%FPR | ≥95% | ? | NOT MEASURED |
-| Worst-case Recall | ≥80% | ? | NOT MEASURED |
-| Cross-dataset drop | ≤10% | ? | NOT MEASURED |
-| Model size | <1MB | ? | NOT MEASURED |
-| False alarms | <100/hour | ? | NOT MEASURED |
+| Latency (P99) | ≤5ms | 2.69ms | **PASS** |
+| Model Size | <1MB | 0.03MB | **PASS** |
+| Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
+| Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
+| Worst-case Recall | ≥80% | 1.4% | **FAIL** |
+
+**Key Finding:** The simple unsupervised CNN-GRU trained only on normal data does NOT detect attacks (AUROC 0.454 = random chance). Infrastructure works; detection approach needs improvement.
 
 ### Files That Exist
 
@@ -120,26 +123,27 @@ gps_imu_detector/
 
 ## Honest Assessment
 
-### What We CAN Claim
+### What We CAN Claim (With Evidence)
 1. A well-structured framework for GPS-IMU anomaly detection exists
 2. The code passes 91 unit tests
 3. The architecture follows best practices (no circular sensors, LOSO-CV, etc.)
-4. The codebase is ready to be trained and evaluated
+4. **Latency target MET:** P99 = 2.69ms < 5ms target
+5. **Model size target MET:** 0.03MB < 1MB target
+6. Evaluation infrastructure works and produces reproducible results
 
-### What We CANNOT Claim (Yet)
-1. Any specific detection performance (AUROC, recall, etc.)
-2. Any specific latency numbers
-3. That the detector actually works on real attacks
-4. That the system is "deployment ready"
+### What We CANNOT Claim
+1. **Detection does NOT work:** AUROC 0.454 is worse than random (0.5)
+2. The simple unsupervised approach is insufficient
+3. The system is NOT deployment-ready for attack detection
+4. Need physics-based or supervised approach for actual detection
 
-### Required Next Steps for Valid Claims
+### Required Next Steps for Better Detection
 
-1. **Run actual training** on EuRoC or similar dataset
-2. **Run actual evaluation** with the evaluation scripts
-3. **Document hardware** used for all measurements
-4. **Version control** exact splits and seeds
-5. **Measure actual latency** with profiling tools
-6. **Verify circularity** - ensure no sensors derived from ground truth
+1. **Implement physics-based residuals** (PINN approach for unsupervised)
+2. **Use supervised learning** with labeled attack data
+3. **Try reconstruction-based** approaches (autoencoder)
+4. **Implement hybrid scoring** combining physics + ML
+5. **Run cross-dataset evaluation** for transfer learning
 
 ---
 
@@ -167,9 +171,15 @@ b639367 Add GPS-IMU anomaly detector framework (Phases 0-2)
 - Claims should not be published without hardware/seed/split info
 - Needs independent verification
 
-### Track 2 (GPS-IMU)
-- **CODE FRAMEWORK ONLY** - no trained models or results
-- Ready to be trained and evaluated
-- No performance claims can be made until actual evaluation is run
+### Track 2 (GPS-IMU) - VALIDATED 2025-12-30
 
-**BOTTOM LINE:** We have code, not validated results.
+**What Works:**
+- Latency: 2.69ms P99 (**PASS** - target <5ms)
+- Model size: 0.03MB (**PASS** - target <1MB)
+- Infrastructure: Training, evaluation, and benchmarking all work
+
+**What Doesn't Work:**
+- Detection: AUROC 0.454 (**FAIL** - worse than random)
+- Recall@5%FPR: 1.4% (**FAIL** - target ≥95%)
+
+**BOTTOM LINE:** Infrastructure works. Simple unsupervised CNN-GRU approach does NOT detect attacks. Need physics-based or supervised methods.

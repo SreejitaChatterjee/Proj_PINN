@@ -184,18 +184,29 @@ Hard Negative Generator
 | P4 | Explainable Alarms | `src/explainable_alarms.py` | Per-alarm attribution |
 | P5 | Demo Script | `scripts/demo_reproduce_figure.py` | Reproduce paper figures |
 
-## Target Metrics (NOT YET MEASURED)
+## Validated Metrics (2025-12-30)
 
-**These are TARGETS, not achieved results. No evaluation has been run.**
+**Evaluation run on EuRoC MAV dataset with seed=42, 3 train / 2 test sequences.**
 
 | Metric | Target | Actual | Status |
 |--------|--------|--------|--------|
-| Latency | ≤5ms | ? | NOT MEASURED |
-| Recall@5%FPR | ≥95% | ? | NOT MEASURED |
-| Worst-case Recall | ≥80% | ? | NOT MEASURED |
-| Cross-dataset Drop | ≤10% | ? | NOT MEASURED |
-| Model Size | <1MB | ? | NOT MEASURED |
-| False Alarms | <100/hour | ? | NOT MEASURED |
+| Latency (P99) | ≤5ms | 2.69ms | **PASS** |
+| Model Size | <1MB | 0.03MB | **PASS** |
+| Mean AUROC | ≥0.90 | 0.454 | **FAIL** |
+| Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
+| Worst-case Recall | ≥80% | 1.4% | **FAIL** |
+
+### Detection Performance (Per-Attack)
+
+| Attack | AUROC | Recall@5%FPR |
+|--------|-------|--------------|
+| bias | 0.399 | 1.4% |
+| drift | 0.495 | 5.2% |
+| noise | 0.480 | 3.8% |
+| coordinated | 0.456 | 3.2% |
+| intermittent | 0.439 | 3.3% |
+
+**Interpretation:** The simple unsupervised CNN-GRU trained only on normal data does NOT effectively detect attacks. AUROC of 0.454 is worse than random (0.5). This validates that the infrastructure works but the simple unsupervised approach is insufficient for detection.
 
 ## Attack Catalog
 

@@ -1,0 +1,82 @@
+{
+  "hardware": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python": "3.14.0",
+    "pytorch": "2.9.0+cpu",
+    "seed": 42,
+    "timestamp": "2025-12-30T10:41:40.645201"
+  },
+  "config": {
+    "seed": 42,
+    "epochs": 10,
+    "seq_len": 25,
+    "batch_size": 256,
+    "train_sequences": [
+      "MH_01_easy",
+      "MH_02_easy",
+      "MH_03_medium"
+    ],
+    "test_sequences": [
+      "V1_01_easy",
+      "V1_02_medium"
+    ]
+  },
+  "data": {
+    "total_samples": 138088,
+    "train_samples": 92675,
+    "test_samples": 45413
+  },
+  "per_attack": {
+    "bias": {
+      "auroc": 0.39922160518030614,
+      "recall_at_1pct_fpr": 0.00024234946793275905,
+      "recall_at_5pct_fpr": 0.013813919672167265,
+      "recall_at_10pct_fpr": 0.03934874088435524
+    },
+    "drift": {
+      "auroc": 0.49512383671239696,
+      "recall_at_1pct_fpr": 0.008966930313512084,
+      "recall_at_5pct_fpr": 0.05225935799422768,
+      "recall_at_10pct_fpr": 0.10105972812796052
+    },
+    "noise": {
+      "auroc": 0.4801480048755852,
+      "recall_at_1pct_fpr": 0.004296195113353456,
+      "recall_at_5pct_fpr": 0.03848950186168455,
+      "recall_at_10pct_fpr": 0.08413932891229152
+    },
+    "coordinated": {
+      "auroc": 0.45638867423431256,
+      "recall_at_1pct_fpr": 0.0018506686642137964,
+      "recall_at_5pct_fpr": 0.03183590737843971,
+      "recall_at_10pct_fpr": 0.0663156271343277
+    },
+    "intermittent": {
+      "auroc": 0.43880273320595947,
+      "recall_at_1pct_fpr": 0.005904514309634493,
+      "recall_at_5pct_fpr": 0.03311375002753971,
+      "recall_at_10pct_fpr": 0.0684527088060984
+    }
+  },
+  "overall": {
+    "mean_auroc": 0.45393697084171214,
+    "worst_recall_at_5pct_fpr": 0.013813919672167265,
+    "worst_attack": "bias"
+  },
+  "latency": {
+    "mean_ms": 1.7518213008297607,
+    "p50_ms": 1.6885000513866544,
+    "p95_ms": 2.1223199728410687,
+    "p99_ms": 2.687042970210314
+  },
+  "model": {
+    "params": 7841,
+    "size_mb": 0.029911041259765625,
+    "architecture": "CNN(32)-GRU(32)-FC(1)"
+  },
+  "targets": {
+    "latency_5ms": true,
+    "model_1mb": true
+  }
+}

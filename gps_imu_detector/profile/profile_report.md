@@ -1,8 +1,8 @@
 # Profiling Report: GPS-IMU Anomaly Detector
 
-**Date:** [TO BE FILLED]
-**Commit:** [TO BE FILLED]
-**Author:** [TO BE FILLED]
+**Date:** 2025-12-30
+**Commit:** See git log
+**Author:** Validated automatically
 
 ---
 
@@ -10,13 +10,11 @@
 
 | Component | Specification |
 |-----------|---------------|
-| CPU | [e.g., Intel Core i7-10700 @ 2.90GHz] |
-| Cores | [e.g., 8 cores, 16 threads] |
-| RAM | [e.g., 32 GB DDR4] |
-| OS | [e.g., Ubuntu 22.04 / Windows 11] |
-| Python | [e.g., 3.10.12] |
-| PyTorch | [e.g., 2.1.0] |
-| ONNX Runtime | [e.g., 1.16.0] |
+| CPU | AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD |
+| OS | Windows-11-10.0.26200-SP0 |
+| Python | 3.14.0 |
+| PyTorch | 2.9.0+cpu |
+| ONNX Runtime | Not tested |
 
 ---
 
@@ -24,12 +22,12 @@
 
 | Property | Value |
 |----------|-------|
-| Architecture | 1D CNN + GRU |
-| Conv Channels | 32 → 64 |
-| GRU Hidden | 64 |
-| Total Parameters | [TO BE MEASURED] |
-| Model Size (FP32) | [TO BE MEASURED] |
-| Model Size (INT8) | [TO BE MEASURED] |
+| Architecture | CNN(32)-GRU(32)-FC(1) |
+| Conv Channels | 32 |
+| GRU Hidden | 32 |
+| Total Parameters | 7,841 |
+| Model Size (FP32) | 0.030 MB |
+| Model Size (INT8) | Not tested |
 
 ---
 
@@ -39,43 +37,41 @@
 
 | Metric | Value |
 |--------|-------|
-| Mean | [TO BE MEASURED] ms |
-| Std | [TO BE MEASURED] ms |
-| P50 | [TO BE MEASURED] ms |
-| P95 | [TO BE MEASURED] ms |
-| P99 | [TO BE MEASURED] ms |
-| Max | [TO BE MEASURED] ms |
-| Samples | [e.g., 1000] |
-| Warmup | [e.g., 50] |
+| Mean | 1.752 ms |
+| P50 | 1.689 ms |
+| P95 | 2.122 ms |
+| P99 | 2.687 ms |
+| Samples | 1000 |
+| Warmup | 100 |
 
 ### 3.2 ONNX Runtime (FP32)
 
 | Metric | Value |
 |--------|-------|
-| Mean | [TO BE MEASURED] ms |
-| P50 | [TO BE MEASURED] ms |
-| P99 | [TO BE MEASURED] ms |
+| Mean | Not tested |
+| P50 | Not tested |
+| P99 | Not tested |
 | Threads | 1 (single-thread) |
 
 ### 3.3 ONNX Runtime (INT8 Quantized)
 
 | Metric | Value |
 |--------|-------|
-| Mean | [TO BE MEASURED] ms |
-| P50 | [TO BE MEASURED] ms |
-| P99 | [TO BE MEASURED] ms |
-| Speedup vs FP32 | [TO BE MEASURED]x |
+| Mean | Not tested |
+| P50 | Not tested |
+| P99 | Not tested |
+| Speedup vs FP32 | Not tested |
 
 ### 3.4 Full Pipeline (Feature Extraction + Inference)
 
 | Component | Latency (ms) | % of Total |
 |-----------|--------------|------------|
-| Feature Extraction | [TO BE MEASURED] | [%] |
-| Physics Residuals | [TO BE MEASURED] | [%] |
-| EKF Update | [TO BE MEASURED] | [%] |
-| CNN-GRU Inference | [TO BE MEASURED] | [%] |
-| Hybrid Scoring | [TO BE MEASURED] | [%] |
-| **Total** | [TO BE MEASURED] | 100% |
+| Feature Extraction | Not tested | - |
+| Physics Residuals | Not tested | - |
+| EKF Update | Not tested | - |
+| CNN-GRU Inference | 1.752 | 100% |
+| Hybrid Scoring | Not tested | - |
+| **Total** | ~1.8 ms | - |
 
 ---
 
@@ -83,41 +79,36 @@
 
 | Metric | Value |
 |--------|-------|
-| Peak CPU Memory | [TO BE MEASURED] MB |
-| Model Memory (FP32) | [TO BE MEASURED] MB |
-| Model Memory (INT8) | [TO BE MEASURED] MB |
-| Feature Buffer | [TO BE MEASURED] MB |
-| Total Working Set | [TO BE MEASURED] MB |
+| Peak CPU Memory | Not measured |
+| Model Memory (FP32) | 0.030 MB |
+| Model Memory (INT8) | Not tested |
+| Feature Buffer | Not measured |
+| Total Working Set | Not measured |
 
 ---
 
-## 5. Quantization Analysis
+## 5. Detection Performance (VALIDATED - POOR RESULTS)
 
-### 5.1 Accuracy Impact
+**IMPORTANT: The simple unsupervised detector does NOT effectively detect attacks.**
 
-| Metric | FP32 | INT8 | Drop |
-|--------|------|------|------|
-| AUROC | [TO BE MEASURED] | [TO BE MEASURED] | [%] |
-| Recall@5%FPR | [TO BE MEASURED] | [TO BE MEASURED] | [%] |
-| Worst-Case Recall | [TO BE MEASURED] | [TO BE MEASURED] | [%] |
+### 5.1 Per-Attack Results
 
-### 5.2 Quantization Steps
+| Attack | AUROC | Recall@1%FPR | Recall@5%FPR | Recall@10%FPR |
+|--------|-------|--------------|--------------|---------------|
+| bias | 0.399 | 0.000 | 0.014 | 0.039 |
+| drift | 0.495 | 0.009 | 0.052 | 0.101 |
+| noise | 0.480 | 0.004 | 0.038 | 0.084 |
+| coordinated | 0.456 | 0.002 | 0.032 | 0.066 |
+| intermittent | 0.439 | 0.006 | 0.033 | 0.068 |
 
-1. Dynamic quantization (PyTorch):
-   ```python
-   torch.quantization.quantize_dynamic(model, {nn.Linear, nn.GRU}, dtype=torch.qint8)
-   ```
+### 5.2 Overall
 
-2. ONNX export:
-   ```python
-   torch.onnx.export(model, dummy_input, "model.onnx", opset_version=13)
-   ```
+| Metric | Value |
+|--------|-------|
+| Mean AUROC | 0.454 |
+| Worst-case Recall@5%FPR | 0.014 (bias) |
 
-3. ONNX quantization:
-   ```python
-   from onnxruntime.quantization import quantize_dynamic
-   quantize_dynamic("model.onnx", "model_int8.onnx")
-   ```
+**Interpretation:** AUROC of 0.454 is WORSE than random (0.5). The simple unsupervised approach trained only on normal data does NOT learn to distinguish attacks.
 
 ---
 
@@ -125,63 +116,56 @@
 
 | Target | Requirement | Measured | Status |
 |--------|-------------|----------|--------|
-| Latency | ≤5 ms/timestep | [TO BE MEASURED] | [PASS/FAIL] |
-| Model Size | <1 MB | [TO BE MEASURED] | [PASS/FAIL] |
-| Accuracy Drop | ≤2% absolute | [TO BE MEASURED] | [PASS/FAIL] |
-| Memory | <100 MB | [TO BE MEASURED] | [PASS/FAIL] |
+| Latency | ≤5 ms/timestep | 2.687 ms (P99) | **PASS** |
+| Model Size | <1 MB | 0.030 MB | **PASS** |
+| Recall@5%FPR | ≥95% | 1.4% | **FAIL** |
+| Mean AUROC | >0.90 | 0.454 | **FAIL** |
 
 ---
 
 ## 7. Latency CDF
 
 ```
-[TO BE GENERATED: Latency CDF plot showing P50, P95, P99 markers]
-
 Percentile | Latency (ms)
 -----------|-------------
-P10        | [TO BE MEASURED]
-P25        | [TO BE MEASURED]
-P50        | [TO BE MEASURED]
-P75        | [TO BE MEASURED]
-P90        | [TO BE MEASURED]
-P95        | [TO BE MEASURED]
-P99        | [TO BE MEASURED]
+P50        | 1.689
+P95        | 2.122
+P99        | 2.687
 ```
 
 ---
 
-## 8. Profiling Commands
+## 8. Experimental Configuration
 
-```bash
-# Run latency benchmark
-python src/quantization.py --benchmark --n_iterations 1000
-
-# Run full pipeline profile
-python src/operational_metrics.py --profile --output profile/
-
-# Generate ONNX and benchmark
-python src/quantization.py --export onnx --quantize int8 --benchmark
-
-# Memory profile
-python -m memory_profiler src/inference.py --profile
-```
+| Setting | Value |
+|---------|-------|
+| Random Seed | 42 |
+| Epochs | 10 |
+| Sequence Length | 25 |
+| Batch Size | 256 |
+| Train Sequences | MH_01_easy, MH_02_easy, MH_03_medium |
+| Test Sequences | V1_01_easy, V1_02_medium |
+| Train Samples | 92,675 |
+| Test Samples | 45,413 |
 
 ---
 
-## 9. Notes
+## 9. Conclusion
 
-- All benchmarks run with single thread (OMP_NUM_THREADS=1)
-- Warmup iterations excluded from timing
-- Measurements averaged over [N] runs
-- [Any additional notes about the profiling environment]
+**Latency and model size targets are MET.**
+
+**Detection performance is NOT acceptable:**
+- The simple unsupervised CNN-GRU trained only on normal data essentially performs at random chance
+- AUROC of 0.454 indicates no discrimination between normal and attack data
+- This is expected for unsupervised learning without attack examples during training
+
+**Next steps for improved detection:**
+1. Use supervised learning with labeled attack data
+2. Implement physics residuals (PINN-based) for unsupervised anomaly detection
+3. Use reconstruction-based approaches (autoencoder)
+4. Implement hybrid scoring with physics consistency checks
 
 ---
 
-## 10. Conclusion
-
-[TO BE FILLED: Summary of whether the detector meets all targets and is ready for deployment]
-
----
-
-*Report generated by: [script/manual]*
-*Last updated: [date]*
+*Report generated automatically from validation run*
+*Last updated: 2025-12-30*
