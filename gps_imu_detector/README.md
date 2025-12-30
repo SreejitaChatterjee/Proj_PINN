@@ -304,36 +304,53 @@ See `docs/REPRODUCIBILITY.md` for full guide.
 
 ---
 
-## Files
+## Files (Narrative Structure)
 
 ```
 gps_imu_detector/
-├── run_all.py                          # One-command reproduction
-├── paper/
-│   └── dsn_submission.tex              # DSN 2026 paper draft
-├── ci/
-│   └── leakage_check.py                # CI gate (circular sensors, splits)
-├── configs/
-│   └── splits.json                     # Sequence-wise split documentation
-├── docs/
-│   ├── REPRODUCIBILITY.md              # Full reproducibility guide
-│   └── BREAKTHROUGH_FEASIBILITY.md     # ICI technical analysis
-├── experiments/
-│   └── consistent_spoofing.py          # Equivalence class experiment
-├── attacks/
-│   └── catalog.json                    # Attack definitions with seeds
+├── CLAIMS.md                           # Tiered claim registry (Detectable/Marginal/Hard)
+├── FREEZE.md                           # Experiment/metric/code freeze declarations
+├── run_hybrid_eval.sh                  # One-command reproduction (Linux/Mac)
+├── run_hybrid_eval.bat                 # One-command reproduction (Windows)
+│
+├── experiments/                        # NARRATIVE ORDER (read sequentially)
+│   ├── 1_impossibility/                # Why residuals fail (REC theorem)
+│   ├── 2_ici_detector/                 # New detection primitive
+│   ├── 3_scaling_law/                  # Offset → ICI relationship
+│   ├── 4_self_healing/                 # IASP correction
+│   └── 5_limits/                       # Honest disclosure of blind spots
+│
+├── baselines/                          # Reference implementations
+│   ├── residual_detector.py            # Forward-only (AUROC=0.5)
+│   └── README.md                       # Why baselines fail
+│
 ├── src/
 │   ├── inverse_model.py                # ICI detector (main contribution)
-│   ├── statistical_rigor.py            # Bootstrap CIs, method comparison
-│   ├── cross_dataset_transfer.py       # Transfer evaluation, MMD
-│   ├── quantization.py                 # INT8, ONNX export, profiling
-│   └── temporal_surprise.py            # Complementary signal
-└── results/
-    ├── ici_vs_residual.png             # Key figure: ICI breaks REC barrier
-    ├── detector.pth                    # Trained model
-    ├── per_attack_results.csv          # Per-attack metrics
-    ├── latency_profile.json            # P50/P95/P99 latency
-    └── impossibility_experiment.json   # Equivalence validation
+│   ├── ekf/                            # EKF-NIS baseline
+│   │   └── ekf_position.py             # Position tracker + NIS scoring
+│   ├── hybrid/                         # Hybrid fusion
+│   │   └── fuse_scores.py              # Weighted EKF + ICI combination
+│   ├── statistical_rigor.py            # Bootstrap CIs
+│   └── cross_dataset_transfer.py       # Transfer evaluation
+│
+├── scripts/
+│   ├── run_ekf_detector.py             # Standalone EKF evaluation
+│   ├── run_hybrid_eval.py              # Full hybrid evaluation
+│   ├── bootstrap_ci.py                 # Confidence interval computation
+│   └── generate_worst_case_table.py    # Reviewer-critical table
+│
+├── docs/
+│   ├── EVALUATION.md                   # Non-circular evaluation protocol
+│   ├── REPRODUCIBILITY.md              # Full reproduction guide
+│   └── BREAKTHROUGH_FEASIBILITY.md     # ICI technical analysis
+│
+├── results/
+│   ├── operational_metrics.md          # Latency, false alarms, deployment
+│   ├── worst_case_summary.csv          # Per-attack breakdown
+│   └── bootstrap_ci.json               # 95% confidence intervals
+│
+└── ci/
+    └── leakage_check.py                # CI gate (blocks circular sensors)
 ```
 
 ---
