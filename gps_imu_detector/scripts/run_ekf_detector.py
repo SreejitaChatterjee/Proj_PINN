@@ -64,6 +64,7 @@ def inject_spoofing_attack(
     start_frac: float = 0.3,
     duration_frac: float = 0.5,
     seed: int = 42,
+    dt: float = 0.01,
 ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Inject GPS spoofing attack into trajectory.
@@ -295,9 +296,9 @@ def main():
     # Target check
     print("\n[5] Target Check...")
     targets = {
-        'AUROC >= 0.65': mean_auroc >= 0.65,
-        'Worst AUROC >= 0.50': worst_auroc >= 0.50,
-        'P95 latency < 1ms': latency['p95_ms'] < 1.0,
+        'AUROC >= 0.65': bool(mean_auroc >= 0.65),
+        'Worst AUROC >= 0.50': bool(worst_auroc >= 0.50),
+        'P95 latency < 1ms': bool(latency['p95_ms'] < 1.0),
     }
 
     for target, passed in targets.items():

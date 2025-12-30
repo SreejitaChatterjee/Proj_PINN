@@ -1,0 +1,187 @@
+{
+  "calibration": {
+    "mean_nis": 0.9931746434495692,
+    "std_nis": 0.8267144381608909,
+    "threshold": 1.9498174684957688,
+    "n_samples": 1497
+  },
+  "by_attack": {
+    "offset": {
+      "5.0": {
+        "auroc": 0.742068136272545,
+        "recall_5pct": 0.332,
+        "mean_attack_score": 2.3156867951898694,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "10.0": {
+        "auroc": 0.876184368737475,
+        "recall_5pct": 0.612,
+        "mean_attack_score": 8.688122337161863,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "25.0": {
+        "auroc": 0.9739559118236473,
+        "recall_5pct": 0.908,
+        "mean_attack_score": 52.86738597162006,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "50.0": {
+        "auroc": 0.990813627254509,
+        "recall_5pct": 0.972,
+        "mean_attack_score": 210.03934872419106,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "100.0": {
+        "auroc": 0.9978837675350701,
+        "recall_5pct": 0.992,
+        "mean_attack_score": 837.6577368361108,
+        "mean_normal_score": -0.03665101632488712
+      }
+    },
+    "drift": {
+      "5.0": {
+        "auroc": 0.5705931863727456,
+        "recall_5pct": 0.06,
+        "mean_attack_score": 0.17622226225241344,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "10.0": {
+        "auroc": 0.6241482965931864,
+        "recall_5pct": 0.104,
+        "mean_attack_score": 0.4478340516511394,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "25.0": {
+        "auroc": 0.764068136272545,
+        "recall_5pct": 0.456,
+        "mean_attack_score": 2.5564711105747295,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "50.0": {
+        "auroc": 0.8465931863727455,
+        "recall_5pct": 0.68,
+        "mean_attack_score": 10.383538511205343,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "100.0": {
+        "auroc": 0.9163567134268538,
+        "recall_5pct": 0.8,
+        "mean_attack_score": 42.21019444655901,
+        "mean_normal_score": -0.03665101632488712
+      }
+    },
+    "ramp": {
+      "5.0": {
+        "auroc": 0.5160040080160321,
+        "recall_5pct": 0.044,
+        "mean_attack_score": 0.0028360950115161004,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "10.0": {
+        "auroc": 0.48944689378757517,
+        "recall_5pct": 0.028,
+        "mean_attack_score": -0.08783289840962104,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "25.0": {
+        "auroc": 0.4513306613226453,
+        "recall_5pct": 0.02,
+        "mean_attack_score": -0.19940588141945267,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "50.0": {
+        "auroc": 0.5292705410821643,
+        "recall_5pct": 0.088,
+        "mean_attack_score": 0.1494191377427586,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "100.0": {
+        "auroc": 0.7268176352705411,
+        "recall_5pct": 0.44,
+        "mean_attack_score": 2.852494141736915,
+        "mean_normal_score": -0.03665101632488712
+      }
+    },
+    "oscillation": {
+      "5.0": {
+        "auroc": 0.942128256513026,
+        "recall_5pct": 0.844,
+        "mean_attack_score": 29.989962767537797,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "10.0": {
+        "auroc": 0.9701763527054108,
+        "recall_5pct": 0.932,
+        "mean_attack_score": 118.80437911162936,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "25.0": {
+        "auroc": 0.9880761523046092,
+        "recall_5pct": 0.968,
+        "mean_attack_score": 738.915814131076,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "50.0": {
+        "auroc": 0.9931022044088176,
+        "recall_5pct": 0.992,
+        "mean_attack_score": 2951.328825787394,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "100.0": {
+        "auroc": 0.9958036072144288,
+        "recall_5pct": 0.992,
+        "mean_attack_score": 11797.007173939679,
+        "mean_normal_score": -0.03665101632488712
+      }
+    },
+    "jump": {
+      "5.0": {
+        "auroc": 0.7757835671342685,
+        "recall_5pct": 0.36,
+        "mean_attack_score": 2.5157406416669765,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "10.0": {
+        "auroc": 0.8897394789579158,
+        "recall_5pct": 0.68,
+        "mean_attack_score": 9.088230030116065,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "25.0": {
+        "auroc": 0.9777795591182363,
+        "recall_5pct": 0.92,
+        "mean_attack_score": 53.86765520400558,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "50.0": {
+        "auroc": 0.9892825651302604,
+        "recall_5pct": 0.976,
+        "mean_attack_score": 212.03988718896218,
+        "mean_normal_score": -0.03665101632488712
+      },
+      "100.0": {
+        "auroc": 0.9976513026052104,
+        "recall_5pct": 0.988,
+        "mean_attack_score": 841.6588137656529,
+        "mean_normal_score": -0.03665101632488712
+      }
+    }
+  },
+  "summary": {
+    "mean_auroc": 0.8214023246492985,
+    "worst_auroc": 0.4513306613226453,
+    "n_attacks": 25
+  },
+  "latency": {
+    "mean_ms": 0.04516407092468756,
+    "p50_ms": 0.042899977415800095,
+    "p95_ms": 0.05589996580965817,
+    "p99_ms": 0.08869997691363096,
+    "max_ms": 0.7707999320700765
+  },
+  "targets": {
+    "AUROC >= 0.65": true,
+    "Worst AUROC >= 0.50": false,
+    "P95 latency < 1ms": true
+  }
+}
