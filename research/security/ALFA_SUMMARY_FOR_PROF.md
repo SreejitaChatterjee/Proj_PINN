@@ -2,8 +2,20 @@
 
 **To:** Professor
 **From:** Sreejita
-**Date:** December 2024
-**Subject:** Honest Research Update - Framework Complete, Validation Pending
+**Date:** 2025-12-30
+**Subject:** Honest Research Update - PINN Contradiction Resolved
+
+## CRITICAL UPDATE: Physics Doesn't Help
+
+See `PINN_CONTRADICTION_RESOLVED.md` for details.
+
+| Finding | Evidence |
+|---------|----------|
+| Neural network detects faults | 65.7% F1 ✓ |
+| Physics constraints help | w=0 > w=20 ✗ |
+| "PINN-based" is accurate | Physics AUROC 0.5 ✗ |
+
+**Recommendation:** Remove "PINN" claims from paper. Claim neural network detection only.
 
 ---
 
