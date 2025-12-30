@@ -90,6 +90,27 @@ Tier: **Fundamentally Hard** (honest disclosure)
 
 ---
 
+## Supporting Result (NOT a Claim)
+
+### EKF Complementarity
+
+> **Classical physics-based innovation tests capture complementary high-frequency inconsistencies; a lightweight hybrid yields marginal but consistent gains without altering the fundamental detectability boundary.**
+
+| Detector | AUROC | Worst-Case R@5% | Status |
+|----------|-------|-----------------|--------|
+| EKF-NIS | 0.667 | 0.026 | Baseline |
+| ICI | 0.972 | 0.666 | **Primary** |
+| Hybrid | 0.980 | 0.676 | Supporting |
+
+**This is NOT a contribution.** It validates that:
+- ICI defines the detectability boundary
+- EKF helps in narrow regime (oscillation)
+- Improvement is marginal (+1% worst-case)
+
+See `docs/HYBRID_INTERPRETATION.md` for proper framing.
+
+---
+
 ## What We Do NOT Claim
 
 1. **Full GPS security** - We detect a specific attack class, not all attacks
@@ -97,6 +118,7 @@ Tier: **Fundamentally Hard** (honest disclosure)
 3. **Adversarial robustness** - Attacker with model access can evade
 4. **Sensor fault detection** - Focus is on spoofing, not hardware faults
 5. **Multi-vehicle coordination** - Single-vehicle detection only
+6. **Hybrid as novelty** - Fusion is supporting validation, not contribution
 
 ---
 
