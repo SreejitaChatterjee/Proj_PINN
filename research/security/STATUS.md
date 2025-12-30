@@ -1,15 +1,30 @@
 # Security Detection Research - Status Update
 
-**Last Updated:** December 2024
+**Last Updated:** 2025-12-30
+
+---
+
+## CRITICAL: PINN Contradiction Resolved
+
+**See:** `PINN_CONTRADICTION_RESOLVED.md`
+
+| Claim | Evidence | Status |
+|-------|----------|--------|
+| "PINN-based detection works" | AUROC 0.5 (random) | **FALSE** |
+| "Physics constraints help" | w=0 outperforms w=20 | **FALSE** |
+| "Neural network detects faults" | 65.7% F1 | **TRUE** |
+
+**Resolution:** The detector works, but physics constraints DON'T help.
+The paper should not claim "PINN-based" as the contribution.
 
 ---
 
 ## Project Overview
 
-This research develops physics-informed anomaly detection for UAV sensor security, with two main tracks:
+This research develops anomaly detection for UAV sensor security:
 
-1. **ALFA Fault Detection** - PINN-based detector on real flight data
-2. **GPS-IMU Anomaly Detector** - Multi-signal fusion framework for attack detection
+1. **ALFA Fault Detection** - Neural network detector (NOT physics-informed)
+2. **GPS-IMU Anomaly Detector** - Framework only, physics components don't work
 
 ---
 

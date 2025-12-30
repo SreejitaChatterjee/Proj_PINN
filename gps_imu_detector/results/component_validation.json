@@ -1,0 +1,97 @@
+{
+  "hardware": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "python": "3.14.0",
+    "timestamp": "2025-12-30T11:00:36.010876",
+    "seed": 42
+  },
+  "config": {
+    "train_seqs": [
+      "MH_01_easy",
+      "MH_02_easy",
+      "MH_03_medium"
+    ],
+    "test_seqs": [
+      "V1_01_easy",
+      "V1_02_medium"
+    ]
+  },
+  "components": {
+    "physics_residuals": {
+      "per_attack": {
+        "bias": {
+          "auroc": 0.5000000215774255,
+          "recall_at_5pct_fpr": 0.05000770704423843
+        },
+        "drift": {
+          "auroc": 0.7072540852005128,
+          "recall_at_5pct_fpr": 0.3462444674432431
+        },
+        "noise": {
+          "auroc": 0.5258226319651087,
+          "recall_at_5pct_fpr": 0.060599387840486206
+        },
+        "coordinated": {
+          "auroc": 0.5168819037569929,
+          "recall_at_5pct_fpr": 0.052055578799022305
+        }
+      },
+      "mean_auroc": 0.56248966062501,
+      "status": "VALIDATED"
+    },
+    "ekf_nis": {
+      "status": "FAILED",
+      "error": "'SimpleEKF' object has no attribute 'update'"
+    },
+    "feature_extractor": {
+      "per_attack": {
+        "bias": {
+          "auroc": 0.5818816370361533,
+          "recall_at_5pct_fpr": 0.06592292089249494
+        },
+        "drift": {
+          "auroc": 0.5164452435517118,
+          "recall_at_5pct_fpr": 0.056795131845841784
+        },
+        "noise": {
+          "auroc": 0.667439487510749,
+          "recall_at_5pct_fpr": 0.07403651115618662
+        },
+        "coordinated": {
+          "auroc": 0.5607223234820962,
+          "recall_at_5pct_fpr": 0.061866125760649086
+        }
+      },
+      "mean_auroc": 0.5816221728951776,
+      "status": "VALIDATED"
+    },
+    "hybrid_scorer": {
+      "per_attack": {
+        "bias": {
+          "auroc": 0.5,
+          "recall_at_5pct_fpr": 0
+        },
+        "drift": {
+          "auroc": 0.5,
+          "recall_at_5pct_fpr": 0
+        },
+        "noise": {
+          "auroc": 0.5,
+          "recall_at_5pct_fpr": 0
+        },
+        "coordinated": {
+          "auroc": 0.5,
+          "recall_at_5pct_fpr": 0
+        }
+      },
+      "mean_auroc": 0.5,
+      "status": "VALIDATED"
+    }
+  },
+  "summary": {
+    "validated": 3,
+    "total": 4,
+    "physics_detection_works": "False"
+  }
+}
