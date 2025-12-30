@@ -1,0 +1,98 @@
+{
+  "version": "1.0.0",
+  "description": "Attack catalog for GPS-IMU anomaly detector evaluation",
+  "created": "2025-12-30",
+  "seed": 42,
+  "attacks": {
+    "bias": {
+      "description": "Constant sensor bias injection",
+      "parameters": {
+        "position_bias_m": [0.1, 0.5, 1.0, 2.0, 5.0],
+        "velocity_bias_mps": [0.05, 0.1, 0.5, 1.0],
+        "acceleration_bias_mps2": [0.1, 0.5, 1.0, 2.0],
+        "gyro_bias_radps": [0.01, 0.05, 0.1]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.3, 0.7],
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "drift": {
+      "description": "Gradual sensor drift (ramp)",
+      "parameters": {
+        "position_drift_rate_mps": [0.01, 0.05, 0.1, 0.5],
+        "velocity_drift_rate_mps2": [0.005, 0.01, 0.05],
+        "max_drift_duration_s": [10, 30, 60]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.2, 0.5],
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "noise": {
+      "description": "Increased sensor noise",
+      "parameters": {
+        "position_noise_std_m": [0.5, 1.0, 2.0, 5.0],
+        "velocity_noise_std_mps": [0.1, 0.5, 1.0],
+        "acceleration_noise_std_mps2": [0.5, 1.0, 2.0]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.3, 0.7],
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "coordinated": {
+      "description": "Coordinated GPS+IMU attack (co-bias)",
+      "parameters": {
+        "position_bias_m": [0.5, 1.0, 2.0],
+        "velocity_bias_mps": [0.1, 0.5],
+        "acceleration_bias_mps2": [0.5, 1.0],
+        "correlation_factor": [0.8, 0.9, 1.0]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.3, 0.6],
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "intermittent": {
+      "description": "On-off intermittent attack",
+      "parameters": {
+        "position_bias_m": [1.0, 2.0],
+        "on_duration_s": [1, 5, 10],
+        "off_duration_s": [2, 5, 10],
+        "n_cycles": [3, 5, 10]
+      },
+      "onset": "fixed",
+      "onset_fraction": 0.2,
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "replay": {
+      "description": "Replay attack (repeat past data)",
+      "parameters": {
+        "replay_duration_s": [5, 10, 30],
+        "delay_s": [1, 5, 10]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.4, 0.6],
+      "seeds": [42, 43, 44, 45, 46]
+    },
+    "ar1_drift": {
+      "description": "AR(1) stealthy drift",
+      "parameters": {
+        "ar_coefficient": [0.95, 0.99],
+        "innovation_std": [0.01, 0.05, 0.1],
+        "channels": ["position", "velocity", "both"]
+      },
+      "onset": "random_uniform",
+      "onset_range": [0.2, 0.4],
+      "seeds": [42, 43, 44, 45, 46]
+    }
+  },
+  "evaluation": {
+    "metrics": ["auroc", "aupr", "recall_at_1pct_fpr", "recall_at_5pct_fpr", "recall_at_10pct_fpr", "precision", "f1", "detection_latency_ms"],
+    "fpr_thresholds": [0.01, 0.05, 0.10],
+    "bootstrap_samples": 1000,
+    "confidence_level": 0.95
+  },
+  "reproducibility": {
+    "numpy_seed": 42,
+    "torch_seed": 42,
+    "python_hash_seed": 42
+  }
+}

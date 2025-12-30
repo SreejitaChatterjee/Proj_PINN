@@ -40,7 +40,7 @@ def rollout_predictions(model, initial_state, controls, scaler_X, scaler_y, n_st
 def evaluate_model(model_path, data_path, output_dir="results"):
     """Evaluate model and generate visualizations"""
     model = QuadrotorPINN()
-    model.load_state_dict(torch.load(model_path))
+    model.load_state_dict(torch.load(model_path, weights_only=True))
     model.eval()
 
     # Load scalers

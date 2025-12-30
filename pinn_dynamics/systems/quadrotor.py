@@ -115,9 +115,14 @@ class QuadrotorPINN(DynamicsPINN):
         rdot = t3 * p * q + tz / J["Jzz"]
 
         # === ATTITUDE KINEMATICS ===
-        phi_dot = p + torch.sin(phi) * torch.tan(theta) * q + torch.cos(phi) * torch.tan(theta) * r
+        # Add gimbal lock protection: clamp cos(theta) to avoid division by zero near ±90°
+        cos_theta = torch.cos(theta)
+        cos_theta_safe = torch.clamp(cos_theta, min=1e-6)  # Prevent division by zero
+        tan_theta = torch.sin(theta) / cos_theta_safe
+
+        phi_dot = p + torch.sin(phi) * tan_theta * q + torch.cos(phi) * tan_theta * r
         theta_dot = torch.cos(phi) * q - torch.sin(phi) * r
-        psi_dot = torch.sin(phi) * q / torch.cos(theta) + torch.cos(phi) * r / torch.cos(theta)
+        psi_dot = torch.sin(phi) * q / cos_theta_safe + torch.cos(phi) * r / cos_theta_safe
 
         # === TRANSLATIONAL DYNAMICS (Body Frame) ===
         c_d = self.drag_coeff

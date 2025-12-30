@@ -166,9 +166,7 @@ try:
             # Predict with IMU
             ekf.predict(rates[i], accel[i])
             # Update with GPS (pos + vel)
-            gps_meas = np.concatenate([pos[i], vel[i]])
-            imu_meas = np.concatenate([rates[i], accel[i]])
-            nis = ekf.update(gps_meas, imu_meas)
+            nis, _ = ekf.update_gps(pos[i], vel[i])
             nis_list.append(nis)
 
         return np.array(nis_list)

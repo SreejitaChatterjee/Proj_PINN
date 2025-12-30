@@ -1,0 +1,72 @@
+{
+  "normal": {
+    "mean_residual": 3.9850431422690846e-06,
+    "std_residual": 1.6793819103473995e-06,
+    "max_residual": 1.1919901374906381e-05,
+    "p95_residual": 6.958205477710499e-06
+  },
+  "consistent_attacks": {
+    "offset_1m": {
+      "offset_m": 1,
+      "mean_residual": 3.985043142269631e-06,
+      "residual_diff": 5.463362509790237e-19,
+      "detectable": false,
+      "note": "Constant offset - dynamics unchanged"
+    },
+    "offset_5m": {
+      "offset_m": 5,
+      "mean_residual": 3.985043142273127e-06,
+      "residual_diff": 4.042041224297521e-18,
+      "detectable": false,
+      "note": "Constant offset - dynamics unchanged"
+    },
+    "offset_10m": {
+      "offset_m": 10,
+      "mean_residual": 3.985043142273696e-06,
+      "residual_diff": 4.611247364852411e-18,
+      "detectable": false,
+      "note": "Constant offset - dynamics unchanged"
+    },
+    "offset_50m": {
+      "offset_m": 50,
+      "mean_residual": 3.985043142288695e-06,
+      "residual_diff": 1.961050679483156e-17,
+      "detectable": false,
+      "note": "Constant offset - dynamics unchanged"
+    },
+    "offset_100m": {
+      "offset_m": 100,
+      "mean_residual": 3.985043142280451e-06,
+      "residual_diff": 1.1366335119205456e-17,
+      "detectable": false,
+      "note": "Constant offset - dynamics unchanged"
+    }
+  },
+  "inconsistent_attacks": {
+    "drift_0.0001": {
+      "drift_rate": 0.0001,
+      "total_drift_m": 0.9999,
+      "mean_residual": 9.955724807099572e-05,
+      "residual_increase_pct": 2398.2727794085513,
+      "detectable": true,
+      "note": "Growing drift - dynamics violated"
+    },
+    "drift_0.001": {
+      "drift_rate": 0.001,
+      "total_drift_m": 9.998999999999999,
+      "mean_residual": 0.0009950003062072193,
+      "residual_increase_pct": 24868.369743687792,
+      "detectable": true,
+      "note": "Growing drift - dynamics violated"
+    },
+    "drift_0.01": {
+      "drift_rate": 0.01,
+      "total_drift_m": 99.99000000000001,
+      "mean_residual": 0.009949994612704722,
+      "residual_increase_pct": 249583.4854098767,
+      "detectable": true,
+      "note": "Growing drift - dynamics violated"
+    }
+  },
+  "conclusion": "CONSISTENT spoofing: 0/5 detectable (even 100m offset is UNDETECTABLE!)\nINCONSISTENT spoofing: 3/3 detectable\n\nCONCLUSION: Residual-based detectors CANNOT detect consistent spoofing.\nAn attacker who applies a constant GPS offset (even 100m!) will not trigger detection\nbecause the dynamics remain internally consistent."
+}

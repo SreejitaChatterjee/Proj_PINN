@@ -24,7 +24,7 @@ def main():
     # 1. Load model
     print("Loading model...")
     model = QuadrotorPINN()
-    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+    model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu", weights_only=True))
     model.eval()
 
     # Print model summary

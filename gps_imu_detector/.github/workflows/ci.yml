@@ -1,0 +1,102 @@
+name: GPS-IMU Detector CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gps_imu_detector/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'gps_imu_detector/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install torch numpy scipy scikit-learn pandas numba pytest
+        pip install -e .
+
+    - name: Run leakage check
+      run: |
+        cd gps_imu_detector
+        python scripts/ci_circular_check.py --source-only
+
+    - name: Run unit tests
+      run: |
+        cd gps_imu_detector
+        python -m pytest tests/ -v --tb=short
+
+    - name: Smoke test (quick validation)
+      run: |
+        cd gps_imu_detector
+        python -c "
+from src.feature_extractor import StreamingFeatureExtractor
+from src.ekf import SimpleEKF
+from src.physics_residuals import PhysicsResidualComputer
+from src.model import GPSIMUDetector
+import numpy as np
+
+# Test feature extractor
+fe = StreamingFeatureExtractor(n_features=15, windows=[5, 10])
+for i in range(20):
+    fe.update(np.random.randn(15))
+print('Feature extractor: OK')
+
+# Test EKF
+ekf = SimpleEKF(dt=0.005)
+ekf.predict(np.zeros(3), np.array([0, 0, 9.81]))
+nis, ok = ekf.update_gps(np.zeros(3), np.zeros(3))
+print(f'EKF: OK (NIS={nis:.2f})')
+
+# Test model
+model = GPSIMUDetector(input_dim=15, hidden_dim=32)
+x = np.random.randn(1, 25, 15).astype(np.float32)
+import torch
+out = model(torch.from_numpy(x))
+print(f'Model: OK (output shape={out.shape})')
+
+print('All smoke tests passed!')
+"
+
+  leakage-gate:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check for circular sensors
+      run: |
+        cd gps_imu_detector
+        # Check for banned patterns in source code
+        if grep -r "baro_alt\|mag_heading\|derived_" src/ --include="*.py" | grep -v "EXCLUDED\|banned\|#"; then
+          echo "ERROR: Found banned sensor patterns in source code"
+          exit 1
+        fi
+        echo "Leakage gate: PASSED"
+
+  validate-artifacts:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Check required files exist
+      run: |
+        cd gps_imu_detector
+        test -f attacks/catalog.json || (echo "Missing attacks/catalog.json" && exit 1)
+        test -f data/splits/euroc_loso.json || (echo "Missing data/splits/euroc_loso.json" && exit 1)
+        test -f docs/EVALUATION_PROTOCOL.md || (echo "Missing docs/EVALUATION_PROTOCOL.md" && exit 1)
+        test -f configs/baseline.yaml || (echo "Missing configs/baseline.yaml" && exit 1)
+        echo "All required artifacts present"

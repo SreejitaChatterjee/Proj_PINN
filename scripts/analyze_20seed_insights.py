@@ -10,7 +10,9 @@ from pathlib import Path
 import numpy as np
 from scipy import stats
 
-warnings.filterwarnings("ignore")
+# Suppress specific scipy/numpy deprecation warnings in statistical analysis
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="scipy")
+warnings.filterwarnings("ignore", category=RuntimeWarning, message=".*invalid value.*")
 
 # Load data
 results_dir = Path(__file__).parent.parent / "results"

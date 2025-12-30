@@ -37,7 +37,7 @@ from pinn_dynamics.security import AnomalyDetector
 def load_trained_model(model_path: Path, scalers_path: Path):
     """Load trained PINN model and scalers."""
     model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
-    model.load_state_dict(torch.load(model_path, map_location="cpu"))
+    model.load_state_dict(torch.load(model_path, map_location="cpu", weights_only=True))
     model.eval()
 
     with open(scalers_path, "rb") as f:

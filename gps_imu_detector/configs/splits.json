@@ -1,0 +1,46 @@
+{
+  "_comment": "Sequence-wise splits for GPS-IMU detector evaluation",
+  "_version": "1.0",
+  "_date": "2025-12-30",
+  "_rule": "Each flight appears in exactly ONE split (no data leakage)",
+
+  "train_flights": [
+    "flight_001",
+    "flight_002",
+    "flight_003",
+    "flight_004",
+    "flight_005",
+    "flight_006",
+    "flight_007",
+    "flight_008"
+  ],
+
+  "val_flights": [
+    "flight_009",
+    "flight_010"
+  ],
+
+  "test_flights": [
+    "flight_011",
+    "flight_012"
+  ],
+
+  "attack_injection": {
+    "_comment": "Attacks are injected into test flights only",
+    "attack_types": [
+      "drift",
+      "noise",
+      "bias",
+      "coordinated",
+      "intermittent"
+    ],
+    "injection_rate": 0.5,
+    "seed": 42
+  },
+
+  "scaler_rule": {
+    "_comment": "Scaler MUST be fitted on train_flights ONLY",
+    "fit_on": "train_flights",
+    "transform_on": ["train_flights", "val_flights", "test_flights"]
+  }
+}

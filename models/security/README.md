@@ -1,6 +1,12 @@
 # Spoofing Attack Detection Models
 
-This directory contains all trained models for UAV sensor spoofing attack detection.
+**STATUS: EXPERIMENTAL - Results on Synthetic Data Only**
+
+**WARNING:** All metrics below are from synthetic attack simulations, NOT validated
+on real-world attacks. Use with caution. See research/security/UAV_FAULT_DETECTION.md
+for validated results on real CMU ALFA flight data (AUROC 0.575).
+
+This directory contains experimental models for UAV sensor spoofing attack detection.
 
 ## Model Overview
 

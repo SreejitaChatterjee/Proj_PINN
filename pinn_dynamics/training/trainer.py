@@ -86,7 +86,13 @@ class Trainer:
 
         Returns:
             Dict of average losses for this epoch
+
+        Raises:
+            ValueError: If the DataLoader is empty
         """
+        if len(loader) == 0:
+            raise ValueError("DataLoader is empty. Cannot train on empty dataset.")
+
         weights = weights or {
             "physics": 10.0,
             "temporal": 12.0,
@@ -262,5 +268,5 @@ class Trainer:
 
     def load(self, path: str):
         """Load model state dict."""
-        self.model.load_state_dict(torch.load(path, map_location=self.device))
+        self.model.load_state_dict(torch.load(path, map_location=self.device, weights_only=True))
         logger.info(f"Model loaded from {path}")

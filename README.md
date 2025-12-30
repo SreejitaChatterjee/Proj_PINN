@@ -138,14 +138,25 @@ export_torchscript(model, 'model.pt')
 
 ## UAV Fault Detection (Security Extension)
 
-**PINN-based real-time fault detection achieving deployment-ready 4.5% false positive rate.**
+### GPS-IMU Detector (VALIDATED)
 
-### Key Results (ACSAC 2025 Submission)
-- **4.5% false positive rate** (14× better than One-Class SVM's 62.9%)
-- **65.7% F1 score** with 100% precision on CMU ALFA dataset
-- **0.34 ms inference time** (29× real-time headroom at 100 Hz, CPU-only)
-- **0.79 MB model size** (fits embedded autopilots)
-- **Evaluated on 47 real UAV flights** (engine failures, stuck actuators, etc.)
+**Detection:** Mean AUROC 0.845 [0.82, 0.87] across five attack types with real-time latency (P95 = 2.73ms).
+
+**Theoretical Implication:** Consistent GPS spoofing lies within the nominal Residual Equivalence Class (REC), making residual-based detection ill-posed without external trust anchors.
+
+**Counter-Intuitive:** Physics priors degrade detection; w=0 outperforms w=20.
+
+**Engineering Rigor:** CI leakage gates, bootstrap CIs, cross-dataset transfer, quantization profiling.
+
+```bash
+# CI check (mandatory before evaluation)
+python gps_imu_detector/ci/leakage_check.py --check-code
+
+# Full evaluation
+python gps_imu_detector/run_all.py --seed 42
+```
+
+See `gps_imu_detector/README.md` for details.
 
 ### Quick Example
 ```python
@@ -189,35 +200,27 @@ Evaluated on **CMU ALFA** (Advanced Large-scale Flight Archive):
 - 5 fault categories: engine failures, rudder stuck, aileron stuck, elevator stuck, unknown
 - Zero synthetic data - all real flight tests
 
-### Files
-- **Examples**: `examples/uav_fault_detection.py` - Complete working example
-- **Training**: `scripts/security/train_detector.py` - Train your own detector
-- **Evaluation**: `scripts/security/evaluate_detector.py` - Evaluate performance
-- **Baselines**: `scripts/security/evaluate_baselines.py` - Compare with Chi2, IForest, SVM
-- **Paper**: `research/security/paper_v3_integrated.tex` - Full ACSAC 2025 submission
-- **Results**: `research/security/results_optimized/` - All experimental results
-- **Figures**: `research/security/figures/` - 11 publication-quality figures
-- **Models**: `models/security/` - Trained detectors (20 seeds)
+### Key Files
+- **GPS-IMU Detector**: `gps_imu_detector/run_all.py` - One-command reproduction
+- **CI Leakage Gate**: `gps_imu_detector/ci/leakage_check.py` - Mandatory pre-evaluation check
+- **Statistical Rigor**: `gps_imu_detector/src/statistical_rigor.py` - Bootstrap CIs
+- **Reproducibility**: `gps_imu_detector/docs/REPRODUCIBILITY.md` - Full guide
+- **ALFA Scripts**: `scripts/security/feature_alfa_detector.py` - Best ALFA detector
+- **Examples**: `examples/uav_fault_detection.py` - Working example
 
-### Quick Start Guide
-See `research/security/QUICKSTART.md` for step-by-step instructions to:
-1. Download CMU ALFA dataset (~100 MB)
-2. Train detector (20 seeds, ~54 minutes)
-3. Evaluate on test flights
-4. Reproduce all paper results (~2 hours total)
-
-### Automation
+### Quick Start
 ```bash
-# Run complete pipeline
-bash scripts/security/run_all.sh
+# GPS-IMU detector (validated, recommended)
+python gps_imu_detector/ci/leakage_check.py --check-code  # CI gate
+python gps_imu_detector/run_all.py --seed 42              # Full eval
+
+# ALFA dataset (experimental)
+python scripts/security/feature_alfa_detector.py --seeds 5
 ```
 
 ### Documentation
-- `research/security/README.md` - Overview of security work
-- `research/security/QUICKSTART.md` - Step-by-step reproduction
-- `research/security/paper_v3_integrated.tex` - Full paper with all results
-- `models/README.md` - Model documentation
-- `data/README.md` - Dataset documentation
+- `gps_imu_detector/README.md` - GPS-IMU detector (validated results)
+- `research/security/README.md` - Security research summary
 
 ## Project Structure
 

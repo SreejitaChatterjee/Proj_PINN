@@ -4,27 +4,24 @@ This directory contains pre-trained PINN models for dynamics prediction and faul
 
 ---
 
-## Fault Detection Models (`security/`)
+## GPS-IMU Detector (VALIDATED)
 
-**Location:** `models/security/`
+| Metric | Value |
+|--------|-------|
+| Mean AUROC | **0.845** |
+| Limitation | Cannot detect consistent spoofing |
 
-### Best Detector (w=0, seed 0)
-**File:** `detector_w0_seed0.pth`
-- **Type:** Pure data-driven (physics weight w=0)
-- **Architecture:** 5 layers × 256 units, tanh, dropout 0.1
-- **Parameters:** 204,818 (0.79 MB)
-- **Val Loss:** 0.3301
-- **Performance:**
-  - F1: 65.7%
-  - FPR: 4.5%
-  - Precision: 100% (on ALFA dataset)
-  - Inference: 0.34 ms (CPU)
-- **Usage:**
-  ```python
-  from pinn_dynamics import QuadrotorPINN
-  model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
-  model.load_state_dict(torch.load('models/security/detector_w0_seed0.pth'))
-  ```
+**Model:** `gps_imu_detector/results/detector.pth`
+
+**Reproduce:** `python gps_imu_detector/run_all.py --seed 42`
+
+---
+
+## ALFA Fault Detection Models (`security/`)
+
+**Status:** EXPERIMENTAL - Limited by 1Hz sampling
+
+**Best Result:** AUROC 0.575 with feature-based detection.
 
 ### Multi-Seed Ensemble (w=0, seeds 0-19)
 **Files:** `detector_w0_seed0.pth` through `detector_w0_seed19.pth`

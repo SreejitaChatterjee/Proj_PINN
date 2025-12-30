@@ -1,0 +1,76 @@
+{
+  "timestamp": "2025-12-30T12:10:08.410482",
+  "method": "Dynamics Predictor (MLP)",
+  "n_seeds": 5,
+  "n_flights": 47,
+  "aggregate": {
+    "sample_auroc_mean": 0.5226598081179495,
+    "sample_auroc_std": 0.0015485869927069477,
+    "flight_detection_rate_mean": 0.23243243243243245,
+    "flight_detection_rate_std": 0.013240485096125286,
+    "flight_false_alarm_rate_mean": 0.18,
+    "flight_false_alarm_rate_std": 0.116619037896906
+  },
+  "per_seed": [
+    {
+      "sample_auroc": 0.5208711497529541,
+      "sample_fpr": 0.05004721435316336,
+      "flight_detection_rate": 0.24324324324324326,
+      "flight_false_alarm_rate": 0.3,
+      "threshold_percentile": 95,
+      "min_consecutive": 3,
+      "n_detected": 9,
+      "n_false_alarm": 3,
+      "n_fault_flights": 37,
+      "n_normal_flights": 10
+    },
+    {
+      "sample_auroc": 0.5215773040259714,
+      "sample_fpr": 0.05004721435316336,
+      "flight_detection_rate": 0.21621621621621623,
+      "flight_false_alarm_rate": 0.0,
+      "threshold_percentile": 95,
+      "min_consecutive": 3,
+      "n_detected": 8,
+      "n_false_alarm": 0,
+      "n_fault_flights": 37,
+      "n_normal_flights": 10
+    },
+    {
+      "sample_auroc": 0.5232661277189136,
+      "sample_fpr": 0.05004721435316336,
+      "flight_detection_rate": 0.24324324324324326,
+      "flight_false_alarm_rate": 0.2,
+      "threshold_percentile": 95,
+      "min_consecutive": 3,
+      "n_detected": 9,
+      "n_false_alarm": 2,
+      "n_fault_flights": 37,
+      "n_normal_flights": 10
+    },
+    {
+      "sample_auroc": 0.5253230976778269,
+      "sample_fpr": 0.05004721435316336,
+      "flight_detection_rate": 0.24324324324324326,
+      "flight_false_alarm_rate": 0.3,
+      "threshold_percentile": 95,
+      "min_consecutive": 3,
+      "n_detected": 9,
+      "n_false_alarm": 3,
+      "n_fault_flights": 37,
+      "n_normal_flights": 10
+    },
+    {
+      "sample_auroc": 0.5222613614140817,
+      "sample_fpr": 0.05004721435316336,
+      "flight_detection_rate": 0.21621621621621623,
+      "flight_false_alarm_rate": 0.1,
+      "threshold_percentile": 95,
+      "min_consecutive": 3,
+      "n_detected": 8,
+      "n_false_alarm": 1,
+      "n_fault_flights": 37,
+      "n_normal_flights": 10
+    }
+  ]
+}

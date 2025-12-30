@@ -1,0 +1,93 @@
+{
+  "nominal": {
+    "threshold": 42.422733306884766,
+    "mean_ici": 23.99920654296875,
+    "max_ici": 42.77862548828125,
+    "trigger_rate_pct": 1.0001000100010002,
+    "healing_drift_m": 0.0015647174978568974
+  },
+  "auroc": {
+    "residual": 1.0,
+    "ici": 1.0,
+    "combined": 1.0,
+    "recall_1pct_residual": 1.0,
+    "recall_1pct_ici": 1.0,
+    "recall_1pct_combined": 1.0,
+    "improvement": 0.0
+  },
+  "healing": {
+    "spoof_magnitude_m": 100.0,
+    "error_before_m": 114.56439237389597,
+    "error_after_m": 26.205230029930746,
+    "reduction_pct": 77.12619995887856
+  },
+  "seed_robustness": {
+    "seeds": [
+      42,
+      123,
+      456
+    ],
+    "aurocs": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "mean": 1.0,
+    "std": 0.0
+  },
+  "noise_robustness": {
+    "noise_levels": [
+      0.0,
+      0.5,
+      1.0,
+      2.0,
+      5.0
+    ],
+    "aurocs": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ]
+  },
+  "runtime": {
+    "batch_size": 100,
+    "ici_mean_ms": 1.0508999996818602,
+    "ici_p95_ms": 1.526214979821816,
+    "heal_mean_ms": 1.2191880028694868,
+    "heal_p95_ms": 1.7800200323108584,
+    "per_sample_ici_us": 10.508999996818602,
+    "per_sample_heal_us": 12.191880028694868
+  },
+  "failure_case": {
+    "offsets": [
+      1,
+      2,
+      5,
+      10,
+      25,
+      50,
+      100
+    ],
+    "aurocs": [
+      0.5169048057921104,
+      0.5312112119302739,
+      0.5226144476633883,
+      0.4984949490048515,
+      0.6571615707425328,
+      1.0,
+      1.0
+    ],
+    "detection_rates": [
+      0.6600660066006601,
+      0.44004400440044,
+      0.0,
+      0.0,
+      1.5501550155015502,
+      100.0,
+      100.0
+    ],
+    "min_detectable_m": 50
+  }
+}

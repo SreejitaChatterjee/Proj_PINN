@@ -88,3 +88,30 @@ env/
 *_backup*
 *_old*
 *.temp
+
+# Large model files (track via Git LFS or exclude)
+models/**/*.pth
+models/**/*.pkl
+models/**/*.onnx
+models/**/*.json
+!models/security/README.md
+!models/security/*.txt
+
+# Sensor fusion detector (experimental)
+sensor_fusion_detector/
+
+# PADRE models (experimental)
+models/padre_*/
+models/fault_detection_advanced/
+
+# Experimental model directories (unvalidated)
+models/security/enhanced_detector/
+models/security/ensemble_detector/
+models/security/final_pipeline/
+models/security/full_pipeline/
+models/security/generalized_detector/
+models/security/sensor_fusion_v1/
+models/security/sensor_fusion_v2/
+models/security/sequence_pinn/
+models/security/supervised_detector/
+models/security/synthetic_pinn/

@@ -2,7 +2,9 @@
 UAV Fault Detection Example
 ============================
 
-Complete working example of real-time fault detection using PINN-based anomaly detector.
+EXPERIMENTAL - Example code for fault detection research.
+
+STATUS: Research in Progress - See research/security/UAV_FAULT_DETECTION.md
 
 Demonstrates:
 - Loading trained detector
@@ -10,19 +12,21 @@ Demonstrates:
 - Real-time anomaly detection
 - Performance evaluation
 
-Key Results:
-- F1 Score: 65.7%
-- False Positive Rate: 4.5% (14× better than SVM's 62.9%)
-- 100% Precision across all fault types on ALFA dataset
-- 0.34 ms inference time (29× real-time headroom)
+Validated Results (CMU ALFA Dataset):
+- Best AUROC: 0.575 (feature-based approach)
+- Achievable: 30% detection at 10% false alarm rate
+- Limitation: ~1 Hz sampling rate limits dynamics-based detection
+
+Note: Previous claims of 65.7% F1 and 4.5% FPR were based on
+incorrect evaluation methodology and have been retracted.
 
 Usage:
     python examples/uav_fault_detection.py
 
 Requirements:
     - Trained model at models/security/detector_w0_seed0.pth
-    - Test data at data/ALFA_processed/fault_test.csv
-    - See research/security/QUICKSTART.md for setup
+    - Test data at data/alfa/temporal/
+    - See research/security/UAV_FAULT_DETECTION.md for setup
 """
 
 import torch
@@ -209,9 +213,9 @@ def main():
     print("="*50)
     print("UAV FAULT DETECTION - EXAMPLE")
     print("="*50)
-    print("\nPINN-based real-time fault detection")
-    print("Paper: Low-False-Alarm UAV Fault Detection via PINNs")
-    print("Submitted to ACSAC 2025")
+    print("\nEXPERIMENTAL - Research in progress")
+    print("Dataset: CMU ALFA (47 flights, ~1 Hz sampling)")
+    print("See: research/security/UAV_FAULT_DETECTION.md")
     print()
 
     # Paths
@@ -257,19 +261,17 @@ def main():
     metrics = evaluate_performance(detections, y_test_aligned, fault_types)
 
     print("\n" + "="*50)
-    print("KEY FINDINGS")
+    print("NOTES")
     print("="*50)
-    print(f"\n1. Deployment-Ready FPR: {metrics['fpr']*100:.1f}%")
-    print(f"   (14× better than One-Class SVM's 62.9%)")
-    print(f"\n2. 100% Precision on ALFA dataset")
-    print(f"   When detector triggers, it's always correct")
-    print(f"\n3. Real-time Capable")
-    print(f"   0.34 ms inference (29× headroom at 100 Hz)")
-    print(f"\n4. Counter-intuitive: w=0 >> w=20 (p<10^-6)")
-    print(f"   Physics constraints hurt when faults violate assumptions")
+    print(f"\nThis is EXPERIMENTAL research code.")
+    print(f"Validated results on ALFA dataset:")
+    print(f"  - Best AUROC: 0.575 (feature-based detection)")
+    print(f"  - Achievable: 30% detection at 10% FA rate")
+    print(f"  - Limitation: ~1 Hz sampling limits dynamics approaches")
+    print(f"\nSee research/security/UAV_FAULT_DETECTION.md for details.")
 
     print("\n" + "="*50)
-    print("See research/security/ for full paper and results")
+    print("See research/security/ for full documentation")
     print("="*50)
 
 

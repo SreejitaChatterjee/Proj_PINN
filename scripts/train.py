@@ -35,13 +35,7 @@ class Trainer:
     def train_epoch(
         self,
         loader,
-        weights={
-            "physics": 10.0,
-            "temporal": 20.0,
-            "stability": 5.0,
-            "reg": 1.0,
-            "energy": 5.0,
-        },
+        weights=None,
         scheduled_sampling_prob=0.0,
     ):
         """
@@ -50,6 +44,14 @@ class Trainer:
         scheduled_sampling_prob: probability of using model's prediction instead of ground truth
                                 increases over training to improve autoregressive performance
         """
+        if weights is None:
+            weights = {
+                "physics": 10.0,
+                "temporal": 20.0,
+                "stability": 5.0,
+                "reg": 1.0,
+                "energy": 5.0,
+            }
         self.model.train()
         losses = {
             "total": 0,

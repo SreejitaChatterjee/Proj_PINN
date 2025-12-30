@@ -8,7 +8,7 @@ Features:
     - Real Data Training: Train on sensor data without control inputs
     - Multi-Step Prediction: Autoregressive rollout with uncertainty
     - Deployment Ready: Export to ONNX for embedded systems
-    - UAV Fault Detection: Real-time anomaly detection with 4.5% FPR
+    - UAV Fault Detection: Experimental anomaly detection (see research/security/)
 
 Quick Start:
     from pinn_dynamics import QuadrotorPINN, Trainer, Predictor
@@ -48,6 +48,7 @@ from .systems.base import DynamicsPINN
 from .systems.quadrotor import QuadrotorPINN
 from .systems.pendulum import PendulumPINN
 from .systems.cartpole import CartPolePINN
+from .systems.sequence import SequencePINN, SequenceAnomalyDetector
 
 # Training
 from .training.trainer import Trainer
@@ -81,6 +82,8 @@ __all__ = [
     "QuadrotorPINN",
     "PendulumPINN",
     "CartPolePINN",
+    "SequencePINN",
+    "SequenceAnomalyDetector",
     # Training
     "Trainer",
     "physics_loss",

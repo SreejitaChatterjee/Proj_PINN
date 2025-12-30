@@ -26,7 +26,7 @@ def main():
     model = QuadrotorPINN()
 
     if MODEL_PATH.exists():
-        model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu"))
+        model.load_state_dict(torch.load(MODEL_PATH, map_location="cpu", weights_only=True))
         print(f"  Loaded weights from {MODEL_PATH}")
     else:
         print(f"  No weights found at {MODEL_PATH}, using random initialization")

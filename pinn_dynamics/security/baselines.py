@@ -89,11 +89,11 @@ class KalmanResidualDetector:
         # Innovation (measurement residual)
         y = measurement - self.x_hat
 
-        # Innovation covariance
-        S = self.P + self.R
+        # Innovation covariance with regularization for numerical stability
+        S = self.P + self.R + np.eye(self.state_dim) * 1e-8
 
-        # Kalman gain
-        K = self.P @ np.linalg.inv(S)
+        # Kalman gain (use pseudo-inverse for numerical stability)
+        K = self.P @ np.linalg.pinv(S)
 
         # Update state estimate
         self.x_hat = self.x_hat + K @ y
@@ -101,8 +101,8 @@ class KalmanResidualDetector:
         # Update covariance
         self.P = (np.eye(self.state_dim) - K) @ self.P
 
-        # Normalized residual (Mahalanobis distance)
-        residual = np.sqrt(y.T @ np.linalg.inv(S) @ y)
+        # Normalized residual (Mahalanobis distance) with pinv for stability
+        residual = np.sqrt(y.T @ np.linalg.pinv(S) @ y)
         self.residuals.append(residual)
 
         # Anomaly detection
@@ -336,9 +336,9 @@ class Chi2Detector:
         Returns:
             BaselineResult with anomaly flag and χ² statistic
         """
-        # Mahalanobis distance
+        # Mahalanobis distance (use pinv for numerical stability)
         diff = state_change - self.mean
-        chi2_stat = diff.T @ np.linalg.inv(self.cov) @ diff
+        chi2_stat = diff.T @ np.linalg.pinv(self.cov) @ diff
 
         # Anomaly detection
         is_anomaly = chi2_stat > self.threshold

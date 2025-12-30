@@ -182,5 +182,170 @@ class TestGradients:
         assert model.params["g"].grad is not None
 
 
+class TestSequencePINN:
+    """Tests for SequencePINN temporal model."""
+
+    def test_init(self):
+        """Test SequencePINN initialization."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        assert model.state_dim == 12
+        assert model.control_dim == 4
+        assert model.sequence_length == 20
+
+    def test_forward_sequence(self):
+        """Test SequencePINN forward pass with sequence input."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        # Input: [batch, sequence_length, state_dim + control_dim]
+        x = torch.randn(8, 20, 16)
+        y = model(x)
+
+        # Output: [batch, state_dim]
+        assert y.shape == (8, 12)
+        assert not torch.isnan(y).any()
+
+    def test_forward_single_step(self):
+        """Test SequencePINN with single-step input (compatibility mode)."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        # Single-step input: [batch, state_dim + control_dim]
+        x = torch.randn(8, 16)
+        y = model(x)
+
+        # Output: [batch, state_dim]
+        assert y.shape == (8, 12)
+
+    def test_anomaly_score(self):
+        """Test anomaly score computation."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        x = torch.randn(8, 20, 16)
+        y, score = model(x, return_anomaly_score=True)
+
+        assert y.shape == (8, 12)
+        assert score.shape == (8, 1)
+        # Scores should be between 0 and 1 (sigmoid output)
+        assert (score >= 0).all() and (score <= 1).all()
+
+    def test_detect_anomaly(self):
+        """Test detect_anomaly method."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        x = torch.randn(8, 20, 16)
+        ground_truth = torch.randn(8, 12)
+
+        score = model.detect_anomaly(x, ground_truth)
+        assert score.shape == (8, 1)
+
+    def test_physics_loss(self):
+        """Test SequencePINN physics loss."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        x = torch.randn(8, 20, 16)
+        y = model(x)
+        loss = model.physics_loss(x, y, dt=0.001)
+
+        assert loss.dim() == 0  # scalar
+        assert not torch.isnan(loss)
+
+    def test_temporal_smoothness_loss(self):
+        """Test temporal smoothness loss."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        x = torch.randn(8, 20, 16)
+        loss = model.temporal_smoothness_loss(x)
+
+        assert loss.dim() == 0
+        assert loss.item() >= 0
+
+    def test_summary(self):
+        """Test model summary."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+        summary = model.summary()
+
+        assert "SequencePINN" in summary
+        assert "Sequence length: 20" in summary
+        assert "LSTM" in summary
+
+    def test_hidden_state_reset(self):
+        """Test hidden state reset for new trajectories."""
+        from pinn_dynamics import SequencePINN
+
+        model = SequencePINN(sequence_length=20)
+
+        # Process a sequence
+        x = torch.randn(1, 20, 16)
+        _ = model(x)
+
+        # Hidden state should be set
+        assert model._hidden is not None
+
+        # Reset
+        model.reset_hidden()
+        assert model._hidden is None
+
+
+class TestSequenceAnomalyDetector:
+    """Tests for SequenceAnomalyDetector."""
+
+    def test_init(self):
+        """Test SequenceAnomalyDetector initialization."""
+        from pinn_dynamics import SequenceAnomalyDetector
+
+        detector = SequenceAnomalyDetector(sequence_length=20)
+        assert detector.sequence_length == 20
+
+    def test_forward(self):
+        """Test forward pass returns prediction and score."""
+        from pinn_dynamics import SequenceAnomalyDetector
+
+        detector = SequenceAnomalyDetector(sequence_length=20)
+        x = torch.randn(8, 20, 16)
+        pred, score = detector(x)
+
+        assert pred.shape == (8, 12)
+        assert score.shape == (8, 1)
+
+    def test_calibrate(self):
+        """Test threshold calibration on normal data."""
+        from pinn_dynamics import SequenceAnomalyDetector
+
+        detector = SequenceAnomalyDetector(sequence_length=20, threshold_percentile=95.0)
+
+        # Generate fake normal data
+        normal_data = torch.randn(100, 20, 16)
+        detector.calibrate(normal_data)
+
+        assert detector.calibrated.item() == True
+        assert detector.threshold.item() > 0
+
+    def test_detect(self):
+        """Test anomaly detection."""
+        from pinn_dynamics import SequenceAnomalyDetector
+
+        detector = SequenceAnomalyDetector(sequence_length=20)
+
+        # Calibrate first
+        normal_data = torch.randn(100, 20, 16)
+        detector.calibrate(normal_data)
+
+        # Test detection
+        test_data = torch.randn(8, 20, 16)
+        detections = detector.detect(test_data)
+
+        assert detections.shape == (8,)
+        assert set(detections.unique().tolist()).issubset({0.0, 1.0})
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

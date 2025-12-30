@@ -43,7 +43,7 @@ def load_trained_model(model_path: Path, scalers_path: Path, device: str = "cpu"
     """Load trained PINN model and scalers."""
     # Load model
     model = QuadrotorPINN(hidden_size=256, num_layers=5, dropout=0.1)
-    model.load_state_dict(torch.load(model_path, map_location=device))
+    model.load_state_dict(torch.load(model_path, map_location=device, weights_only=True))
     model.eval()
 
     # Load scalers
