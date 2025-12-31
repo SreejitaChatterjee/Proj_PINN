@@ -35,7 +35,7 @@ from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
 sys.path.insert(0, str(Path(__file__).parent))
 
 from src.data_loader import GPSIMUDataLoader
-from src.ekf import SimpleEKF, EKFAnomalyDetector
+from src.ekf import EKFPositionTracker, NISAnomalyDetector
 from src.model import CNNGRUDetector
 from src.hybrid_scorer import HybridScorer, TemporalConsistencyScorer
 

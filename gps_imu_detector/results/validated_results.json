@@ -1,4 +1,6 @@
 {
+  "regime": "phase1_unlabeled",
+  "regime_description": "Consistency-based detection trained on normal data only. 50m detectability floor is theoretical limit.",
   "hardware": {
     "platform": "Windows-11-10.0.26200-SP0",
     "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",

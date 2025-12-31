@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "auroc": 0.892627,
+    "recall_1pct_fpr": 0.005,
+    "recall_5pct_fpr": 0.226,
+    "recall_10pct_fpr": 0.522
+  },
+  "defense": {
+    "auroc": 0.999649,
+    "recall_1pct_fpr": 0.999,
+    "recall_5pct_fpr": 0.999,
+    "recall_10pct_fpr": 0.999,
+    "raw_auroc": 0.892627,
+    "raw_recall_5pct_fpr": 0.226,
+    "auroc_improvement": 0.10702200000000006,
+    "recall_improvement": 0.773
+  },
+  "improvement": {
+    "auroc": 0.10702200000000006,
+    "recall_5pct_fpr": 0.773
+  },
+  "target_met": true
+}

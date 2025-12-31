@@ -1,0 +1,164 @@
+{
+  "regime": "phase2_attack_informed",
+  "regime_description": "Hybrid ML+EKF fusion on synthetic attacks. High AUROC is expected on in-distribution synthetic data.",
+  "caveat": "These results are on synthetic attacks - real-world generalization requires Phase 1 analysis.",
+  "ekf": {
+    "auroc": 0.6673008008008008,
+    "recall_1pct": 0.35175,
+    "recall_5pct": 0.39425,
+    "worst_recall": 0.026
+  },
+  "ml": {
+    "auroc": 0.9806201701701702,
+    "recall_1pct": 0.8855,
+    "recall_5pct": 0.92525,
+    "worst_recall": 0.734
+  },
+  "hybrid": {
+    "auroc": 0.9874992992992994,
+    "recall_1pct_fpr": 0.9075,
+    "recall_5pct_fpr": 0.944,
+    "best_f1": 0.948986181016825,
+    "n_normal": 4995,
+    "n_attack": 4000,
+    "weights": {
+      "w_ekf": 0.1,
+      "w_ml": 0.9
+    }
+  },
+  "per_attack": {
+    "consistent_10.0": {
+      "ekf_recall": 0.026,
+      "ml_recall": 0.876,
+      "hybrid_recall": 0.872,
+      "n_samples": 500
+    },
+    "consistent_50.0": {
+      "ekf_recall": 0.248,
+      "ml_recall": 1.0,
+      "hybrid_recall": 1.0,
+      "n_samples": 500
+    },
+    "drift_10.0": {
+      "ekf_recall": 0.03,
+      "ml_recall": 0.816,
+      "hybrid_recall": 0.816,
+      "n_samples": 500
+    },
+    "drift_50.0": {
+      "ekf_recall": 0.372,
+      "ml_recall": 0.978,
+      "hybrid_recall": 0.978,
+      "n_samples": 500
+    },
+    "jump_25.0": {
+      "ekf_recall": 0.546,
+      "ml_recall": 1.0,
+      "hybrid_recall": 1.0,
+      "n_samples": 500
+    },
+    "offset_10.0": {
+      "ekf_recall": 0.426,
+      "ml_recall": 1.0,
+      "hybrid_recall": 1.0,
+      "n_samples": 500
+    },
+    "offset_50.0": {
+      "ekf_recall": 0.58,
+      "ml_recall": 1.0,
+      "hybrid_recall": 1.0,
+      "n_samples": 500
+    },
+    "oscillation_10.0": {
+      "ekf_recall": 0.926,
+      "ml_recall": 0.734,
+      "hybrid_recall": 0.886,
+      "n_samples": 500
+    }
+  },
+  "latency": {
+    "ekf_p95_ms": 0.16521008219569916,
+    "ml_p95_ms": 0.695739942602813,
+    "total_p95_ms": 0.8791899424977591,
+    "total_mean_ms": 0.5667798556128465
+  },
+  "targets": {
+    "Hybrid AUROC >= max(EKF, ML)": true,
+    "Hybrid worst-case > ML worst-case": true,
+    "Total P95 latency < 5ms": true
+  },
+  "grid_search": [
+    {
+      "w_ekf": 0.1,
+      "w_ml": 0.9,
+      "auroc": 0.9874992992992994,
+      "recall_at_fpr": 0.944,
+      "worst_recall": 0.816,
+      "mean_recall": 0.944
+    },
+    {
+      "w_ekf": 0.2,
+      "w_ml": 0.8,
+      "auroc": 0.9880682182182182,
+      "recall_at_fpr": 0.94725,
+      "worst_recall": 0.812,
+      "mean_recall": 0.9475
+    },
+    {
+      "w_ekf": 0.30000000000000004,
+      "w_ml": 0.7,
+      "auroc": 0.9872343343343343,
+      "recall_at_fpr": 0.947,
+      "worst_recall": 0.804,
+      "mean_recall": 0.9470000000000001
+    },
+    {
+      "w_ekf": 0.4,
+      "w_ml": 0.6,
+      "auroc": 0.985011011011011,
+      "recall_at_fpr": 0.942,
+      "worst_recall": 0.786,
+      "mean_recall": 0.942
+    },
+    {
+      "w_ekf": 0.5,
+      "w_ml": 0.5,
+      "auroc": 0.9806655655655656,
+      "recall_at_fpr": 0.926,
+      "worst_recall": 0.74,
+      "mean_recall": 0.92625
+    },
+    {
+      "w_ekf": 0.6,
+      "w_ml": 0.4,
+      "auroc": 0.9727197697697697,
+      "recall_at_fpr": 0.88725,
+      "worst_recall": 0.484,
+      "mean_recall": 0.8875000000000001
+    },
+    {
+      "w_ekf": 0.7000000000000001,
+      "w_ml": 0.29999999999999993,
+      "auroc": 0.9587718718718719,
+      "recall_at_fpr": 0.844,
+      "worst_recall": 0.254,
+      "mean_recall": 0.84475
+    },
+    {
+      "w_ekf": 0.8,
+      "w_ml": 0.19999999999999996,
+      "auroc": 0.9353432932932932,
+      "recall_at_fpr": 0.794,
+      "worst_recall": 0.126,
+      "mean_recall": 0.79425
+    },
+    {
+      "w_ekf": 0.9,
+      "w_ml": 0.09999999999999998,
+      "auroc": 0.8948161661661661,
+      "recall_at_fpr": 0.71375,
+      "worst_recall": 0.052,
+      "mean_recall": 0.71375
+    }
+  ]
+}

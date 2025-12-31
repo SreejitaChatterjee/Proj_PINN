@@ -276,7 +276,10 @@ def main():
     print("\n" + "=" * 70)
     print("LOADING DATA")
     print("=" * 70)
-    df = load_euroc_data('../data/euroc/all_sequences.csv')
+    # Use absolute path or relative from script location
+    script_dir = Path(__file__).parent.parent
+    data_path = script_dir / 'data' / 'euroc' / 'all_sequences.csv'
+    df = load_euroc_data(str(data_path))
     X, feature_cols = prepare_features(df)
     sequences = df['sequence'].values
     print(f"Features: {feature_cols}")

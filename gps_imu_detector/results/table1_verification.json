@@ -1,0 +1,37 @@
+{
+  "expected": {
+    "noise": 0.764,
+    "drift": 0.807,
+    "bias": 0.606,
+    "coordinated": 0.57,
+    "intermittent": 0.307
+  },
+  "measured": {
+    "bias": {
+      "auroc": 0.52935175,
+      "recall_1pct_fpr": 0.0425,
+      "recall_5pct_fpr": 0.0825
+    },
+    "drift": {
+      "auroc": 0.501496375,
+      "recall_1pct_fpr": 0.0,
+      "recall_5pct_fpr": 0.0135
+    },
+    "noise": {
+      "auroc": 0.5200690000000001,
+      "recall_1pct_fpr": 0.024,
+      "recall_5pct_fpr": 0.0585
+    },
+    "coordinated": {
+      "auroc": 0.5720540000000001,
+      "recall_1pct_fpr": 0.079,
+      "recall_5pct_fpr": 0.1195
+    },
+    "intermittent": {
+      "auroc": 0.505672125,
+      "recall_1pct_fpr": 0.018,
+      "recall_5pct_fpr": 0.0585
+    }
+  },
+  "mean_auroc": 0.5257286500000001
+}

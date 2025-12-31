@@ -1,4 +1,6 @@
 {
+  "regime": "phase1_unlabeled",
+  "regime_description": "Consistency-based detection trained on normal data only. Shows 50m detectability floor.",
   "nominal": {
     "threshold": 42.422733306884766,
     "mean_ici": 23.99920654296875,

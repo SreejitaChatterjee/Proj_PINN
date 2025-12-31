@@ -1,0 +1,66 @@
+{
+  "regime": "phase2_attack_informed",
+  "regime_description": "Discriminative detection trained on normal + attacks. Breaks 50m floor via supervision.",
+  "methodology": "Robust (CV threshold, held-out test, attacks in training)",
+  "train_seed": 100,
+  "test_seed": 200,
+  "threshold": 0.9,
+  "overall_auroc": 0.7645178102326993,
+  "overall_recall": 0.9089941756272402,
+  "fpr": 0.5782930107526881,
+  "per_attack": {
+    "ar1_drift": {
+      "recall": 0.9553091397849462,
+      "auroc": 0.7168302964938144,
+      "n_samples": 2976
+    },
+    "coordinated": {
+      "recall": 0.9922715053763441,
+      "auroc": 0.7191534290452654,
+      "n_samples": 2976
+    },
+    "intermittent": {
+      "recall": 0.7788978494623656,
+      "auroc": 0.7058808884502508,
+      "n_samples": 2976
+    },
+    "bias": {
+      "recall": 1.0,
+      "auroc": 0.9561080376886055,
+      "n_samples": 2976
+    },
+    "noise": {
+      "recall": 0.9949596774193549,
+      "auroc": 0.8862971988271766,
+      "n_samples": 2976
+    },
+    "ramp": {
+      "recall": 0.7325268817204301,
+      "auroc": 0.602428240891288,
+      "n_samples": 2976
+    }
+  },
+  "subtle_attacks": {
+    "offset_1m": {
+      "auroc": 0.6369577249718175,
+      "recall_5pct_fpr": 0.004368279569892473
+    },
+    "offset_5m": {
+      "auroc": 0.7859401308135333,
+      "recall_5pct_fpr": 0.03225806451612903
+    },
+    "offset_10m": {
+      "auroc": 0.8821015593385073,
+      "recall_5pct_fpr": 0.17641129032258066
+    },
+    "offset_25m": {
+      "auroc": 0.9852150537634408,
+      "recall_5pct_fpr": 1.0
+    },
+    "offset_50m": {
+      "auroc": 0.9852150537634408,
+      "recall_5pct_fpr": 1.0
+    }
+  },
+  "min_detectable_offset": "offset_5m"
+}
