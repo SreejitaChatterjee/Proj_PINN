@@ -9,43 +9,55 @@ A research repository containing two main contributions:
 ```
 Proj_PINN/
 │
-├── pinn_dynamics/          # Core PINN framework (Python package)
-│   ├── systems/            # System definitions (Quadrotor, Pendulum, etc.)
-│   ├── training/           # Training utilities
-│   ├── inference/          # Prediction and export (ONNX, TorchScript)
-│   └── data/               # Data loaders
+├── pinn_dynamics/              # Core PINN framework (Python package)
+│   ├── systems/                # System definitions (Quadrotor, Pendulum, etc.)
+│   ├── training/               # Training utilities
+│   ├── inference/              # Prediction and export (ONNX, TorchScript)
+│   └── data/                   # Data loaders
 │
-├── gps_imu_detector/       # GPS-IMU Spoofing Detector (Publication-Ready)
-│   ├── src/                # Detection algorithms (ICI, CUSUM, etc.)
-│   ├── docs/               # Methodology documentation
-│   ├── results/            # Evaluation results
-│   └── scripts/            # Evaluation scripts
+├── gps_imu_detector/           # GPS-IMU Spoofing Detector (Publication-Ready)
+│   ├── src/                    # Detection algorithms (ICI, CUSUM, etc.)
+│   ├── scripts/                # Evaluation & run scripts
+│   ├── docs/                   # Methodology documentation
+│   ├── results/                # Evaluation results
+│   ├── attacks/                # Attack simulation
+│   ├── baselines/              # Baseline detectors
+│   ├── tests/                  # Unit tests
+│   └── ci/                     # CI/CD configuration
 │
-├── papers/                 # Paper submissions (organized by venue)
-│   ├── gps_imu_detection/  # DSN - GPS-IMU Detection
-│   ├── pinn_stability_envelope/  # ACC/CDC
-│   ├── pinn_architecture/  # NeurIPS 2025
-│   ├── pinn_modular_design/  # ICRA 2026
-│   ├── pinn_curriculum/    # RA-L
-│   └── shared/             # Common resources
+├── papers/                     # Paper submissions (by venue)
+│   ├── gps_imu_detection/      # DSN - GPS-IMU Detection
+│   ├── pinn_stability_envelope/# ACC/CDC - Stability Envelope
+│   ├── pinn_architecture/      # NeurIPS 2025
+│   ├── pinn_modular_design/    # ICRA 2026
+│   ├── pinn_curriculum/        # RA-L
+│   └── shared/                 # Common resources (bib, styles)
 │
-├── experiments/            # All experimental artifacts
-│   ├── models/             # Trained checkpoints
-│   ├── results/            # Experiment outputs
-│   ├── research/           # Research artifacts
-│   └── runs/               # Training logs
+├── experiments/                # All experimental artifacts
+│   ├── models/                 # Trained checkpoints
+│   ├── results/                # Experiment outputs
+│   ├── research/               # Research artifacts
+│   └── runs/                   # Training logs
 │
-├── data/                   # Datasets
-│   ├── euroc/              # EuRoC MAV dataset
-│   ├── alfa/               # ALFA dataset
-│   └── PADRE_dataset/      # PADRE fault dataset
+├── scripts/                    # Utility scripts (organized)
+│   ├── training/               # Training scripts
+│   ├── evaluation/             # Evaluation scripts
+│   ├── generation/             # Data generation scripts
+│   ├── analysis/               # Analysis & experiments
+│   ├── data/                   # Data loading & preprocessing
+│   └── utils/                  # Utility & formatting scripts
 │
-├── docs/                   # Project documentation
-├── configs/                # Configuration files
-├── scripts/                # Utility scripts
-├── examples/               # Usage examples
-├── tests/                  # Test suite
-└── legacy/                 # Deprecated code
+├── data/                       # Datasets
+│   ├── euroc/                  # EuRoC MAV dataset
+│   ├── alfa/                   # ALFA dataset
+│   └── PADRE_dataset/          # PADRE fault dataset
+│
+├── docker/                     # Docker configuration
+├── docs/                       # Project documentation
+├── configs/                    # Configuration files
+├── examples/                   # Usage examples
+├── tests/                      # Test suite
+└── legacy/                     # Deprecated code
 ```
 
 ## Quick Start

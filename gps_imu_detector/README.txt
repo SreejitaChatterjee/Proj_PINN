@@ -141,19 +141,25 @@ When test data comes from a different distribution:
 ## Architecture
 
 ```
-gps_imu_detector/src/
-├── inverse_model.py           # Core ICI detector
-├── temporal_ici.py            # Temporal aggregation
-├── conditional_fusion.py      # Conditional hybrid fusion
-├── coordinated_defense.py     # Coordinated attack defense
-├── actuator_observability.py  # Actuator fault detection
-├── advanced_detection.py      # v0.5.0 improvements
-├── final_improvements.py      # v0.5.1 improvements
-├── industry_aligned.py        # v0.6.0 industry alignment
-├── analytical_redundancy.py   # v0.7.0 dual estimator (BREAKS ACTUATOR CEILING)
-├── active_probing.py          # v0.8.0 probing (BREAKS STEALTH CEILING)
-├── pinn_integration.py        # v0.9.0 PINN integration (PHYSICS-INFORMED)
-└── __init__.py               # 109 exports
+gps_imu_detector/
+├── src/                       # Core detection algorithms
+│   ├── inverse_model.py       # Core ICI detector
+│   ├── temporal_ici.py        # Temporal aggregation
+│   ├── conditional_fusion.py  # Conditional hybrid fusion
+│   ├── coordinated_defense.py # Coordinated attack defense
+│   ├── actuator_observability.py  # Actuator fault detection
+│   ├── advanced_detection.py  # v0.5.0 improvements
+│   ├── industry_aligned.py    # v0.6.0 industry alignment
+│   ├── analytical_redundancy.py   # v0.7.0 dual estimator
+│   ├── active_probing.py      # v0.8.0 probing
+│   └── pinn_integration.py    # v0.9.0 PINN integration
+├── scripts/                   # Evaluation & run scripts
+├── docs/                      # Methodology documentation
+├── results/                   # Evaluation outputs
+├── attacks/                   # Attack simulation
+├── baselines/                 # Baseline detectors
+├── tests/                     # Unit tests
+└── ci/                        # CI/CD configuration
 ```
 
 ---
@@ -381,15 +387,14 @@ python -m pytest gps_imu_detector/tests/ -v
 
 ```bash
 # Run publication-ready evaluation (RECOMMENDED)
-cd gps_imu_detector
+cd gps_imu_detector/scripts
 python run_publication_evaluation.py
 
 # Results saved to: results/publication_results.json
 # Expected: AUROC 99.8%, FPR 0.21%, Recall@1%FPR 93.4%
 
-# Run v3 rate-based evaluation
-cd scripts
-python targeted_improvements_v3.py
+# Run rigorous evaluation with realistic noise
+python rigorous_evaluation.py
 
 # Run generalization test
 python generalization_test.py

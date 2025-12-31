@@ -1,50 +1,71 @@
-# Quadrotor PINN - Scripts
+# Scripts Directory
 
-## Core Files
+Organized utility scripts for the PINN framework.
 
-### Model
-- `pinn_model.py` - PINN architecture for simulated data (16 inputs: states + controls)
-- `pinn_base.py` - Base class for custom dynamics systems
+## Structure
 
-### Training
-- `train_euroc.py` - **Train on real EuRoC MAV data** (recommended)
-- `train.py` - Train on simulated data
-- `load_euroc.py` - Download and preprocess EuRoC dataset
+```
+scripts/
+├── training/       # Model training scripts
+├── evaluation/     # Evaluation and validation scripts
+├── generation/     # Data generation scripts
+├── analysis/       # Analysis and experiments
+├── data/           # Data loading and preprocessing
+└── utils/          # Utility and formatting scripts
+```
 
-### Data Generation
-- `generate_diverse_training_data.py` - Generate simulated trajectories
+## Subdirectories
+
+### training/
+Training scripts for various models:
+- `train_euroc.py` - Train on real EuRoC MAV data
+- `train.py` - General training script
+- `train_padre_*.py` - PADRE fault detection training
+- `train_all_architectures.py` - Architecture comparison
+
+### evaluation/
+Evaluation and validation:
+- `evaluate*.py` - Model evaluation scripts
+- `run_*.py` - Batch run scripts
+- `show_all_results.py` - Results display
+- `validate_finding.py` - Validation checks
+
+### generation/
+Data and figure generation:
+- `generate_diverse_training_data.py` - Training data
+- `generate_*_plots.py` - Plot generation
+- `generate_ieee_publication_plots.py` - IEEE figures
+
+### analysis/
+Analysis and experiments:
+- `physics_weight_sweep*.py` - Physics weight ablation
+- `*_experiment.py` - Various experiments
+- `pinn_*.py` - PINN architecture analysis
+- `robustness_analysis.py` - Robustness studies
+
+### data/
+Data loading and preprocessing:
+- `load_euroc.py` - EuRoC data loader
+- `download_alfa.py` - ALFA dataset download
+- `padre_*.py` - PADRE data processing
+- `split_*.py` - Train/test splitting
+
+### utils/
+Utility scripts:
+- `fix_*.py` - Formatting fixes
+- `convert_to_ieee.py` - IEEE conversion
+- `plot_utils.py` - Plotting utilities
+- `export.py` - Model export utilities
 
 ## Quick Start
 
 ```bash
-# Train on real EuRoC data (recommended)
-python train_euroc.py
+# Train on real EuRoC data
+python training/train_euroc.py
 
-# Or train on simulated data
-python generate_diverse_training_data.py
-python train_with_diverse_data.py
+# Generate synthetic data
+python generation/generate_diverse_training_data.py
 
-# Run demo
-python ../demo.py --real   # EuRoC model
-python ../demo.py          # Simulated model
+# Run evaluation
+python evaluation/evaluate.py
 ```
-
-## Model Architectures
-
-### EuRoC Model (real data)
-- Input: 15 features (12 states + 3 IMU accelerations)
-- Output: 12 next states
-- Data: 138K samples from 5 ETH Zurich MAV sequences
-- Performance: 11cm position MAE on 100-step rollout
-
-### Simulated Model
-- Input: 16 features (12 states + 4 controls)
-- Output: 12 next states
-- Data: 500K samples from numerical simulation
-- Physics: Learnable mass and inertia parameters
-
-## Loss Components
-1. **Data loss**: MSE between predicted and true states
-2. **Kinematic loss**: Position derivatives match velocities
-3. **Smoothness loss**: Penalize unrealistic state jumps
-4. **Physics loss**: (Simulated only) Euler equations residuals
