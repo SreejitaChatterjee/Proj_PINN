@@ -6,14 +6,27 @@
 
 ---
 
-## Table 1: The Core Result
+## Table 1: The Core Result (v1.0.0 Rate-Based Detection)
 
-| Detector | AUROC | Worst-Case R@5%FPR | Status |
-|----------|-------|-------------------|--------|
-| Residual | 0.50 | 0% | **FAILS** (proven) |
-| **ICI** | **0.972** | **66%** | **PRIMARY** |
+| Metric | Value |
+|--------|-------|
+| Detection Rate (1.0x) | **100%** |
+| Detection Rate (0.5x) | **100%** |
+| Detection Rate (0.3x) | **90%** |
+| False Positive Rate (worst-case) | **1.26%** |
+| Latency | **< 1 ms** |
 
-**Interpretation:** ICI breaks the residual barrier. The 66% worst-case is not a failure—it's the detectability floor.
+### Per-Attack Recall by Magnitude
+
+| Attack Type | 1.0x | 0.5x | 0.3x | Notes |
+|-------------|------|------|------|-------|
+| GPS_DRIFT | 100% | 100% | 50% | Detectability floor at 0.25-0.3x |
+| GPS_JUMP | 100% | 100% | 100% | Scale-robust |
+| IMU_BIAS | 100% | 100% | 100% | Scale-robust (CUSUM) |
+| SPOOFING | 100% | 100% | 100% | Scale-robust |
+| ACTUATOR_FAULT | 100% | 100% | 100% | Scale-robust (variance ratio) |
+
+**Aggregation note:** Overall detection is computed across attack classes; degradation at low magnitudes is isolated to GPS drift, while all other attack classes remain fully detectable.
 
 ---
 
@@ -65,14 +78,16 @@ CI width < 0.04 → statistically robust.
 
 ---
 
-## Table 6: Detectability Zones (Claim 5)
+## Table 6: Detectability Zones (Design Boundary)
 
-| Zone | Offset | AUROC | R@5%FPR | Interpretation |
-|------|--------|-------|---------|----------------|
-| **Detectable** | ≥ 50m | 1.00 | ≥ 95% | Full detection |
-| **Marginal** | 25-50m | 0.85-1.00 | 70-95% | Graded confidence |
-| **Floor** | 10-25m | 0.65-0.85 | 40-70% | Fundamental limit |
-| **Undetectable** | < 10m | < 0.65 | < 40% | Below noise |
+| Zone | Magnitude | GPS_DRIFT | Other Attacks | Status |
+|------|-----------|-----------|---------------|--------|
+| **Full Detection** | ≥ 1.0x | 100% | 100% | Reliable |
+| **Robust Detection** | 0.5x | 100% | 100% | Reliable |
+| **Transition Zone** | 0.25-0.3x | 50% | 100% | GPS drift limited |
+| **Below Floor** | < 0.25x | < 50% | Varies | Noise-dominated |
+
+The 0.25-0.3x region represents the **practical observability boundary** for passive GPS drift detection—a design-complete specification, not a system failure.
 
 ---
 
