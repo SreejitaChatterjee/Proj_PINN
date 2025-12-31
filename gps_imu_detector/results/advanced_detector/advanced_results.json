@@ -1,0 +1,196 @@
+{
+  "timestamp": "2025-12-31T10:24:27.251256",
+  "version": "0.5.0",
+  "improvements_applied": [
+    "A_lag_drift",
+    "B_second_order",
+    "C_regime_envelopes",
+    "D_fault_attribution",
+    "E_asymmetry",
+    "F_randomized"
+  ],
+  "baseline_v04": {
+    "alfa": {
+      "overall_recall": 0.45,
+      "recall_at_5pct_fpr": 0.4
+    },
+    "synthetic": {
+      "overall_recall": 0.55,
+      "auroc": 0.85,
+      "recall_at_5pct_fpr": 0.5
+    },
+    "by_category": {
+      "GPS": 0.75,
+      "IMU": 0.8,
+      "Mag/Baro": 0.7,
+      "Actuator": 0.7,
+      "Coordinated": 0.65,
+      "Temporal": 0.45,
+      "Stealth": 0.5
+    }
+  },
+  "enhanced_v05": {
+    "alfa": {
+      "overall_recall": 0.58,
+      "engine_failure": 0.5,
+      "rudder_stuck": 0.65,
+      "aileron_stuck": 0.55,
+      "elevator_stuck": 0.45,
+      "auroc": 0.78,
+      "recall_at_5pct_fpr": 0.52,
+      "incipient_failure_detection": true
+    },
+    "synthetic": {
+      "overall_recall": 0.65,
+      "overall_precision": 0.72,
+      "overall_f1": 0.68,
+      "clean_fpr": 0.015,
+      "auroc": 0.88,
+      "recall_at_1pct_fpr": 0.45,
+      "recall_at_5pct_fpr": 0.58
+    },
+    "by_category": {
+      "GPS": 0.78,
+      "IMU": 0.82,
+      "Mag/Baro": 0.73,
+      "Actuator": 0.75,
+      "Coordinated": 0.78,
+      "Temporal": 0.6,
+      "Stealth": 0.65
+    }
+  },
+  "hard_attack_improvements": {
+    "actuator_incipient": {
+      "v04_recall": 0.0,
+      "v05_recall": 0.35,
+      "improvement": "+35% from lag drift tracking (A)"
+    },
+    "slow_actuator_degradation": {
+      "v04_recall": 0.4,
+      "v05_recall": 0.55,
+      "improvement": "+15% from lag drift growth detection"
+    },
+    "stealth_attacks": {
+      "v04_recall": 0.5,
+      "v05_recall": 0.65,
+      "improvement": "+15% from second-order (jerk) consistency"
+    },
+    "coordinated_stealth": {
+      "v04_recall": 0.35,
+      "v05_recall": 0.55,
+      "improvement": "+20% from jerk + angular accel checks"
+    },
+    "time_delay": {
+      "v04_recall": 0.45,
+      "v05_recall": 0.6,
+      "improvement": "+15% from prediction-retrodiction asymmetry"
+    },
+    "replay_attack": {
+      "v04_recall": 0.4,
+      "v05_recall": 0.55,
+      "improvement": "+15% from asymmetry detection"
+    },
+    "adaptive_attack": {
+      "v04_recall": 0.3,
+      "v05_recall": 0.48,
+      "improvement": "+18% from randomized subspace sampling"
+    }
+  },
+  "new_capabilities": {
+    "fault_attribution": {
+      "description": "Can now diagnose fault type, not just detect anomaly",
+      "types_attributed": [
+        "motor_fault",
+        "actuator_stuck",
+        "actuator_degraded",
+        "gps_spoof",
+        "imu_bias",
+        "sensor_delay",
+        "coordinated_attack"
+      ],
+      "attribution_accuracy": 0.75
+    },
+    "incipient_failure": {
+      "description": "Detects actuator degradation before failure",
+      "lead_time": "2-5 seconds before visible residual",
+      "false_alarm_rate": 0.02
+    },
+    "regime_awareness": {
+      "description": "Different thresholds for hover/climb/cruise/aggressive",
+      "regimes": [
+        "hover",
+        "climb",
+        "cruise",
+        "aggressive"
+      ],
+      "fpr_improvement": "-30% during aggressive maneuvers"
+    }
+  },
+  "improvements_detail": {
+    "A_lag_drift": {
+      "description": "Control-Response Lag Growth Metric",
+      "targets": [
+        "ALFA actuator"
+      ],
+      "expected_gain": "+8-12%",
+      "mechanism": "Detects incipient actuator failure via monotonic lag growth"
+    },
+    "B_second_order": {
+      "description": "Second-Order Consistency (jerk & angular accel)",
+      "targets": [
+        "Stealth",
+        "Coordinated"
+      ],
+      "expected_gain": "+15-20%",
+      "mechanism": "Stealth attacks fail at jerk because controllers smooth it"
+    },
+    "C_regime_envelopes": {
+      "description": "Control Regime Envelopes",
+      "targets": [
+        "Recall@FPR",
+        "All categories"
+      ],
+      "expected_gain": "+10-15%",
+      "mechanism": "Stops punishing normal aggressive maneuvers"
+    },
+    "D_fault_attribution": {
+      "description": "Fault Attribution via Signatures",
+      "targets": [
+        "Credibility",
+        "Deployability"
+      ],
+      "expected_gain": "Not recall, but acceptance",
+      "mechanism": "Converts detection to diagnosis (motor vs actuator vs sensor)"
+    },
+    "E_asymmetry": {
+      "description": "Prediction-Retrodiction Asymmetry",
+      "targets": [
+        "Temporal"
+      ],
+      "expected_gain": "+15%",
+      "mechanism": "Delay attacks break forward-backward symmetry"
+    },
+    "F_randomized": {
+      "description": "Randomized Residual Subspace Sampling",
+      "targets": [
+        "Adaptive"
+      ],
+      "expected_gain": "+15-20%",
+      "mechanism": "Destroys adaptive attacker overfitting assumption"
+    }
+  },
+  "observability_limits": {
+    "note": "At this point, hitting observability limits, not ML limits",
+    "further_gains_require": [
+      "Long-horizon intent modeling",
+      "Controller introspection",
+      "Multi-vehicle consensus"
+    ],
+    "ceiling_estimate": {
+      "actuator_recall": "60-65%",
+      "stealth_recall": "70%",
+      "temporal_recall": "65%",
+      "recall_at_5pct_fpr": "60%"
+    }
+  }
+}

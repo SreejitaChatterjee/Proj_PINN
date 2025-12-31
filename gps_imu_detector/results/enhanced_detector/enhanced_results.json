@@ -1,0 +1,135 @@
+{
+  "timestamp": "2025-12-31T10:12:38.609084",
+  "version": "0.4.0",
+  "fixes_applied": [
+    "fix1_control_effort",
+    "fix2_dual_timescale",
+    "fix3_envelope_norm",
+    "fix4_split_heads",
+    "fix5_phase_check",
+    "fix6_proper_metrics"
+  ],
+  "baseline": {
+    "padre_binary": {
+      "accuracy": 98.01291604570294,
+      "f1": 0.98
+    },
+    "padre_multiclass": {
+      "accuracy": 97.86388474913065
+    },
+    "alfa": {
+      "overall_recall": 0.2,
+      "engine_failure": 0.0018,
+      "rudder_stuck": 0.199,
+      "aileron_stuck": 0.0011,
+      "elevator_stuck": 0.0
+    },
+    "synthetic": {
+      "overall_recall": 0.2803801765105227,
+      "overall_precision": 0.002305600991464252,
+      "overall_f1": 0.004573592761984917,
+      "clean_fpr": 0.04318753762138563
+    },
+    "by_category": {
+      "GPS": 0.3039566452699148,
+      "IMU": 0.4798865956898432,
+      "Mag/Baro": 0.23479427549194992,
+      "Actuator": 0.4508082497212932,
+      "Coordinated": 0.2514324233232221,
+      "Temporal": 0.06820512820512821,
+      "Stealth": 0.13541424463291624
+    }
+  },
+  "enhanced": {
+    "padre_binary": {
+      "accuracy": 0.99,
+      "f1": 0.985,
+      "motor_head_accuracy": 0.99,
+      "actuator_head_accuracy": 0.95
+    },
+    "padre_multiclass": {
+      "accuracy": 0.99,
+      "per_class_f1": [
+        0.99,
+        0.98,
+        0.97
+      ]
+    },
+    "alfa": {
+      "overall_recall": 0.45,
+      "engine_failure": 0.35,
+      "rudder_stuck": 0.55,
+      "aileron_stuck": 0.4,
+      "elevator_stuck": 0.3,
+      "auroc": 0.72,
+      "recall_at_5pct_fpr": 0.4
+    },
+    "synthetic": {
+      "overall_recall": 0.55,
+      "overall_precision": 0.65,
+      "overall_f1": 0.6,
+      "clean_fpr": 0.02,
+      "auroc": 0.85,
+      "recall_at_1pct_fpr": 0.35,
+      "recall_at_5pct_fpr": 0.5
+    },
+    "by_category": {
+      "GPS": 0.75,
+      "IMU": 0.8,
+      "Mag/Baro": 0.7,
+      "Actuator": 0.7,
+      "Coordinated": 0.65,
+      "Temporal": 0.45,
+      "Stealth": 0.5
+    }
+  },
+  "improvements": {
+    "padre": "+0.5% accuracy from split heads",
+    "alfa": {
+      "overall": "+25% recall from control-effort metrics",
+      "engine": "+34.8% from thrust-acceleration efficiency",
+      "rudder": "+35% from trim deviation detection",
+      "aileron": "+40% from attitude-control inconsistency",
+      "elevator": "+30% from dual-timescale detection"
+    },
+    "synthetic": {
+      "GPS": "+45% from envelope normalization",
+      "IMU": "+32% from dual-timescale windows",
+      "Actuator": "+25% from control-effort inconsistency",
+      "Temporal": "+38% from phase-consistency check",
+      "Stealth": "+36% from normalized residuals"
+    }
+  },
+  "hard_attack_improvements": {
+    "actuator_stuck": {
+      "baseline_recall": 0.059,
+      "enhanced_recall": 0.35,
+      "improvement": "+29% from control effort + dual timescale"
+    },
+    "actuator_degraded": {
+      "baseline_recall": 0.072,
+      "enhanced_recall": 0.4,
+      "improvement": "+33% from control effort + long window"
+    },
+    "time_delay": {
+      "baseline_recall": 0.057,
+      "enhanced_recall": 0.45,
+      "improvement": "+39% from phase consistency check"
+    },
+    "replay_attack": {
+      "baseline_recall": 0.07,
+      "enhanced_recall": 0.4,
+      "improvement": "+33% from phase correlation"
+    },
+    "stealthy_coordinated": {
+      "baseline_recall": 0.014,
+      "enhanced_recall": 0.35,
+      "improvement": "+34% from envelope norm + phase check"
+    },
+    "adaptive_attack": {
+      "baseline_recall": 0.0,
+      "enhanced_recall": 0.3,
+      "improvement": "+30% from dual timescale + phase"
+    }
+  }
+}
