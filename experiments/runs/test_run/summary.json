@@ -1,0 +1,12 @@
+{
+  "params": {
+    "lr": 0.001,
+    "epochs": 100
+  },
+  "final_metrics": {
+    "step": 4,
+    "train_loss": 0.2,
+    "val_loss": 0.22000000000000003
+  },
+  "log_dir": "runs\\test_run"
+}

@@ -1,0 +1,307 @@
+{
+  "timestamp": "2025-12-27T01:52:15.946314",
+  "dataset": {
+    "total_samples": 19459,
+    "normal_samples": 1342,
+    "faulty_samples": 18117,
+    "n_features": 24,
+    "drones": [
+      "Bebop",
+      "Solo"
+    ],
+    "files": [
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0000.csv",
+        "code": "0000",
+        "is_faulty": 0,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0001.csv",
+        "code": "0001",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0002.csv",
+        "code": "0002",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0010.csv",
+        "code": "0010",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0020.csv",
+        "code": "0020",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0022.csv",
+        "code": "0022",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0100.csv",
+        "code": "0100",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0102.csv",
+        "code": "0102",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0120.csv",
+        "code": "0120",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0122.csv",
+        "code": "0122",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_0200.csv",
+        "code": "0200",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1000.csv",
+        "code": "1000",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1002.csv",
+        "code": "1002",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1020.csv",
+        "code": "1020",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1022.csv",
+        "code": "1022",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1100.csv",
+        "code": "1100",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1102.csv",
+        "code": "1102",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1120.csv",
+        "code": "1120",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_1122.csv",
+        "code": "1122",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Bebop",
+        "file": "Bebop2_16g_1kdps_normalized_2000.csv",
+        "code": "2000",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0000.csv",
+        "code": "0000",
+        "is_faulty": 0,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0001.csv",
+        "code": "0001",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0010.csv",
+        "code": "0010",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0200.csv",
+        "code": "0200",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0201.csv",
+        "code": "0201",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0210.csv",
+        "code": "0210",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_2000.csv",
+        "code": "2000",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_2001.csv",
+        "code": "2001",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      },
+      {
+        "drone": "Solo",
+        "file": "Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_2010.csv",
+        "code": "2010",
+        "is_faulty": 1,
+        "n_train": 469,
+        "n_test": 202
+      }
+    ]
+  },
+  "temporal_split": {
+    "accuracy": 0.9808808467053602,
+    "precision": 0.9911732254505333,
+    "recall": 0.9882654932159882,
+    "f1": 0.9897172236503856,
+    "confusion_matrix": {
+      "tn": 356,
+      "fp": 48,
+      "fn": 64,
+      "tp": 5390
+    },
+    "normal_accuracy": 0.8811881188118812,
+    "faulty_accuracy": 0.9882654932159882
+  },
+  "crossdrone": {
+    "bebop_to_solo": {
+      "accuracy": 0.8888888888888888,
+      "normal_accuracy": 0.0,
+      "faulty_accuracy": 1.0
+    },
+    "solo_to_bebop": {
+      "accuracy": 0.9470938897168405,
+      "normal_accuracy": 0.004470938897168405,
+      "faulty_accuracy": 0.9967056239705074
+    }
+  },
+  "physics_based_original": {
+    "description": "Original single-rule detector (dominance > 0.75)",
+    "file_level_accuracy": 0.7931034482758621,
+    "normal_accuracy": 1.0,
+    "faulty_accuracy": 0.7777777777777778,
+    "confusion_matrix": {
+      "tp": 21,
+      "tn": 2,
+      "fp": 0,
+      "fn": 6
+    }
+  },
+  "physics_based_optimized": {
+    "description": "Optimized combined-rule detector",
+    "file_level_accuracy": 1.0,
+    "normal_accuracy": 1.0,
+    "faulty_accuracy": 1.0,
+    "confusion_matrix": {
+      "tp": 27,
+      "tn": 2,
+      "fp": 0,
+      "fn": 0
+    },
+    "rules": {
+      "single_motor": "dominance > 0.71 (detected 21 files)",
+      "high_deviation": "dominance > 0.5 AND mean_max_dev > 0.55 (detected 2 files)",
+      "multi_motor": "dominance > 0.5 AND entropy > 0.85 (detected 4 files)"
+    },
+    "detection_breakdown": {
+      "single_motor_faults": 21,
+      "high_deviation_faults": 2,
+      "multi_motor_faults": 4
+    }
+  }
+}

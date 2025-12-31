@@ -1,0 +1,24 @@
+{
+  "features": "168 (72 time + 96 frequency)",
+  "time_features": [
+    "mean",
+    "std",
+    "range"
+  ],
+  "freq_features": [
+    "low_freq_energy",
+    "mid_freq_energy",
+    "high_freq_energy",
+    "dominant_freq"
+  ],
+  "window_size": 256,
+  "stride": 128,
+  "binary_threshold": 0.75,
+  "results": {
+    "binary": {
+      "accuracy": 1.0,
+      "fp": 0,
+      "fn": 0
+    }
+  }
+}

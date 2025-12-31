@@ -1,0 +1,8 @@
+{
+  "mean_f1": 0.6565255657211974,
+  "mean_precision": 0.8333333333333334,
+  "mean_recall": 0.5560473871992999,
+  "mean_fpr": 0.0447483582336903,
+  "total_flights_tested": 47,
+  "fault_types_tested": 6
+}

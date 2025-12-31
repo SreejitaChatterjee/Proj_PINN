@@ -1,0 +1,20 @@
+{
+  "model_type": "SequencePINN",
+  "sequence_length": 20,
+  "state_dim": 12,
+  "control_dim": 4,
+  "hidden_size": 128,
+  "num_lstm_layers": 2,
+  "fc_hidden_size": 256,
+  "dropout": 0.1,
+  "epochs": 30,
+  "batch_size": 256,
+  "lr": 0.001,
+  "train_samples": 138068,
+  "val_samples": 138068,
+  "final_train_loss": 0.01481419508172958,
+  "final_val_loss": 0.005068440716045357,
+  "detection_threshold": 0.3966537415981293,
+  "calibration_mean_error": 0.21137475967407227,
+  "calibration_std_error": 0.1269732564687729
+}

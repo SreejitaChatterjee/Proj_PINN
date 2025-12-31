@@ -1,0 +1,42 @@
+{
+  "state_dim": 12,
+  "control_dim": 4,
+  "hidden_size": 256,
+  "num_layers": 5,
+  "dropout": 0.1,
+  "epochs": 500,
+  "batch_size": 32,
+  "lr": 0.001,
+  "num_seeds": 20,
+  "train_samples": 503,
+  "val_samples": 126,
+
+  "w0_mean_loss": 0.330206,
+  "w0_std_loss": 0.006939,
+  "w0_best_loss": 0.319020,
+  "w0_all_losses": [
+    0.332663, 0.338155, 0.320503, 0.322229, 0.319020,
+    0.327437, 0.331463, 0.333959, 0.346701, 0.320425,
+    0.339644, 0.331560, 0.332864, 0.323286, 0.327673,
+    0.330626, 0.334035, 0.328397, 0.327008, 0.336467
+  ],
+
+  "w20_mean_loss": 4.502390,
+  "w20_std_loss": 0.146651,
+  "w20_best_loss": 4.190747,
+  "w20_all_losses": [
+    4.533350, 4.713048, 4.554884, 4.506615, 4.531447,
+    4.528586, 4.548572, 4.329843, 4.389396, 4.302008,
+    4.190747, 4.261709, 4.669148, 4.719369, 4.458180,
+    4.486816, 4.486285, 4.718130, 4.488663, 4.631006
+  ],
+
+  "t_statistic": -122.8753,
+  "p_value": 0.000000,
+  "significant": true,
+  "winner": "w=0",
+
+  "interpretation": "w=0 (pure data-driven) is SIGNIFICANTLY better than w=20 (physics-informed) with p<0.001",
+  "effect_size": "Huge difference: w=0 achieves 0.330 loss vs w=20 achieves 4.502 loss (13.6x worse)",
+  "conclusion": "For ALFA fault detection, physics loss HURTS performance. Use w=0 for detection."
+}

@@ -1,0 +1,141 @@
+{
+  "config": {
+    "data_dir": "data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
+    "output_dir": "models/padre_classifier",
+    "window_size": 256,
+    "stride": 128,
+    "test_split": 0.2,
+    "seed": 42,
+    "n_estimators": 100
+  },
+  "n_samples": 13420,
+  "n_features": 72,
+  "models": {
+    "rf_binary": {
+      "accuracy": 0.9977645305514158,
+      "f1": 0.9988276670574443,
+      "precision": 0.9976580796252927,
+      "recall": 1.0,
+      "confusion_matrix": [
+        [
+          122,
+          6
+        ],
+        [
+          0,
+          2556
+        ]
+      ],
+      "top_features": [
+        {
+          "name": "B_aZ_std",
+          "importance": 0.10253242240403097
+        },
+        {
+          "name": "B_aZ_range",
+          "importance": 0.09469997827002041
+        },
+        {
+          "name": "A_gX_std",
+          "importance": 0.056359150448017266
+        },
+        {
+          "name": "C_gX_range",
+          "importance": 0.05490035441927077
+        },
+        {
+          "name": "B_gX_range",
+          "importance": 0.04790314794476161
+        },
+        {
+          "name": "A_gX_range",
+          "importance": 0.04194456148054889
+        },
+        {
+          "name": "A_aX_mean",
+          "importance": 0.04117390002085373
+        },
+        {
+          "name": "C_gX_std",
+          "importance": 0.03859028883290443
+        },
+        {
+          "name": "B_gX_std",
+          "importance": 0.0367010885243635
+        },
+        {
+          "name": "D_gZ_range",
+          "importance": 0.03483179332991758
+        }
+      ]
+    },
+    "rf_motor": {
+      "accuracy": 0.9932935916542474,
+      "f1": 0.9932732768010523,
+      "precision": 0.9933294543897767,
+      "recall": 0.9932935916542474,
+      "confusion_matrix": [
+        [
+          127,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        [
+          0,
+          264,
+          0,
+          0,
+          0,
+          9
+        ],
+        [
+          0,
+          0,
+          282,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          253,
+          0,
+          3
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          264,
+          2
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          0,
+          1476
+        ]
+      ]
+    }
+  },
+  "timestamp": "2025-12-26T23:38:44.553854",
+  "cv_accuracy": {
+    "mean": 0.9980439121237117,
+    "std": 0.0009946775442004373,
+    "scores": [
+      0.9986033519553073,
+      0.9976711690731253,
+      0.9986027014438752,
+      0.9990684676292502,
+      0.9962738705170004
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "model": "cnn",
+  "task": "multiclass",
+  "test_accuracy": 97.71485345255837,
+  "n_classes": 3,
+  "n_params": 3496691,
+  "epochs": 5,
+  "best_epoch": 4,
+  "config": {
+    "data_dir": "data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
+    "task": "multiclass",
+    "window_size": 256,
+    "stride": 128,
+    "model": "cnn",
+    "dropout": 0.3,
+    "batch_size": 64,
+    "epochs": 5,
+    "lr": 0.001,
+    "weight_decay": 0.01,
+    "seed": 42,
+    "save_dir": "models/fault_detection_advanced",
+    "uncertainty": false,
+    "explainability": false,
+    "export_onnx": false,
+    "quantize": false
+  },
+  "history": {
+    "train_loss": [
+      0.026646958858877117,
+      0.0079592053319911,
+      0.004799668452871047,
+      0.004449453407027076,
+      0.0038358889261707854
+    ],
+    "train_acc": [
+      74.50500319352778,
+      91.43070044709388,
+      96.71066638279753,
+      97.71130508835427,
+      98.26484990419416
+    ],
+    "val_loss": [
+      0.02028490975499153,
+      0.00416303134034024,
+      0.003966986574340581,
+      0.0031842110407751534,
+      0.0034226923693232436
+    ],
+    "val_acc": [
+      57.07898658718331,
+      92.25037257824144,
+      96.92001987083955,
+      97.71485345255837,
+      97.36711376055638
+    ]
+  },
+  "timestamp": "2025-12-26T13:16:49.056136"
+}

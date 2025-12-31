@@ -1,0 +1,223 @@
+{
+  "target_recall": 0.9,
+  "with_pinn": false,
+  "training_metrics": {
+    "precision": 0.9824976673378186,
+    "recall": 0.9000305909450803,
+    "fpr": 0.018473787333741096,
+    "threshold": 0.7024965462915416
+  },
+  "category_results": {
+    "GPS": {
+      "avg": 0.8806984126984126,
+      "min": 0.16916666666666666
+    },
+    "IMU": {
+      "avg": 0.9861944444444444,
+      "min": 0.9088888888888889
+    },
+    "Mag/Baro": {
+      "avg": 0.9730555555555556,
+      "min": 0.9466666666666667
+    },
+    "Actuator": {
+      "avg": 0.36697916666666663,
+      "min": 0.08291666666666667
+    },
+    "Coordinated": {
+      "avg": 0.541125,
+      "min": 0.08291666666666667
+    },
+    "Temporal": {
+      "avg": 0.2758333333333333,
+      "min": 0.11055555555555556
+    },
+    "Stealth": {
+      "avg": 0.677104896382644,
+      "min": 0.13266666666666665
+    }
+  },
+  "per_attack_results": {
+    "clean": {
+      "fpr": 0.0016494045164576613
+    },
+    "gps_gradual_drift": {
+      "precision": 1.0,
+      "recall": 0.9994444444444445,
+      "f1": 0.999722145040289,
+      "fpr": 0.0
+    },
+    "gps_sudden_jump": {
+      "precision": 1.0,
+      "recall": 0.16916666666666666,
+      "f1": 0.2893799002138275,
+      "fpr": 0.0
+    },
+    "gps_oscillating": {
+      "precision": 1.0,
+      "recall": 0.9993333333333333,
+      "f1": 0.9996665555185061,
+      "fpr": 0.0
+    },
+    "gps_meaconing": {
+      "precision": 1.0,
+      "recall": 0.9994444444444445,
+      "f1": 0.999722145040289,
+      "fpr": 0.0
+    },
+    "gps_jamming": {
+      "precision": 1.0,
+      "recall": 0.9988888888888889,
+      "f1": 0.9994441356309061,
+      "fpr": 0.0
+    },
+    "gps_freeze": {
+      "precision": 1.0,
+      "recall": 0.9991666666666666,
+      "f1": 0.9995831596498541,
+      "fpr": 0.0
+    },
+    "gps_multipath": {
+      "precision": 1.0,
+      "recall": 0.9994444444444445,
+      "f1": 0.999722145040289,
+      "fpr": 0.0
+    },
+    "imu_constant_bias": {
+      "precision": 1.0,
+      "recall": 0.9991666666666666,
+      "f1": 0.9995831596498541,
+      "fpr": 0.0
+    },
+    "imu_gradual_drift": {
+      "precision": 1.0,
+      "recall": 0.9995833333333334,
+      "f1": 0.9997916232548448,
+      "fpr": 0.0
+    },
+    "imu_sinusoidal": {
+      "precision": 1.0,
+      "recall": 0.9991666666666666,
+      "f1": 0.9995831596498541,
+      "fpr": 0.0
+    },
+    "imu_noise_injection": {
+      "precision": 1.0,
+      "recall": 0.9993333333333333,
+      "f1": 0.9996665555185061,
+      "fpr": 0.0
+    },
+    "imu_scale_factor": {
+      "precision": 1.0,
+      "recall": 0.9088888888888889,
+      "f1": 0.9522700814901047,
+      "fpr": 0.0
+    },
+    "gyro_saturation": {
+      "precision": 1.0,
+      "recall": 0.9988888888888889,
+      "f1": 0.9994441356309061,
+      "fpr": 0.0
+    },
+    "accel_saturation": {
+      "precision": 1.0,
+      "recall": 0.9983333333333333,
+      "f1": 0.9991659716430359,
+      "fpr": 0.0
+    },
+    "magnetometer_spoofing": {
+      "precision": 1.0,
+      "recall": 0.9466666666666667,
+      "f1": 0.9726027397260273,
+      "fpr": 0.0
+    },
+    "barometer_spoofing": {
+      "precision": 1.0,
+      "recall": 0.9994444444444445,
+      "f1": 0.999722145040289,
+      "fpr": 0.0
+    },
+    "actuator_stuck": {
+      "precision": 1.0,
+      "recall": 0.16583333333333333,
+      "f1": 0.2844889206576126,
+      "fpr": 0.0
+    },
+    "actuator_degraded": {
+      "precision": 1.0,
+      "recall": 0.08291666666666667,
+      "f1": 0.15313582146979607,
+      "fpr": 0.0
+    },
+    "control_hijack": {
+      "precision": 1.0,
+      "recall": 0.22,
+      "f1": 0.36065573770491804,
+      "fpr": 0.0
+    },
+    "thrust_manipulation": {
+      "precision": 1.0,
+      "recall": 0.9991666666666666,
+      "f1": 0.9995831596498541,
+      "fpr": 0.0
+    },
+    "coordinated_gps_imu": {
+      "precision": 1.0,
+      "recall": 0.9993333333333333,
+      "f1": 0.9996665555185061,
+      "fpr": 0.0
+    },
+    "stealthy_coordinated": {
+      "precision": 1.0,
+      "recall": 0.08291666666666667,
+      "f1": 0.15313582146979607,
+      "fpr": 0.0
+    },
+    "time_delay": {
+      "precision": 1.0,
+      "recall": 0.11055555555555556,
+      "f1": 0.19909954977488745,
+      "fpr": 0.0
+    },
+    "sensor_dropout": {
+      "precision": 1.0,
+      "recall": 0.4411111111111111,
+      "f1": 0.6121819583654587,
+      "fpr": 0.0
+    },
+    "adaptive_attack": {
+      "precision": 1.0,
+      "recall": 0.9996666666666667,
+      "f1": 0.9998333055509252,
+      "fpr": 0.0
+    },
+    "intermittent_attack": {
+      "precision": 1.0,
+      "recall": 0.253955037468776,
+      "f1": 0.4050464807436919,
+      "fpr": 0.0
+    },
+    "slow_ramp": {
+      "precision": 1.0,
+      "recall": 0.9997916666666666,
+      "f1": 0.9998958224815084,
+      "fpr": 0.0
+    },
+    "resonance_attack": {
+      "precision": 1.0,
+      "recall": 0.9994444444444445,
+      "f1": 0.999722145040289,
+      "fpr": 0.0
+    },
+    "false_data_injection": {
+      "precision": 1.0,
+      "recall": 0.13266666666666665,
+      "f1": 0.23425544437904647,
+      "fpr": 0.0
+    }
+  },
+  "overall_recall": 0.7414385836675057,
+  "overall_min_recall": 0.08291666666666667,
+  "overall_fpr": 0.0,
+  "clean_fpr": 0.0016494045164576613
+}

@@ -1,0 +1,37 @@
+{
+  "model_size": {
+    "file_size_mb": 0.787,
+    "total_parameters": 204818,
+    "trainable_parameters": 204818,
+    "parameters_memory_mb": 0.781
+  },
+  "inference_time_ms": {
+    "mean": 0.3409,
+    "std": 0.1547,
+    "min": 0.2187,
+    "max": 1.2616,
+    "p95": 0.7069,
+    "p99": 0.8524
+  },
+  "detection_time_ms": {
+    "mean": 19.8108,
+    "std": 3.2177,
+    "mc_samples": 50,
+    "overhead_factor": 58.1
+  },
+  "throughput": {
+    "inference_samples_per_sec": 2933.0,
+    "detection_samples_per_sec": 50.5
+  },
+  "real_time_capability": {
+    "target_frequency_hz": 100,
+    "time_budget_ms": 10.0,
+    "mean_inference_time_ms": 0.3409,
+    "capable": "True",
+    "headroom_factor": 29.33
+  },
+  "computational_complexity": {
+    "flops_per_forward_pass": 0,
+    "gflops": 0.0
+  }
+}

@@ -1,0 +1,639 @@
+{
+  "model_type": "EnsembleDetector",
+  "voting_threshold": 0.5,
+  "overall_precision": 0.00030259128639408385,
+  "overall_recall": 0.803122878479294,
+  "overall_f1": 0.0006049546450212566,
+  "clean_fpr": 0.9473064511439951,
+  "category_results": {
+    "GPS": 0.8809097878865321,
+    "IMU": 0.7583630014189701,
+    "Mag/Baro": 1.0,
+    "Actuator": 1.0,
+    "Coordinated": 0.6894169194472531,
+    "Temporal": 1.0,
+    "Stealth": 0.6353372474434246
+  },
+  "per_attack_results": {
+    "gps_gradual_drift": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130241,
+      "true_negatives": 7295,
+      "false_negatives": 0,
+      "precision": 0.0003991004888980989,
+      "recall": 1.0,
+      "f1": 0.0007978825424834094,
+      "fpr": 0.9469593415542112,
+      "detector_triggers": {
+        "cross_sensor": 96065,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_sudden_jump": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 34,
+      "false_positives": 130304,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0002608602249535822,
+      "recall": 1.0,
+      "f1": 0.0005215843892860429,
+      "fpr": 0.9472934265815607,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107897,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_oscillating": {
+      "samples": 137588,
+      "attack_samples": 43,
+      "normal_samples": 137545,
+      "true_positives": 27,
+      "false_positives": 130252,
+      "true_negatives": 7293,
+      "false_negatives": 16,
+      "precision": 0.00020724752262452122,
+      "recall": 0.627906976744186,
+      "f1": 0.0004143582817943248,
+      "fpr": 0.9469773528663347,
+      "detector_triggers": {
+        "cross_sensor": 96047,
+        "statistical": 137989,
+        "similarity": 107897,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_meaconing": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130286,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00039896269698783165,
+      "recall": 1.0,
+      "f1": 0.0007976071784646062,
+      "fpr": 0.9472865286179618,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_jamming": {
+      "samples": 137588,
+      "attack_samples": 26,
+      "normal_samples": 137562,
+      "true_positives": 26,
+      "false_positives": 130312,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00019948134849391582,
+      "recall": 1.0,
+      "f1": 0.00039888312724371757,
+      "fpr": 0.9472964917637138,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_freeze": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 34,
+      "false_positives": 130304,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0002608602249535822,
+      "recall": 1.0,
+      "f1": 0.0005215843892860429,
+      "fpr": 0.9472934265815607,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gps_multipath": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 28,
+      "false_positives": 130242,
+      "true_negatives": 7294,
+      "false_negatives": 24,
+      "precision": 0.00021493820526598603,
+      "recall": 0.5384615384615384,
+      "f1": 0.0004297048848237443,
+      "fpr": 0.9469666123778502,
+      "detector_triggers": {
+        "cross_sensor": 96048,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "imu_constant_bias": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 13,
+      "false_positives": 130256,
+      "true_negatives": 7298,
+      "false_negatives": 21,
+      "precision": 9.979350421051824e-05,
+      "recall": 0.38235294117647056,
+      "f1": 0.00019953493012440235,
+      "fpr": 0.9469444727161697,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "imu_gradual_drift": {
+      "samples": 137588,
+      "attack_samples": 69,
+      "normal_samples": 137519,
+      "true_positives": 27,
+      "false_positives": 130211,
+      "true_negatives": 7308,
+      "false_negatives": 42,
+      "precision": 0.0002073127658594266,
+      "recall": 0.391304347826087,
+      "f1": 0.00041440597972480374,
+      "fpr": 0.9468582523142257,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107897,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "imu_sinusoidal": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 34,
+      "false_positives": 130304,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0002608602249535822,
+      "recall": 1.0,
+      "f1": 0.0005215843892860429,
+      "fpr": 0.9472934265815607,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "imu_noise_injection": {
+      "samples": 137588,
+      "attack_samples": 43,
+      "normal_samples": 137545,
+      "true_positives": 23,
+      "false_positives": 130265,
+      "true_negatives": 7280,
+      "false_negatives": 20,
+      "precision": 0.0001765319906668304,
+      "recall": 0.5348837209302325,
+      "f1": 0.00035294749522369966,
+      "fpr": 0.9470718673888545,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "imu_scale_factor": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130286,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00039896269698783165,
+      "recall": 1.0,
+      "f1": 0.0007976071784646062,
+      "fpr": 0.9472865286179618,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "gyro_saturation": {
+      "samples": 137588,
+      "attack_samples": 26,
+      "normal_samples": 137562,
+      "true_positives": 26,
+      "false_positives": 130312,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00019948134849391582,
+      "recall": 1.0,
+      "f1": 0.00039888312724371757,
+      "fpr": 0.9472964917637138,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "accel_saturation": {
+      "samples": 137588,
+      "attack_samples": 17,
+      "normal_samples": 137571,
+      "true_positives": 17,
+      "false_positives": 130321,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0001304301124767911,
+      "recall": 1.0,
+      "f1": 0.00026082620536227994,
+      "fpr": 0.9472999396675171,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "magnetometer_spoofing": {
+      "samples": 137588,
+      "attack_samples": 43,
+      "normal_samples": 137545,
+      "true_positives": 43,
+      "false_positives": 130295,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0003299114609707069,
+      "recall": 1.0,
+      "f1": 0.0006596053105897331,
+      "fpr": 0.947289977825439,
+      "detector_triggers": {
+        "cross_sensor": 96018,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "barometer_spoofing": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130286,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00039896269698783165,
+      "recall": 1.0,
+      "f1": 0.0007976071784646062,
+      "fpr": 0.9472865286179618,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "actuator_stuck": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 34,
+      "false_positives": 130304,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0002608602249535822,
+      "recall": 1.0,
+      "f1": 0.0005215843892860429,
+      "fpr": 0.9472934265815607,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "actuator_degraded": {
+      "samples": 137588,
+      "attack_samples": 69,
+      "normal_samples": 137519,
+      "true_positives": 69,
+      "false_positives": 130269,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0005293928094646228,
+      "recall": 1.0,
+      "f1": 0.0010582254020106284,
+      "fpr": 0.9472800122164937,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "control_hijack": {
+      "samples": 137588,
+      "attack_samples": 26,
+      "normal_samples": 137562,
+      "true_positives": 26,
+      "false_positives": 130312,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00019948134849391582,
+      "recall": 1.0,
+      "f1": 0.00039888312724371757,
+      "fpr": 0.9472964917637138,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "thrust_manipulation": {
+      "samples": 137588,
+      "attack_samples": 34,
+      "normal_samples": 137554,
+      "true_positives": 34,
+      "false_positives": 130304,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0002608602249535822,
+      "recall": 1.0,
+      "f1": 0.0005215843892860429,
+      "fpr": 0.9472934265815607,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107897,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "coordinated_gps_imu": {
+      "samples": 137588,
+      "attack_samples": 43,
+      "normal_samples": 137545,
+      "true_positives": 30,
+      "false_positives": 130295,
+      "true_negatives": 7250,
+      "false_negatives": 13,
+      "precision": 0.0002301937464032227,
+      "recall": 0.6976744186046512,
+      "f1": 0.00046023564064801183,
+      "fpr": 0.947289977825439,
+      "detector_triggers": {
+        "cross_sensor": 96009,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "stealthy_coordinated": {
+      "samples": 137588,
+      "attack_samples": 69,
+      "normal_samples": 137519,
+      "true_positives": 47,
+      "false_positives": 130269,
+      "true_negatives": 7250,
+      "false_negatives": 22,
+      "precision": 0.0003606617759906688,
+      "recall": 0.6811594202898551,
+      "f1": 0.0007209418261303064,
+      "fpr": 0.9472800122164937,
+      "detector_triggers": {
+        "cross_sensor": 96122,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "replay_attack": {
+      "samples": 137588,
+      "attack_samples": 100,
+      "normal_samples": 137488,
+      "true_positives": 100,
+      "false_positives": 130238,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00076723595574583,
+      "recall": 1.0,
+      "f1": 0.0015332955120440361,
+      "fpr": 0.9472681252182008,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "time_delay": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130286,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00039896269698783165,
+      "recall": 1.0,
+      "f1": 0.0007976071784646062,
+      "fpr": 0.9472865286179618,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "sensor_dropout": {
+      "samples": 137588,
+      "attack_samples": 26,
+      "normal_samples": 137562,
+      "true_positives": 26,
+      "false_positives": 130312,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00019948134849391582,
+      "recall": 1.0,
+      "f1": 0.00039888312724371757,
+      "fpr": 0.9472964917637138,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "adaptive_attack": {
+      "samples": 137588,
+      "attack_samples": 87,
+      "normal_samples": 137501,
+      "true_positives": 37,
+      "false_positives": 130201,
+      "true_negatives": 7300,
+      "false_negatives": 50,
+      "precision": 0.00028409527173328827,
+      "recall": 0.42528735632183906,
+      "f1": 0.0005678112411279493,
+      "fpr": 0.9469094770219852,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107897,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "intermittent_attack": {
+      "samples": 137588,
+      "attack_samples": 36,
+      "normal_samples": 137552,
+      "true_positives": 4,
+      "false_positives": 130334,
+      "true_negatives": 7218,
+      "false_negatives": 32,
+      "precision": 3.0689438229833204e-05,
+      "recall": 0.1111111111111111,
+      "f1": 6.136192799177751e-05,
+      "fpr": 0.9475252995230895,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "slow_ramp": {
+      "samples": 137588,
+      "attack_samples": 139,
+      "normal_samples": 137449,
+      "true_positives": 89,
+      "false_positives": 130199,
+      "true_negatives": 7250,
+      "false_negatives": 50,
+      "precision": 0.0006831020508412133,
+      "recall": 0.6402877697841727,
+      "f1": 0.0013647480966364326,
+      "fpr": 0.9472531629913641,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107947,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "resonance_attack": {
+      "samples": 137588,
+      "attack_samples": 52,
+      "normal_samples": 137536,
+      "true_positives": 52,
+      "false_positives": 130286,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.00039896269698783165,
+      "recall": 1.0,
+      "f1": 0.0007976071784646062,
+      "fpr": 0.9472865286179618,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "false_data_injection": {
+      "samples": 137588,
+      "attack_samples": 43,
+      "normal_samples": 137545,
+      "true_positives": 43,
+      "false_positives": 130295,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0003299114609707069,
+      "recall": 1.0,
+      "f1": 0.0006596053105897331,
+      "fpr": 0.947289977825439,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    },
+    "clean": {
+      "samples": 137588,
+      "attack_samples": 0,
+      "normal_samples": 137588,
+      "true_positives": 0,
+      "false_positives": 130338,
+      "true_negatives": 7250,
+      "false_negatives": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "fpr": 0.9473064511439951,
+      "detector_triggers": {
+        "cross_sensor": 96022,
+        "statistical": 137989,
+        "similarity": 107997,
+        "pinn": 0,
+        "sequence_pinn": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+============================================================
+CROSS-DATASET TRANSFER TEST RESULTS
+============================================================
+
+Methodology:
+- Trained: EuRoC normal data (138K samples)
+- Tested: PADRE dataset (different drone platforms)
+- Feature conversion: Aggregated per-motor IMU to 12D features
+
+Results:
+- FPR on PADRE Normal: 0.0% +/- 0.0%
+- Recall on PADRE Faults: 3.3% +/- 5.9%
+
+Interpretation:
+- The detector trained on EuRoC does NOT generalize well to PADRE
+- This is EXPECTED: different platforms have different dynamics
+- Cross-dataset validation is a critical honest limitation
+
+Recommendation:
+- Do NOT claim generalization across platforms without validation
+- Detector must be retrained or fine-tuned for each platform

@@ -1,0 +1,8 @@
+{
+  "jerk_threshold": 50.0,
+  "nis_threshold": 20.0,
+  "cusum_threshold": 5.0,
+  "spectral_threshold": 3.0,
+  "sprt_alpha": 0.01,
+  "sprt_beta": 0.01
+}

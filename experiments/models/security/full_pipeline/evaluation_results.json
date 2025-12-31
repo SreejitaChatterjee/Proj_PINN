@@ -1,0 +1,242 @@
+{
+  "per_attack": {
+    "gps_gradual_drift": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_sudden_jump": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_oscillating": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_meaconing": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_jamming": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_freeze": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gps_multipath": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "imu_constant_bias": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "imu_gradual_drift": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "imu_sinusoidal": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "imu_noise_injection": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "imu_scale_factor": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "gyro_saturation": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "accel_saturation": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "magnetometer_spoofing": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "barometer_spoofing": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "actuator_stuck": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "actuator_degraded": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "control_hijack": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "thrust_manipulation": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "coordinated_gps_imu": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "stealthy_coordinated": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "replay_attack": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "time_delay": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "sensor_dropout": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "adaptive_attack": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "intermittent_attack": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "slow_ramp": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "resonance_attack": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "false_data_injection": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    },
+    "clean": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 1.0,
+      "hardened": 1.0,
+      "ensemble": 1.0
+    }
+  },
+  "overall": {
+    "clean_fp_rate": {
+      "pinn": 0.0,
+      "seq": 0.0,
+      "clf": 0.59,
+      "hardened": 1.0,
+      "ensemble": 0.0
+    },
+    "accuracy": 0.9653979238754326,
+    "f1": 0.9823943661971831
+  },
+  "confusion": [
+    [
+      0,
+      500
+    ],
+    [
+      0,
+      13950
+    ]
+  ]
+}

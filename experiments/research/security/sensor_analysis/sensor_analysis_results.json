@@ -1,0 +1,871 @@
+{
+  "attack_detection_summary": {
+    "gps_gradual_drift": {
+      "best_metric": "pos_vel_inconsistency_x",
+      "best_detection_rate": 0.9998333055509252,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_x",
+          0.9998333055509252
+        ],
+        [
+          "pos_vel_inconsistency_y",
+          0.9998333055509252
+        ],
+        [
+          "pos_vel_inconsistency_z",
+          0.9998333055509252
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9998333055509252
+        ]
+      ]
+    },
+    "gps_sudden_jump": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.025756439109777443,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.025756439109777443
+        ],
+        [
+          "zscore_vy",
+          0.01800450112528132
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.016754188547136784
+        ],
+        [
+          "vel_accel_inconsistency_vy",
+          0.015503875968992248
+        ],
+        [
+          "zscore_q",
+          0.014253563390847712
+        ]
+      ]
+    },
+    "gps_oscillating": {
+      "best_metric": "pos_vel_inconsistency_y",
+      "best_detection_rate": 1.0,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_y",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency_z",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency",
+          1.0
+        ],
+        [
+          "kinematic_inconsistency",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.9997999599919984
+        ]
+      ]
+    },
+    "gps_meaconing": {
+      "best_metric": "kinematic_inconsistency",
+      "best_detection_rate": 0.9974995832638773,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency",
+          0.9974995832638773
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9763293882313719
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9424904150691782
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9276546091015169
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9238206367727955
+        ]
+      ]
+    },
+    "gps_jamming": {
+      "best_metric": "pos_vel_inconsistency",
+      "best_detection_rate": 1.0,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency",
+          1.0
+        ],
+        [
+          "kinematic_inconsistency",
+          1.0
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9896632210736912
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9893297765921975
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9813271090363455
+        ]
+      ]
+    },
+    "gps_freeze": {
+      "best_metric": "pos_vel_inconsistency",
+      "best_detection_rate": 0.9997499374843711,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency",
+          0.9997499374843711
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9997499374843711
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9992498124531133
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.9974993748437109
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.994748687171793
+        ]
+      ]
+    },
+    "gps_multipath": {
+      "best_metric": "pos_vel_inconsistency",
+      "best_detection_rate": 0.9998333055509252,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9966661110185031
+        ],
+        [
+          "pos_vel_inconsistency_y",
+          0.9964994165694282
+        ],
+        [
+          "pos_vel_inconsistency_z",
+          0.9964994165694282
+        ]
+      ]
+    },
+    "imu_constant_bias": {
+      "best_metric": "pos_vel_inconsistency_x",
+      "best_detection_rate": 0.9984996249062266,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_x",
+          0.9984996249062266
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9982495623905977
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9982495623905977
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9979994998749687
+        ],
+        [
+          "energy_inconsistency",
+          0.5863965991497875
+        ]
+      ]
+    },
+    "imu_gradual_drift": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.9864983122890362,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.9864983122890362
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9861232654081761
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.9753719214901863
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9744968121015127
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.972246530816352
+        ]
+      ]
+    },
+    "imu_sinusoidal": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.9464866216554139,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.9464866216554139
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9372343085771443
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.7771942985746436
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.7434358589647412
+        ],
+        [
+          "vel_accel_inconsistency",
+          0.025006251562890724
+        ]
+      ]
+    },
+    "imu_noise_injection": {
+      "best_metric": "kinematic_inconsistency",
+      "best_detection_rate": 0.9971994398879775,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency",
+          0.9971994398879775
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9701940388077616
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9667933586717343
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9667933586717343
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9289857971594319
+        ]
+      ]
+    },
+    "imu_scale_factor": {
+      "best_metric": "kinematic_inconsistency",
+      "best_detection_rate": 0.9998333055509252,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.994665777629605
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9568261376896149
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9543257209534922
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.8688114685780963
+        ]
+      ]
+    },
+    "gyro_saturation": {
+      "best_metric": "att_rate_inconsistency_phi",
+      "best_detection_rate": 1.0,
+      "top_5_metrics": [
+        [
+          "att_rate_inconsistency_phi",
+          1.0
+        ],
+        [
+          "att_rate_inconsistency_theta",
+          1.0
+        ],
+        [
+          "att_rate_inconsistency",
+          1.0
+        ],
+        [
+          "att_rate_inconsistency_psi",
+          0.9323107702567522
+        ],
+        [
+          "correlation_z_vz",
+          0.014338112704234745
+        ]
+      ]
+    },
+    "accel_saturation": {
+      "best_metric": "pos_vel_inconsistency_x",
+      "best_detection_rate": 1.0,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_x",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency_y",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency_z",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency",
+          1.0
+        ],
+        [
+          "vel_accel_inconsistency_vx",
+          1.0
+        ]
+      ]
+    },
+    "magnetometer_spoofing": {
+      "best_metric": "kinematic_inconsistency",
+      "best_detection_rate": 0.9429885977195439,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency",
+          0.9429885977195439
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9005801160232046
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.8919783956791358
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.8225645129025805
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.7369473894778956
+        ]
+      ]
+    },
+    "barometer_spoofing": {
+      "best_metric": "pos_vel_inconsistency_z",
+      "best_detection_rate": 0.9998333055509252,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_z",
+          0.9998333055509252
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9998333055509252
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9998333055509252
+        ],
+        [
+          "correlation_z_vz",
+          0.026004334055675947
+        ]
+      ]
+    },
+    "actuator_stuck": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.0207551887971993,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.0207551887971993
+        ],
+        [
+          "zscore_vy",
+          0.01800450112528132
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.016504126031507877
+        ],
+        [
+          "vel_accel_inconsistency_vy",
+          0.015503875968992248
+        ],
+        [
+          "zscore_q",
+          0.014253563390847712
+        ]
+      ]
+    },
+    "actuator_degraded": {
+      "best_metric": "att_rate_inconsistency_theta",
+      "best_detection_rate": 0.019252406550818852,
+      "top_5_metrics": [
+        [
+          "att_rate_inconsistency_theta",
+          0.019252406550818852
+        ],
+        [
+          "zscore_q",
+          0.014376797099637455
+        ],
+        [
+          "att_rate_inconsistency_psi",
+          0.013751718964870608
+        ],
+        [
+          "zscore_theta",
+          0.013501687710963871
+        ],
+        [
+          "zscore_vy",
+          0.013126640830103764
+        ]
+      ]
+    },
+    "control_hijack": {
+      "best_metric": "energy_inconsistency",
+      "best_detection_rate": 0.08836278759586529,
+      "top_5_metrics": [
+        [
+          "energy_inconsistency",
+          0.08836278759586529
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.027675891963987995
+        ],
+        [
+          "vel_accel_inconsistency_vy",
+          0.020340113371123708
+        ],
+        [
+          "zscore_vy",
+          0.018672890963654553
+        ],
+        [
+          "correlation_y_vy",
+          0.016005335111703902
+        ]
+      ]
+    },
+    "thrust_manipulation": {
+      "best_metric": "pos_vel_inconsistency_z",
+      "best_detection_rate": 0.9997499374843711,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_z",
+          0.9997499374843711
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9997499374843711
+        ],
+        [
+          "vel_accel_inconsistency_vz",
+          0.9997499374843711
+        ],
+        [
+          "vel_accel_inconsistency",
+          0.9997499374843711
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9994998749687422
+        ]
+      ]
+    },
+    "coordinated_gps_imu": {
+      "best_metric": "pos_vel_inconsistency_y",
+      "best_detection_rate": 0.9997999599919984,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_y",
+          0.9997999599919984
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9997999599919984
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.9997999599919984
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9997999599919984
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9995999199839968
+        ]
+      ]
+    },
+    "stealthy_coordinated": {
+      "best_metric": "att_rate_inconsistency_theta",
+      "best_detection_rate": 0.019252406550818852,
+      "top_5_metrics": [
+        [
+          "att_rate_inconsistency_theta",
+          0.019252406550818852
+        ],
+        [
+          "correlation_y_vy",
+          0.014501812726590823
+        ],
+        [
+          "zscore_q",
+          0.014376797099637455
+        ],
+        [
+          "att_rate_inconsistency_psi",
+          0.013751718964870608
+        ],
+        [
+          "zscore_vy",
+          0.01362670333791724
+        ]
+      ]
+    },
+    "replay_attack": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.2,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.2
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.2
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.2
+        ],
+        [
+          "kinematic_inconsistency",
+          0.2
+        ],
+        [
+          "zscore_vx",
+          0.07
+        ]
+      ]
+    },
+    "time_delay": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.017169528254709118,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.017169528254709118
+        ],
+        [
+          "zscore_vy",
+          0.01666944490748458
+        ],
+        [
+          "vel_accel_inconsistency",
+          0.013502250375062511
+        ],
+        [
+          "zscore_p",
+          0.012835472578763127
+        ],
+        [
+          "zscore_q",
+          0.011668611435239206
+        ]
+      ]
+    },
+    "sensor_dropout": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.024341447149049684,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.024341447149049684
+        ],
+        [
+          "zscore_vy",
+          0.01800600200066689
+        ],
+        [
+          "jerk_vx",
+          0.017672557519173057
+        ],
+        [
+          "zscore_p",
+          0.015005001667222408
+        ],
+        [
+          "zscore_q",
+          0.014671557185728577
+        ]
+      ]
+    },
+    "adaptive_attack": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 1.0,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          1.0
+        ],
+        [
+          "kinematic_inconsistency_y",
+          1.0
+        ],
+        [
+          "kinematic_inconsistency",
+          1.0
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.9998999899989999
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9988998899889989
+        ]
+      ]
+    },
+    "intermittent_attack": {
+      "best_metric": "att_rate_inconsistency_psi",
+      "best_detection_rate": 0.03222583062702973,
+      "top_5_metrics": [
+        [
+          "att_rate_inconsistency_psi",
+          0.03222583062702973
+        ],
+        [
+          "kinematic_inconsistency_y",
+          0.028728453659755182
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.02548088933300025
+        ],
+        [
+          "att_rate_inconsistency_phi",
+          0.02523107669248064
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.02498126405196103
+        ]
+      ]
+    },
+    "slow_ramp": {
+      "best_metric": "pos_vel_inconsistency_x",
+      "best_detection_rate": 0.9999374960935058,
+      "top_5_metrics": [
+        [
+          "pos_vel_inconsistency_x",
+          0.9999374960935058
+        ],
+        [
+          "pos_vel_inconsistency",
+          0.9999374960935058
+        ],
+        [
+          "kinematic_inconsistency_x",
+          0.9999374960935058
+        ],
+        [
+          "kinematic_inconsistency",
+          0.9999374960935058
+        ],
+        [
+          "kinematic_inconsistency_z",
+          0.9874992187011689
+        ]
+      ]
+    },
+    "resonance_attack": {
+      "best_metric": "angular_accel_p",
+      "best_detection_rate": 0.2642107017836306,
+      "top_5_metrics": [
+        [
+          "angular_accel_p",
+          0.2642107017836306
+        ],
+        [
+          "angular_accel_r",
+          0.07584597432905485
+        ],
+        [
+          "att_rate_inconsistency_theta",
+          0.024837472912152027
+        ],
+        [
+          "att_rate_inconsistency_psi",
+          0.018003000500083348
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.016169361560260043
+        ]
+      ]
+    },
+    "false_data_injection": {
+      "best_metric": "kinematic_inconsistency_x",
+      "best_detection_rate": 0.015003000600120024,
+      "top_5_metrics": [
+        [
+          "kinematic_inconsistency_x",
+          0.015003000600120024
+        ],
+        [
+          "pos_vel_inconsistency_x",
+          0.013402680536107221
+        ],
+        [
+          "zscore_p",
+          0.013402680536107221
+        ],
+        [
+          "zscore_q",
+          0.01240248049609922
+        ],
+        [
+          "jerk_vx",
+          0.010602120424084817
+        ]
+      ]
+    }
+  },
+  "metric_effectiveness": {
+    "pos_vel_inconsistency_x": 0.505862235641154,
+    "pos_vel_inconsistency_y": 0.4023087627033825,
+    "pos_vel_inconsistency_z": 0.3884616137531873,
+    "pos_vel_inconsistency": 0.5857407507090986,
+    "vel_accel_inconsistency_vx": 0.03964762183641297,
+    "vel_accel_inconsistency_vy": 0.042977143702242086,
+    "vel_accel_inconsistency_vz": 0.03862861827801676,
+    "vel_accel_inconsistency": 0.0771217214766994,
+    "att_rate_inconsistency_phi": 0.042134650622094746,
+    "att_rate_inconsistency_theta": 0.049058665557628764,
+    "att_rate_inconsistency_psi": 0.04075181276054528,
+    "att_rate_inconsistency": 0.041994664398971364,
+    "kinematic_inconsistency_x": 0.5368453577925093,
+    "kinematic_inconsistency_y": 0.4612841863946855,
+    "kinematic_inconsistency_z": 0.4441928057142885,
+    "kinematic_inconsistency": 0.6039299325125883,
+    "energy_inconsistency": 0.12887929500429215,
+    "jerk_vx": 0.01912689736953217,
+    "jerk_vy": 0.012610929349936833,
+    "jerk_vz": 0.009421836798317866,
+    "jerk_magnitude": 0.01716019214564202,
+    "angular_accel_p": 0.04178512599165282,
+    "angular_accel_q": 0.013445544487783383,
+    "angular_accel_r": 0.026795878155154104,
+    "angular_accel_magnitude": 0.02891312732334327,
+    "zscore_vx": 0.011473165005338414,
+    "zscore_vy": 0.014109187218695063,
+    "zscore_vz": 0.007564947970117183,
+    "zscore_p": 0.010591791934234972,
+    "zscore_q": 0.011717700704287773,
+    "zscore_r": 0.007566818707778425,
+    "zscore_phi": 0.010036912567005563,
+    "zscore_theta": 0.011004492986823716,
+    "correlation_x_vx": 0.04732294809401269,
+    "correlation_y_vy": 0.008718247251334809,
+    "correlation_z_vz": 0.06340831949938684
+  },
+  "top_metrics": [
+    "kinematic_inconsistency",
+    "pos_vel_inconsistency",
+    "kinematic_inconsistency_x",
+    "pos_vel_inconsistency_x",
+    "kinematic_inconsistency_y",
+    "kinematic_inconsistency_z",
+    "pos_vel_inconsistency_y",
+    "pos_vel_inconsistency_z",
+    "energy_inconsistency",
+    "vel_accel_inconsistency",
+    "correlation_z_vz",
+    "att_rate_inconsistency_theta",
+    "correlation_x_vx",
+    "vel_accel_inconsistency_vy",
+    "att_rate_inconsistency_phi"
+  ],
+  "easily_detected_attacks": [
+    "gps_gradual_drift",
+    "gps_oscillating",
+    "gps_meaconing",
+    "gps_jamming",
+    "gps_freeze",
+    "gps_multipath",
+    "imu_constant_bias",
+    "imu_gradual_drift",
+    "imu_sinusoidal",
+    "imu_noise_injection",
+    "imu_scale_factor",
+    "gyro_saturation",
+    "accel_saturation",
+    "magnetometer_spoofing",
+    "barometer_spoofing",
+    "thrust_manipulation",
+    "coordinated_gps_imu",
+    "adaptive_attack",
+    "slow_ramp"
+  ],
+  "hard_to_detect_attacks": [
+    "gps_sudden_jump",
+    "actuator_stuck",
+    "actuator_degraded",
+    "control_hijack",
+    "stealthy_coordinated",
+    "time_delay",
+    "sensor_dropout",
+    "intermittent_attack",
+    "false_data_injection"
+  ]
+}

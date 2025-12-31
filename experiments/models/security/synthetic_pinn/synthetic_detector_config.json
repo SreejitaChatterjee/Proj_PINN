@@ -1,0 +1,34 @@
+{
+  "state_dim": 12,
+  "control_dim": 4,
+  "hidden_size": 256,
+  "num_layers": 5,
+  "dropout": 0.1,
+  "epochs": 5,
+  "batch_size": 64,
+  "lr": 0.001,
+  "train_samples": 72994,
+  "val_samples": 36380,
+  "test_samples": 28711,
+  "final_train_loss": 0.04416644198233939,
+  "final_val_loss": 0.011595125705607707,
+  "detection_threshold": 1.1165486234256246,
+  "calibration_mean_error": 0.38372290434496426,
+  "calibration_std_error": 0.3445591656187477,
+  "test_mean_error": 0.4430453493271185,
+  "test_std_error": 0.23587480584853057,
+  "sequence_split": {
+    "train_sequences": [
+      "MH_02_easy",
+      "V1_02_medium",
+      "MH_03_medium"
+    ],
+    "val_sequences": [
+      "MH_01_easy"
+    ],
+    "test_sequences": [
+      "V1_01_easy"
+    ]
+  },
+  "methodology": "Sequence-based split; scaler fit on train only; threshold tuned on validation; test held out"
+}

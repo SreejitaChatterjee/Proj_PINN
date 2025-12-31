@@ -1,0 +1,33 @@
+{
+  "model_type": "IsolationForest",
+  "feature_type": "multi_scale",
+  "windows": [
+    5,
+    10,
+    25,
+    50,
+    100,
+    200
+  ],
+  "contamination": 0.07,
+  "n_estimators": 200,
+  "n_features": 18,
+  "n_training_samples": 137888,
+  "state_columns": [
+    "x",
+    "y",
+    "z",
+    "roll",
+    "pitch",
+    "yaw",
+    "p",
+    "q",
+    "r",
+    "vx",
+    "vy",
+    "vz"
+  ],
+  "expected_recall": 0.818,
+  "expected_fpr": 0.107,
+  "version": "1.0"
+}

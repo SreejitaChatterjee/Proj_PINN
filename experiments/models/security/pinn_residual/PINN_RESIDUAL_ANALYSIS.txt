@@ -1,0 +1,97 @@
+================================================================================
+PINN-RESIDUAL APPROACH: ROOT CAUSE ANALYSIS OF FAILURE
+================================================================================
+
+HYPOTHESIS (Original):
+- PINN learns physics, attacks violate physics -> detectable residuals
+- Bias attacks should cause physics violations (attitude doesn't match rates)
+
+ACTUAL RESULTS:
+- Overall Recall: 11.2% (WORSE than raw features: 22.7%)
+- Bias Recall: 0.1% (WORSE than raw features: 3.1%)
+- FPR: 14.0% (WORSE than raw features: 6.5%)
+
+================================================================================
+WHY THE HYPOTHESIS WAS FLAWED
+================================================================================
+
+The PINN-residual approach fails because:
+
+1. CONSISTENT ATTACK PROBLEM:
+   - Bias is applied to the ENTIRE sequence
+   - Both input (state_t) and "ground truth" (state_{t+1}) are biased
+   - Residual = biased_actual - PINN(biased_input)
+   - If PINN generalizes to shifted operating points, residual stays small
+
+2. PINN IS NOT A PHYSICS CHECKER:
+   - PINN learns: f(state_t) -> state_{t+1}
+   - This is a LEARNED MAPPING, not physics constraint checking
+   - It doesn't verify: "Is this state physically plausible?"
+   - It only predicts: "Given this input, what comes next?"
+
+3. NO CROSS-MODAL VALIDATION:
+   - True physics checking requires: comparing INDEPENDENT measurements
+   - Example: integrate accelerometer -> compare to GPS position
+   - Our PINN only uses one data stream (self-consistency check)
+   - Self-consistency can't detect systematic bias
+
+4. RESIDUAL FEATURES ARE SECOND-ORDER:
+   - We extract features from residuals, then detect anomalies
+   - This adds another layer of indirection
+   - Small residuals -> small features -> undetectable
+
+================================================================================
+WHAT WOULD ACTUALLY WORK FOR BIAS DETECTION
+================================================================================
+
+1. SENSOR FUSION (Cross-Modal Validation):
+   - Compare IMU-integrated position to GPS position
+   - Compare visual odometry to IMU measurements
+   - Discrepancy indicates attack/fault
+
+2. REDUNDANT SENSORS:
+   - Multiple IMUs with voting
+   - Gyro + accelerometer cross-check
+   - Requires hardware redundancy
+
+3. KNOWN PHYSICS MODEL (Not Learned):
+   - Use analytical dynamics: integrate F=ma
+   - Compare predicted vs measured
+   - But: requires accurate model parameters
+
+4. CUMULATIVE SUM (CUSUM):
+   - Detect persistent bias via cumulative errors
+   - Works for slowly-drifting attacks
+   - Need: trusted reference signal
+
+================================================================================
+HONEST CONCLUSION
+================================================================================
+
+The PINN-residual approach DOES NOT improve bias detection.
+The fundamental limitation is:
+- Single-sensor data cannot detect systematic bias
+- Bias affects both input and "ground truth" consistently
+- Only cross-modal or redundant sensors can detect bias
+
+RECOMMENDATION:
+- For statistical anomalies (noise, spikes): Raw multi-scale features work
+- For systematic bias: Need additional sensor modalities or redundancy
+- Do NOT claim PINN-based approaches detect bias without validation
+
+================================================================================
+COMPARISON TABLE
+================================================================================
+
+Attack Type      Raw Features    PINN-Residual    Winner
+----------------------------------------------------------------------
+noise                60.1%           9.5%         Raw Features
+bias                  3.1%           0.1%         Raw Features
+drift                51.9%          29.4%         Raw Features
+jump                 20.9%          14.4%         Raw Features
+oscillation           3.7%           2.7%         Raw Features
+----------------------------------------------------------------------
+Overall              22.7%          11.2%         Raw Features
+FPR                   6.5%          14.0%         Raw Features
+
+VERDICT: PINN-residual approach is INFERIOR to simple raw features.

@@ -1,0 +1,13 @@
+{
+  "windows": [
+    5,
+    10,
+    25,
+    50,
+    100,
+    200
+  ],
+  "contamination": 0.1,
+  "expected_recall": 0.9946666666666667,
+  "expected_fpr": 0.1475
+}
