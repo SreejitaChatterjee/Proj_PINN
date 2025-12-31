@@ -218,12 +218,59 @@ def check_directory(dir_path: str, dt: float = 0.005) -> bool:
     return all_passed
 
 
+def check_source_code(src_dir: str = 'src') -> bool:
+    """Check source code for banned sensor patterns."""
+    import re
+
+    banned_patterns = [
+        r'\bbaro_alt\b',
+        r'\bmag_heading\b',
+        r'\bderived_\w+',
+    ]
+
+    path = Path(src_dir)
+    if not path.exists():
+        print(f"Source directory not found: {src_dir}")
+        return True  # Pass if no src dir
+
+    violations = []
+    for py_file in path.glob('**/*.py'):
+        content = py_file.read_text(encoding='utf-8', errors='ignore')
+        for pattern in banned_patterns:
+            matches = re.findall(pattern, content)
+            if matches:
+                # Skip if in comment or string containing "banned" or "EXCLUDED"
+                lines = content.split('\n')
+                for i, line in enumerate(lines, 1):
+                    if re.search(pattern, line):
+                        if 'banned' in line.lower() or 'EXCLUDED' in line or line.strip().startswith('#'):
+                            continue
+                        violations.append(f"{py_file}:{i}: {line.strip()[:80]}")
+
+    if violations:
+        print("=" * 60)
+        print("SOURCE CODE CHECK: FAILED")
+        print("=" * 60)
+        print(f"\nFound {len(violations)} banned pattern(s):\n")
+        for v in violations[:20]:  # Limit output
+            print(f"  {v}")
+        if len(violations) > 20:
+            print(f"  ... and {len(violations) - 20} more")
+        return False
+    else:
+        print("=" * 60)
+        print("SOURCE CODE CHECK: PASSED")
+        print("=" * 60)
+        print("No banned sensor patterns found in source code.")
+        return True
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='CI Gate: Check for circular sensor derivations'
     )
     parser.add_argument(
-        '--data', type=str, required=True,
+        '--data', type=str, required=False,
         help='Path to data file or directory'
     )
     parser.add_argument(
@@ -238,8 +285,21 @@ def main():
         '--json', action='store_true',
         help='Output JSON report'
     )
+    parser.add_argument(
+        '--source-only', action='store_true',
+        help='Only check source code for banned patterns (no data needed)'
+    )
 
     args = parser.parse_args()
+
+    # Source-only mode: just check source code
+    if args.source_only:
+        passed = check_source_code('src')
+        sys.exit(0 if passed else 1)
+
+    # Data mode requires --data argument
+    if not args.data:
+        parser.error("--data is required unless using --source-only")
 
     global CORRELATION_THRESHOLD
     CORRELATION_THRESHOLD = args.threshold
