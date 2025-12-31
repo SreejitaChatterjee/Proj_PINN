@@ -10,7 +10,13 @@ Tests:
 
 import numpy as np
 import pytest
-from gps_imu_detector.src.active_probing import (
+import sys
+from pathlib import Path
+
+# Add src to path
+sys.path.insert(0, str(Path(__file__).parent.parent / 'src'))
+
+from active_probing import (
     # Generators
     ExcitationType,
     ExcitationSignal,
