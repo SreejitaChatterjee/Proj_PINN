@@ -44,8 +44,8 @@ jobs:
         python -c "
 from src.feature_extractor import StreamingFeatureExtractor
 from src.ekf import SimpleEKF
-from src.physics_residuals import PhysicsResidualComputer
-from src.model import GPSIMUDetector
+from src.physics_residuals import AnalyticPhysicsChecker
+from src.model import CNNGRUDetector
 import numpy as np
 
 # Test feature extractor
@@ -61,10 +61,10 @@ nis, ok = ekf.update_gps(np.zeros(3), np.zeros(3))
 print(f'EKF: OK (NIS={nis:.2f})')
 
 # Test model
-model = GPSIMUDetector(input_dim=15, hidden_dim=32)
+model = CNNGRUDetector(input_dim=15, gru_hidden_size=32)
 x = np.random.randn(1, 25, 15).astype(np.float32)
 import torch
-out = model(torch.from_numpy(x))
+out, hidden = model(torch.from_numpy(x))
 print(f'Model: OK (output shape={out.shape})')
 
 print('All smoke tests passed!')
