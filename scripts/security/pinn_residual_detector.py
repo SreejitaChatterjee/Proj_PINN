@@ -22,19 +22,20 @@ Why this should transfer across platforms:
 - PINN learns physics, not platform-specific patterns
 """
 
+import pickle
+import sys
+import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-import pickle
-from pathlib import Path
 from sklearn.ensemble import IsolationForest
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
-import warnings
-import sys
+from sklearn.preprocessing import StandardScaler
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -59,32 +60,33 @@ class EuRoCPINN(nn.Module):
     - Hidden: 256 with LayerNorm
     - Output: 12 (next state)
     """
+
     def __init__(self, input_dim=15, hidden_size=256, output_dim=12):
         super().__init__()
 
         # Match exact architecture from saved model
         self.net = nn.Sequential(
-            nn.Linear(input_dim, hidden_size),      # net.0
-            nn.LayerNorm(hidden_size),               # net.1
-            nn.Tanh(),                               # net.2
-            nn.Dropout(0.1),                         # net.3
-            nn.Linear(hidden_size, hidden_size),    # net.4
-            nn.LayerNorm(hidden_size),               # net.5
-            nn.Tanh(),                               # net.6
-            nn.Dropout(0.1),                         # net.7
-            nn.Linear(hidden_size, hidden_size),    # net.8
-            nn.LayerNorm(hidden_size),               # net.9
-            nn.Tanh(),                               # net.10
-            nn.Dropout(0.1),                         # net.11
-            nn.Linear(hidden_size, hidden_size),    # net.12
-            nn.LayerNorm(hidden_size),               # net.13
-            nn.Tanh(),                               # net.14
-            nn.Dropout(0.1),                         # net.15
-            nn.Linear(hidden_size, hidden_size),    # net.16
-            nn.LayerNorm(hidden_size),               # net.17
-            nn.Tanh(),                               # net.18
-            nn.Dropout(0.1),                         # net.19
-            nn.Linear(hidden_size, output_dim),     # net.20
+            nn.Linear(input_dim, hidden_size),  # net.0
+            nn.LayerNorm(hidden_size),  # net.1
+            nn.Tanh(),  # net.2
+            nn.Dropout(0.1),  # net.3
+            nn.Linear(hidden_size, hidden_size),  # net.4
+            nn.LayerNorm(hidden_size),  # net.5
+            nn.Tanh(),  # net.6
+            nn.Dropout(0.1),  # net.7
+            nn.Linear(hidden_size, hidden_size),  # net.8
+            nn.LayerNorm(hidden_size),  # net.9
+            nn.Tanh(),  # net.10
+            nn.Dropout(0.1),  # net.11
+            nn.Linear(hidden_size, hidden_size),  # net.12
+            nn.LayerNorm(hidden_size),  # net.13
+            nn.Tanh(),  # net.14
+            nn.Dropout(0.1),  # net.15
+            nn.Linear(hidden_size, hidden_size),  # net.16
+            nn.LayerNorm(hidden_size),  # net.17
+            nn.Tanh(),  # net.18
+            nn.Dropout(0.1),  # net.19
+            nn.Linear(hidden_size, output_dim),  # net.20
         )
 
     def forward(self, x):
@@ -100,8 +102,8 @@ def load_pinn_model():
 
     if MODEL_PATH.exists():
         checkpoint = torch.load(MODEL_PATH, map_location=DEVICE, weights_only=False)
-        if isinstance(checkpoint, dict) and 'model_state_dict' in checkpoint:
-            model.load_state_dict(checkpoint['model_state_dict'])
+        if isinstance(checkpoint, dict) and "model_state_dict" in checkpoint:
+            model.load_state_dict(checkpoint["model_state_dict"])
         else:
             model.load_state_dict(checkpoint)
         print("  Model loaded successfully.")
@@ -141,7 +143,7 @@ def compute_residuals(model, data, batch_size=1000):
             x_batch = torch.tensor(data[start:end], dtype=torch.float32, device=DEVICE)
 
             # Actual next states: [batch, 12]
-            actual_next = data[start+1:end+1, :12]
+            actual_next = data[start + 1 : end + 1, :12]
 
             # PINN prediction: [batch, 12]
             predicted_next = model(x_batch).cpu().numpy()
@@ -171,7 +173,7 @@ def extract_residual_features(residuals, windows=WINDOWS):
     for i in range(max_window, len(residuals)):
         feat_list = []
         for w_size in windows:
-            w = residuals[i-w_size:i]
+            w = residuals[i - w_size : i]
 
             # Mean absolute residual (should be ~0 for normal)
             feat_list.append(np.mean(np.abs(w)))
@@ -195,27 +197,27 @@ def generate_attack(clean_data, attack_type, magnitude):
     attacked = clean_data.copy()
     n = len(clean_data)
 
-    if attack_type == 'noise':
+    if attack_type == "noise":
         noise = np.random.normal(0, magnitude * 0.1, attacked.shape)
         attacked += noise
 
-    elif attack_type == 'bias':
+    elif attack_type == "bias":
         # Bias on attitude sensors - this should cause physics violation!
         attacked[:, 3] += magnitude * 0.05  # roll bias
         attacked[:, 4] += magnitude * 0.05  # pitch bias
         # Angular rates don't change -> inconsistent with attitude change
 
-    elif attack_type == 'drift':
+    elif attack_type == "drift":
         drift = np.linspace(0, magnitude * 5.0, n)
         attacked[:, 0] += drift  # position drift
         # Velocity doesn't match position change -> physics violation
 
-    elif attack_type == 'jump':
+    elif attack_type == "jump":
         jump_idx = n // 2
         attacked[jump_idx:, 0] += magnitude * 2.0
         # Instant position change with no velocity -> physics violation
 
-    elif attack_type == 'oscillation':
+    elif attack_type == "oscillation":
         t = np.linspace(0, 10 * np.pi, n)
         attacked[:, 0] += magnitude * np.sin(t)
 
@@ -235,9 +237,25 @@ def run_pinn_residual_evaluation():
     print("\nLoading EuRoC data...")
     df = pd.read_csv(EUROC_PATH)
     # 15 input features: 12 states + 3 accelerations (matches model input)
-    input_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz', 'ax', 'ay', 'az']
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
-    sequences = df['sequence'].unique()
+    input_cols = [
+        "x",
+        "y",
+        "z",
+        "roll",
+        "pitch",
+        "yaw",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+        "ax",
+        "ay",
+        "az",
+    ]
+    state_cols = ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]
+    sequences = df["sequence"].unique()
 
     print(f"Found {len(sequences)} sequences")
 
@@ -248,8 +266,8 @@ def run_pinn_residual_evaluation():
         print(f"\n--- Testing on {test_seq} ---")
 
         # Train/test split
-        train_df = df[df['sequence'] != test_seq]
-        test_df = df[df['sequence'] == test_seq]
+        train_df = df[df["sequence"] != test_seq]
+        test_df = df[df["sequence"] == test_seq]
 
         # Use 15-column input format for PINN
         train_data = train_df[input_cols].values
@@ -275,10 +293,7 @@ def run_pinn_residual_evaluation():
         train_scaled = scaler.fit_transform(train_features)
 
         detector = IsolationForest(
-            n_estimators=200,
-            contamination=CONTAMINATION,
-            random_state=42,
-            n_jobs=-1
+            n_estimators=200, contamination=CONTAMINATION, random_state=42, n_jobs=-1
         )
         detector.fit(train_scaled)
 
@@ -299,10 +314,10 @@ def run_pinn_residual_evaluation():
         print(f"    FPR on clean: {fpr*100:.1f}%")
 
         # Step 5: Evaluate on attacks
-        attack_types = ['noise', 'bias', 'drift', 'jump', 'oscillation']
+        attack_types = ["noise", "bias", "drift", "jump", "oscillation"]
         magnitudes = [0.25, 0.5, 1.0, 2.0, 4.0]
 
-        seq_results = {'sequence': test_seq, 'fpr': fpr, 'attacks': {}}
+        seq_results = {"sequence": test_seq, "fpr": fpr, "attacks": {}}
 
         for attack_type in attack_types:
             attack_recalls = []
@@ -329,7 +344,7 @@ def run_pinn_residual_evaluation():
                 attack_recalls.append(recall)
 
             avg_recall = np.mean(attack_recalls) if attack_recalls else 0
-            seq_results['attacks'][attack_type] = avg_recall
+            seq_results["attacks"][attack_type] = avg_recall
             print(f"    {attack_type}: {avg_recall*100:.1f}% recall")
 
         all_results.append(seq_results)
@@ -344,20 +359,20 @@ def run_pinn_residual_evaluation():
         return
 
     # Aggregate across sequences
-    avg_fpr = np.mean([r['fpr'] for r in all_results])
+    avg_fpr = np.mean([r["fpr"] for r in all_results])
     print(f"\nAverage FPR: {avg_fpr*100:.1f}%")
 
     print("\nPer-Attack Recall (averaged across sequences):")
-    attack_types = ['noise', 'bias', 'drift', 'jump', 'oscillation']
+    attack_types = ["noise", "bias", "drift", "jump", "oscillation"]
     for attack_type in attack_types:
-        recalls = [r['attacks'].get(attack_type, 0) for r in all_results]
+        recalls = [r["attacks"].get(attack_type, 0) for r in all_results]
         avg = np.mean(recalls)
         print(f"  {attack_type:15s}: {avg*100:.1f}%")
 
     # Overall average
     all_recalls = []
     for r in all_results:
-        for attack, recall in r['attacks'].items():
+        for attack, recall in r["attacks"].items():
             all_recalls.append(recall)
 
     overall_avg = np.mean(all_recalls) if all_recalls else 0
@@ -374,7 +389,7 @@ def run_pinn_residual_evaluation():
     print("PINN-residual features:")
     print(f"  Overall: {overall_avg*100:.1f}% recall, {avg_fpr*100:.1f}% FPR")
 
-    bias_recall = np.mean([r['attacks'].get('bias', 0) for r in all_results])
+    bias_recall = np.mean([r["attacks"].get("bias", 0) for r in all_results])
     print(f"  Bias attacks: {bias_recall*100:.1f}% recall")
 
     if bias_recall > 0.031:
@@ -407,7 +422,7 @@ RESULTS (LOSO-CV):
 Per-Attack Type:
 """
     for attack_type in attack_types:
-        recalls = [r['attacks'].get(attack_type, 0) for r in all_results]
+        recalls = [r["attacks"].get(attack_type, 0) for r in all_results]
         avg = np.mean(recalls)
         report += f"  {attack_type:15s}: {avg*100:.1f}%\n"
 
@@ -426,7 +441,7 @@ COMPARISON WITH RAW FEATURES:
         report += "CONCLUSION: PINN-residual approach needs more work.\n"
 
     report_path = OUTPUT_DIR / "PINN_RESIDUAL_RESULTS.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(report)
 
     print(f"\nResults saved to: {report_path}")

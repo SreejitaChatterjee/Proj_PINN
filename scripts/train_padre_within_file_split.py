@@ -8,12 +8,19 @@ Strategy: Take first 70% of windows from each file for training,
          last 30% for testing (respects time ordering).
 """
 
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-import re
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 
 
 def extract_features(window):
@@ -23,7 +30,14 @@ def extract_features(window):
         ch = window[:, col]
         feat.extend([ch.mean(), ch.std(), ch.max() - ch.min()])
         fft = np.abs(np.fft.rfft(ch))
-        feat.extend([fft[1:10].sum(), fft[10:50].sum(), fft[50:].sum(), np.argmax(fft[1:]) if len(fft) > 1 else 0])
+        feat.extend(
+            [
+                fft[1:10].sum(),
+                fft[10:50].sum(),
+                fft[50:].sum(),
+                np.argmax(fft[1:]) if len(fft) > 1 else 0,
+            ]
+        )
     return feat
 
 
@@ -43,8 +57,8 @@ def load_data_with_temporal_split(data_dir, window_size=256, stride=128, train_r
     X_train, y_train, X_test, y_test = [], [], [], []
     file_stats = []
 
-    for csv_file in sorted(Path(data_dir).glob('*.csv')):
-        match = re.search(r'normalized_(\d{4})\.csv', csv_file.name)
+    for csv_file in sorted(Path(data_dir).glob("*.csv")):
+        match = re.search(r"normalized_(\d{4})\.csv", csv_file.name)
         if not match:
             continue
 
@@ -57,7 +71,7 @@ def load_data_with_temporal_split(data_dir, window_size=256, stride=128, train_r
         # Extract all windows
         windows = []
         for i in range((len(data) - window_size) // stride + 1):
-            window = data[i * stride: i * stride + window_size]
+            window = data[i * stride : i * stride + window_size]
             windows.append(extract_features(window))
 
         # Temporal split
@@ -71,16 +85,16 @@ def load_data_with_temporal_split(data_dir, window_size=256, stride=128, train_r
         y_test.extend([is_faulty] * len(test_windows))
 
         label = "Normal" if is_faulty == 0 else "Faulty"
-        file_stats.append({
-            'file': csv_file.name,
-            'label': label,
-            'train': len(train_windows),
-            'test': len(test_windows)
-        })
+        file_stats.append(
+            {
+                "file": csv_file.name,
+                "label": label,
+                "train": len(train_windows),
+                "test": len(test_windows),
+            }
+        )
 
-    return (np.array(X_train), np.array(y_train),
-            np.array(X_test), np.array(y_test),
-            file_stats)
+    return (np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test), file_stats)
 
 
 def main():
@@ -88,7 +102,7 @@ def main():
     print("PADRE CLASSIFIER - WITHIN-FILE TEMPORAL SPLIT")
     print("=" * 70)
 
-    data_dir = Path('data/PADRE_dataset/Parrot_Bebop_2/Normalized_data')
+    data_dir = Path("data/PADRE_dataset/Parrot_Bebop_2/Normalized_data")
 
     for train_ratio in [0.7, 0.8, 0.5]:
         print(f"\n{'='*70}")
@@ -100,7 +114,9 @@ def main():
         )
 
         print(f"\nData Split:")
-        print(f"  Train: {len(X_train)} samples ({sum(y_train==0)} normal, {sum(y_train==1)} faulty)")
+        print(
+            f"  Train: {len(X_train)} samples ({sum(y_train==0)} normal, {sum(y_train==1)} faulty)"
+        )
         print(f"  Test:  {len(X_test)} samples ({sum(y_test==0)} normal, {sum(y_test==1)} faulty)")
 
         print(f"\nPer-File Distribution:")
@@ -108,8 +124,9 @@ def main():
             print(f"  {s['file']}: train={s['train']}, test={s['test']} ({s['label']})")
 
         # Train
-        clf = RandomForestClassifier(n_estimators=100, class_weight='balanced',
-                                     random_state=42, n_jobs=-1)
+        clf = RandomForestClassifier(
+            n_estimators=100, class_weight="balanced", random_state=42, n_jobs=-1
+        )
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
 

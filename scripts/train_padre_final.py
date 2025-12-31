@@ -21,11 +21,15 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score,
-    confusion_matrix, classification_report
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
 )
+from sklearn.preprocessing import StandardScaler
 
 
 def extract_features(window: np.ndarray) -> np.ndarray:
@@ -43,32 +47,31 @@ def extract_features(window: np.ndarray) -> np.ndarray:
         ch = window[:, col]
 
         # Time domain (3 features)
-        features.extend([
-            ch.mean(),
-            ch.std(),
-            ch.max() - ch.min()
-        ])
+        features.extend([ch.mean(), ch.std(), ch.max() - ch.min()])
 
         # Frequency domain (4 features)
         fft = np.abs(np.fft.rfft(ch))
-        features.extend([
-            fft[1:10].sum(),      # Low frequency energy
-            fft[10:50].sum(),     # Mid frequency energy
-            fft[50:].sum(),       # High frequency energy
-            np.argmax(fft[1:]) if len(fft) > 1 else 0  # Dominant frequency
-        ])
+        features.extend(
+            [
+                fft[1:10].sum(),  # Low frequency energy
+                fft[10:50].sum(),  # Mid frequency energy
+                fft[50:].sum(),  # High frequency energy
+                np.argmax(fft[1:]) if len(fft) > 1 else 0,  # Dominant frequency
+            ]
+        )
 
     return np.array(features)
 
 
 def parse_fault_code(filename: str) -> str:
     """Extract 4-digit fault code from PADRE filename."""
-    match = re.search(r'_(\d{4})\.csv$', filename)
+    match = re.search(r"_(\d{4})\.csv$", filename)
     return match.group(1) if match else None
 
 
-def load_padre_data(data_dirs: list, window_size: int = 256,
-                    stride: int = 128, train_ratio: float = 0.7):
+def load_padre_data(
+    data_dirs: list, window_size: int = 256, stride: int = 128, train_ratio: float = 0.7
+):
     """
     Load PADRE data with within-file temporal split.
 
@@ -92,7 +95,7 @@ def load_padre_data(data_dirs: list, window_size: int = 256,
             print(f"  Skipping {drone_name}: {data_dir} not found")
             continue
 
-        for csv_file in sorted(data_dir.glob('*.csv')):
+        for csv_file in sorted(data_dir.glob("*.csv")):
             fault_code = parse_fault_code(csv_file.name)
             if not fault_code:
                 continue
@@ -108,7 +111,7 @@ def load_padre_data(data_dirs: list, window_size: int = 256,
             # Extract windows
             windows = []
             for i in range((len(data) - window_size) // stride + 1):
-                window = data[i * stride: i * stride + window_size]
+                window = data[i * stride : i * stride + window_size]
                 windows.append(extract_features(window))
 
             if not windows:
@@ -125,30 +128,52 @@ def load_padre_data(data_dirs: list, window_size: int = 256,
             y_test.extend([is_faulty] * (len(windows) - n_train))
             groups_test.extend([file_id] * (len(windows) - n_train))
 
-            file_stats.append({
-                'id': file_id,
-                'drone': drone_name,
-                'file': csv_file.name,
-                'fault_code': fault_code,
-                'is_faulty': is_faulty,
-                'motor_faults': motor_faults,
-                'n_train': n_train,
-                'n_test': len(windows) - n_train
-            })
+            file_stats.append(
+                {
+                    "id": file_id,
+                    "drone": drone_name,
+                    "file": csv_file.name,
+                    "fault_code": fault_code,
+                    "is_faulty": is_faulty,
+                    "motor_faults": motor_faults,
+                    "n_train": n_train,
+                    "n_test": len(windows) - n_train,
+                }
+            )
             file_id += 1
 
-    return (np.array(X_train), np.array(y_train),
-            np.array(X_test), np.array(y_test),
-            file_stats)
+    return (np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test), file_stats)
 
 
 def get_feature_names():
     """Get descriptive names for all 168 features."""
-    sensors = ['A_aX', 'A_aY', 'A_aZ', 'A_gX', 'A_gY', 'A_gZ',
-               'B_aX', 'B_aY', 'B_aZ', 'B_gX', 'B_gY', 'B_gZ',
-               'C_aX', 'C_aY', 'C_aZ', 'C_gX', 'C_gY', 'C_gZ',
-               'D_aX', 'D_aY', 'D_aZ', 'D_gX', 'D_gY', 'D_gZ']
-    stats = ['mean', 'std', 'range', 'lowFreq', 'midFreq', 'highFreq', 'domFreq']
+    sensors = [
+        "A_aX",
+        "A_aY",
+        "A_aZ",
+        "A_gX",
+        "A_gY",
+        "A_gZ",
+        "B_aX",
+        "B_aY",
+        "B_aZ",
+        "B_gX",
+        "B_gY",
+        "B_gZ",
+        "C_aX",
+        "C_aY",
+        "C_aZ",
+        "C_gX",
+        "C_gY",
+        "C_gZ",
+        "D_aX",
+        "D_aY",
+        "D_aZ",
+        "D_gX",
+        "D_gY",
+        "D_gZ",
+    ]
+    stats = ["mean", "std", "range", "lowFreq", "midFreq", "highFreq", "domFreq"]
 
     names = []
     for sensor in sensors:
@@ -159,14 +184,24 @@ def get_feature_names():
 
 def main():
     parser = argparse.ArgumentParser(description="Train PADRE fault detector")
-    parser.add_argument("--train_ratio", type=float, default=0.7,
-                        help="Fraction of each file for training (default: 0.7)")
-    parser.add_argument("--output_dir", type=str, default="models/padre_classifier",
-                        help="Output directory")
-    parser.add_argument("--n_estimators", type=int, default=100,
-                        help="Number of trees in Random Forest")
-    parser.add_argument("--threshold", type=float, default=0.5,
-                        help="Classification threshold (increase to reduce FP)")
+    parser.add_argument(
+        "--train_ratio",
+        type=float,
+        default=0.7,
+        help="Fraction of each file for training (default: 0.7)",
+    )
+    parser.add_argument(
+        "--output_dir", type=str, default="models/padre_classifier", help="Output directory"
+    )
+    parser.add_argument(
+        "--n_estimators", type=int, default=100, help="Number of trees in Random Forest"
+    )
+    parser.add_argument(
+        "--threshold",
+        type=float,
+        default=0.5,
+        help="Classification threshold (increase to reduce FP)",
+    )
     args = parser.parse_args()
 
     print("=" * 80)
@@ -179,7 +214,7 @@ def main():
     base = Path("C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset")
     data_dirs = [
         ("Bebop2", base / "Parrot_Bebop_2" / "Normalized_data"),
-        ("Solo", base / "3DR_Solo" / "Normalized_data" / "extracted")
+        ("Solo", base / "3DR_Solo" / "Normalized_data" / "extracted"),
     ]
 
     # Load data
@@ -191,8 +226,8 @@ def main():
         data_dirs, train_ratio=args.train_ratio
     )
 
-    n_normal = sum(1 for f in file_stats if f['is_faulty'] == 0)
-    n_faulty = sum(1 for f in file_stats if f['is_faulty'] == 1)
+    n_normal = sum(1 for f in file_stats if f["is_faulty"] == 0)
+    n_faulty = sum(1 for f in file_stats if f["is_faulty"] == 1)
 
     print(f"\nDataset: {len(file_stats)} files ({n_normal} normal, {n_faulty} faulty)")
     print(f"Train: {len(X_train)} samples ({sum(y_train==0)} normal, {sum(y_train==1)} faulty)")
@@ -210,10 +245,7 @@ def main():
     print("=" * 80)
 
     clf = RandomForestClassifier(
-        n_estimators=args.n_estimators,
-        class_weight='balanced',
-        random_state=42,
-        n_jobs=-1
+        n_estimators=args.n_estimators, class_weight="balanced", random_state=42, n_jobs=-1
     )
     clf.fit(X_train_scaled, y_train)
 
@@ -230,7 +262,9 @@ def main():
     print("=" * 80)
     print(f"\nThreshold: {args.threshold}")
     print(f"\nOverall Metrics:")
-    print(f"  Accuracy:    {accuracy_score(y_test, y_pred):.4f} ({accuracy_score(y_test, y_pred)*100:.2f}%)")
+    print(
+        f"  Accuracy:    {accuracy_score(y_test, y_pred):.4f} ({accuracy_score(y_test, y_pred)*100:.2f}%)"
+    )
     print(f"  Precision:   {precision_score(y_test, y_pred):.4f}")
     print(f"  Recall:      {recall_score(y_test, y_pred):.4f}")
     print(f"  F1 Score:    {f1_score(y_test, y_pred):.4f}")
@@ -248,8 +282,7 @@ def main():
     # Feature importance
     feature_names = get_feature_names()
     importances = clf.feature_importances_
-    top_features = sorted(zip(feature_names, importances),
-                          key=lambda x: x[1], reverse=True)[:10]
+    top_features = sorted(zip(feature_names, importances), key=lambda x: x[1], reverse=True)[:10]
 
     print(f"\nTop 10 Features:")
     for name, imp in top_features:
@@ -265,54 +298,49 @@ def main():
 
     # Save classifier
     model_path = output_dir / "rf_binary_final.pkl"
-    with open(model_path, 'wb') as f:
+    with open(model_path, "wb") as f:
         pickle.dump(clf, f)
     print(f"Model: {model_path}")
 
     # Save scaler
     scaler_path = output_dir / "scaler_final.pkl"
-    with open(scaler_path, 'wb') as f:
+    with open(scaler_path, "wb") as f:
         pickle.dump(scaler, f)
     print(f"Scaler: {scaler_path}")
 
     # Save results
     results = {
-        'config': {
-            'train_ratio': args.train_ratio,
-            'n_estimators': args.n_estimators,
-            'threshold': args.threshold,
-            'n_features': X_train.shape[1],
-            'window_size': 256,
-            'stride': 128
+        "config": {
+            "train_ratio": args.train_ratio,
+            "n_estimators": args.n_estimators,
+            "threshold": args.threshold,
+            "n_features": X_train.shape[1],
+            "window_size": 256,
+            "stride": 128,
         },
-        'dataset': {
-            'n_files': len(file_stats),
-            'n_normal_files': n_normal,
-            'n_faulty_files': n_faulty,
-            'n_train': len(X_train),
-            'n_test': len(X_test)
+        "dataset": {
+            "n_files": len(file_stats),
+            "n_normal_files": n_normal,
+            "n_faulty_files": n_faulty,
+            "n_train": len(X_train),
+            "n_test": len(X_test),
         },
-        'metrics': {
-            'accuracy': float(accuracy_score(y_test, y_pred)),
-            'precision': float(precision_score(y_test, y_pred)),
-            'recall': float(recall_score(y_test, y_pred)),
-            'f1': float(f1_score(y_test, y_pred)),
-            'confusion_matrix': {
-                'tn': int(tn),
-                'fp': int(fp),
-                'fn': int(fn),
-                'tp': int(tp)
-            },
-            'normal_accuracy': float(tn / (tn + fp)),
-            'faulty_accuracy': float(tp / (tp + fn))
+        "metrics": {
+            "accuracy": float(accuracy_score(y_test, y_pred)),
+            "precision": float(precision_score(y_test, y_pred)),
+            "recall": float(recall_score(y_test, y_pred)),
+            "f1": float(f1_score(y_test, y_pred)),
+            "confusion_matrix": {"tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp)},
+            "normal_accuracy": float(tn / (tn + fp)),
+            "faulty_accuracy": float(tp / (tp + fn)),
         },
-        'top_features': [{'name': n, 'importance': float(i)} for n, i in top_features],
-        'files': file_stats,
-        'timestamp': datetime.now().isoformat()
+        "top_features": [{"name": n, "importance": float(i)} for n, i in top_features],
+        "files": file_stats,
+        "timestamp": datetime.now().isoformat(),
     }
 
     results_path = output_dir / "results_final.json"
-    with open(results_path, 'w') as f:
+    with open(results_path, "w") as f:
         json.dump(results, f, indent=2)
     print(f"Results: {results_path}")
 
@@ -406,7 +434,7 @@ if __name__ == "__main__":
 '''
 
     inference_path = output_dir / "padre_inference.py"
-    with open(inference_path, 'w') as f:
+    with open(inference_path, "w") as f:
         f.write(inference_code)
     print(f"Inference: {inference_path}")
 

@@ -7,16 +7,17 @@ This validates whether the detector generalizes across platforms.
 Expected: Significant performance degradation (honest limitation).
 """
 
+import pickle
+import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import pickle
-from pathlib import Path
 from sklearn.ensemble import IsolationForest
+from sklearn.metrics import classification_report, confusion_matrix
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import confusion_matrix, classification_report
-import warnings
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 EUROC_PATH = PROJECT_ROOT / "data" / "euroc" / "all_sequences.csv"
@@ -36,12 +37,14 @@ def extract_multiscale_features(data, windows=WINDOWS):
     for i in range(max_window, len(data)):
         feat_list = []
         for w_size in windows:
-            w = data[i-w_size:i]
-            feat_list.extend([
-                np.mean(w, axis=0).mean(),
-                np.std(w, axis=0).mean(),
-                np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
-            ])
+            w = data[i - w_size : i]
+            feat_list.extend(
+                [
+                    np.mean(w, axis=0).mean(),
+                    np.std(w, axis=0).mean(),
+                    np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
+                ]
+            )
         all_features.append(feat_list)
 
     return np.array(all_features)
@@ -52,7 +55,7 @@ def load_euroc_training_data():
     print("Loading EuRoC training data...")
     df = pd.read_csv(EUROC_PATH)
 
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_cols = ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]
     data = df[state_cols].values
 
     print(f"  Loaded {len(data)} samples from EuRoC")
@@ -67,15 +70,15 @@ def parse_padre_filename(filename):
     """
     # Extract the 4-digit code
     name = filename.stem
-    parts = name.split('_')
+    parts = name.split("_")
     code = parts[-1]  # e.g., "0000", "0001", "1000"
 
     if len(code) != 4:
         return None, None
 
     # Count faulty motors (1 or 2 means fault)
-    n_faulty = sum(1 for c in code if c in ['1', '2'])
-    is_normal = (n_faulty == 0)
+    n_faulty = sum(1 for c in code if c in ["1", "2"])
+    is_normal = n_faulty == 0
 
     return is_normal, n_faulty
 
@@ -122,36 +125,36 @@ def process_padre_file(file_path):
     # This makes it more comparable to EuRoC's single-sensor format
 
     # Accelerometer columns for each motor
-    accel_cols = [f'{m}_a{axis}' for m in ['A', 'B', 'C', 'D'] for axis in ['X', 'Y', 'Z']]
-    gyro_cols = [f'{m}_g{axis}' for m in ['A', 'B', 'C', 'D'] for axis in ['X', 'Y', 'Z']]
+    accel_cols = [f"{m}_a{axis}" for m in ["A", "B", "C", "D"] for axis in ["X", "Y", "Z"]]
+    gyro_cols = [f"{m}_g{axis}" for m in ["A", "B", "C", "D"] for axis in ["X", "Y", "Z"]]
 
     # Check if columns exist (handle case sensitivity)
-    df.columns = [c.replace('_a', '_a').replace('_g', '_g') for c in df.columns]
+    df.columns = [c.replace("_a", "_a").replace("_g", "_g") for c in df.columns]
 
     # Create aggregated features (12 features like EuRoC's 12 states)
     features = []
 
     # Mean acceleration per axis (proxy for position/velocity info)
-    for axis in ['X', 'Y', 'Z']:
-        motor_cols = [c for c in df.columns if f'_a{axis}' in c]
+    for axis in ["X", "Y", "Z"]:
+        motor_cols = [c for c in df.columns if f"_a{axis}" in c]
         if motor_cols:
             features.append(df[motor_cols].mean(axis=1).values)
 
     # Mean gyroscope per axis (proxy for angular rate info)
-    for axis in ['X', 'Y', 'Z']:
-        motor_cols = [c for c in df.columns if f'_g{axis}' in c]
+    for axis in ["X", "Y", "Z"]:
+        motor_cols = [c for c in df.columns if f"_g{axis}" in c]
         if motor_cols:
             features.append(df[motor_cols].mean(axis=1).values)
 
     # Std acceleration per axis (additional variance info)
-    for axis in ['X', 'Y', 'Z']:
-        motor_cols = [c for c in df.columns if f'_a{axis}' in c]
+    for axis in ["X", "Y", "Z"]:
+        motor_cols = [c for c in df.columns if f"_a{axis}" in c]
         if motor_cols:
             features.append(df[motor_cols].std(axis=1).values)
 
     # Std gyroscope per axis
-    for axis in ['X', 'Y', 'Z']:
-        motor_cols = [c for c in df.columns if f'_g{axis}' in c]
+    for axis in ["X", "Y", "Z"]:
+        motor_cols = [c for c in df.columns if f"_g{axis}" in c]
         if motor_cols:
             features.append(df[motor_cols].std(axis=1).values)
 
@@ -183,10 +186,7 @@ def run_cross_dataset_test():
     euroc_features_scaled = scaler.fit_transform(euroc_features)
 
     detector = IsolationForest(
-        n_estimators=N_ESTIMATORS,
-        contamination=CONTAMINATION,
-        random_state=42,
-        n_jobs=-1
+        n_estimators=N_ESTIMATORS, contamination=CONTAMINATION, random_state=42, n_jobs=-1
     )
     detector.fit(euroc_features_scaled)
     print("  Training complete.")
@@ -213,11 +213,9 @@ def run_cross_dataset_test():
 
             # FP = anomaly predictions on normal data
             fp_rate = np.sum(predictions == -1) / len(predictions)
-            normal_results.append({
-                'file': file_path.name,
-                'n_samples': len(predictions),
-                'fp_rate': fp_rate
-            })
+            normal_results.append(
+                {"file": file_path.name, "n_samples": len(predictions), "fp_rate": fp_rate}
+            )
             print(f"    {file_path.name}: FPR = {fp_rate*100:.1f}%")
         except Exception as e:
             print(f"    {file_path.name}: Error - {e}")
@@ -240,12 +238,14 @@ def run_cross_dataset_test():
 
             # TP = anomaly predictions on fault data
             recall = np.sum(predictions == -1) / len(predictions)
-            fault_results.append({
-                'file': file_path.name,
-                'n_faulty_motors': n_faulty,
-                'n_samples': len(predictions),
-                'recall': recall
-            })
+            fault_results.append(
+                {
+                    "file": file_path.name,
+                    "n_faulty_motors": n_faulty,
+                    "n_samples": len(predictions),
+                    "recall": recall,
+                }
+            )
             print(f"    {file_path.name} ({n_faulty} motors): Recall = {recall*100:.1f}%")
         except Exception as e:
             print(f"    {file_path.name}: Error - {e}")
@@ -256,22 +256,22 @@ def run_cross_dataset_test():
     print("=" * 60)
 
     if normal_results:
-        avg_fpr = np.mean([r['fp_rate'] for r in normal_results])
-        std_fpr = np.std([r['fp_rate'] for r in normal_results])
+        avg_fpr = np.mean([r["fp_rate"] for r in normal_results])
+        std_fpr = np.std([r["fp_rate"] for r in normal_results])
         print(f"\nFPR on PADRE Normal: {avg_fpr*100:.1f}% +/- {std_fpr*100:.1f}%")
     else:
         print("\nNo normal PADRE results available")
 
     if fault_results:
-        avg_recall = np.mean([r['recall'] for r in fault_results])
-        std_recall = np.std([r['recall'] for r in fault_results])
+        avg_recall = np.mean([r["recall"] for r in fault_results])
+        std_recall = np.std([r["recall"] for r in fault_results])
         print(f"Recall on PADRE Faults: {avg_recall*100:.1f}% +/- {std_recall*100:.1f}%")
 
         # Breakdown by fault severity
         for n_faulty in [1, 2]:
-            subset = [r for r in fault_results if r['n_faulty_motors'] == n_faulty]
+            subset = [r for r in fault_results if r["n_faulty_motors"] == n_faulty]
             if subset:
-                avg = np.mean([r['recall'] for r in subset])
+                avg = np.mean([r["recall"] for r in subset])
                 print(f"  {n_faulty}-motor faults: {avg*100:.1f}%")
     else:
         print("No fault PADRE results available")
@@ -290,12 +290,12 @@ def run_cross_dataset_test():
 
     # Save results
     results = {
-        'normal_results': normal_results,
-        'fault_results': fault_results,
-        'summary': {
-            'fpr': avg_fpr if normal_results else None,
-            'recall': avg_recall if fault_results else None
-        }
+        "normal_results": normal_results,
+        "fault_results": fault_results,
+        "summary": {
+            "fpr": avg_fpr if normal_results else None,
+            "recall": avg_recall if fault_results else None,
+        },
     }
 
     report_lines = [
@@ -309,8 +309,16 @@ def run_cross_dataset_test():
         "- Feature conversion: Aggregated per-motor IMU to 12D features",
         "",
         "Results:",
-        f"- FPR on PADRE Normal: {avg_fpr*100:.1f}% +/- {std_fpr*100:.1f}%" if normal_results else "- FPR: N/A",
-        f"- Recall on PADRE Faults: {avg_recall*100:.1f}% +/- {std_recall*100:.1f}%" if fault_results else "- Recall: N/A",
+        (
+            f"- FPR on PADRE Normal: {avg_fpr*100:.1f}% +/- {std_fpr*100:.1f}%"
+            if normal_results
+            else "- FPR: N/A"
+        ),
+        (
+            f"- Recall on PADRE Faults: {avg_recall*100:.1f}% +/- {std_recall*100:.1f}%"
+            if fault_results
+            else "- Recall: N/A"
+        ),
         "",
         "Interpretation:",
         "- The detector trained on EuRoC does NOT generalize well to PADRE",
@@ -319,11 +327,11 @@ def run_cross_dataset_test():
         "",
         "Recommendation:",
         "- Do NOT claim generalization across platforms without validation",
-        "- Detector must be retrained or fine-tuned for each platform"
+        "- Detector must be retrained or fine-tuned for each platform",
     ]
 
     report_path = OUTPUT_DIR / "CROSS_DATASET_RESULTS.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write("\n".join(report_lines))
     print(f"\nResults saved to: {report_path}")
 

@@ -6,23 +6,24 @@ Tests cover:
 - SyntheticNormalGenerator from scripts/generate_synthetic_normals.py
 """
 
+import sys
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
-import sys
-from pathlib import Path
 
 # Add scripts to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "security"))
 
-from generate_synthetic_attacks import SyntheticAttackGenerator, GRAVITY, Z_SCALE
+from generate_synthetic_attacks import GRAVITY, Z_SCALE, SyntheticAttackGenerator
 from generate_synthetic_normals import SyntheticNormalGenerator, extract_features
-
 
 # =============================================================================
 # Fixtures
 # =============================================================================
+
 
 @pytest.fixture
 def sample_clean_data():
@@ -30,24 +31,26 @@ def sample_clean_data():
     n_samples = 1000
     np.random.seed(42)
 
-    return pd.DataFrame({
-        'timestamp': np.arange(n_samples) * 0.005,  # 200Hz
-        'x': np.cumsum(np.random.randn(n_samples) * 0.01),
-        'y': np.cumsum(np.random.randn(n_samples) * 0.01),
-        'z': np.ones(n_samples) + np.random.randn(n_samples) * 0.01,
-        'roll': np.random.randn(n_samples) * 0.1,
-        'pitch': np.random.randn(n_samples) * 0.1,
-        'yaw': np.cumsum(np.random.randn(n_samples) * 0.01),
-        'p': np.random.randn(n_samples) * 0.1,
-        'q': np.random.randn(n_samples) * 0.1,
-        'r': np.random.randn(n_samples) * 0.05,
-        'vx': np.random.randn(n_samples) * 0.5,
-        'vy': np.random.randn(n_samples) * 0.5,
-        'vz': np.random.randn(n_samples) * 0.2,
-        'ax': np.random.randn(n_samples) * 1.0,
-        'ay': np.random.randn(n_samples) * 1.0,
-        'az': np.random.randn(n_samples) * 1.0 + 9.81,
-    })
+    return pd.DataFrame(
+        {
+            "timestamp": np.arange(n_samples) * 0.005,  # 200Hz
+            "x": np.cumsum(np.random.randn(n_samples) * 0.01),
+            "y": np.cumsum(np.random.randn(n_samples) * 0.01),
+            "z": np.ones(n_samples) + np.random.randn(n_samples) * 0.01,
+            "roll": np.random.randn(n_samples) * 0.1,
+            "pitch": np.random.randn(n_samples) * 0.1,
+            "yaw": np.cumsum(np.random.randn(n_samples) * 0.01),
+            "p": np.random.randn(n_samples) * 0.1,
+            "q": np.random.randn(n_samples) * 0.1,
+            "r": np.random.randn(n_samples) * 0.05,
+            "vx": np.random.randn(n_samples) * 0.5,
+            "vy": np.random.randn(n_samples) * 0.5,
+            "vz": np.random.randn(n_samples) * 0.2,
+            "ax": np.random.randn(n_samples) * 1.0,
+            "ay": np.random.randn(n_samples) * 1.0,
+            "az": np.random.randn(n_samples) * 1.0 + 9.81,
+        }
+    )
 
 
 @pytest.fixture
@@ -56,24 +59,26 @@ def short_clean_data():
     n_samples = 50
     np.random.seed(42)
 
-    return pd.DataFrame({
-        'timestamp': np.arange(n_samples) * 0.005,
-        'x': np.random.randn(n_samples),
-        'y': np.random.randn(n_samples),
-        'z': np.ones(n_samples),
-        'roll': np.random.randn(n_samples) * 0.1,
-        'pitch': np.random.randn(n_samples) * 0.1,
-        'yaw': np.random.randn(n_samples) * 0.1,
-        'p': np.random.randn(n_samples) * 0.1,
-        'q': np.random.randn(n_samples) * 0.1,
-        'r': np.random.randn(n_samples) * 0.1,
-        'vx': np.random.randn(n_samples) * 0.5,
-        'vy': np.random.randn(n_samples) * 0.5,
-        'vz': np.random.randn(n_samples) * 0.2,
-        'ax': np.random.randn(n_samples),
-        'ay': np.random.randn(n_samples),
-        'az': np.random.randn(n_samples) + 9.81,
-    })
+    return pd.DataFrame(
+        {
+            "timestamp": np.arange(n_samples) * 0.005,
+            "x": np.random.randn(n_samples),
+            "y": np.random.randn(n_samples),
+            "z": np.ones(n_samples),
+            "roll": np.random.randn(n_samples) * 0.1,
+            "pitch": np.random.randn(n_samples) * 0.1,
+            "yaw": np.random.randn(n_samples) * 0.1,
+            "p": np.random.randn(n_samples) * 0.1,
+            "q": np.random.randn(n_samples) * 0.1,
+            "r": np.random.randn(n_samples) * 0.1,
+            "vx": np.random.randn(n_samples) * 0.5,
+            "vy": np.random.randn(n_samples) * 0.5,
+            "vz": np.random.randn(n_samples) * 0.2,
+            "ax": np.random.randn(n_samples),
+            "ay": np.random.randn(n_samples),
+            "az": np.random.randn(n_samples) + 9.81,
+        }
+    )
 
 
 @pytest.fixture
@@ -102,6 +107,7 @@ def sample_normal_data(tmp_path):
 # SyntheticAttackGenerator Tests
 # =============================================================================
 
+
 class TestSyntheticAttackGenerator:
     """Tests for SyntheticAttackGenerator class."""
 
@@ -120,10 +126,10 @@ class TestSyntheticAttackGenerator:
     def test_init_data_adds_labels(self, attack_generator):
         """Test _init_data adds label and attack_type columns."""
         data = attack_generator._init_data()
-        assert 'label' in data.columns
-        assert 'attack_type' in data.columns
-        assert (data['label'] == 0).all()
-        assert (data['attack_type'] == 'Normal').all()
+        assert "label" in data.columns
+        assert "attack_type" in data.columns
+        assert (data["label"] == 0).all()
+        assert (data["attack_type"] == "Normal").all()
 
     def test_get_attack_window(self, attack_generator):
         """Test attack window calculation."""
@@ -135,47 +141,47 @@ class TestSyntheticAttackGenerator:
     def test_handle_nan_values_interpolate(self, attack_generator):
         """Test NaN handling with interpolation."""
         data = attack_generator._init_data()
-        data.loc[10:20, 'x'] = np.nan
+        data.loc[10:20, "x"] = np.nan
 
-        result = attack_generator.handle_nan_values(data, method='interpolate')
-        assert not result['x'].isna().any()
+        result = attack_generator.handle_nan_values(data, method="interpolate")
+        assert not result["x"].isna().any()
 
     def test_handle_nan_values_copy(self, attack_generator):
         """Test that handle_nan_values returns a copy."""
         data = attack_generator._init_data()
-        original_x = data['x'].copy()
-        data.loc[10:20, 'x'] = np.nan
+        original_x = data["x"].copy()
+        data.loc[10:20, "x"] = np.nan
 
-        result = attack_generator.handle_nan_values(data, method='zero')
+        result = attack_generator.handle_nan_values(data, method="zero")
         # Original should still have NaN
-        assert data['x'].isna().any()
+        assert data["x"].isna().any()
         # Result should not have NaN
-        assert not result['x'].isna().any()
+        assert not result["x"].isna().any()
 
     def test_handle_nan_invalid_method(self, attack_generator):
         """Test that invalid NaN method raises error."""
         data = attack_generator._init_data()
         with pytest.raises(ValueError, match="Unknown NaN handling method"):
-            attack_generator.handle_nan_values(data, method='invalid')
+            attack_generator.handle_nan_values(data, method="invalid")
 
     # GPS Attack Tests
     def test_gps_gradual_drift(self, attack_generator):
         """Test GPS gradual drift attack."""
         result = attack_generator.gps_gradual_drift()
-        assert 'label' in result.columns
-        assert result['label'].sum() > 0
-        assert (result[result['label'] == 1]['attack_type'] == 'GPS_Gradual_Drift').all()
+        assert "label" in result.columns
+        assert result["label"].sum() > 0
+        assert (result[result["label"] == 1]["attack_type"] == "GPS_Gradual_Drift").all()
 
     def test_gps_sudden_jump(self, attack_generator):
         """Test GPS sudden jump attack."""
         result = attack_generator.gps_sudden_jump()
-        assert result['label'].sum() > 0
+        assert result["label"].sum() > 0
 
     def test_gps_jamming(self, attack_generator):
         """Test GPS jamming creates NaN values."""
         result = attack_generator.gps_jamming()
         # Should have NaN in attacked region before handling
-        assert result['x'].isna().any()
+        assert result["x"].isna().any()
 
     def test_gps_meaconing_short_data(self, short_clean_data):
         """Test GPS meaconing with short data doesn't cause negative indices."""
@@ -188,14 +194,14 @@ class TestSyntheticAttackGenerator:
     def test_imu_constant_bias(self, attack_generator):
         """Test IMU constant bias attack."""
         result = attack_generator.imu_constant_bias()
-        assert result['label'].sum() > 0
+        assert result["label"].sum() > 0
 
     def test_gyro_saturation(self, attack_generator):
         """Test gyro saturation attack."""
         result = attack_generator.gyro_saturation(max_rate=4.0)
-        attack_region = result[result['label'] == 1]
+        attack_region = result[result["label"] == 1]
         # All p values in attack region should be at saturation
-        assert (np.abs(attack_region['p']) == 4.0).all() or len(attack_region) == 0
+        assert (np.abs(attack_region["p"]) == 4.0).all() or len(attack_region) == 0
 
     # Coordinated Attack Tests
     def test_stealthy_coordinated_short_data(self, short_clean_data):
@@ -216,7 +222,7 @@ class TestSyntheticAttackGenerator:
     def test_replay_attack(self, attack_generator):
         """Test replay attack."""
         result = attack_generator.replay_attack()
-        assert result['label'].sum() > 0
+        assert result["label"].sum() > 0
 
     def test_replay_attack_short_data(self, short_clean_data):
         """Test replay attack with short data doesn't cause negative indices."""
@@ -225,12 +231,12 @@ class TestSyntheticAttackGenerator:
         result = gen.replay_attack(replay_window=100)
         assert result is not None
         # With short data, should still have some attack marker
-        assert result['label'].sum() >= 0
+        assert result["label"].sum() >= 0
 
     def test_time_delay_attack(self, attack_generator):
         """Test time delay attack."""
         result = attack_generator.time_delay_attack()
-        assert result['label'].sum() > 0
+        assert result["label"].sum() > 0
 
     # Generation Tests
     def test_generate_all_attacks(self, attack_generator):
@@ -238,8 +244,8 @@ class TestSyntheticAttackGenerator:
         attacks = attack_generator.generate_all_attacks()
         # Should have 30 attacks + clean baseline
         assert len(attacks) == 31
-        assert 'clean' in attacks
-        assert 'gps_gradual_drift' in attacks
+        assert "clean" in attacks
+        assert "gps_gradual_drift" in attacks
 
     def test_generate_all_attacks_with_nan_handling(self, attack_generator):
         """Test generating all attacks with NaN handling."""
@@ -252,19 +258,16 @@ class TestSyntheticAttackGenerator:
     def test_generate_pinn_ready_dataset(self, attack_generator):
         """Test generating PINN-ready dataset."""
         dataset = attack_generator.generate_pinn_ready_dataset()
-        assert 'label' in dataset.columns
-        assert 'attack_type' in dataset.columns
+        assert "label" in dataset.columns
+        assert "attack_type" in dataset.columns
         assert not dataset.select_dtypes(include=[np.number]).isna().any().any()
 
     def test_attack_labels_in_window_only(self, attack_generator):
         """Test that attack labels are only within attack window."""
-        result = attack_generator.gps_gradual_drift(
-            attack_start_ratio=0.3,
-            drift_duration=10.0
-        )
+        result = attack_generator.gps_gradual_drift(attack_start_ratio=0.3, drift_duration=10.0)
 
         # Get indices where label is 1
-        attack_indices = result[result['label'] == 1].index
+        attack_indices = result[result["label"] == 1].index
 
         if len(attack_indices) > 0:
             # Attack should be contiguous
@@ -275,6 +278,7 @@ class TestSyntheticAttackGenerator:
 # =============================================================================
 # SyntheticNormalGenerator Tests
 # =============================================================================
+
 
 class TestSyntheticNormalGenerator:
     """Tests for SyntheticNormalGenerator class."""
@@ -295,7 +299,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
         assert len(gen.real_normals) == 1
-        assert gen.real_normals[0]['data'].shape[1] == 24
+        assert gen.real_normals[0]["data"].shape[1] == 24
 
     def test_load_real_normals_file_not_found(self):
         """Test loading non-existent file raises error."""
@@ -320,7 +324,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data'].copy()
+        original = gen.real_normals[0]["data"].copy()
         noisy = gen.add_noise(original, noise_level=0.1)
 
         assert noisy.shape == original.shape
@@ -331,7 +335,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data']
+        original = gen.real_normals[0]["data"]
         warped = gen.time_warp(original, factor_range=(0.8, 1.2))
 
         # Shape should be different (time stretched/compressed)
@@ -342,7 +346,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data'].copy()
+        original = gen.real_normals[0]["data"].copy()
         scaled = gen.amplitude_scale(original, scale_range=(0.5, 1.5))
 
         assert scaled.shape == original.shape
@@ -352,7 +356,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data'].copy()
+        original = gen.real_normals[0]["data"].copy()
         jittered = gen.jitter(original, sigma=0.01)
 
         assert jittered.shape == original.shape
@@ -363,7 +367,7 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data'].copy()
+        original = gen.real_normals[0]["data"].copy()
         smoothed = gen.smooth(original, sigma=2)
 
         assert smoothed.shape == original.shape
@@ -373,8 +377,8 @@ class TestSyntheticNormalGenerator:
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        data1 = gen.real_normals[0]['data']
-        data2 = gen.real_normals[0]['data'] * 2  # Different data
+        data1 = gen.real_normals[0]["data"]
+        data2 = gen.real_normals[0]["data"] * 2  # Different data
 
         mixed = gen.mix_segments(data1, data2, n_segments=5)
         assert mixed.shape[0] == min(len(data1), len(data2))
@@ -405,17 +409,17 @@ class TestSyntheticNormalGenerator:
 
         assert len(synthetic) == 5
         for s in synthetic:
-            assert 'data' in s
-            assert 'base' in s
-            assert 'augmentations' in s
-            assert len(s['augmentations']) >= 2
+            assert "data" in s
+            assert "base" in s
+            assert "augmentations" in s
+            assert len(s["augmentations"]) >= 2
 
     def test_channel_dropout(self, sample_normal_data):
         """Test channel dropout."""
         gen = SyntheticNormalGenerator(seed=42, n_columns=24)
         gen.load_real_normals([sample_normal_data])
 
-        original = gen.real_normals[0]['data'].copy()
+        original = gen.real_normals[0]["data"].copy()
         dropped = gen.channel_dropout(original, dropout_prob=0.5)
 
         assert dropped.shape == original.shape
@@ -449,6 +453,7 @@ class TestExtractFeatures:
 # Integration Tests
 # =============================================================================
 
+
 class TestIntegration:
     """Integration tests combining multiple components."""
 
@@ -470,8 +475,8 @@ class TestIntegration:
         gen1.load_real_normals([sample_normal_data])
         gen2.load_real_normals([sample_normal_data])
 
-        result1 = gen1.add_noise(gen1.real_normals[0]['data'], 0.1)
-        result2 = gen2.add_noise(gen2.real_normals[0]['data'], 0.1)
+        result1 = gen1.add_noise(gen1.real_normals[0]["data"], 0.1)
+        result2 = gen2.add_noise(gen2.real_normals[0]["data"], 0.1)
 
         np.testing.assert_array_equal(result1, result2)
 

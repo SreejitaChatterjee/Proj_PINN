@@ -11,13 +11,14 @@ This approach should generalize across drones because it's
 based on RELATIVE motor comparison, not absolute patterns.
 """
 
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 from scipy.stats import kurtosis, skew
-import re
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, f1_score
 
 
 def extract_motor_deviation_features(window):
@@ -42,11 +43,11 @@ def extract_motor_deviation_features(window):
         # Basic stats
         motor_mean = motor_data.mean()
         motor_std = motor_data.std()
-        motor_energy = np.sum(motor_data ** 2)
+        motor_energy = np.sum(motor_data**2)
         motor_range = motor_data.max() - motor_data.min()
 
         # Vibration intensity (RMS)
-        motor_rms = np.sqrt(np.mean(motor_data ** 2))
+        motor_rms = np.sqrt(np.mean(motor_data**2))
 
         # Frequency content
         motor_fft_energy = 0
@@ -57,45 +58,49 @@ def extract_motor_deviation_features(window):
         # Kurtosis (peakedness - faults often have spiky signals)
         motor_kurtosis = np.mean([kurtosis(motor_data[:, c]) for c in range(n_sensors_per_motor)])
 
-        motor_stats.append({
-            'mean': motor_mean,
-            'std': motor_std,
-            'energy': motor_energy,
-            'range': motor_range,
-            'rms': motor_rms,
-            'fft_energy': motor_fft_energy,
-            'kurtosis': motor_kurtosis
-        })
+        motor_stats.append(
+            {
+                "mean": motor_mean,
+                "std": motor_std,
+                "energy": motor_energy,
+                "range": motor_range,
+                "rms": motor_rms,
+                "fft_energy": motor_fft_energy,
+                "kurtosis": motor_kurtosis,
+            }
+        )
 
     # Compute group average
-    avg_std = np.mean([m['std'] for m in motor_stats])
-    avg_energy = np.mean([m['energy'] for m in motor_stats])
-    avg_rms = np.mean([m['rms'] for m in motor_stats])
-    avg_fft = np.mean([m['fft_energy'] for m in motor_stats])
-    avg_kurtosis = np.mean([m['kurtosis'] for m in motor_stats])
+    avg_std = np.mean([m["std"] for m in motor_stats])
+    avg_energy = np.mean([m["energy"] for m in motor_stats])
+    avg_rms = np.mean([m["rms"] for m in motor_stats])
+    avg_fft = np.mean([m["fft_energy"] for m in motor_stats])
+    avg_kurtosis = np.mean([m["kurtosis"] for m in motor_stats])
 
     # DEVIATION FEATURES: How much does each motor differ from the group?
     for m in range(n_motors):
         ms = motor_stats[m]
 
         # Deviation from group average (normalized)
-        std_dev = (ms['std'] - avg_std) / (avg_std + 1e-8)
-        energy_dev = (ms['energy'] - avg_energy) / (avg_energy + 1e-8)
-        rms_dev = (ms['rms'] - avg_rms) / (avg_rms + 1e-8)
-        fft_dev = (ms['fft_energy'] - avg_fft) / (avg_fft + 1e-8)
-        kurtosis_dev = (ms['kurtosis'] - avg_kurtosis) / (np.abs(avg_kurtosis) + 1e-8)
+        std_dev = (ms["std"] - avg_std) / (avg_std + 1e-8)
+        energy_dev = (ms["energy"] - avg_energy) / (avg_energy + 1e-8)
+        rms_dev = (ms["rms"] - avg_rms) / (avg_rms + 1e-8)
+        fft_dev = (ms["fft_energy"] - avg_fft) / (avg_fft + 1e-8)
+        kurtosis_dev = (ms["kurtosis"] - avg_kurtosis) / (np.abs(avg_kurtosis) + 1e-8)
 
         features.extend([std_dev, energy_dev, rms_dev, fft_dev, kurtosis_dev])
 
     # MAX DEVIATION: The most anomalous motor (key fault indicator)
-    std_devs = [(motor_stats[m]['std'] - avg_std) / (avg_std + 1e-8) for m in range(n_motors)]
-    energy_devs = [(motor_stats[m]['energy'] - avg_energy) / (avg_energy + 1e-8) for m in range(n_motors)]
-    rms_devs = [(motor_stats[m]['rms'] - avg_rms) / (avg_rms + 1e-8) for m in range(n_motors)]
+    std_devs = [(motor_stats[m]["std"] - avg_std) / (avg_std + 1e-8) for m in range(n_motors)]
+    energy_devs = [
+        (motor_stats[m]["energy"] - avg_energy) / (avg_energy + 1e-8) for m in range(n_motors)
+    ]
+    rms_devs = [(motor_stats[m]["rms"] - avg_rms) / (avg_rms + 1e-8) for m in range(n_motors)]
 
-    features.append(max(np.abs(std_devs)))      # Max std deviation
-    features.append(max(np.abs(energy_devs)))   # Max energy deviation
-    features.append(max(np.abs(rms_devs)))      # Max RMS deviation
-    features.append(np.std(std_devs))           # Spread of deviations
+    features.append(max(np.abs(std_devs)))  # Max std deviation
+    features.append(max(np.abs(energy_devs)))  # Max energy deviation
+    features.append(max(np.abs(rms_devs)))  # Max RMS deviation
+    features.append(np.std(std_devs))  # Spread of deviations
     features.append(np.std(energy_devs))
 
     # PAIRWISE MOTOR CORRELATIONS
@@ -135,8 +140,8 @@ def extract_motor_deviation_features(window):
 
 def load_drone_data(data_dir, window_size=256, stride=128):
     X, y = [], []
-    for csv_file in sorted(Path(data_dir).glob('*.csv')):
-        match = re.search(r'_(\d{4})\.csv', csv_file.name)
+    for csv_file in sorted(Path(data_dir).glob("*.csv")):
+        match = re.search(r"_(\d{4})\.csv", csv_file.name)
         if not match:
             continue
         codes = match.group(1)
@@ -146,7 +151,7 @@ def load_drone_data(data_dir, window_size=256, stride=128):
         data = df.values.astype(np.float32)[:, :24]
 
         for i in range((len(data) - window_size) // stride + 1):
-            window = data[i * stride: i * stride + window_size]
+            window = data[i * stride : i * stride + window_size]
             X.append(extract_motor_deviation_features(window))
             y.append(is_faulty)
 
@@ -160,8 +165,8 @@ def main():
     print("\nKey Idea: Detect when ANY motor deviates from the group")
     print("This should generalize because it's RELATIVE, not ABSOLUTE\n")
 
-    bebop_dir = Path('data/PADRE_dataset/Parrot_Bebop_2/Normalized_data')
-    solo_dir = Path('data/PADRE_dataset/3DR_Solo/Normalized_data/extracted')
+    bebop_dir = Path("data/PADRE_dataset/Parrot_Bebop_2/Normalized_data")
+    solo_dir = Path("data/PADRE_dataset/3DR_Solo/Normalized_data/extracted")
 
     X_bebop, y_bebop = load_drone_data(bebop_dir)
     X_solo, y_solo = load_drone_data(solo_dir)
@@ -175,8 +180,9 @@ def main():
     print("TEST 1: Train on Bebop -> Test on Solo")
     print("=" * 70)
 
-    clf = RandomForestClassifier(n_estimators=200, class_weight='balanced',
-                                  random_state=42, n_jobs=-1, max_depth=15)
+    clf = RandomForestClassifier(
+        n_estimators=200, class_weight="balanced", random_state=42, n_jobs=-1, max_depth=15
+    )
     clf.fit(X_bebop, y_bebop)
     y_pred = clf.predict(X_solo)
 
@@ -193,8 +199,9 @@ def main():
     print("TEST 2: Train on Solo -> Test on Bebop")
     print("=" * 70)
 
-    clf = RandomForestClassifier(n_estimators=200, class_weight='balanced',
-                                  random_state=42, n_jobs=-1, max_depth=15)
+    clf = RandomForestClassifier(
+        n_estimators=200, class_weight="balanced", random_state=42, n_jobs=-1, max_depth=15
+    )
     clf.fit(X_solo, y_solo)
     y_pred = clf.predict(X_bebop)
 
@@ -213,11 +220,14 @@ def main():
 
     clf.fit(X_bebop, y_bebop)
     feature_names = (
-        [f"Motor{m}_{stat}_dev" for m in ['A','B','C','D']
-         for stat in ['std', 'energy', 'rms', 'fft', 'kurtosis']] +
-        ['max_std_dev', 'max_energy_dev', 'max_rms_dev', 'std_spread', 'energy_spread'] +
-        [f"corr_{p}" for p in ['AB', 'AC', 'AD', 'BC', 'BD', 'CD']] +
-        ['min_corr', 'corr_spread', 'asymm_AC', 'asymm_BD']
+        [
+            f"Motor{m}_{stat}_dev"
+            for m in ["A", "B", "C", "D"]
+            for stat in ["std", "energy", "rms", "fft", "kurtosis"]
+        ]
+        + ["max_std_dev", "max_energy_dev", "max_rms_dev", "std_spread", "energy_spread"]
+        + [f"corr_{p}" for p in ["AB", "AC", "AD", "BC", "BD", "CD"]]
+        + ["min_corr", "corr_spread", "asymm_AC", "asymm_BD"]
     )
 
     importances = clf.feature_importances_

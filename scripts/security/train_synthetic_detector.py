@@ -17,8 +17,8 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
 
 try:
@@ -26,6 +26,7 @@ try:
     from pinn_dynamics.training import Trainer
 except ImportError:
     import sys
+
     sys.path.insert(0, str(Path(__file__).parent.parent.parent))
     from pinn_dynamics import QuadrotorPINN
     from pinn_dynamics.training import Trainer
@@ -54,11 +55,7 @@ def load_euroc_data(data_path: Path) -> pd.DataFrame:
 def normalize_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Normalize column names to standard format."""
     # Map roll/pitch/yaw to phi/theta/psi
-    column_map = {
-        "roll": "phi",
-        "pitch": "theta",
-        "yaw": "psi"
-    }
+    column_map = {"roll": "phi", "pitch": "theta", "yaw": "psi"}
 
     for old, new in column_map.items():
         if old in df.columns and new not in df.columns:
@@ -99,7 +96,9 @@ def prepare_sequences(df: pd.DataFrame, seq_len: int = 1):
     return X, y
 
 
-def split_by_sequence(df: pd.DataFrame, test_ratio: float = 0.2, val_ratio: float = 0.2, seed: int = 42):
+def split_by_sequence(
+    df: pd.DataFrame, test_ratio: float = 0.2, val_ratio: float = 0.2, seed: int = 42
+):
     """
     Split data by flight sequence to prevent temporal leakage.
 
@@ -126,8 +125,8 @@ def split_by_sequence(df: pd.DataFrame, test_ratio: float = 0.2, val_ratio: floa
     n_train = n_seqs - n_test - n_val
 
     train_seqs = list(sequences[:n_train])
-    val_seqs = list(sequences[n_train:n_train + n_val])
-    test_seqs = list(sequences[n_train + n_val:])
+    val_seqs = list(sequences[n_train : n_train + n_val])
+    test_seqs = list(sequences[n_train + n_val :])
 
     train_df = df[df["sequence"].isin(train_seqs)]
     val_df = df[df["sequence"].isin(val_seqs)]
@@ -165,16 +164,10 @@ def train_pinn_detector(
 
     # DataLoaders
     train_loader = DataLoader(
-        TensorDataset(X_train_t, y_train_t),
-        batch_size=batch_size,
-        shuffle=True,
-        num_workers=0
+        TensorDataset(X_train_t, y_train_t), batch_size=batch_size, shuffle=True, num_workers=0
     )
     val_loader = DataLoader(
-        TensorDataset(X_val_t, y_val_t),
-        batch_size=batch_size,
-        shuffle=False,
-        num_workers=0
+        TensorDataset(X_val_t, y_val_t), batch_size=batch_size, shuffle=False, num_workers=0
     )
 
     # Model
@@ -239,20 +232,13 @@ def compute_detection_threshold(
 
 def main():
     parser = argparse.ArgumentParser(description="Train synthetic attack detector")
-    parser.add_argument("--data", type=str, default="data/euroc",
-                        help="Path to EuRoC data")
-    parser.add_argument("--output", type=str, default="models/security",
-                        help="Output directory")
-    parser.add_argument("--epochs", type=int, default=100,
-                        help="Training epochs")
-    parser.add_argument("--batch-size", type=int, default=64,
-                        help="Batch size")
-    parser.add_argument("--lr", type=float, default=1e-3,
-                        help="Learning rate")
-    parser.add_argument("--val-split", type=float, default=0.2,
-                        help="Validation split ratio")
-    parser.add_argument("--seed", type=int, default=42,
-                        help="Random seed")
+    parser.add_argument("--data", type=str, default="data/euroc", help="Path to EuRoC data")
+    parser.add_argument("--output", type=str, default="models/security", help="Output directory")
+    parser.add_argument("--epochs", type=int, default=100, help="Training epochs")
+    parser.add_argument("--batch-size", type=int, default=64, help="Batch size")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
+    parser.add_argument("--val-split", type=float, default=0.2, help="Validation split ratio")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
     args = parser.parse_args()
 
     # Setup
@@ -300,9 +286,7 @@ def main():
             X, y, test_size=0.2, random_state=args.seed
         )
         X_train, X_val, y_train, y_val = train_test_split(
-            X_trainval, y_trainval,
-            test_size=args.val_split / (1 - 0.2),
-            random_state=args.seed
+            X_trainval, y_trainval, test_size=args.val_split / (1 - 0.2), random_state=args.seed
         )
         sequence_split_info = None
 
@@ -327,12 +311,13 @@ def main():
     X_test_scaled = scaler_X.transform(X_test)
     y_test_scaled = scaler_y.transform(y_test)
 
-
     # Train model
     print("\n[3/5] Training PINN detector...")
     model, history = train_pinn_detector(
-        X_train_scaled, y_train_scaled,
-        X_val_scaled, y_val_scaled,
+        X_train_scaled,
+        y_train_scaled,
+        X_val_scaled,
+        y_val_scaled,
         epochs=args.epochs,
         batch_size=args.batch_size,
         lr=args.lr,
@@ -342,15 +327,13 @@ def main():
     print("\n[4/5] Computing detection threshold on validation set...")
     device = "cuda" if torch.cuda.is_available() else "cpu"
     threshold, mean_err, std_err = compute_detection_threshold(
-        model, X_val_scaled, y_val_scaled, scaler_y,
-        percentile=99.0, device=device
+        model, X_val_scaled, y_val_scaled, scaler_y, percentile=99.0, device=device
     )
 
     # Evaluate on held-out TEST set (final unbiased estimate)
     print("\n[4.5/5] Evaluating on held-out test set...")
     test_threshold, test_mean_err, test_std_err = compute_detection_threshold(
-        model, X_test_scaled, y_test_scaled, scaler_y,
-        percentile=99.0, device=device
+        model, X_test_scaled, y_test_scaled, scaler_y, percentile=99.0, device=device
     )
     print(f"  Test mean error: {test_mean_err:.4f}")
     print(f"  Test std error:  {test_std_err:.4f}")

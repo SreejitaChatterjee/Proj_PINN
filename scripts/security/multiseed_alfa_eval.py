@@ -10,21 +10,21 @@ Usage:
 
 import argparse
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
-    roc_auc_score,
+    confusion_matrix,
+    f1_score,
     precision_score,
     recall_score,
-    f1_score,
-    confusion_matrix,
+    roc_auc_score,
 )
+from sklearn.preprocessing import StandardScaler
 
 
 class SimpleAnomalyDetector(nn.Module):
@@ -66,13 +66,15 @@ def load_alfa_data(data_dir: Path):
         state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
         X = df[state_cols].values
 
-        flights.append({
-            "name": csv_file.stem,
-            "X": X,
-            "label": label,
-            "fault_type": fault_type,
-            "n_samples": len(X),
-        })
+        flights.append(
+            {
+                "name": csv_file.stem,
+                "X": X,
+                "label": label,
+                "fault_type": fault_type,
+                "n_samples": len(X),
+            }
+        )
 
     return flights
 
@@ -127,7 +129,7 @@ def run_lofo_cv(flights, seed, device="cpu"):
     results = []
 
     for i, val_flight in enumerate(flights):
-        train_flights = flights[:i] + flights[i + 1:]
+        train_flights = flights[:i] + flights[i + 1 :]
 
         # Skip if no normal flights in training
         n_normal = sum(1 for f in train_flights if f["label"] == 0)
@@ -142,13 +144,15 @@ def run_lofo_cv(flights, seed, device="cpu"):
         flight_pred = pred.mean()  # Average prediction
         flight_true = val_flight["label"]
 
-        results.append({
-            "flight": val_flight["name"],
-            "fault_type": val_flight["fault_type"],
-            "true_label": flight_true,
-            "pred_score": float(flight_pred),
-            "n_samples": val_flight["n_samples"],
-        })
+        results.append(
+            {
+                "flight": val_flight["name"],
+                "fault_type": val_flight["fault_type"],
+                "true_label": flight_true,
+                "pred_score": float(flight_pred),
+                "n_samples": val_flight["n_samples"],
+            }
+        )
 
     return results
 
@@ -189,12 +193,16 @@ def compute_metrics(results, threshold=0.5):
 
 def main():
     parser = argparse.ArgumentParser(description="Multi-seed ALFA evaluation")
-    parser.add_argument("--data", type=str, default="data/alfa/preprocessed",
-                        help="Path to preprocessed ALFA data")
-    parser.add_argument("--seeds", type=int, default=5,
-                        help="Number of random seeds to test")
-    parser.add_argument("--output", type=str, default="research/security/alfa_multiseed_results.json",
-                        help="Output file")
+    parser.add_argument(
+        "--data", type=str, default="data/alfa/preprocessed", help="Path to preprocessed ALFA data"
+    )
+    parser.add_argument("--seeds", type=int, default=5, help="Number of random seeds to test")
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="research/security/alfa_multiseed_results.json",
+        help="Output file",
+    )
     args = parser.parse_args()
 
     data_dir = Path(args.data)
@@ -266,9 +274,13 @@ def main():
     print("\n" + "=" * 60)
     print("AGGREGATE RESULTS")
     print("=" * 60)
-    print(f"AUROC: {summary['aggregate']['auroc_mean']:.3f} +/- {summary['aggregate']['auroc_std']:.3f}")
+    print(
+        f"AUROC: {summary['aggregate']['auroc_mean']:.3f} +/- {summary['aggregate']['auroc_std']:.3f}"
+    )
     print(f"F1:    {summary['aggregate']['f1_mean']:.3f} +/- {summary['aggregate']['f1_std']:.3f}")
-    print(f"FPR:   {summary['aggregate']['fpr_mean']:.3f} +/- {summary['aggregate']['fpr_std']:.3f}")
+    print(
+        f"FPR:   {summary['aggregate']['fpr_mean']:.3f} +/- {summary['aggregate']['fpr_std']:.3f}"
+    )
     print(f"\nResults saved to {output_path}")
 
 

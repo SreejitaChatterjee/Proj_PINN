@@ -10,8 +10,8 @@ Usage:
 """
 
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -107,15 +107,17 @@ def load_flight_with_temporal_labels(flight_dir: Path) -> pd.DataFrame:
     pose_df["z"] = pose_df["pose.position.z"]
 
     # Convert quaternion to Euler
-    euler_angles = np.array([
-        quaternion_to_euler(
-            row["pose.orientation.x"],
-            row["pose.orientation.y"],
-            row["pose.orientation.z"],
-            row["pose.orientation.w"],
-        )
-        for _, row in pose_df.iterrows()
-    ])
+    euler_angles = np.array(
+        [
+            quaternion_to_euler(
+                row["pose.orientation.x"],
+                row["pose.orientation.y"],
+                row["pose.orientation.z"],
+                row["pose.orientation.w"],
+            )
+            for _, row in pose_df.iterrows()
+        ]
+    )
     pose_df["phi"] = euler_angles[:, 0]
     pose_df["theta"] = euler_angles[:, 1]
     pose_df["psi"] = euler_angles[:, 2]
@@ -178,7 +180,9 @@ def load_flight_with_temporal_labels(flight_dir: Path) -> pd.DataFrame:
             rc_df["timestamp"] = rc_df["%time"] / 1e9
             pose_df = pd.merge_asof(
                 pose_df.sort_values("timestamp"),
-                rc_df[["timestamp", "thrust", "torque_x", "torque_y", "torque_z"]].sort_values("timestamp"),
+                rc_df[["timestamp", "thrust", "torque_x", "torque_y", "torque_z"]].sort_values(
+                    "timestamp"
+                ),
                 on="timestamp",
                 direction="nearest",
                 tolerance=0.1,
@@ -195,7 +199,21 @@ def load_flight_with_temporal_labels(flight_dir: Path) -> pd.DataFrame:
         pose_df["torque_z"] = 0
 
     # Select columns
-    state_cols = ["timestamp", "x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
+    state_cols = [
+        "timestamp",
+        "x",
+        "y",
+        "z",
+        "phi",
+        "theta",
+        "psi",
+        "p",
+        "q",
+        "r",
+        "vx",
+        "vy",
+        "vz",
+    ]
     control_cols = ["thrust", "torque_x", "torque_y", "torque_z"]
     final_df = pose_df[state_cols + control_cols].copy()
     final_df = final_df.dropna()

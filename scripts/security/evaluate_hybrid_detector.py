@@ -13,16 +13,16 @@ Usage:
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-from pinn_dynamics import QuadrotorPINN, Predictor
+from pinn_dynamics import Predictor, QuadrotorPINN
 from pinn_dynamics.security.physics_consistency_detector import HybridAttackDetector
 
 sys.path.insert(0, str(Path(__file__).parent))
@@ -227,15 +227,40 @@ def main():
     print()
 
     categories = {
-        "GPS": ["gps_gradual_drift", "gps_sudden_jump", "gps_oscillating", "gps_meaconing",
-                "gps_jamming", "gps_freeze", "gps_multipath"],
-        "IMU": ["imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-                "imu_noise_injection", "imu_scale_factor", "gyro_saturation", "accel_saturation"],
+        "GPS": [
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_jamming",
+            "gps_freeze",
+            "gps_multipath",
+        ],
+        "IMU": [
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            "gyro_saturation",
+            "accel_saturation",
+        ],
         "Mag/Baro": ["magnetometer_spoofing", "barometer_spoofing"],
-        "Actuator": ["actuator_stuck", "actuator_degraded", "control_hijack", "thrust_manipulation"],
+        "Actuator": [
+            "actuator_stuck",
+            "actuator_degraded",
+            "control_hijack",
+            "thrust_manipulation",
+        ],
         "Coordinated": ["coordinated_gps_imu", "stealthy_coordinated"],
         "Temporal": ["replay_attack", "time_delay", "sensor_dropout"],
-        "Stealth": ["adaptive_attack", "intermittent_attack", "slow_ramp", "resonance_attack", "false_data_injection"],
+        "Stealth": [
+            "adaptive_attack",
+            "intermittent_attack",
+            "slow_ramp",
+            "resonance_attack",
+            "false_data_injection",
+        ],
     }
 
     for attack_name, attack_data in attacks.items():
@@ -245,11 +270,13 @@ def main():
         if attack_name == "clean":
             print(f"  {attack_name:30s} | FPR: {metrics['fpr']*100:5.1f}% | (baseline)")
         else:
-            print(f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
-                  f"FPR: {metrics['fpr']*100:5.1f}% | "
-                  f"V:{metrics['triggered_by']['velocity']:4d} "
-                  f"R:{metrics['triggered_by']['rollout']:4d} "
-                  f"T:{metrics['triggered_by']['temporal']:4d}")
+            print(
+                f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
+                f"FPR: {metrics['fpr']*100:5.1f}% | "
+                f"V:{metrics['triggered_by']['velocity']:4d} "
+                f"R:{metrics['triggered_by']['rollout']:4d} "
+                f"T:{metrics['triggered_by']['temporal']:4d}"
+            )
 
     # Category results
     print("\n[5/5] Computing aggregate metrics...")
@@ -277,8 +304,11 @@ def main():
 
     overall_precision = all_tp / (all_tp + all_fp) if (all_tp + all_fp) > 0 else 0
     overall_recall = all_tp / (all_tp + all_fn) if (all_tp + all_fn) > 0 else 0
-    overall_f1 = 2 * overall_precision * overall_recall / (overall_precision + overall_recall) \
-        if (overall_precision + overall_recall) > 0 else 0
+    overall_f1 = (
+        2 * overall_precision * overall_recall / (overall_precision + overall_recall)
+        if (overall_precision + overall_recall) > 0
+        else 0
+    )
 
     clean_fpr = results["clean"]["fpr"] if "clean" in results else 0
 
@@ -303,15 +333,23 @@ def main():
 
     # Attack-specific breakdown
     print("\n** KEY ATTACK PERFORMANCE **")
-    key_attacks = ["gps_gradual_drift", "gps_sudden_jump", "replay_attack",
-                   "coordinated_gps_imu", "stealthy_coordinated", "thrust_manipulation"]
+    key_attacks = [
+        "gps_gradual_drift",
+        "gps_sudden_jump",
+        "replay_attack",
+        "coordinated_gps_imu",
+        "stealthy_coordinated",
+        "thrust_manipulation",
+    ]
     for attack_name in key_attacks:
         if attack_name in results:
             r = results[attack_name]
-            print(f"  {attack_name:25s}: {r['recall']*100:5.1f}% recall | "
-                  f"V:{r['triggered_by']['velocity']:4d} "
-                  f"R:{r['triggered_by']['rollout']:4d} "
-                  f"T:{r['triggered_by']['temporal']:4d}")
+            print(
+                f"  {attack_name:25s}: {r['recall']*100:5.1f}% recall | "
+                f"V:{r['triggered_by']['velocity']:4d} "
+                f"R:{r['triggered_by']['rollout']:4d} "
+                f"T:{r['triggered_by']['temporal']:4d}"
+            )
 
     # Save results
     summary = {

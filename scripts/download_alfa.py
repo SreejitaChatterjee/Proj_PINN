@@ -6,23 +6,25 @@ Citation: Keipour et al., "ALFA: A dataset for UAV fault and anomaly detection,"
 
 This script documents the exact steps to reproduce the ALFA evaluation.
 """
+
+import hashlib
+import json
 import os
 import sys
-import json
-import hashlib
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Configuration
 ALFA_URL = "https://theairlab.org/alfa-dataset/"
 DATA_DIR = Path("data/alfa")
 PROCESSED_DIR = DATA_DIR / "processed"
 
+
 def print_instructions():
     """Print manual download instructions."""
-    print("="*70)
+    print("=" * 70)
     print("ALFA DATASET DOWNLOAD INSTRUCTIONS")
-    print("="*70)
+    print("=" * 70)
     print()
     print("The ALFA dataset must be downloaded manually from CMU AirLab.")
     print()
@@ -52,7 +54,8 @@ def print_instructions():
     print("  - Elevator Stuck: 2 flights")
     print("  - Unknown Fault: 1 flight")
     print()
-    print("="*70)
+    print("=" * 70)
+
 
 def check_data_exists():
     """Check if ALFA data exists."""
@@ -64,6 +67,7 @@ def check_data_exists():
     print("ALFA data NOT found")
     return False
 
+
 def create_placeholder():
     """Create placeholder structure."""
     DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -71,7 +75,8 @@ def create_placeholder():
 
     # Create README
     readme = DATA_DIR / "README.md"
-    readme.write_text("""# ALFA Dataset
+    readme.write_text(
+        """# ALFA Dataset
 
 **Status:** NOT DOWNLOADED
 
@@ -98,9 +103,11 @@ def create_placeholder():
 - 47 flight recordings (ROS bags)
 - 10 normal + 37 fault flights
 - ~5,506 samples after preprocessing
-""")
+"""
+    )
 
     print(f"Created placeholder at {DATA_DIR}")
+
 
 def create_reproducibility_config():
     """Create config for reproducible evaluation."""
@@ -111,27 +118,26 @@ def create_reproducibility_config():
         "citation": "Keipour et al., IJRR 2021",
         "preprocessing": {
             "script": "scripts/preprocess_alfa.py",
-            "output": "data/alfa/processed/alfa_processed.csv"
+            "output": "data/alfa/processed/alfa_processed.csv",
         },
         "evaluation": {
             "random_seed": 42,
             "cv_method": "leave-one-flight-out",
             "n_flights": 47,
             "contamination": 0.05,
-            "threshold_method": "grid_search_balanced_accuracy"
+            "threshold_method": "grid_search_balanced_accuracy",
         },
-        "hardware": {
-            "note": "Document your hardware here when running evaluation"
-        },
-        "created": datetime.now().isoformat()
+        "hardware": {"note": "Document your hardware here when running evaluation"},
+        "created": datetime.now().isoformat(),
     }
 
     config_path = DATA_DIR / "reproducibility_config.json"
-    with open(config_path, 'w') as f:
+    with open(config_path, "w") as f:
         json.dump(config, f, indent=2)
 
     print(f"Created reproducibility config at {config_path}")
     return config
+
 
 def main():
     print_instructions()
@@ -145,6 +151,7 @@ def main():
 
     print("\nALFA data found. Ready for preprocessing.")
     return True
+
 
 if __name__ == "__main__":
     success = main()

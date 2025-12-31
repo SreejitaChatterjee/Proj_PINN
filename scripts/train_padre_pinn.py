@@ -19,14 +19,14 @@ Usage:
 import argparse
 import json
 import sys
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset, random_split
-import pandas as pd
 
 # Add project root to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -39,48 +39,53 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Train PINN on PADRE dataset")
 
     # Data
-    parser.add_argument("--data_dir", type=str,
-                        default="data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
-                        help="Path to PADRE Normalized_data folder")
-    parser.add_argument("--precomputed", type=str,
-                        default="data/PADRE_PINN_converted/padre_pinn_data.npz",
-                        help="Path to precomputed .npz file (faster loading)")
-    parser.add_argument("--window_size", type=int, default=128,
-                        help="Window size for training samples")
-    parser.add_argument("--stride", type=int, default=64,
-                        help="Stride between windows")
+    parser.add_argument(
+        "--data_dir",
+        type=str,
+        default="data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
+        help="Path to PADRE Normalized_data folder",
+    )
+    parser.add_argument(
+        "--precomputed",
+        type=str,
+        default="data/PADRE_PINN_converted/padre_pinn_data.npz",
+        help="Path to precomputed .npz file (faster loading)",
+    )
+    parser.add_argument(
+        "--window_size", type=int, default=128, help="Window size for training samples"
+    )
+    parser.add_argument("--stride", type=int, default=64, help="Stride between windows")
 
     # Model architecture
-    parser.add_argument("--hidden_size", type=int, default=256,
-                        help="Hidden layer width")
-    parser.add_argument("--num_layers", type=int, default=5,
-                        help="Number of hidden layers")
-    parser.add_argument("--dropout", type=float, default=0.1,
-                        help="Dropout rate")
+    parser.add_argument("--hidden_size", type=int, default=256, help="Hidden layer width")
+    parser.add_argument("--num_layers", type=int, default=5, help="Number of hidden layers")
+    parser.add_argument("--dropout", type=float, default=0.1, help="Dropout rate")
 
     # Training
-    parser.add_argument("--epochs", type=int, default=100,
-                        help="Number of training epochs")
-    parser.add_argument("--batch_size", type=int, default=64,
-                        help="Batch size")
-    parser.add_argument("--lr", type=float, default=1e-3,
-                        help="Learning rate")
-    parser.add_argument("--weight_decay", type=float, default=1e-5,
-                        help="Weight decay for regularization")
+    parser.add_argument("--epochs", type=int, default=100, help="Number of training epochs")
+    parser.add_argument("--batch_size", type=int, default=64, help="Batch size")
+    parser.add_argument("--lr", type=float, default=1e-3, help="Learning rate")
+    parser.add_argument(
+        "--weight_decay", type=float, default=1e-5, help="Weight decay for regularization"
+    )
 
     # Loss weights
-    parser.add_argument("--physics_weight", type=float, default=5.0,
-                        help="Weight for physics loss")
-    parser.add_argument("--temporal_weight", type=float, default=2.0,
-                        help="Weight for temporal smoothness loss")
-    parser.add_argument("--stability_weight", type=float, default=1.0,
-                        help="Weight for stability loss")
+    parser.add_argument("--physics_weight", type=float, default=5.0, help="Weight for physics loss")
+    parser.add_argument(
+        "--temporal_weight", type=float, default=2.0, help="Weight for temporal smoothness loss"
+    )
+    parser.add_argument(
+        "--stability_weight", type=float, default=1.0, help="Weight for stability loss"
+    )
 
     # Output
-    parser.add_argument("--output_dir", type=str, default="models/padre_pinn",
-                        help="Output directory for model and results")
-    parser.add_argument("--seed", type=int, default=42,
-                        help="Random seed")
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default="models/padre_pinn",
+        help="Output directory for model and results",
+    )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
 
     return parser.parse_args()
 
@@ -104,9 +109,9 @@ def denormalize_padre_data(data, accel_range_g=16, gyro_range_dps=1000):
     for motor_idx in range(4):
         base = motor_idx * 6
         # Accelerometer (columns 0, 1, 2 for each motor)
-        data_out[:, base:base+3] *= accel_range_g * g  # Convert to m/s²
+        data_out[:, base : base + 3] *= accel_range_g * g  # Convert to m/s²
         # Gyroscope (columns 3, 4, 5 for each motor)
-        data_out[:, base+3:base+6] *= gyro_range_dps * (np.pi / 180)  # Convert to rad/s
+        data_out[:, base + 3 : base + 6] *= gyro_range_dps * (np.pi / 180)  # Convert to rad/s
 
     return data_out
 
@@ -115,9 +120,9 @@ def load_precomputed_data(npz_path):
     """Load precomputed PADRE-PINN data from .npz file."""
     print(f"Loading precomputed data from {npz_path}")
     data = np.load(npz_path)
-    X = data['X']
-    Y = data['Y']
-    labels = data['labels']
+    X = data["X"]
+    Y = data["Y"]
+    labels = data["labels"]
     print(f"Loaded {len(X)} samples")
     print(f"  X shape: {X.shape}")
     print(f"  Y shape: {Y.shape}")
@@ -126,7 +131,9 @@ def load_precomputed_data(npz_path):
     return X, Y, labels
 
 
-def load_padre_data(data_dir, converter, window_size, stride, max_files=None, max_samples_per_file=10000):
+def load_padre_data(
+    data_dir, converter, window_size, stride, max_files=None, max_samples_per_file=10000
+):
     """Load and convert PADRE dataset."""
     data_path = Path(data_dir)
     csv_files = sorted(data_path.glob("*.csv"))
@@ -146,16 +153,17 @@ def load_padre_data(data_dir, converter, window_size, stride, max_files=None, ma
         try:
             # Parse fault label from filename
             import re
-            match = re.search(r'normalized_(\d{4})\.csv$', csv_file.name)
+
+            match = re.search(r"normalized_(\d{4})\.csv$", csv_file.name)
             if not match:
                 continue
 
             codes = match.group(1)
             motor_faults = {
-                'A': int(codes[0]),
-                'B': int(codes[1]),
-                'C': int(codes[2]),
-                'D': int(codes[3])
+                "A": int(codes[0]),
+                "B": int(codes[1]),
+                "C": int(codes[2]),
+                "D": int(codes[3]),
             }
 
             # Binary label: 0 = normal, 1 = any fault
@@ -175,12 +183,14 @@ def load_padre_data(data_dir, converter, window_size, stride, max_files=None, ma
                 all_Y.append(Y[i])
                 all_labels.append(is_faulty)
 
-            file_info.append({
-                'file': csv_file.name,
-                'motor_faults': motor_faults,
-                'is_faulty': is_faulty,
-                'n_windows': len(X)
-            })
+            file_info.append(
+                {
+                    "file": csv_file.name,
+                    "motor_faults": motor_faults,
+                    "is_faulty": is_faulty,
+                    "n_windows": len(X),
+                }
+            )
 
             print(f"  {csv_file.name}: {len(X)} windows, fault={is_faulty}")
 
@@ -198,7 +208,9 @@ def load_padre_data(data_dir, converter, window_size, stride, max_files=None, ma
     return X, Y, labels, file_info
 
 
-def create_data_loaders(X, Y, labels, batch_size, val_split=0.15, test_split=0.15, seed=42, preflattened=False):
+def create_data_loaders(
+    X, Y, labels, batch_size, val_split=0.15, test_split=0.15, seed=42, preflattened=False
+):
     """Create train/val/test data loaders."""
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -237,17 +249,19 @@ def create_data_loaders(X, Y, labels, batch_size, val_split=0.15, test_split=0.1
     n_train = n_total - n_val - n_test
 
     train_set, val_set, test_set = random_split(
-        dataset, [n_train, n_val, n_test],
-        generator=torch.Generator().manual_seed(seed)
+        dataset, [n_train, n_val, n_test], generator=torch.Generator().manual_seed(seed)
     )
 
     # Create loaders
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True,
-                              num_workers=0, pin_memory=True)
-    val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False,
-                            num_workers=0, pin_memory=True)
-    test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False,
-                             num_workers=0, pin_memory=True)
+    train_loader = DataLoader(
+        train_set, batch_size=batch_size, shuffle=True, num_workers=0, pin_memory=True
+    )
+    val_loader = DataLoader(
+        val_set, batch_size=batch_size, shuffle=False, num_workers=0, pin_memory=True
+    )
+    test_loader = DataLoader(
+        test_set, batch_size=batch_size, shuffle=False, num_workers=0, pin_memory=True
+    )
 
     print(f"Train: {n_train}, Val: {n_val}, Test: {n_test}")
 
@@ -275,24 +289,26 @@ def train_epoch(model, loader, optimizer, criterion, device, weights):
 
         # Physics loss
         physics_loss = torch.tensor(0.0, device=device)
-        if weights.get('physics', 0) > 0:
+        if weights.get("physics", 0) > 0:
             physics_loss = model.physics_loss(X, output)
 
         # Temporal smoothness
         temporal_loss = torch.tensor(0.0, device=device)
-        if weights.get('temporal', 0) > 0:
+        if weights.get("temporal", 0) > 0:
             temporal_loss = model.temporal_smoothness_loss(X, output)
 
         # Stability
         stability_loss = torch.tensor(0.0, device=device)
-        if weights.get('stability', 0) > 0:
+        if weights.get("stability", 0) > 0:
             stability_loss = model.stability_loss(X, output)
 
         # Total loss
-        loss = (data_loss
-                + weights.get('physics', 0) * physics_loss
-                + weights.get('temporal', 0) * temporal_loss
-                + weights.get('stability', 0) * stability_loss)
+        loss = (
+            data_loss
+            + weights.get("physics", 0) * physics_loss
+            + weights.get("temporal", 0) * temporal_loss
+            + weights.get("stability", 0) * stability_loss
+        )
 
         # Backward
         loss.backward()
@@ -305,9 +321,9 @@ def train_epoch(model, loader, optimizer, criterion, device, weights):
         n_batches += 1
 
     return {
-        'total': total_loss / n_batches,
-        'data': data_loss_sum / n_batches,
-        'physics': physics_loss_sum / n_batches
+        "total": total_loss / n_batches,
+        "data": data_loss_sum / n_batches,
+        "physics": physics_loss_sum / n_batches,
     }
 
 
@@ -343,16 +359,16 @@ def validate(model, loader, criterion, device):
     faulty_residuals = all_residuals[all_labels == 1]
 
     metrics = {
-        'loss': total_loss / n_batches,
-        'normal_residual_mean': normal_residuals.mean() if len(normal_residuals) > 0 else 0,
-        'faulty_residual_mean': faulty_residuals.mean() if len(faulty_residuals) > 0 else 0,
+        "loss": total_loss / n_batches,
+        "normal_residual_mean": normal_residuals.mean() if len(normal_residuals) > 0 else 0,
+        "faulty_residual_mean": faulty_residuals.mean() if len(faulty_residuals) > 0 else 0,
     }
 
     # Separation ratio (higher = better fault detection)
     if len(normal_residuals) > 0 and len(faulty_residuals) > 0:
-        metrics['separation_ratio'] = faulty_residuals.mean() / (normal_residuals.mean() + 1e-8)
+        metrics["separation_ratio"] = faulty_residuals.mean() / (normal_residuals.mean() + 1e-8)
     else:
-        metrics['separation_ratio'] = 1.0
+        metrics["separation_ratio"] = 1.0
 
     return metrics
 
@@ -364,7 +380,7 @@ def main():
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
 
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
 
     # Create output directory
@@ -380,13 +396,13 @@ def main():
         Jyy=0.005,
         Jzz=0.009,
         complementary_alpha=0.98,
-        drag_coeff=0.01
+        drag_coeff=0.01,
     )
 
     # Load data
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Loading PADRE dataset...")
-    print("="*60)
+    print("=" * 60)
 
     precomputed_path = Path(args.precomputed)
     if precomputed_path.exists():
@@ -397,29 +413,26 @@ def main():
         print(f"Precomputed file not found at {precomputed_path}")
         print("Converting from raw data (slower)...")
         X, Y, labels, file_info = load_padre_data(
-            args.data_dir, converter,
-            args.window_size, args.stride
+            args.data_dir, converter, args.window_size, args.stride
         )
         preflattened = False
 
     # Create data loaders
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Creating data loaders...")
-    print("="*60)
+    print("=" * 60)
 
     train_loader, val_loader, test_loader = create_data_loaders(
         X, Y, labels, args.batch_size, seed=args.seed, preflattened=preflattened
     )
 
     # Create model
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Creating model...")
-    print("="*60)
+    print("=" * 60)
 
     model = QuadrotorPINN(
-        hidden_size=args.hidden_size,
-        num_layers=args.num_layers,
-        dropout=args.dropout
+        hidden_size=args.hidden_size, num_layers=args.num_layers, dropout=args.dropout
     ).to(device)
 
     n_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -427,11 +440,7 @@ def main():
     print(f"Parameters: {n_params:,}")
 
     # Optimizer and scheduler
-    optimizer = torch.optim.AdamW(
-        model.parameters(),
-        lr=args.lr,
-        weight_decay=args.weight_decay
-    )
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer, T_max=args.epochs, eta_min=1e-6
     )
@@ -439,26 +448,21 @@ def main():
 
     # Loss weights
     weights = {
-        'physics': args.physics_weight,
-        'temporal': args.temporal_weight,
-        'stability': args.stability_weight
+        "physics": args.physics_weight,
+        "temporal": args.temporal_weight,
+        "stability": args.stability_weight,
     }
 
     print(f"\nLoss weights: {weights}")
 
     # Training loop
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Starting training...")
-    print("="*60)
+    print("=" * 60)
 
-    history = {
-        'train_loss': [],
-        'val_loss': [],
-        'separation_ratio': [],
-        'lr': []
-    }
+    history = {"train_loss": [], "val_loss": [], "separation_ratio": [], "lr": []}
 
-    best_val_loss = float('inf')
+    best_val_loss = float("inf")
     best_separation = 0
 
     for epoch in range(args.epochs):
@@ -473,47 +477,55 @@ def main():
         current_lr = scheduler.get_last_lr()[0]
 
         # Record history
-        history['train_loss'].append(train_metrics['total'])
-        history['val_loss'].append(val_metrics['loss'])
-        history['separation_ratio'].append(val_metrics['separation_ratio'])
-        history['lr'].append(current_lr)
+        history["train_loss"].append(train_metrics["total"])
+        history["val_loss"].append(val_metrics["loss"])
+        history["separation_ratio"].append(val_metrics["separation_ratio"])
+        history["lr"].append(current_lr)
 
         # Save best model
-        if val_metrics['loss'] < best_val_loss:
-            best_val_loss = val_metrics['loss']
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'optimizer_state_dict': optimizer.state_dict(),
-                'val_loss': best_val_loss,
-                'config': vars(args)
-            }, output_dir / 'best_model.pth')
+        if val_metrics["loss"] < best_val_loss:
+            best_val_loss = val_metrics["loss"]
+            torch.save(
+                {
+                    "epoch": epoch,
+                    "model_state_dict": model.state_dict(),
+                    "optimizer_state_dict": optimizer.state_dict(),
+                    "val_loss": best_val_loss,
+                    "config": vars(args),
+                },
+                output_dir / "best_model.pth",
+            )
 
-        if val_metrics['separation_ratio'] > best_separation:
-            best_separation = val_metrics['separation_ratio']
-            torch.save({
-                'epoch': epoch,
-                'model_state_dict': model.state_dict(),
-                'separation_ratio': best_separation,
-                'config': vars(args)
-            }, output_dir / 'best_separation_model.pth')
+        if val_metrics["separation_ratio"] > best_separation:
+            best_separation = val_metrics["separation_ratio"]
+            torch.save(
+                {
+                    "epoch": epoch,
+                    "model_state_dict": model.state_dict(),
+                    "separation_ratio": best_separation,
+                    "config": vars(args),
+                },
+                output_dir / "best_separation_model.pth",
+            )
 
         # Print progress
         if (epoch + 1) % 10 == 0 or epoch == 0:
-            print(f"Epoch {epoch+1:3d}/{args.epochs} | "
-                  f"Train: {train_metrics['total']:.4f} (data: {train_metrics['data']:.4f}, phys: {train_metrics['physics']:.4f}) | "
-                  f"Val: {val_metrics['loss']:.4f} | "
-                  f"Sep: {val_metrics['separation_ratio']:.2f} | "
-                  f"LR: {current_lr:.2e}")
+            print(
+                f"Epoch {epoch+1:3d}/{args.epochs} | "
+                f"Train: {train_metrics['total']:.4f} (data: {train_metrics['data']:.4f}, phys: {train_metrics['physics']:.4f}) | "
+                f"Val: {val_metrics['loss']:.4f} | "
+                f"Sep: {val_metrics['separation_ratio']:.2f} | "
+                f"LR: {current_lr:.2e}"
+            )
 
     # Final evaluation on test set
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Final evaluation on test set...")
-    print("="*60)
+    print("=" * 60)
 
     # Load best model
-    checkpoint = torch.load(output_dir / 'best_model.pth')
-    model.load_state_dict(checkpoint['model_state_dict'])
+    checkpoint = torch.load(output_dir / "best_model.pth")
+    model.load_state_dict(checkpoint["model_state_dict"])
 
     test_metrics = validate(model, test_loader, criterion, device)
 
@@ -525,16 +537,16 @@ def main():
 
     # Save results
     results = {
-        'config': vars(args),
-        'history': history,
-        'test_metrics': test_metrics,
-        'best_val_loss': best_val_loss,
-        'best_separation': best_separation,
-        'n_params': n_params,
-        'timestamp': datetime.now().isoformat()
+        "config": vars(args),
+        "history": history,
+        "test_metrics": test_metrics,
+        "best_val_loss": best_val_loss,
+        "best_separation": best_separation,
+        "n_params": n_params,
+        "timestamp": datetime.now().isoformat(),
     }
 
-    with open(output_dir / 'results.json', 'w') as f:
+    with open(output_dir / "results.json", "w") as f:
         json.dump(results, f, indent=2, default=str)
 
     print(f"\nModel saved to: {output_dir / 'best_model.pth'}")

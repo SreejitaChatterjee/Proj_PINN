@@ -9,12 +9,19 @@ Uses both Parrot Bebop 2 and 3DR Solo datasets:
 Within-file temporal split ensures both normal files contribute to train and test.
 """
 
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-import re
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 
 
 def extract_features(window):
@@ -25,14 +32,21 @@ def extract_features(window):
         ch = window[:, col]
         feat.extend([ch.mean(), ch.std(), ch.max() - ch.min()])
         fft = np.abs(np.fft.rfft(ch))
-        feat.extend([fft[1:10].sum(), fft[10:50].sum(), fft[50:].sum(), np.argmax(fft[1:]) if len(fft) > 1 else 0])
+        feat.extend(
+            [
+                fft[1:10].sum(),
+                fft[10:50].sum(),
+                fft[50:].sum(),
+                np.argmax(fft[1:]) if len(fft) > 1 else 0,
+            ]
+        )
     return feat
 
 
 def parse_fault_code(filename):
     """Extract 4-digit fault code from filename."""
     # Match patterns like _0000.csv, _1022.csv, etc.
-    match = re.search(r'_(\d{4})\.csv$', filename)
+    match = re.search(r"_(\d{4})\.csv$", filename)
     if match:
         return match.group(1)
     return None
@@ -42,24 +56,36 @@ def load_all_padre_data(base_dir, window_size=256, stride=128, train_ratio=0.7):
     """Load both Bebop and Solo datasets with temporal split."""
 
     datasets = [
-        ('Bebop2', base_dir / 'Parrot_Bebop_2' / 'Normalized_data'),
-        ('Solo', base_dir / 'data/PADRE_dataset/3DR_Solo/Normalized_data/extracted' if 'GitHub' not in str(base_dir)
-                else Path('C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/3DR_Solo/Normalized_data/extracted'))
+        ("Bebop2", base_dir / "Parrot_Bebop_2" / "Normalized_data"),
+        (
+            "Solo",
+            (
+                base_dir / "data/PADRE_dataset/3DR_Solo/Normalized_data/extracted"
+                if "GitHub" not in str(base_dir)
+                else Path(
+                    "C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/3DR_Solo/Normalized_data/extracted"
+                )
+            ),
+        ),
     ]
 
     X_train, y_train, X_test, y_test = [], [], [], []
     file_stats = []
 
     # Bebop 2 data
-    bebop_dir = Path('C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/Parrot_Bebop_2/Normalized_data')
-    solo_dir = Path('C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/3DR_Solo/Normalized_data/extracted')
+    bebop_dir = Path(
+        "C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/Parrot_Bebop_2/Normalized_data"
+    )
+    solo_dir = Path(
+        "C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset/3DR_Solo/Normalized_data/extracted"
+    )
 
-    for drone_name, data_dir in [('Bebop2', bebop_dir), ('Solo', solo_dir)]:
+    for drone_name, data_dir in [("Bebop2", bebop_dir), ("Solo", solo_dir)]:
         if not data_dir.exists():
             print(f"Skipping {drone_name}: {data_dir} not found")
             continue
 
-        for csv_file in sorted(data_dir.glob('*.csv')):
+        for csv_file in sorted(data_dir.glob("*.csv")):
             fault_code = parse_fault_code(csv_file.name)
             if not fault_code:
                 continue
@@ -73,7 +99,7 @@ def load_all_padre_data(base_dir, window_size=256, stride=128, train_ratio=0.7):
             # Extract all windows
             windows = []
             for i in range((len(data) - window_size) // stride + 1):
-                window = data[i * stride: i * stride + window_size]
+                window = data[i * stride : i * stride + window_size]
                 windows.append(extract_features(window))
 
             if not windows:
@@ -90,19 +116,19 @@ def load_all_padre_data(base_dir, window_size=256, stride=128, train_ratio=0.7):
             y_test.extend([is_faulty] * len(test_windows))
 
             label = "Normal" if is_faulty == 0 else "Faulty"
-            file_stats.append({
-                'drone': drone_name,
-                'file': csv_file.name,
-                'fault_code': fault_code,
-                'label': label,
-                'cols': n_cols,
-                'train': len(train_windows),
-                'test': len(test_windows)
-            })
+            file_stats.append(
+                {
+                    "drone": drone_name,
+                    "file": csv_file.name,
+                    "fault_code": fault_code,
+                    "label": label,
+                    "cols": n_cols,
+                    "train": len(train_windows),
+                    "test": len(test_windows),
+                }
+            )
 
-    return (np.array(X_train), np.array(y_train),
-            np.array(X_test), np.array(y_test),
-            file_stats)
+    return (np.array(X_train), np.array(y_train), np.array(X_test), np.array(y_test), file_stats)
 
 
 def main():
@@ -110,7 +136,7 @@ def main():
     print("PADRE CLASSIFIER - COMBINED BEBOP 2 + 3DR SOLO")
     print("=" * 80)
 
-    base_dir = Path('C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset')
+    base_dir = Path("C:/Users/sreej/OneDrive/Documents/GitHub/Proj_PINN/data/PADRE_dataset")
 
     X_train, y_train, X_test, y_test, file_stats = load_all_padre_data(base_dir)
 
@@ -127,48 +153,63 @@ def main():
 
     print(f"\nPer-File Details:")
     for s in file_stats:
-        print(f"  [{s['drone']:6s}] {s['file'][-30:]}: {s['cols']}ch, train={s['train']}, test={s['test']} ({s['label']})")
+        print(
+            f"  [{s['drone']:6s}] {s['file'][-30:]}: {s['cols']}ch, train={s['train']}, test={s['test']} ({s['label']})"
+        )
 
     # Check feature dimensions
-    if len(set(X_train[i].shape[0] if hasattr(X_train[i], 'shape') else len(X_train[i]) for i in range(len(X_train)))) > 1:
+    if (
+        len(
+            set(
+                X_train[i].shape[0] if hasattr(X_train[i], "shape") else len(X_train[i])
+                for i in range(len(X_train))
+            )
+        )
+        > 1
+    ):
         print("\nWARNING: Inconsistent feature dimensions - drones have different sensor counts!")
         print("Training on Bebop 2 only (24 channels = 168 features)")
 
         # Filter to Bebop only
-        bebop_indices_train = [i for i, s in enumerate(file_stats) for _ in range(s['train']) if s['drone'] == 'Bebop2']
-        bebop_indices_test = [i for i, s in enumerate(file_stats) for _ in range(s['test']) if s['drone'] == 'Bebop2']
+        bebop_indices_train = [
+            i for i, s in enumerate(file_stats) for _ in range(s["train"]) if s["drone"] == "Bebop2"
+        ]
+        bebop_indices_test = [
+            i for i, s in enumerate(file_stats) for _ in range(s["test"]) if s["drone"] == "Bebop2"
+        ]
 
         # Recalculate
         X_train_bebop, y_train_bebop = [], []
         X_test_bebop, y_test_bebop = [], []
 
-        bebop_stats = [s for s in file_stats if s['drone'] == 'Bebop2']
+        bebop_stats = [s for s in file_stats if s["drone"] == "Bebop2"]
         idx_train = 0
         idx_test = 0
 
         for s in file_stats:
-            if s['drone'] == 'Bebop2':
-                for _ in range(s['train']):
+            if s["drone"] == "Bebop2":
+                for _ in range(s["train"]):
                     if idx_train < len(X_train):
                         X_train_bebop.append(X_train[idx_train])
                         y_train_bebop.append(y_train[idx_train])
                     idx_train += 1
-                for _ in range(s['test']):
+                for _ in range(s["test"]):
                     if idx_test < len(X_test):
                         X_test_bebop.append(X_test[idx_test])
                         y_test_bebop.append(y_test[idx_test])
                     idx_test += 1
             else:
-                idx_train += s['train']
-                idx_test += s['test']
+                idx_train += s["train"]
+                idx_test += s["test"]
 
     # Train classifier
     print("\n" + "=" * 80)
     print("TRAINING")
     print("=" * 80)
 
-    clf = RandomForestClassifier(n_estimators=100, class_weight='balanced',
-                                 random_state=42, n_jobs=-1)
+    clf = RandomForestClassifier(
+        n_estimators=100, class_weight="balanced", random_state=42, n_jobs=-1
+    )
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_test)
 

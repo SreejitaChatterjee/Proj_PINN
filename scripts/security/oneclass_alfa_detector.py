@@ -12,15 +12,15 @@ Usage:
 
 import argparse
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
+from sklearn.metrics import auc, precision_recall_curve, roc_auc_score
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import roc_auc_score, precision_recall_curve, auc
 
 
 class AnomalyAutoencoder(nn.Module):
@@ -70,15 +70,17 @@ def load_temporal_data(data_dir: Path):
         labels = df["label"].values
         fault_type = df["fault_type"].iloc[0]
 
-        flights.append({
-            "name": csv_file.stem,
-            "X": X,
-            "labels": labels,
-            "fault_type": fault_type,
-            "is_fault_flight": fault_type != "Normal",
-            "n_normal": (labels == 0).sum(),
-            "n_fault": (labels == 1).sum(),
-        })
+        flights.append(
+            {
+                "name": csv_file.stem,
+                "X": X,
+                "labels": labels,
+                "fault_type": fault_type,
+                "is_fault_flight": fault_type != "Normal",
+                "n_normal": (labels == 0).sum(),
+                "n_fault": (labels == 1).sum(),
+            }
+        )
 
     return flights
 
@@ -224,8 +226,12 @@ def compute_metrics(all_results, threshold_percentile=95, min_consecutive=3):
         "sample_precision": float(tp / (tp + fp)) if (tp + fp) > 0 else 0.0,
         "sample_recall": float(tp / (tp + fn)) if (tp + fn) > 0 else 0.0,
         "sample_fpr": float(fp / (fp + tn)) if (fp + tn) > 0 else 0.0,
-        "flight_detection_rate": float(n_fault_flights_detected / n_fault_flights) if n_fault_flights > 0 else 0.0,
-        "flight_false_alarm_rate": float(n_normal_flights_alarmed / n_normal_flights) if n_normal_flights > 0 else 0.0,
+        "flight_detection_rate": (
+            float(n_fault_flights_detected / n_fault_flights) if n_fault_flights > 0 else 0.0
+        ),
+        "flight_false_alarm_rate": (
+            float(n_normal_flights_alarmed / n_normal_flights) if n_normal_flights > 0 else 0.0
+        ),
         "mean_detection_delay": float(np.mean(detection_delays)) if detection_delays else 0.0,
         "n_fault_flights_detected": n_fault_flights_detected,
         "n_normal_flights_alarmed": n_normal_flights_alarmed,
@@ -240,7 +246,7 @@ def run_lofo_cv(flights, seed, device="cpu"):
 
     for i, test_flight in enumerate(flights):
         # Train on all OTHER flights' normal samples
-        train_flights = flights[:i] + flights[i + 1:]
+        train_flights = flights[:i] + flights[i + 1 :]
 
         # Collect normal samples (label=0) from training flights
         train_normal = []
@@ -266,10 +272,13 @@ def run_lofo_cv(flights, seed, device="cpu"):
 
 def main():
     parser = argparse.ArgumentParser(description="One-class ALFA detector")
-    parser.add_argument("--data", type=str, default="data/alfa/temporal",
-                        help="Path to temporal ALFA data")
+    parser.add_argument(
+        "--data", type=str, default="data/alfa/temporal", help="Path to temporal ALFA data"
+    )
     parser.add_argument("--seeds", type=int, default=5, help="Number of seeds")
-    parser.add_argument("--output", type=str, default="research/security/oneclass_alfa_results.json")
+    parser.add_argument(
+        "--output", type=str, default="research/security/oneclass_alfa_results.json"
+    )
     args = parser.parse_args()
 
     data_dir = Path(args.data)
@@ -343,10 +352,18 @@ def main():
     print("\n" + "=" * 70)
     print("AGGREGATE RESULTS (One-Class Autoencoder)")
     print("=" * 70)
-    print(f"Sample AUROC:           {summary['aggregate']['sample_auroc_mean']:.3f} +/- {summary['aggregate']['sample_auroc_std']:.3f}")
-    print(f"Sample FPR:             {summary['aggregate']['sample_fpr_mean']:.3f} +/- {summary['aggregate']['sample_fpr_std']:.3f}")
-    print(f"Flight Detection Rate:  {summary['aggregate']['flight_detection_rate_mean']:.1%} +/- {summary['aggregate']['flight_detection_rate_std']:.1%}")
-    print(f"Flight False Alarm Rate:{summary['aggregate']['flight_false_alarm_rate_mean']:.1%} +/- {summary['aggregate']['flight_false_alarm_rate_std']:.1%}")
+    print(
+        f"Sample AUROC:           {summary['aggregate']['sample_auroc_mean']:.3f} +/- {summary['aggregate']['sample_auroc_std']:.3f}"
+    )
+    print(
+        f"Sample FPR:             {summary['aggregate']['sample_fpr_mean']:.3f} +/- {summary['aggregate']['sample_fpr_std']:.3f}"
+    )
+    print(
+        f"Flight Detection Rate:  {summary['aggregate']['flight_detection_rate_mean']:.1%} +/- {summary['aggregate']['flight_detection_rate_std']:.1%}"
+    )
+    print(
+        f"Flight False Alarm Rate:{summary['aggregate']['flight_false_alarm_rate_mean']:.1%} +/- {summary['aggregate']['flight_false_alarm_rate_std']:.1%}"
+    )
     print(f"\nResults saved to {output_path}")
 
 

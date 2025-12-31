@@ -14,12 +14,12 @@ Usage:
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from pinn_dynamics.security.supervised_detector import SupervisedAttackClassifier
@@ -126,14 +126,10 @@ def main():
             n_normal_test = min(len(normal_states_seq), n_test_attack * 2)
 
             if n_normal_test > 0:
-                test_states = np.vstack([
-                    normal_states_seq[:n_normal_test],
-                    attack_states[n_train:]
-                ])
-                test_labels = np.concatenate([
-                    np.zeros(n_normal_test),
-                    np.ones(n_test_attack)
-                ])
+                test_states = np.vstack(
+                    [normal_states_seq[:n_normal_test], attack_states[n_train:]]
+                )
+                test_labels = np.concatenate([np.zeros(n_normal_test), np.ones(n_test_attack)])
             else:
                 test_states = attack_states[n_train:]
                 test_labels = np.ones(n_test_attack)
@@ -145,7 +141,9 @@ def main():
 
     # Combine attack training data
     attack_train = np.vstack(attack_train_data)
-    print(f"  Attack train: {len(attack_train):,} samples from {len(attack_train_data)} attack types")
+    print(
+        f"  Attack train: {len(attack_train):,} samples from {len(attack_train_data)} attack types"
+    )
 
     # Create classifier
     print("\n[4/5] Training classifier...")
@@ -163,15 +161,40 @@ def main():
 
     results = {}
     categories = {
-        "GPS": ["gps_gradual_drift", "gps_sudden_jump", "gps_oscillating", "gps_meaconing",
-                "gps_jamming", "gps_freeze", "gps_multipath"],
-        "IMU": ["imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-                "imu_noise_injection", "imu_scale_factor", "gyro_saturation", "accel_saturation"],
+        "GPS": [
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_jamming",
+            "gps_freeze",
+            "gps_multipath",
+        ],
+        "IMU": [
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            "gyro_saturation",
+            "accel_saturation",
+        ],
         "Mag/Baro": ["magnetometer_spoofing", "barometer_spoofing"],
-        "Actuator": ["actuator_stuck", "actuator_degraded", "control_hijack", "thrust_manipulation"],
+        "Actuator": [
+            "actuator_stuck",
+            "actuator_degraded",
+            "control_hijack",
+            "thrust_manipulation",
+        ],
         "Coordinated": ["coordinated_gps_imu", "stealthy_coordinated"],
         "Temporal": ["replay_attack", "time_delay", "sensor_dropout"],
-        "Stealth": ["adaptive_attack", "intermittent_attack", "slow_ramp", "resonance_attack", "false_data_injection"],
+        "Stealth": [
+            "adaptive_attack",
+            "intermittent_attack",
+            "slow_ramp",
+            "resonance_attack",
+            "false_data_injection",
+        ],
     }
 
     # Test on normal data first
@@ -191,8 +214,10 @@ def main():
         eval_metrics = classifier.evaluate(test_states, test_labels)
         results[attack_name] = eval_metrics
 
-        print(f"  {attack_name:30s} | Recall: {eval_metrics['recall']*100:5.1f}% | "
-              f"FPR: {eval_metrics['fpr']*100:5.1f}% | F1: {eval_metrics['f1']*100:5.1f}%")
+        print(
+            f"  {attack_name:30s} | Recall: {eval_metrics['recall']*100:5.1f}% | "
+            f"FPR: {eval_metrics['fpr']*100:5.1f}% | F1: {eval_metrics['f1']*100:5.1f}%"
+        )
 
     # Category results
     print("\n" + "=" * 70)
@@ -221,12 +246,15 @@ def main():
     # Save model and results
     model_path = output_path / "classifier.pkl"
     with open(model_path, "wb") as f:
-        pickle.dump({
-            "classifier": classifier.classifier,
-            "scaler": classifier.scaler,
-            "feature_extractor": classifier.feature_extractor,
-            "window_size": classifier.window_size,
-        }, f)
+        pickle.dump(
+            {
+                "classifier": classifier.classifier,
+                "scaler": classifier.scaler,
+                "feature_extractor": classifier.feature_extractor,
+                "window_size": classifier.window_size,
+            },
+            f,
+        )
     print(f"\nModel saved to: {model_path}")
 
     results_path = output_path / "evaluation_results.json"

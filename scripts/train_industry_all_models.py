@@ -17,14 +17,14 @@ Usage:
     python scripts/train_industry_all_models.py --model all --seeds 5
 """
 
-import sys
-import json
 import argparse
+import json
 import logging
-from pathlib import Path
+import sys
 from datetime import datetime
-import numpy as np
+from pathlib import Path
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, TensorDataset
@@ -32,10 +32,10 @@ from torch.utils.data import DataLoader, TensorDataset
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from pinn_dynamics.systems import QuadrotorPINN, PendulumPINN, CartPolePINN
+from pinn_dynamics.systems import CartPolePINN, PendulumPINN, QuadrotorPINN
 from pinn_dynamics.training.trainer_v2 import IndustryTrainer
 
-logging.basicConfig(level=logging.INFO, format='%(message)s')
+logging.basicConfig(level=logging.INFO, format="%(message)s")
 logger = logging.getLogger(__name__)
 
 
@@ -96,6 +96,7 @@ MODEL_CONFIGS = {
 # Data Generation
 # ============================================================================
 
+
 def generate_quadrotor_data(n_samples: int = 10000, seed: int = 42):
     """Generate synthetic quadrotor data."""
     torch.manual_seed(seed)
@@ -134,7 +135,7 @@ def generate_quadrotor_data(n_samples: int = 10000, seed: int = 42):
         acc[2] = total_thrust / m - g
 
         # Next position
-        next_pos = pos + vel * dt + 0.5 * acc * dt ** 2
+        next_pos = pos + vel * dt + 0.5 * acc * dt**2
         next_vel = vel + acc * dt
 
         # Next angles (simplified)
@@ -178,7 +179,7 @@ def generate_pendulum_data(n_samples: int = 5000, seed: int = 42):
         ctrl = torch.randn(1) * 0.5
 
         # Dynamics
-        alpha = (-g / L * torch.sin(theta) - b / (m * L ** 2) * omega + ctrl / (m * L ** 2))
+        alpha = -g / L * torch.sin(theta) - b / (m * L**2) * omega + ctrl / (m * L**2)
         next_omega = omega + alpha * dt
         next_theta = theta + omega * dt
 
@@ -203,7 +204,7 @@ def generate_cartpole_data(n_samples: int = 5000, seed: int = 42):
     g = 9.81
     mc = 1.0  # Cart mass
     mp = 0.1  # Pole mass
-    L = 0.5   # Pole length
+    L = 0.5  # Pole length
 
     states = []
     next_states = []
@@ -224,8 +225,8 @@ def generate_cartpole_data(n_samples: int = 5000, seed: int = 42):
         sin_t = torch.sin(theta)
         cos_t = torch.cos(theta)
 
-        temp = (ctrl + mp * L * theta_dot ** 2 * sin_t) / (mc + mp)
-        theta_acc = (g * sin_t - cos_t * temp) / (L * (4/3 - mp * cos_t ** 2 / (mc + mp)))
+        temp = (ctrl + mp * L * theta_dot**2 * sin_t) / (mc + mp)
+        theta_acc = (g * sin_t - cos_t * temp) / (L * (4 / 3 - mp * cos_t**2 / (mc + mp)))
         x_acc = temp - mp * L * theta_acc * cos_t / (mc + mp)
 
         next_x = x + x_dot * dt
@@ -273,6 +274,7 @@ DATA_GENERATORS = {
 # Training
 # ============================================================================
 
+
 def train_single_model(
     model_name: str,
     seed: int = 42,
@@ -300,14 +302,9 @@ def train_single_model(
     Y_train, Y_val = Y[:train_idx], Y[train_idx:]
 
     train_loader = DataLoader(
-        TensorDataset(X_train, Y_train),
-        batch_size=config["batch_size"],
-        shuffle=True
+        TensorDataset(X_train, Y_train), batch_size=config["batch_size"], shuffle=True
     )
-    val_loader = DataLoader(
-        TensorDataset(X_val, Y_val),
-        batch_size=config["batch_size"]
-    )
+    val_loader = DataLoader(TensorDataset(X_val, Y_val), batch_size=config["batch_size"])
 
     # Create model
     ModelClass = config["class"]
@@ -400,7 +397,9 @@ def train_all_models(
 
     for model_name, results in all_results.items():
         logger.info(f"\n{model_name.upper()}:")
-        logger.info(f"  Rollout MAE: {results['mean_rollout_mae']:.4f} ± {results['std_rollout_mae']:.4f}m")
+        logger.info(
+            f"  Rollout MAE: {results['mean_rollout_mae']:.4f} ± {results['std_rollout_mae']:.4f}m"
+        )
         logger.info(f"  Best: {results['best_rollout_mae']:.4f}m")
 
     # Save summary
@@ -416,15 +415,19 @@ def train_all_models(
 # Main
 # ============================================================================
 
+
 def main():
     parser = argparse.ArgumentParser(description="Industry-grade training for all models")
-    parser.add_argument("--model", type=str, default="all",
-                        choices=list(MODEL_CONFIGS.keys()) + ["all"],
-                        help="Model to train")
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="all",
+        choices=list(MODEL_CONFIGS.keys()) + ["all"],
+        help="Model to train",
+    )
     parser.add_argument("--seeds", type=int, default=5, help="Number of seeds")
     parser.add_argument("--device", type=str, default="cpu", help="Device")
-    parser.add_argument("--output", type=str, default="models/industry",
-                        help="Output directory")
+    parser.add_argument("--output", type=str, default="models/industry", help="Output directory")
     args = parser.parse_args()
 
     output_dir = Path(args.output)

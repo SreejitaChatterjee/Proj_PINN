@@ -25,13 +25,17 @@ import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from torch.utils.data import DataLoader, TensorDataset
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.preprocessing import StandardScaler
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.metrics import (
-    classification_report, confusion_matrix, roc_auc_score,
-    precision_recall_curve, f1_score, accuracy_score
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_recall_curve,
+    roc_auc_score,
 )
+from sklearn.preprocessing import StandardScaler
+from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 
 # Add project root to path
@@ -39,24 +43,29 @@ PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from pinn_dynamics.security import (
-    HardenedDetector, HardenedConfig,
-    PhysicsAnomalyDetector, PhysicsLimits,
+    HardenedConfig,
+    HardenedDetector,
+    PhysicsAnomalyDetector,
+    PhysicsLimits,
 )
 
 # Import attack generator from local script
 sys.path.insert(0, str(PROJECT_ROOT / "scripts" / "security"))
 from generate_synthetic_attacks import SyntheticAttackGenerator
 
-
 # ============================================================================
 # Configuration
 # ============================================================================
 
+
 @dataclass
 class PipelineConfig:
     """Full training pipeline configuration."""
+
     # Paths
-    output_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "models" / "security" / "full_pipeline")
+    output_dir: Path = field(
+        default_factory=lambda: PROJECT_ROOT / "models" / "security" / "full_pipeline"
+    )
     euroc_dir: Path = field(default_factory=lambda: PROJECT_ROOT / "data" / "euroc")
 
     # PINN training
@@ -85,20 +94,35 @@ class PipelineConfig:
     grid_search_points: int = 8  # Reduced for faster calibration
 
     # Attack generation
-    attack_types: List[str] = field(default_factory=lambda: [
-        # GPS attacks
-        "gps_gradual_drift", "gps_sudden_jump", "gps_oscillating",
-        "gps_meaconing", "gps_jamming", "gps_freeze", "gps_multipath",
-        # IMU attacks
-        "imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-        "imu_noise_injection", "imu_scale_factor",
-        # Temporal attacks
-        "replay_attack", "delay_attack", "dropout_attack",
-        # Stealth attacks (hard negatives)
-        "stealth_adaptive", "stealth_slow_ramp", "stealth_intermittent",
-        # Coordinated attacks
-        "coordinated_gps_imu", "coordinated_sensor_actuator",
-    ])
+    attack_types: List[str] = field(
+        default_factory=lambda: [
+            # GPS attacks
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_jamming",
+            "gps_freeze",
+            "gps_multipath",
+            # IMU attacks
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            # Temporal attacks
+            "replay_attack",
+            "delay_attack",
+            "dropout_attack",
+            # Stealth attacks (hard negatives)
+            "stealth_adaptive",
+            "stealth_slow_ramp",
+            "stealth_intermittent",
+            # Coordinated attacks
+            "coordinated_gps_imu",
+            "coordinated_sensor_actuator",
+        ]
+    )
 
     # Evaluation
     test_split: float = 0.2
@@ -112,11 +136,14 @@ class PipelineConfig:
 # Data Loading
 # ============================================================================
 
-def load_euroc_data(config: PipelineConfig) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+
+def load_euroc_data(
+    config: PipelineConfig,
+) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Load EuRoC dataset with proper train/test split."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Loading EuRoC Dataset")
-    print("="*60)
+    print("=" * 60)
 
     # Use preprocessed CSV if available
     csv_path = config.euroc_dir / "all_sequences.csv"
@@ -167,14 +194,12 @@ def load_euroc_data(config: PipelineConfig) -> Tuple[np.ndarray, np.ndarray, np.
 
 
 def generate_attack_data(
-    clean_data: np.ndarray,
-    config: PipelineConfig,
-    dt: float = 0.005
+    clean_data: np.ndarray, config: PipelineConfig, dt: float = 0.005
 ) -> Dict[str, np.ndarray]:
     """Generate synthetic attacks on clean data."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Generating Synthetic Attacks")
-    print("="*60)
+    print("=" * 60)
 
     # Convert numpy array to DataFrame for SyntheticAttackGenerator
     # State columns: px, py, pz, roll, pitch, yaw, p, q, r, vx, vy, vz
@@ -210,10 +235,13 @@ def generate_attack_data(
 # Simple MLP for State Prediction
 # ============================================================================
 
+
 class StatePredictor(nn.Module):
     """Simple MLP for state prediction (next state from current state)."""
 
-    def __init__(self, state_dim: int, hidden_dim: int = 256, n_layers: int = 5, dropout: float = 0.1):
+    def __init__(
+        self, state_dim: int, hidden_dim: int = 256, n_layers: int = 5, dropout: float = 0.1
+    ):
         super().__init__()
 
         layers = []
@@ -237,17 +265,18 @@ class StatePredictor(nn.Module):
 # PINN Training
 # ============================================================================
 
+
 def train_pinn_detector(
     X_train: np.ndarray,
     y_train: np.ndarray,
     X_test: np.ndarray,
     y_test: np.ndarray,
-    config: PipelineConfig
+    config: PipelineConfig,
 ) -> Tuple[nn.Module, StandardScaler, StandardScaler, float]:
     """Train PINN base detector."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Training PINN Base Detector")
-    print("="*60)
+    print("=" * 60)
 
     # Scalers
     scaler_X = StandardScaler()
@@ -266,18 +295,14 @@ def train_pinn_detector(
         state_dim=input_dim,
         hidden_dim=config.pinn_hidden,
         n_layers=config.pinn_layers,
-        dropout=config.pinn_dropout
+        dropout=config.pinn_dropout,
     ).to(config.device)
 
     # DataLoaders
     train_dataset = TensorDataset(
-        torch.FloatTensor(X_train_scaled),
-        torch.FloatTensor(y_train_scaled)
+        torch.FloatTensor(X_train_scaled), torch.FloatTensor(y_train_scaled)
     )
-    test_dataset = TensorDataset(
-        torch.FloatTensor(X_test_scaled),
-        torch.FloatTensor(y_test_scaled)
-    )
+    test_dataset = TensorDataset(torch.FloatTensor(X_test_scaled), torch.FloatTensor(y_test_scaled))
 
     train_loader = DataLoader(train_dataset, batch_size=config.pinn_batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=config.pinn_batch_size)
@@ -287,7 +312,7 @@ def train_pinn_detector(
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, patience=10, factor=0.5)
     criterion = nn.MSELoss()
 
-    best_loss = float('inf')
+    best_loss = float("inf")
     best_state = None
     patience_counter = 0
 
@@ -329,7 +354,9 @@ def train_pinn_detector(
             patience_counter += 1
 
         if (epoch + 1) % 10 == 0:
-            print(f"  Epoch {epoch+1}/{config.pinn_epochs}: Train={train_loss:.4f}, Val={val_loss:.4f}")
+            print(
+                f"  Epoch {epoch+1}/{config.pinn_epochs}: Train={train_loss:.4f}, Val={val_loss:.4f}"
+            )
 
         if patience_counter >= 20:
             print(f"  Early stopping at epoch {epoch+1}")
@@ -360,21 +387,31 @@ def train_pinn_detector(
 # Sequence Model Training
 # ============================================================================
 
+
 class SequencePINN(nn.Module):
     """LSTM-based sequence model for temporal attack detection."""
 
-    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int,
-                 n_layers: int = 2, dropout: float = 0.1):
+    def __init__(
+        self,
+        input_dim: int,
+        hidden_dim: int,
+        output_dim: int,
+        n_layers: int = 2,
+        dropout: float = 0.1,
+    ):
         super().__init__()
         self.lstm = nn.LSTM(
-            input_dim, hidden_dim, n_layers,
-            batch_first=True, dropout=dropout if n_layers > 1 else 0
+            input_dim,
+            hidden_dim,
+            n_layers,
+            batch_first=True,
+            dropout=dropout if n_layers > 1 else 0,
         )
         self.fc = nn.Sequential(
             nn.Linear(hidden_dim, hidden_dim),
             nn.ReLU(),
             nn.Dropout(dropout),
-            nn.Linear(hidden_dim, output_dim)
+            nn.Linear(hidden_dim, output_dim),
         )
 
     def forward(self, x):
@@ -386,20 +423,18 @@ def create_sequences(data: np.ndarray, seq_length: int) -> Tuple[np.ndarray, np.
     """Create sequences for LSTM training."""
     X, y = [], []
     for i in range(len(data) - seq_length):
-        X.append(data[i:i+seq_length])
-        y.append(data[i+seq_length])
+        X.append(data[i : i + seq_length])
+        y.append(data[i + seq_length])
     return np.array(X), np.array(y)
 
 
 def train_sequence_detector(
-    X_train: np.ndarray,
-    X_test: np.ndarray,
-    config: PipelineConfig
+    X_train: np.ndarray, X_test: np.ndarray, config: PipelineConfig
 ) -> Tuple[nn.Module, StandardScaler, float]:
     """Train sequence-based temporal detector."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Training Sequence Detector (LSTM)")
-    print("="*60)
+    print("=" * 60)
 
     # Scaler
     scaler = StandardScaler()
@@ -418,18 +453,12 @@ def train_sequence_detector(
         input_dim=input_dim,
         hidden_dim=config.seq_hidden,
         output_dim=input_dim,
-        n_layers=config.seq_lstm_layers
+        n_layers=config.seq_lstm_layers,
     ).to(config.device)
 
     # DataLoaders
-    train_dataset = TensorDataset(
-        torch.FloatTensor(X_train_seq),
-        torch.FloatTensor(y_train_seq)
-    )
-    test_dataset = TensorDataset(
-        torch.FloatTensor(X_test_seq),
-        torch.FloatTensor(y_test_seq)
-    )
+    train_dataset = TensorDataset(torch.FloatTensor(X_train_seq), torch.FloatTensor(y_train_seq))
+    test_dataset = TensorDataset(torch.FloatTensor(X_test_seq), torch.FloatTensor(y_test_seq))
 
     train_loader = DataLoader(train_dataset, batch_size=config.seq_batch_size, shuffle=True)
     test_loader = DataLoader(test_dataset, batch_size=config.seq_batch_size)
@@ -438,7 +467,7 @@ def train_sequence_detector(
     optimizer = torch.optim.Adam(model.parameters(), lr=config.pinn_lr)
     criterion = nn.MSELoss()
 
-    best_loss = float('inf')
+    best_loss = float("inf")
     best_state = None
 
     for epoch in range(config.seq_epochs):
@@ -473,7 +502,9 @@ def train_sequence_detector(
             best_state = model.state_dict().copy()
 
         if (epoch + 1) % 10 == 0:
-            print(f"  Epoch {epoch+1}/{config.seq_epochs}: Train={train_loss:.4f}, Val={val_loss:.4f}")
+            print(
+                f"  Epoch {epoch+1}/{config.seq_epochs}: Train={train_loss:.4f}, Val={val_loss:.4f}"
+            )
 
     model.load_state_dict(best_state)
 
@@ -500,12 +531,13 @@ def train_sequence_detector(
 # Supervised Classifier Training
 # ============================================================================
 
+
 def extract_features(data: np.ndarray, window_size: int = 50) -> np.ndarray:
     """Extract statistical features from window of data."""
     features = []
 
     for i in range(window_size, len(data)):
-        window = data[i-window_size:i]
+        window = data[i - window_size : i]
 
         # Basic statistics
         mean = np.mean(window, axis=0)
@@ -524,36 +556,32 @@ def extract_features(data: np.ndarray, window_size: int = 50) -> np.ndarray:
         diff2_max = np.max(np.abs(diff2), axis=0)
 
         # Autocorrelation at lag 1
-        autocorr = np.array([np.corrcoef(window[:-1, j], window[1:, j])[0, 1]
-                            for j in range(window.shape[1])])
+        autocorr = np.array(
+            [np.corrcoef(window[:-1, j], window[1:, j])[0, 1] for j in range(window.shape[1])]
+        )
         autocorr = np.nan_to_num(autocorr, nan=0.0)
 
-        feat = np.concatenate([
-            mean, std, min_val, max_val,
-            diff_mean, diff_std,
-            diff2_mean, diff2_max,
-            autocorr
-        ])
+        feat = np.concatenate(
+            [mean, std, min_val, max_val, diff_mean, diff_std, diff2_mean, diff2_max, autocorr]
+        )
         features.append(feat)
 
     return np.array(features)
 
 
 def train_supervised_classifier(
-    clean_data: np.ndarray,
-    attack_data: Dict[str, np.ndarray],
-    config: PipelineConfig
+    clean_data: np.ndarray, attack_data: Dict[str, np.ndarray], config: PipelineConfig
 ) -> Tuple[RandomForestClassifier, StandardScaler]:
     """Train supervised attack classifier."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Training Supervised Classifier")
-    print("="*60)
+    print("=" * 60)
 
     window_size = 50
 
     # Extract features from clean data
     print("  Extracting features from clean data...")
-    clean_features = extract_features(clean_data[:config.calibration_samples], window_size)
+    clean_features = extract_features(clean_data[: config.calibration_samples], window_size)
     clean_labels = np.zeros(len(clean_features))
 
     # Extract features from attack data
@@ -585,6 +613,7 @@ def train_supervised_classifier(
 
     # Train/test split
     from sklearn.model_selection import train_test_split
+
     X_train, X_test, y_train, y_test = train_test_split(
         X_scaled, y_binary, test_size=config.test_split, stratify=y_binary, random_state=42
     )
@@ -596,7 +625,7 @@ def train_supervised_classifier(
         max_depth=config.clf_max_depth,
         class_weight={0: 1.0, 1: config.clf_class_weight},
         n_jobs=-1,
-        random_state=42
+        random_state=42,
     )
     clf.fit(X_train, y_train)
 
@@ -621,23 +650,24 @@ def train_supervised_classifier(
 # Hardened Detector Calibration
 # ============================================================================
 
+
 def calibrate_hardened_detector(
     clean_data: np.ndarray,
     attack_data: Dict[str, np.ndarray],
     config: PipelineConfig,
-    dt: float = 0.005
+    dt: float = 0.005,
 ) -> HardenedConfig:
     """Calibrate hardened detector thresholds via grid search."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Calibrating Hardened Detector Thresholds")
-    print("="*60)
+    print("=" * 60)
 
     # Prepare calibration data
     n_cal = min(config.calibration_samples, len(clean_data))
     cal_clean = clean_data[:n_cal]
 
     # Get one attack sample for each type
-    cal_attacks = {k: v[:min(200, len(v))] for k, v in list(attack_data.items())[:5]}
+    cal_attacks = {k: v[: min(200, len(v))] for k, v in list(attack_data.items())[:5]}
 
     # Grid search over key thresholds
     best_f1 = 0.0
@@ -647,8 +677,10 @@ def calibrate_hardened_detector(
     nis_thresholds = np.linspace(20, 100, config.grid_search_points // 4)
     cusum_thresholds = np.linspace(5, 50, config.grid_search_points // 4)
 
-    print(f"  Grid search: {len(jerk_thresholds)}x{len(nis_thresholds)}x{len(cusum_thresholds)} = "
-          f"{len(jerk_thresholds)*len(nis_thresholds)*len(cusum_thresholds)} combinations")
+    print(
+        f"  Grid search: {len(jerk_thresholds)}x{len(nis_thresholds)}x{len(cusum_thresholds)} = "
+        f"{len(jerk_thresholds)*len(nis_thresholds)*len(cusum_thresholds)} combinations"
+    )
 
     for jerk_th in tqdm(jerk_thresholds, desc="Grid search"):
         for nis_th in nis_thresholds:
@@ -658,7 +690,7 @@ def calibrate_hardened_detector(
                     jerk_threshold=jerk_th,
                     nis_threshold=nis_th,
                     cusum_threshold=cusum_th,
-                    spectral_threshold=3.0
+                    spectral_threshold=3.0,
                 )
 
                 detector = HardenedDetector(config=cfg, dt=dt)
@@ -672,7 +704,7 @@ def calibrate_hardened_detector(
                     gyro = np.zeros(3)
 
                     result = detector.detect(pos, vel, acc, gyro)
-                    if result['is_anomaly']:
+                    if result["is_anomaly"]:
                         fp += 1
 
                 fp_rate = fp / (len(cal_clean) - 100)
@@ -690,7 +722,7 @@ def calibrate_hardened_detector(
                         gyro = np.zeros(3)
 
                         result = detector.detect(pos, vel, acc, gyro)
-                        if result['is_anomaly']:
+                        if result["is_anomaly"]:
                             tp += 1
                         total_attack += 1
 
@@ -718,6 +750,7 @@ def calibrate_hardened_detector(
 # Full Evaluation
 # ============================================================================
 
+
 def evaluate_full_pipeline(
     pinn_model: nn.Module,
     seq_model: nn.Module,
@@ -727,18 +760,14 @@ def evaluate_full_pipeline(
     attack_data: Dict[str, np.ndarray],
     scalers: Dict,
     config: PipelineConfig,
-    dt: float = 0.005
+    dt: float = 0.005,
 ) -> Dict:
     """Evaluate the full detection pipeline."""
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Full Pipeline Evaluation")
-    print("="*60)
+    print("=" * 60)
 
-    results = {
-        'per_attack': {},
-        'overall': {},
-        'confusion': None
-    }
+    results = {"per_attack": {}, "overall": {}, "confusion": None}
 
     # Initialize detectors
     hardened = HardenedDetector(config=hardened_config, dt=dt)
@@ -746,30 +775,30 @@ def evaluate_full_pipeline(
 
     # Evaluate on clean data
     print("\n1. Clean Data Evaluation")
-    fp_counts = {'pinn': 0, 'seq': 0, 'clf': 0, 'hardened': 0, 'ensemble': 0}
+    fp_counts = {"pinn": 0, "seq": 0, "clf": 0, "hardened": 0, "ensemble": 0}
     n_clean = min(1000, len(clean_data) - 100)
 
     window_size = 50
-    clean_features = extract_features(clean_data[:n_clean + window_size], window_size)
-    clean_features_scaled = scalers['clf'].transform(clean_features)
+    clean_features = extract_features(clean_data[: n_clean + window_size], window_size)
+    clean_features_scaled = scalers["clf"].transform(clean_features)
 
     for i in range(n_clean):
         # Classifier
-        if classifier.predict(clean_features_scaled[i:i+1])[0] == 1:
-            fp_counts['clf'] += 1
+        if classifier.predict(clean_features_scaled[i : i + 1])[0] == 1:
+            fp_counts["clf"] += 1
 
         # Hardened detector
         pos = clean_data[i + window_size, :3]
         vel = clean_data[i + window_size, 3:6] if clean_data.shape[1] > 3 else np.zeros(3)
         result = hardened.detect(pos, vel, np.zeros(3), np.zeros(3))
-        if result['is_anomaly']:
-            fp_counts['hardened'] += 1
+        if result["is_anomaly"]:
+            fp_counts["hardened"] += 1
 
     for name, count in fp_counts.items():
         fp_rate = count / n_clean * 100
         print(f"  {name}: FP = {count}/{n_clean} = {fp_rate:.1f}%")
 
-    results['overall']['clean_fp_rate'] = {k: v/n_clean for k, v in fp_counts.items()}
+    results["overall"]["clean_fp_rate"] = {k: v / n_clean for k, v in fp_counts.items()}
 
     # Evaluate on each attack type
     print("\n2. Per-Attack Evaluation")
@@ -779,57 +808,59 @@ def evaluate_full_pipeline(
     all_y_pred = []
 
     for attack_type, attack in attack_data.items():
-        tp_counts = {'pinn': 0, 'seq': 0, 'clf': 0, 'hardened': 0, 'ensemble': 0}
+        tp_counts = {"pinn": 0, "seq": 0, "clf": 0, "hardened": 0, "ensemble": 0}
         n_attack = min(500, len(attack) - window_size)
 
         # Reset hardened detector
         hardened = HardenedDetector(config=hardened_config, dt=dt)
 
         # Extract features
-        attack_features = extract_features(attack[:n_attack + window_size], window_size)
-        attack_features_scaled = scalers['clf'].transform(attack_features)
+        attack_features = extract_features(attack[: n_attack + window_size], window_size)
+        attack_features_scaled = scalers["clf"].transform(attack_features)
 
         for i in range(n_attack):
             # Classifier
-            clf_pred = classifier.predict(attack_features_scaled[i:i+1])[0]
+            clf_pred = classifier.predict(attack_features_scaled[i : i + 1])[0]
             if clf_pred == 1:
-                tp_counts['clf'] += 1
+                tp_counts["clf"] += 1
 
             # Hardened detector
             pos = attack[i + window_size, :3]
             vel = attack[i + window_size, 3:6] if attack.shape[1] > 3 else np.zeros(3)
             result = hardened.detect(pos, vel, np.zeros(3), np.zeros(3))
-            if result['is_anomaly']:
-                tp_counts['hardened'] += 1
+            if result["is_anomaly"]:
+                tp_counts["hardened"] += 1
 
             # Ensemble (majority vote)
-            votes = [clf_pred, int(result['is_anomaly'])]
+            votes = [clf_pred, int(result["is_anomaly"])]
             if sum(votes) >= 1:
-                tp_counts['ensemble'] += 1
+                tp_counts["ensemble"] += 1
 
             all_y_true.append(1)  # Attack
             all_y_pred.append(int(sum(votes) >= 1))
 
         # Calculate metrics
-        recall = {k: v/n_attack for k, v in tp_counts.items()}
-        results['per_attack'][attack_type] = recall
+        recall = {k: v / n_attack for k, v in tp_counts.items()}
+        results["per_attack"][attack_type] = recall
 
-        print(f"  {attack_type:30s}: CLF={recall['clf']*100:5.1f}%, "
-              f"HARD={recall['hardened']*100:5.1f}%, ENS={recall['ensemble']*100:5.1f}%")
+        print(
+            f"  {attack_type:30s}: CLF={recall['clf']*100:5.1f}%, "
+            f"HARD={recall['hardened']*100:5.1f}%, ENS={recall['ensemble']*100:5.1f}%"
+        )
 
     # Add clean data predictions
     for i in range(min(500, n_clean)):
         all_y_true.append(0)  # Normal
-        clf_pred = classifier.predict(clean_features_scaled[i:i+1])[0]
+        clf_pred = classifier.predict(clean_features_scaled[i : i + 1])[0]
         all_y_pred.append(clf_pred)
 
     # Overall metrics
     all_y_true = np.array(all_y_true)
     all_y_pred = np.array(all_y_pred)
 
-    results['overall']['accuracy'] = accuracy_score(all_y_true, all_y_pred)
-    results['overall']['f1'] = f1_score(all_y_true, all_y_pred)
-    results['confusion'] = confusion_matrix(all_y_true, all_y_pred).tolist()
+    results["overall"]["accuracy"] = accuracy_score(all_y_true, all_y_pred)
+    results["overall"]["f1"] = f1_score(all_y_true, all_y_pred)
+    results["confusion"] = confusion_matrix(all_y_true, all_y_pred).tolist()
 
     print("\n" + "-" * 60)
     print(f"Overall Accuracy: {results['overall']['accuracy']*100:.1f}%")
@@ -845,11 +876,12 @@ def evaluate_full_pipeline(
 # Main Pipeline
 # ============================================================================
 
+
 def main():
     """Run full training pipeline."""
-    print("="*60)
+    print("=" * 60)
     print("FULL SECURITY DETECTION TRAINING PIPELINE")
-    print("="*60)
+    print("=" * 60)
 
     start_time = time.time()
     config = PipelineConfig()
@@ -872,33 +904,27 @@ def main():
         radius = 5.0
         omega = 0.5
 
-        pos = np.column_stack([
-            radius * np.cos(omega * t),
-            radius * np.sin(omega * t),
-            2.0 + 0.5 * np.sin(0.2 * t)
-        ])
-        vel = np.column_stack([
-            -radius * omega * np.sin(omega * t),
-            radius * omega * np.cos(omega * t),
-            0.5 * 0.2 * np.cos(0.2 * t)
-        ])
-        att = np.column_stack([
-            0.1 * np.sin(0.3 * t),
-            0.1 * np.cos(0.3 * t),
-            omega * t
-        ])
-        rate = np.column_stack([
-            0.1 * 0.3 * np.cos(0.3 * t),
-            -0.1 * 0.3 * np.sin(0.3 * t),
-            np.full_like(t, omega)
-        ])
+        pos = np.column_stack(
+            [radius * np.cos(omega * t), radius * np.sin(omega * t), 2.0 + 0.5 * np.sin(0.2 * t)]
+        )
+        vel = np.column_stack(
+            [
+                -radius * omega * np.sin(omega * t),
+                radius * omega * np.cos(omega * t),
+                0.5 * 0.2 * np.cos(0.2 * t),
+            ]
+        )
+        att = np.column_stack([0.1 * np.sin(0.3 * t), 0.1 * np.cos(0.3 * t), omega * t])
+        rate = np.column_stack(
+            [0.1 * 0.3 * np.cos(0.3 * t), -0.1 * 0.3 * np.sin(0.3 * t), np.full_like(t, omega)]
+        )
 
         data = np.column_stack([pos, vel, att, rate])
         data += np.random.normal(0, 0.01, data.shape)  # Add noise
 
         split = int(0.8 * len(data))
-        X_train, y_train = data[:split-1], data[1:split]
-        X_test, y_test = data[split:-1], data[split+1:]
+        X_train, y_train = data[: split - 1], data[1:split]
+        X_test, y_test = data[split:-1], data[split + 1 :]
 
         print(f"  Generated synthetic data: Train={len(X_train)}, Test={len(X_test)}")
 
@@ -911,95 +937,89 @@ def main():
     )
 
     # Step 4: Train sequence detector
-    seq_model, seq_scaler, seq_threshold = train_sequence_detector(
-        X_train, X_test, config
-    )
+    seq_model, seq_scaler, seq_threshold = train_sequence_detector(X_train, X_test, config)
 
     # Step 5: Train supervised classifier
-    classifier, clf_scaler = train_supervised_classifier(
-        X_train, attack_data, config
-    )
+    classifier, clf_scaler = train_supervised_classifier(X_train, attack_data, config)
 
     # Step 6: Calibrate hardened detector
-    hardened_config = calibrate_hardened_detector(
-        X_test, attack_data, config
-    )
+    hardened_config = calibrate_hardened_detector(X_test, attack_data, config)
 
     # Step 7: Full evaluation
-    scalers = {
-        'pinn_X': scaler_X,
-        'pinn_y': scaler_y,
-        'seq': seq_scaler,
-        'clf': clf_scaler
-    }
+    scalers = {"pinn_X": scaler_X, "pinn_y": scaler_y, "seq": seq_scaler, "clf": clf_scaler}
 
     results = evaluate_full_pipeline(
-        pinn_model, seq_model, classifier, hardened_config,
-        X_test, attack_data, scalers, config
+        pinn_model, seq_model, classifier, hardened_config, X_test, attack_data, scalers, config
     )
 
     # Step 8: Save everything
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Saving Models and Results")
-    print("="*60)
+    print("=" * 60)
 
     # Save PINN model
-    torch.save({
-        'model_state': pinn_model.state_dict(),
-        'threshold': pinn_threshold,
-        'config': {
-            'hidden': config.pinn_hidden,
-            'layers': config.pinn_layers,
-            'dropout': config.pinn_dropout
-        }
-    }, config.output_dir / "pinn_detector.pth")
+    torch.save(
+        {
+            "model_state": pinn_model.state_dict(),
+            "threshold": pinn_threshold,
+            "config": {
+                "hidden": config.pinn_hidden,
+                "layers": config.pinn_layers,
+                "dropout": config.pinn_dropout,
+            },
+        },
+        config.output_dir / "pinn_detector.pth",
+    )
     print(f"  Saved: pinn_detector.pth")
 
     # Save sequence model
-    torch.save({
-        'model_state': seq_model.state_dict(),
-        'threshold': seq_threshold,
-        'config': {
-            'seq_length': config.seq_length,
-            'hidden': config.seq_hidden,
-            'lstm_layers': config.seq_lstm_layers
-        }
-    }, config.output_dir / "sequence_detector.pth")
+    torch.save(
+        {
+            "model_state": seq_model.state_dict(),
+            "threshold": seq_threshold,
+            "config": {
+                "seq_length": config.seq_length,
+                "hidden": config.seq_hidden,
+                "lstm_layers": config.seq_lstm_layers,
+            },
+        },
+        config.output_dir / "sequence_detector.pth",
+    )
     print(f"  Saved: sequence_detector.pth")
 
     # Save classifier
-    with open(config.output_dir / "classifier.pkl", 'wb') as f:
+    with open(config.output_dir / "classifier.pkl", "wb") as f:
         pickle.dump(classifier, f)
     print(f"  Saved: classifier.pkl")
 
     # Save scalers
-    with open(config.output_dir / "scalers.pkl", 'wb') as f:
+    with open(config.output_dir / "scalers.pkl", "wb") as f:
         pickle.dump(scalers, f)
     print(f"  Saved: scalers.pkl")
 
     # Save hardened config
     hardened_dict = {
-        'jerk_threshold': hardened_config.jerk_threshold,
-        'nis_threshold': hardened_config.nis_threshold,
-        'cusum_threshold': hardened_config.cusum_threshold,
-        'spectral_threshold': hardened_config.spectral_threshold,
-        'sprt_alpha': hardened_config.sprt_alpha,
-        'sprt_beta': hardened_config.sprt_beta
+        "jerk_threshold": hardened_config.jerk_threshold,
+        "nis_threshold": hardened_config.nis_threshold,
+        "cusum_threshold": hardened_config.cusum_threshold,
+        "spectral_threshold": hardened_config.spectral_threshold,
+        "sprt_alpha": hardened_config.sprt_alpha,
+        "sprt_beta": hardened_config.sprt_beta,
     }
-    with open(config.output_dir / "hardened_config.json", 'w') as f:
+    with open(config.output_dir / "hardened_config.json", "w") as f:
         json.dump(hardened_dict, f, indent=2)
     print(f"  Saved: hardened_config.json")
 
     # Save results
-    with open(config.output_dir / "evaluation_results.json", 'w') as f:
+    with open(config.output_dir / "evaluation_results.json", "w") as f:
         json.dump(results, f, indent=2)
     print(f"  Saved: evaluation_results.json")
 
     # Summary
     elapsed = time.time() - start_time
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("TRAINING COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print(f"Total time: {elapsed/60:.1f} minutes")
     print(f"Output directory: {config.output_dir}")
     print(f"\nFinal Results:")
@@ -1008,7 +1028,7 @@ def main():
     print(f"  Clean FP Rate: {results['overall']['clean_fp_rate']['ensemble']*100:.1f}%")
 
     # Best and worst attacks
-    attack_recalls = [(k, v['ensemble']) for k, v in results['per_attack'].items()]
+    attack_recalls = [(k, v["ensemble"]) for k, v in results["per_attack"].items()]
     attack_recalls.sort(key=lambda x: x[1])
 
     print(f"\n  Hardest attacks (lowest recall):")

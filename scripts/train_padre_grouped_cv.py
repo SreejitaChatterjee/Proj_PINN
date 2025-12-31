@@ -10,13 +10,20 @@ Key insight: Adjacent windows from the same file overlap by 50%,
 so they MUST stay together in train or test, never split.
 """
 
+import re
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 from sklearn.model_selection import GroupKFold, StratifiedGroupKFold
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
-import re
 
 
 def extract_features(window):
@@ -28,7 +35,14 @@ def extract_features(window):
         feat.extend([ch.mean(), ch.std(), ch.max() - ch.min()])
         # Frequency domain
         fft = np.abs(np.fft.rfft(ch))
-        feat.extend([fft[1:10].sum(), fft[10:50].sum(), fft[50:].sum(), np.argmax(fft[1:]) if len(fft) > 1 else 0])
+        feat.extend(
+            [
+                fft[1:10].sum(),
+                fft[10:50].sum(),
+                fft[50:].sum(),
+                np.argmax(fft[1:]) if len(fft) > 1 else 0,
+            ]
+        )
     return feat
 
 
@@ -37,8 +51,8 @@ def load_data_with_groups(data_dir, window_size=256, stride=128):
     X, y, groups = [], [], []
     file_info = {}
 
-    for file_id, csv_file in enumerate(sorted(Path(data_dir).glob('*.csv'))):
-        match = re.search(r'normalized_(\d{4})\.csv', csv_file.name)
+    for file_id, csv_file in enumerate(sorted(Path(data_dir).glob("*.csv"))):
+        match = re.search(r"normalized_(\d{4})\.csv", csv_file.name)
         if not match:
             continue
 
@@ -50,17 +64,17 @@ def load_data_with_groups(data_dir, window_size=256, stride=128):
 
         n_windows = 0
         for i in range((len(data) - window_size) // stride + 1):
-            window = data[i * stride: i * stride + window_size]
+            window = data[i * stride : i * stride + window_size]
             X.append(extract_features(window))
             y.append(is_faulty)
             groups.append(file_id)  # Track source file
             n_windows += 1
 
         file_info[file_id] = {
-            'name': csv_file.name,
-            'fault_code': codes,
-            'is_faulty': is_faulty,
-            'n_windows': n_windows
+            "name": csv_file.name,
+            "fault_code": codes,
+            "is_faulty": is_faulty,
+            "n_windows": n_windows,
         }
 
     return np.array(X), np.array(y), np.array(groups), file_info
@@ -71,7 +85,7 @@ def main():
     print("PADRE CLASSIFIER WITH GROUPED CROSS-VALIDATION")
     print("=" * 70)
 
-    data_dir = Path('data/PADRE_dataset/Parrot_Bebop_2/Normalized_data')
+    data_dir = Path("data/PADRE_dataset/Parrot_Bebop_2/Normalized_data")
     X, y, groups, file_info = load_data_with_groups(data_dir)
 
     print(f"\nDataset: {len(X)} windows from {len(file_info)} files")
@@ -81,7 +95,7 @@ def main():
     # Show file distribution
     print("\nFile Distribution:")
     for fid, info in file_info.items():
-        label = "Normal" if info['is_faulty'] == 0 else "Faulty"
+        label = "Normal" if info["is_faulty"] == 0 else "Faulty"
         print(f"  [{fid:2d}] {info['name']}: {info['n_windows']:4d} windows ({label})")
 
     # ============================================================
@@ -95,7 +109,7 @@ def main():
 
     # Get unique groups and their labels for stratification
     unique_groups = np.unique(groups)
-    group_labels = np.array([file_info[g]['is_faulty'] for g in unique_groups])
+    group_labels = np.array([file_info[g]["is_faulty"] for g in unique_groups])
 
     # Check if we can stratify
     n_normal_files = sum(1 for l in group_labels if l == 0)
@@ -118,11 +132,12 @@ def main():
 
         # Which files are in test set?
         test_files = set(groups[test_idx])
-        test_file_names = [file_info[f]['name'] for f in test_files]
+        test_file_names = [file_info[f]["name"] for f in test_files]
 
         # Train and predict
-        clf = RandomForestClassifier(n_estimators=100, class_weight='balanced',
-                                     random_state=42, n_jobs=-1)
+        clf = RandomForestClassifier(
+            n_estimators=100, class_weight="balanced", random_state=42, n_jobs=-1
+        )
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
 
@@ -135,16 +150,18 @@ def main():
         cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
         tn, fp, fn, tp = cm.ravel() if cm.size == 4 else (0, 0, 0, 0)
 
-        fold_results.append({
-            'fold': fold + 1,
-            'test_files': test_file_names,
-            'accuracy': acc,
-            'precision': prec,
-            'recall': rec,
-            'f1': f1,
-            'fp': fp,
-            'fn': fn
-        })
+        fold_results.append(
+            {
+                "fold": fold + 1,
+                "test_files": test_file_names,
+                "accuracy": acc,
+                "precision": prec,
+                "recall": rec,
+                "f1": f1,
+                "fp": fp,
+                "fn": fn,
+            }
+        )
 
         all_y_true.extend(y_test)
         all_y_pred.extend(y_pred)
@@ -194,8 +211,9 @@ def main():
         if len(X_test) == 0:
             continue
 
-        clf = RandomForestClassifier(n_estimators=100, class_weight='balanced',
-                                     random_state=42, n_jobs=-1)
+        clf = RandomForestClassifier(
+            n_estimators=100, class_weight="balanced", random_state=42, n_jobs=-1
+        )
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)
 
@@ -205,7 +223,7 @@ def main():
         cm = confusion_matrix(y_test, y_pred, labels=[0, 1])
         if cm.size == 4:
             tn, fp, fn, tp = cm.ravel()
-        elif info['is_faulty'] == 0:
+        elif info["is_faulty"] == 0:
             tn, fp = cm[0, 0], len(y_pred) - cm[0, 0]
             fn, tp = 0, 0
         else:
@@ -213,16 +231,18 @@ def main():
             fn = len(y_pred) - (y_pred == 1).sum()
             tp = (y_pred == 1).sum()
 
-        label = "Normal" if info['is_faulty'] == 0 else "Faulty"
+        label = "Normal" if info["is_faulty"] == 0 else "Faulty"
         print(f"{info['name']}: Acc={acc:.2%} ({label}, {len(y_test)} samples, FP={fp}, FN={fn})")
 
-        lofo_results.append({
-            'file': info['name'],
-            'is_faulty': info['is_faulty'],
-            'accuracy': acc,
-            'fp': fp,
-            'fn': fn
-        })
+        lofo_results.append(
+            {
+                "file": info["name"],
+                "is_faulty": info["is_faulty"],
+                "accuracy": acc,
+                "fp": fp,
+                "fn": fn,
+            }
+        )
 
         all_y_true_lofo.extend(y_test)
         all_y_pred_lofo.extend(y_pred)
@@ -246,14 +266,14 @@ def main():
     print(f"  FN={fn:5d}  TP={tp:5d}")
 
     # Per-class accuracy
-    normal_results = [r for r in lofo_results if r['is_faulty'] == 0]
-    faulty_results = [r for r in lofo_results if r['is_faulty'] == 1]
+    normal_results = [r for r in lofo_results if r["is_faulty"] == 0]
+    faulty_results = [r for r in lofo_results if r["is_faulty"] == 1]
 
     if normal_results:
-        normal_acc = np.mean([r['accuracy'] for r in normal_results])
+        normal_acc = np.mean([r["accuracy"] for r in normal_results])
         print(f"\nNormal files mean accuracy: {normal_acc:.2%} ({len(normal_results)} files)")
     if faulty_results:
-        faulty_acc = np.mean([r['accuracy'] for r in faulty_results])
+        faulty_acc = np.mean([r["accuracy"] for r in faulty_results])
         print(f"Faulty files mean accuracy: {faulty_acc:.2%} ({len(faulty_results)} files)")
 
     # ============================================================
@@ -262,7 +282,8 @@ def main():
     print("\n" + "=" * 70)
     print("RECOMMENDATIONS")
     print("=" * 70)
-    print("""
+    print(
+        """
 1. USE STRATIFIED GROUP K-FOLD for your final model evaluation
    - Keeps file integrity (no data leakage)
    - Maintains class balance in each fold
@@ -281,7 +302,8 @@ def main():
    - Hold out 1 normal + 3-4 faulty files as final test set
    - Train on remaining files
    - Never tune hyperparameters on test set
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

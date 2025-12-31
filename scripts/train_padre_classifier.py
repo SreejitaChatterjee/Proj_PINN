@@ -20,22 +20,26 @@ Usage:
 
 import argparse
 import json
+import pickle
 import re
 import sys
-from pathlib import Path
 from datetime import datetime
-import pickle
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score, StratifiedKFold
-from sklearn.metrics import (
-    accuracy_score, f1_score, precision_score, recall_score,
-    classification_report, confusion_matrix
-)
 
 # Add project root
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -43,22 +47,27 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train PADRE fault classifier")
-    parser.add_argument("--data_dir", type=str,
-                        default="data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
-                        help="Path to PADRE Normalized_data folder")
-    parser.add_argument("--output_dir", type=str,
-                        default="models/padre_classifier",
-                        help="Output directory for models")
-    parser.add_argument("--window_size", type=int, default=256,
-                        help="Window size for feature extraction")
-    parser.add_argument("--stride", type=int, default=128,
-                        help="Stride between windows")
-    parser.add_argument("--test_split", type=float, default=0.2,
-                        help="Test set fraction")
-    parser.add_argument("--seed", type=int, default=42,
-                        help="Random seed")
-    parser.add_argument("--n_estimators", type=int, default=100,
-                        help="Number of trees for Random Forest")
+    parser.add_argument(
+        "--data_dir",
+        type=str,
+        default="data/PADRE_dataset/Parrot_Bebop_2/Normalized_data",
+        help="Path to PADRE Normalized_data folder",
+    )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default="models/padre_classifier",
+        help="Output directory for models",
+    )
+    parser.add_argument(
+        "--window_size", type=int, default=256, help="Window size for feature extraction"
+    )
+    parser.add_argument("--stride", type=int, default=128, help="Stride between windows")
+    parser.add_argument("--test_split", type=float, default=0.2, help="Test set fraction")
+    parser.add_argument("--seed", type=int, default=42, help="Random seed")
+    parser.add_argument(
+        "--n_estimators", type=int, default=100, help="Number of trees for Random Forest"
+    )
     return parser.parse_args()
 
 
@@ -75,11 +84,13 @@ def extract_features(window: np.ndarray) -> np.ndarray:
     features = []
     for col in range(window.shape[1]):
         channel = window[:, col]
-        features.extend([
-            channel.mean(),
-            channel.std(),
-            channel.max() - channel.min(),
-        ])
+        features.extend(
+            [
+                channel.mean(),
+                channel.std(),
+                channel.max() - channel.min(),
+            ]
+        )
     return np.array(features)
 
 
@@ -99,21 +110,25 @@ def extract_advanced_features(window: np.ndarray) -> np.ndarray:
         channel = window[:, col]
 
         # Time domain
-        features.extend([
-            channel.mean(),
-            channel.std(),
-            channel.max() - channel.min(),
-            np.percentile(channel, 25),
-            np.percentile(channel, 75),
-        ])
+        features.extend(
+            [
+                channel.mean(),
+                channel.std(),
+                channel.max() - channel.min(),
+                np.percentile(channel, 25),
+                np.percentile(channel, 75),
+            ]
+        )
 
         # Simple frequency domain (dominant frequency energy)
         fft = np.abs(np.fft.rfft(channel))
-        features.extend([
-            fft[1:10].sum(),  # Low frequency energy
-            fft[10:50].sum(),  # Mid frequency energy
-            fft.argmax(),  # Dominant frequency bin
-        ])
+        features.extend(
+            [
+                fft[1:10].sum(),  # Low frequency energy
+                fft[10:50].sum(),  # Mid frequency energy
+                fft.argmax(),  # Dominant frequency bin
+            ]
+        )
 
     return np.array(features)
 
@@ -128,17 +143,12 @@ def parse_padre_filename(filename: str) -> dict:
     Returns:
         Dictionary with motor faults and labels
     """
-    match = re.search(r'normalized_(\d{4})\.csv$', filename)
+    match = re.search(r"normalized_(\d{4})\.csv$", filename)
     if not match:
         return None
 
     codes = match.group(1)
-    motor_faults = {
-        'A': int(codes[0]),
-        'B': int(codes[1]),
-        'C': int(codes[2]),
-        'D': int(codes[3])
-    }
+    motor_faults = {"A": int(codes[0]), "B": int(codes[1]), "C": int(codes[2]), "D": int(codes[3])}
 
     # Binary label
     is_faulty = 1 if any(f > 0 for f in motor_faults.values()) else 0
@@ -156,16 +166,17 @@ def parse_padre_filename(filename: str) -> dict:
     severity = max(motor_faults.values())
 
     return {
-        'motor_faults': motor_faults,
-        'binary_label': is_faulty,
-        'motor_id': motor_id,
-        'severity': severity,
-        'fault_code': codes
+        "motor_faults": motor_faults,
+        "binary_label": is_faulty,
+        "motor_id": motor_id,
+        "severity": severity,
+        "fault_code": codes,
     }
 
 
-def load_padre_data(data_dir: Path, window_size: int, stride: int,
-                    use_advanced_features: bool = False):
+def load_padre_data(
+    data_dir: Path, window_size: int, stride: int, use_advanced_features: bool = False
+):
     """
     Load PADRE dataset and extract features.
 
@@ -212,14 +223,10 @@ def load_padre_data(data_dir: Path, window_size: int, stride: int,
             features = feature_extractor(window)
 
             X.append(features)
-            y_binary.append(info['binary_label'])
-            y_motor.append(info['motor_id'])
-            y_severity.append(info['severity'])
-            metadata.append({
-                'file': csv_file.name,
-                'window_idx': i,
-                **info
-            })
+            y_binary.append(info["binary_label"])
+            y_motor.append(info["motor_id"])
+            y_severity.append(info["severity"])
+            metadata.append({"file": csv_file.name, "window_idx": i, **info})
 
         print(f"  {csv_file.name}: {n_windows} windows, fault={info['binary_label']}")
 
@@ -236,8 +243,7 @@ def load_padre_data(data_dir: Path, window_size: int, stride: int,
     return X, y_binary, y_motor, y_severity, metadata
 
 
-def train_and_evaluate(X_train, X_test, y_train, y_test,
-                       model_name: str, model, task_name: str):
+def train_and_evaluate(X_train, X_test, y_train, y_test, model_name: str, model, task_name: str):
     """
     Train model and return metrics.
     """
@@ -259,9 +265,9 @@ def train_and_evaluate(X_train, X_test, y_train, y_test,
         prec = precision_score(y_test, y_pred)
         rec = recall_score(y_test, y_pred)
     else:
-        f1 = f1_score(y_test, y_pred, average='weighted')
-        prec = precision_score(y_test, y_pred, average='weighted')
-        rec = recall_score(y_test, y_pred, average='weighted')
+        f1 = f1_score(y_test, y_pred, average="weighted")
+        prec = precision_score(y_test, y_pred, average="weighted")
+        rec = recall_score(y_test, y_pred, average="weighted")
 
     print(f"Accuracy: {acc:.2%}")
     print(f"F1 Score: {f1:.2%}")
@@ -273,23 +279,43 @@ def train_and_evaluate(X_train, X_test, y_train, y_test,
     print(f"\nConfusion Matrix:\n{cm}")
 
     return {
-        'accuracy': float(acc),
-        'f1': float(f1),
-        'precision': float(prec),
-        'recall': float(rec),
-        'confusion_matrix': cm.tolist()
+        "accuracy": float(acc),
+        "f1": float(f1),
+        "precision": float(prec),
+        "recall": float(rec),
+        "confusion_matrix": cm.tolist(),
     }
 
 
 def get_feature_names():
     """Get feature names for interpretation."""
     sensor_names = [
-        'A_aX', 'A_aY', 'A_aZ', 'A_gX', 'A_gY', 'A_gZ',
-        'B_aX', 'B_aY', 'B_aZ', 'B_gX', 'B_gY', 'B_gZ',
-        'C_aX', 'C_aY', 'C_aZ', 'C_gX', 'C_gY', 'C_gZ',
-        'D_aX', 'D_aY', 'D_aZ', 'D_gX', 'D_gY', 'D_gZ'
+        "A_aX",
+        "A_aY",
+        "A_aZ",
+        "A_gX",
+        "A_gY",
+        "A_gZ",
+        "B_aX",
+        "B_aY",
+        "B_aZ",
+        "B_gX",
+        "B_gY",
+        "B_gZ",
+        "C_aX",
+        "C_aY",
+        "C_aZ",
+        "C_gX",
+        "C_gY",
+        "C_gZ",
+        "D_aX",
+        "D_aY",
+        "D_aZ",
+        "D_gX",
+        "D_gY",
+        "D_gZ",
     ]
-    stat_names = ['mean', 'std', 'range']
+    stat_names = ["mean", "std", "range"]
 
     feature_names = []
     for sensor in sensor_names:
@@ -308,9 +334,9 @@ def main():
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Load data
-    print("="*60)
+    print("=" * 60)
     print("Loading PADRE Dataset")
-    print("="*60)
+    print("=" * 60)
 
     data_dir = Path(args.data_dir)
     X, y_binary, y_motor, y_severity, metadata = load_padre_data(
@@ -338,11 +364,11 @@ def main():
 
     # Results storage
     results = {
-        'config': vars(args),
-        'n_samples': n_samples,
-        'n_features': X.shape[1],
-        'models': {},
-        'timestamp': datetime.now().isoformat()
+        "config": vars(args),
+        "n_samples": n_samples,
+        "n_features": X.shape[1],
+        "models": {},
+        "timestamp": datetime.now().isoformat(),
     }
 
     # ============================================================
@@ -350,30 +376,31 @@ def main():
     # ============================================================
 
     rf_binary = RandomForestClassifier(
-        n_estimators=args.n_estimators,
-        random_state=args.seed,
-        n_jobs=-1
+        n_estimators=args.n_estimators, random_state=args.seed, n_jobs=-1
     )
 
     metrics = train_and_evaluate(
-        X_train_scaled, X_test_scaled,
-        y_binary_train, y_binary_test,
-        "Random Forest", rf_binary, "Binary Classification"
+        X_train_scaled,
+        X_test_scaled,
+        y_binary_train,
+        y_binary_test,
+        "Random Forest",
+        rf_binary,
+        "Binary Classification",
     )
-    results['models']['rf_binary'] = metrics
+    results["models"]["rf_binary"] = metrics
 
     # Feature importance
     feature_names = get_feature_names()
     importances = rf_binary.feature_importances_
-    top_features = sorted(zip(feature_names, importances),
-                          key=lambda x: x[1], reverse=True)[:10]
+    top_features = sorted(zip(feature_names, importances), key=lambda x: x[1], reverse=True)[:10]
 
     print("\nTop 10 Features:")
     for name, imp in top_features:
         print(f"  {name}: {imp:.4f}")
 
-    results['models']['rf_binary']['top_features'] = [
-        {'name': n, 'importance': float(i)} for n, i in top_features
+    results["models"]["rf_binary"]["top_features"] = [
+        {"name": n, "importance": float(i)} for n, i in top_features
     ]
 
     # ============================================================
@@ -381,63 +408,68 @@ def main():
     # ============================================================
 
     rf_motor = RandomForestClassifier(
-        n_estimators=args.n_estimators,
-        random_state=args.seed,
-        n_jobs=-1
+        n_estimators=args.n_estimators, random_state=args.seed, n_jobs=-1
     )
 
     metrics = train_and_evaluate(
-        X_train_scaled, X_test_scaled,
-        y_motor_train, y_motor_test,
-        "Random Forest", rf_motor, "Motor Identification"
+        X_train_scaled,
+        X_test_scaled,
+        y_motor_train,
+        y_motor_test,
+        "Random Forest",
+        rf_motor,
+        "Motor Identification",
     )
-    results['models']['rf_motor'] = metrics
+    results["models"]["rf_motor"] = metrics
 
     # ============================================================
     # Task 3: Cross-validation for robustness
     # ============================================================
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("5-Fold Cross-Validation (Binary)")
-    print("="*60)
+    print("=" * 60)
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=args.seed)
     cv_scores = cross_val_score(
         RandomForestClassifier(n_estimators=args.n_estimators, random_state=args.seed, n_jobs=-1),
-        X_train_scaled, y_binary_train, cv=cv, scoring='accuracy'
+        X_train_scaled,
+        y_binary_train,
+        cv=cv,
+        scoring="accuracy",
     )
 
     print(f"CV Accuracy: {cv_scores.mean():.2%} (+/- {cv_scores.std()*2:.2%})")
-    results['cv_accuracy'] = {
-        'mean': float(cv_scores.mean()),
-        'std': float(cv_scores.std()),
-        'scores': cv_scores.tolist()
+    results["cv_accuracy"] = {
+        "mean": float(cv_scores.mean()),
+        "std": float(cv_scores.std()),
+        "scores": cv_scores.tolist(),
     }
 
     # ============================================================
     # Save models and results
     # ============================================================
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Saving Models")
-    print("="*60)
+    print("=" * 60)
 
     # Save Random Forest models
-    with open(output_dir / 'rf_binary.pkl', 'wb') as f:
+    with open(output_dir / "rf_binary.pkl", "wb") as f:
         pickle.dump(rf_binary, f)
     print(f"Saved: {output_dir / 'rf_binary.pkl'}")
 
-    with open(output_dir / 'rf_motor.pkl', 'wb') as f:
+    with open(output_dir / "rf_motor.pkl", "wb") as f:
         pickle.dump(rf_motor, f)
     print(f"Saved: {output_dir / 'rf_motor.pkl'}")
 
     # Save scaler
-    with open(output_dir / 'scaler.pkl', 'wb') as f:
+    with open(output_dir / "scaler.pkl", "wb") as f:
         pickle.dump(scaler, f)
     print(f"Saved: {output_dir / 'scaler.pkl'}")
 
     # Save results
-    with open(output_dir / 'results.json', 'w') as f:
+    with open(output_dir / "results.json", "w") as f:
         json.dump(results, f, indent=2)
     print(f"Saved: {output_dir / 'results.json'}")
 
@@ -445,9 +477,9 @@ def main():
     # Summary
     # ============================================================
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("SUMMARY")
-    print("="*60)
+    print("=" * 60)
     print(f"Binary Classification Accuracy: {results['models']['rf_binary']['accuracy']:.2%}")
     print(f"Motor Identification Accuracy: {results['models']['rf_motor']['accuracy']:.2%}")
     print(f"Cross-Validation Accuracy: {results['cv_accuracy']['mean']:.2%}")

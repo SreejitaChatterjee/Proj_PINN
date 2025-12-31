@@ -13,22 +13,27 @@ Author: Rectification of methodological flaws
 Date: December 2024
 """
 
+import json
+import pickle
+import sys
+import warnings
+from datetime import datetime
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-import pickle
-import json
-import warnings
-from pathlib import Path
-from datetime import datetime
 from sklearn.ensemble import IsolationForest
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
-    roc_curve, auc, precision_recall_curve, average_precision_score,
-    confusion_matrix, classification_report
+    auc,
+    average_precision_score,
+    classification_report,
+    confusion_matrix,
+    precision_recall_curve,
+    roc_curve,
 )
-import sys
+from sklearn.preprocessing import StandardScaler
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 # Configuration
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -44,11 +49,11 @@ N_ESTIMATORS = 200
 RANDOM_STATE = 42
 
 # Attack configurations
-ATTACK_TYPES = ['drift', 'bias', 'noise', 'jump', 'oscillation']
+ATTACK_TYPES = ["drift", "bias", "noise", "jump", "oscillation"]
 ATTACK_MAGNITUDES = [0.25, 0.5, 1.0, 2.0, 4.0]
 
 # Stealth attack configurations (hard negatives)
-STEALTH_ATTACKS = ['ar1_drift', 'co_bias', 'intermittent', 'gradual_ramp']
+STEALTH_ATTACKS = ["ar1_drift", "co_bias", "intermittent", "gradual_ramp"]
 
 
 def load_euroc_with_sequences():
@@ -56,12 +61,12 @@ def load_euroc_with_sequences():
     print("Loading EuRoC data with sequence information...")
     df = pd.read_csv(DATA_PATH)
 
-    sequences = df['sequence'].unique()
+    sequences = df["sequence"].unique()
     print(f"Found {len(sequences)} sequences: {list(sequences)}")
 
     # Count samples per sequence
     for seq in sequences:
-        count = len(df[df['sequence'] == seq])
+        count = len(df[df["sequence"] == seq])
         print(f"  {seq}: {count} samples")
 
     return df, sequences
@@ -75,12 +80,14 @@ def extract_multiscale_features(data, windows=WINDOWS):
     for i in range(max_window, len(data)):
         feat_list = []
         for w_size in windows:
-            w = data[i-w_size:i]
-            feat_list.extend([
-                np.mean(w, axis=0).mean(),
-                np.std(w, axis=0).mean(),
-                np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
-            ])
+            w = data[i - w_size : i]
+            feat_list.extend(
+                [
+                    np.mean(w, axis=0).mean(),
+                    np.std(w, axis=0).mean(),
+                    np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
+                ]
+            )
         all_features.append(feat_list)
 
     return np.array(all_features)
@@ -91,29 +98,29 @@ def generate_attack(clean_data, attack_type, magnitude):
     attacked = clean_data.copy()
     n = len(clean_data)
 
-    if attack_type == 'drift':
+    if attack_type == "drift":
         # GPS drift: gradual position offset
         drift = np.linspace(0, magnitude * 5.0, n)
         attacked[:, 0] += drift  # x position
         attacked[:, 1] += drift * 0.5  # y position
 
-    elif attack_type == 'bias':
+    elif attack_type == "bias":
         # IMU bias: constant offset on attitude
         attacked[:, 3] += magnitude * 0.05  # roll
         attacked[:, 4] += magnitude * 0.05  # pitch
 
-    elif attack_type == 'noise':
+    elif attack_type == "noise":
         # Noise injection
         noise = np.random.normal(0, magnitude * 0.1, attacked.shape)
         attacked += noise
 
-    elif attack_type == 'jump':
+    elif attack_type == "jump":
         # Position jump at random point
         jump_idx = n // 2
         attacked[jump_idx:, 0] += magnitude * 2.0
         attacked[jump_idx:, 1] += magnitude * 1.5
 
-    elif attack_type == 'oscillation':
+    elif attack_type == "oscillation":
         # Sinusoidal perturbation
         t = np.linspace(0, 10 * np.pi, n)
         attacked[:, 0] += magnitude * np.sin(t)
@@ -127,29 +134,29 @@ def generate_stealth_attack(clean_data, attack_type, normal_stats):
     attacked = clean_data.copy()
     n = len(clean_data)
 
-    if attack_type == 'ar1_drift':
+    if attack_type == "ar1_drift":
         # AR(1) process mimicking normal autocorrelation
         phi = 0.95
-        sigma = normal_stats['std'] * 0.5  # Within normal variance
+        sigma = normal_stats["std"] * 0.5  # Within normal variance
         ar_noise = np.zeros(n)
         for i in range(1, n):
-            ar_noise[i] = phi * ar_noise[i-1] + np.random.normal(0, sigma)
+            ar_noise[i] = phi * ar_noise[i - 1] + np.random.normal(0, sigma)
         attacked[:, 0] += ar_noise
 
-    elif attack_type == 'co_bias':
+    elif attack_type == "co_bias":
         # Coordinated GPS+IMU bias (maintains consistency)
-        bias = normal_stats['std'] * 0.3
+        bias = normal_stats["std"] * 0.3
         attacked[:, 0] += bias  # Position
         attacked[:, 9] += bias * 0.01  # Velocity (consistent)
 
-    elif attack_type == 'intermittent':
+    elif attack_type == "intermittent":
         # Attack only 10% of timesteps
         mask = np.random.random(n) < 0.1
-        attacked[mask, 0] += normal_stats['std'] * 2
+        attacked[mask, 0] += normal_stats["std"] * 2
 
-    elif attack_type == 'gradual_ramp':
+    elif attack_type == "gradual_ramp":
         # Very slow drift (tau > 1000 timesteps)
-        ramp = np.linspace(0, normal_stats['std'] * 1.5, n)
+        ramp = np.linspace(0, normal_stats["std"] * 1.5, n)
         attacked[:, 0] += ramp
 
     return attacked
@@ -178,15 +185,15 @@ def run_loso_cv(df, sequences, contamination):
     print(f"LOSO-CV with contamination = {contamination}")
     print(f"{'='*60}")
 
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_cols = ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]
 
     all_results = {
-        'fold_metrics': [],
-        'per_attack_metrics': [],
-        'latency_metrics': [],
-        'stealth_metrics': [],
-        'roc_data': [],
-        'pr_data': []
+        "fold_metrics": [],
+        "per_attack_metrics": [],
+        "latency_metrics": [],
+        "stealth_metrics": [],
+        "roc_data": [],
+        "pr_data": [],
     }
 
     for fold_idx, test_seq in enumerate(sequences):
@@ -194,8 +201,8 @@ def run_loso_cv(df, sequences, contamination):
 
         # Split by sequence (NO temporal leakage)
         train_seqs = [s for s in sequences if s != test_seq]
-        train_df = df[df['sequence'].isin(train_seqs)]
-        test_df = df[df['sequence'] == test_seq]
+        train_df = df[df["sequence"].isin(train_seqs)]
+        test_df = df[df["sequence"] == test_seq]
 
         print(f"  Train sequences: {train_seqs}")
         print(f"  Train samples: {len(train_df)}, Test samples: {len(test_df)}")
@@ -206,8 +213,8 @@ def run_loso_cv(df, sequences, contamination):
 
         # Compute normal statistics (for stealth attacks)
         normal_stats = {
-            'mean': np.mean(train_data, axis=0),
-            'std': np.std(train_data, axis=0).mean()
+            "mean": np.mean(train_data, axis=0),
+            "std": np.std(train_data, axis=0).mean(),
         }
 
         # Extract features from CLEAN training data only
@@ -224,7 +231,7 @@ def run_loso_cv(df, sequences, contamination):
             n_estimators=N_ESTIMATORS,
             contamination=contamination,
             random_state=RANDOM_STATE,
-            n_jobs=-1
+            n_jobs=-1,
         )
         detector.fit(train_features_scaled)
 
@@ -253,7 +260,7 @@ def run_loso_cv(df, sequences, contamination):
             for magnitude in ATTACK_MAGNITUDES:
                 # Generate attack on test clean data
                 # Use middle portion to have buffer for features
-                test_base = test_clean_data[max(WINDOWS):max(WINDOWS)+500]
+                test_base = test_clean_data[max(WINDOWS) : max(WINDOWS) + 500]
                 attacked_data = generate_attack(test_base.copy(), attack_type, magnitude)
 
                 # Create combined sequence: clean -> attack
@@ -301,34 +308,40 @@ def run_loso_cv(df, sequences, contamination):
                 latency = compute_detection_latency(binary_preds, attack_label_start)
 
                 result = {
-                    'fold': fold_idx,
-                    'test_seq': test_seq,
-                    'attack_type': attack_type,
-                    'magnitude': magnitude,
-                    'recall': recall,
-                    'precision': precision,
-                    'roc_auc': roc_auc,
-                    'pr_auc': pr_auc,
-                    'latency_timesteps': latency,
-                    'latency_ms': latency * 5 if latency is not None else None  # 200Hz = 5ms per step
+                    "fold": fold_idx,
+                    "test_seq": test_seq,
+                    "attack_type": attack_type,
+                    "magnitude": magnitude,
+                    "recall": recall,
+                    "precision": precision,
+                    "roc_auc": roc_auc,
+                    "pr_auc": pr_auc,
+                    "latency_timesteps": latency,
+                    "latency_ms": (
+                        latency * 5 if latency is not None else None
+                    ),  # 200Hz = 5ms per step
                 }
                 fold_attack_results.append(result)
 
                 # Store ROC/PR data
-                fold_roc_data.append({
-                    'attack_type': attack_type,
-                    'magnitude': magnitude,
-                    'fpr': fpr_curve.tolist(),
-                    'tpr': tpr_curve.tolist(),
-                    'auc': roc_auc
-                })
-                fold_pr_data.append({
-                    'attack_type': attack_type,
-                    'magnitude': magnitude,
-                    'precision': precision_curve.tolist(),
-                    'recall': recall_curve.tolist(),
-                    'auc': pr_auc
-                })
+                fold_roc_data.append(
+                    {
+                        "attack_type": attack_type,
+                        "magnitude": magnitude,
+                        "fpr": fpr_curve.tolist(),
+                        "tpr": tpr_curve.tolist(),
+                        "auc": roc_auc,
+                    }
+                )
+                fold_pr_data.append(
+                    {
+                        "attack_type": attack_type,
+                        "magnitude": magnitude,
+                        "precision": precision_curve.tolist(),
+                        "recall": recall_curve.tolist(),
+                        "auc": pr_auc,
+                    }
+                )
 
                 if latency is not None:
                     fold_latency.append(latency * 5)  # Convert to ms
@@ -336,7 +349,7 @@ def run_loso_cv(df, sequences, contamination):
         # Evaluate on stealth attacks
         fold_stealth_results = []
         for stealth_type in STEALTH_ATTACKS:
-            test_base = test_clean_data[max(WINDOWS):max(WINDOWS)+500]
+            test_base = test_clean_data[max(WINDOWS) : max(WINDOWS) + 500]
             stealth_data = generate_stealth_attack(test_base.copy(), stealth_type, normal_stats)
 
             combined = np.vstack([test_base[:100], stealth_data])
@@ -357,29 +370,29 @@ def run_loso_cv(df, sequences, contamination):
             fn = np.sum((binary_preds == 0) & attack_mask)
             recall = tp / (tp + fn) if (tp + fn) > 0 else 0
 
-            fold_stealth_results.append({
-                'fold': fold_idx,
-                'stealth_type': stealth_type,
-                'recall': recall
-            })
+            fold_stealth_results.append(
+                {"fold": fold_idx, "stealth_type": stealth_type, "recall": recall}
+            )
 
         # Store fold results
-        all_results['fold_metrics'].append({
-            'fold': fold_idx,
-            'test_seq': test_seq,
-            'fpr': fpr,
-            'avg_recall': np.mean([r['recall'] for r in fold_attack_results]),
-            'min_recall': np.min([r['recall'] for r in fold_attack_results]),
-            'avg_roc_auc': np.mean([r['roc_auc'] for r in fold_attack_results]),
-            'avg_latency_ms': np.mean(fold_latency) if fold_latency else None,
-            'stealth_avg_recall': np.mean([r['recall'] for r in fold_stealth_results])
-        })
+        all_results["fold_metrics"].append(
+            {
+                "fold": fold_idx,
+                "test_seq": test_seq,
+                "fpr": fpr,
+                "avg_recall": np.mean([r["recall"] for r in fold_attack_results]),
+                "min_recall": np.min([r["recall"] for r in fold_attack_results]),
+                "avg_roc_auc": np.mean([r["roc_auc"] for r in fold_attack_results]),
+                "avg_latency_ms": np.mean(fold_latency) if fold_latency else None,
+                "stealth_avg_recall": np.mean([r["recall"] for r in fold_stealth_results]),
+            }
+        )
 
-        all_results['per_attack_metrics'].extend(fold_attack_results)
-        all_results['roc_data'].extend(fold_roc_data)
-        all_results['pr_data'].extend(fold_pr_data)
-        all_results['latency_metrics'].extend(fold_latency)
-        all_results['stealth_metrics'].extend(fold_stealth_results)
+        all_results["per_attack_metrics"].extend(fold_attack_results)
+        all_results["roc_data"].extend(fold_roc_data)
+        all_results["pr_data"].extend(fold_pr_data)
+        all_results["latency_metrics"].extend(fold_latency)
+        all_results["stealth_metrics"].extend(fold_stealth_results)
 
         print(f"  Fold {fold_idx + 1} complete:")
         print(f"    FPR: {fpr:.4f}")
@@ -394,9 +407,9 @@ def compute_recall_at_fpr(all_results, target_fpr_levels=[0.01, 0.05, 0.10]):
     """Compute recall at fixed FPR thresholds."""
     recall_at_fpr = {f"recall_at_{int(fpr*100)}pct_fpr": [] for fpr in target_fpr_levels}
 
-    for roc_data in all_results['roc_data']:
-        fpr_curve = np.array(roc_data['fpr'])
-        tpr_curve = np.array(roc_data['tpr'])
+    for roc_data in all_results["roc_data"]:
+        fpr_curve = np.array(roc_data["fpr"])
+        tpr_curve = np.array(roc_data["tpr"])
 
         for target_fpr in target_fpr_levels:
             # Find recall at target FPR
@@ -431,18 +444,18 @@ def generate_summary_report(results_by_contamination):
         report_lines.append(f"{'='*60}")
 
         # Aggregate metrics across folds
-        fold_metrics = results['fold_metrics']
+        fold_metrics = results["fold_metrics"]
 
-        avg_recall = np.mean([f['avg_recall'] for f in fold_metrics])
-        std_recall = np.std([f['avg_recall'] for f in fold_metrics])
-        min_recall = np.min([f['min_recall'] for f in fold_metrics])
-        avg_fpr = np.mean([f['fpr'] for f in fold_metrics])
-        std_fpr = np.std([f['fpr'] for f in fold_metrics])
+        avg_recall = np.mean([f["avg_recall"] for f in fold_metrics])
+        std_recall = np.std([f["avg_recall"] for f in fold_metrics])
+        min_recall = np.min([f["min_recall"] for f in fold_metrics])
+        avg_fpr = np.mean([f["fpr"] for f in fold_metrics])
+        std_fpr = np.std([f["fpr"] for f in fold_metrics])
 
-        stealth_recalls = [f['stealth_avg_recall'] for f in fold_metrics]
+        stealth_recalls = [f["stealth_avg_recall"] for f in fold_metrics]
         avg_stealth = np.mean(stealth_recalls)
 
-        latencies = [l for l in results['latency_metrics'] if l is not None]
+        latencies = [l for l in results["latency_metrics"] if l is not None]
 
         report_lines.append("")
         report_lines.append("AGGREGATE METRICS (LOSO-CV):")
@@ -453,7 +466,9 @@ def generate_summary_report(results_by_contamination):
 
         if latencies:
             report_lines.append(f"  Detection Latency (median): {np.median(latencies):.0f} ms")
-            report_lines.append(f"  Detection Latency (95th pct): {np.percentile(latencies, 95):.0f} ms")
+            report_lines.append(
+                f"  Detection Latency (95th pct): {np.percentile(latencies, 95):.0f} ms"
+            )
 
         # Recall at fixed FPR
         recall_at_fpr = compute_recall_at_fpr(results)
@@ -465,40 +480,46 @@ def generate_summary_report(results_by_contamination):
         # Per-attack type breakdown
         report_lines.append("")
         report_lines.append("PER-ATTACK TYPE PERFORMANCE:")
-        attack_df = pd.DataFrame(results['per_attack_metrics'])
+        attack_df = pd.DataFrame(results["per_attack_metrics"])
         for attack_type in ATTACK_TYPES:
-            type_data = attack_df[attack_df['attack_type'] == attack_type]
-            type_recall = type_data['recall'].mean()
-            type_min = type_data['recall'].min()
-            type_auc = type_data['roc_auc'].mean()
-            report_lines.append(f"  {attack_type:15s}: Avg={type_recall*100:.1f}%, Min={type_min*100:.1f}%, AUC={type_auc:.3f}")
+            type_data = attack_df[attack_df["attack_type"] == attack_type]
+            type_recall = type_data["recall"].mean()
+            type_min = type_data["recall"].min()
+            type_auc = type_data["roc_auc"].mean()
+            report_lines.append(
+                f"  {attack_type:15s}: Avg={type_recall*100:.1f}%, Min={type_min*100:.1f}%, AUC={type_auc:.3f}"
+            )
 
         # Per-magnitude breakdown
         report_lines.append("")
         report_lines.append("PER-MAGNITUDE PERFORMANCE:")
         for magnitude in ATTACK_MAGNITUDES:
-            mag_data = attack_df[attack_df['magnitude'] == magnitude]
-            mag_recall = mag_data['recall'].mean()
-            mag_min = mag_data['recall'].min()
-            report_lines.append(f"  {magnitude}x: Avg={mag_recall*100:.1f}%, Min={mag_min*100:.1f}%")
+            mag_data = attack_df[attack_df["magnitude"] == magnitude]
+            mag_recall = mag_data["recall"].mean()
+            mag_min = mag_data["recall"].min()
+            report_lines.append(
+                f"  {magnitude}x: Avg={mag_recall*100:.1f}%, Min={mag_min*100:.1f}%"
+            )
 
         # Stealth attack breakdown
         report_lines.append("")
         report_lines.append("STEALTH ATTACK PERFORMANCE (HARD NEGATIVES):")
-        stealth_df = pd.DataFrame(results['stealth_metrics'])
+        stealth_df = pd.DataFrame(results["stealth_metrics"])
         for stealth_type in STEALTH_ATTACKS:
-            type_data = stealth_df[stealth_df['stealth_type'] == stealth_type]
-            type_recall = type_data['recall'].mean()
+            type_data = stealth_df[stealth_df["stealth_type"] == stealth_type]
+            type_recall = type_data["recall"].mean()
             report_lines.append(f"  {stealth_type:15s}: {type_recall*100:.1f}%")
 
         # Per-fold breakdown
         report_lines.append("")
         report_lines.append("PER-FOLD RESULTS (LOSO-CV):")
         for fold in fold_metrics:
-            report_lines.append(f"  Fold {fold['fold']+1} ({fold['test_seq']}): "
-                              f"Recall={fold['avg_recall']*100:.1f}%, "
-                              f"FPR={fold['fpr']*100:.1f}%, "
-                              f"Stealth={fold['stealth_avg_recall']*100:.1f}%")
+            report_lines.append(
+                f"  Fold {fold['fold']+1} ({fold['test_seq']}): "
+                f"Recall={fold['avg_recall']*100:.1f}%, "
+                f"FPR={fold['fpr']*100:.1f}%, "
+                f"Stealth={fold['stealth_avg_recall']*100:.1f}%"
+            )
 
     # Final recommendations
     report_lines.append("")
@@ -523,18 +544,18 @@ def generate_summary_report(results_by_contamination):
     best_c = None
     best_score = -1
     for c, r in results_by_contamination.items():
-        avg_recall = np.mean([f['avg_recall'] for f in r['fold_metrics']])
+        avg_recall = np.mean([f["avg_recall"] for f in r["fold_metrics"]])
         if avg_recall > best_score:
             best_score = avg_recall
             best_c = c
 
     best_results = results_by_contamination[best_c]
-    best_fold_metrics = best_results['fold_metrics']
-    final_avg = np.mean([f['avg_recall'] for f in best_fold_metrics])
-    final_std = np.std([f['avg_recall'] for f in best_fold_metrics])
-    final_min = np.min([f['min_recall'] for f in best_fold_metrics])
-    final_fpr = np.mean([f['fpr'] for f in best_fold_metrics])
-    final_stealth = np.mean([f['stealth_avg_recall'] for f in best_fold_metrics])
+    best_fold_metrics = best_results["fold_metrics"]
+    final_avg = np.mean([f["avg_recall"] for f in best_fold_metrics])
+    final_std = np.std([f["avg_recall"] for f in best_fold_metrics])
+    final_min = np.min([f["min_recall"] for f in best_fold_metrics])
+    final_fpr = np.mean([f["fpr"] for f in best_fold_metrics])
+    final_stealth = np.mean([f["stealth_avg_recall"] for f in best_fold_metrics])
 
     report_lines.append(f"   Best config (c={best_c}):")
     report_lines.append(f"     Average Recall: {final_avg*100:.1f}% +/- {final_std*100:.1f}%")
@@ -568,7 +589,7 @@ def main():
 
     # Save results
     report_path = OUTPUT_DIR / "HONEST_RESULTS.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(report)
     print(f"\nReport saved to: {report_path}")
 
@@ -586,21 +607,19 @@ def main():
     json_results = {}
     for c, r in results_by_contamination.items():
         json_results[str(c)] = {
-            'fold_metrics': r['fold_metrics'],
-            'per_attack_summary': pd.DataFrame(r['per_attack_metrics']).groupby(
-                ['attack_type', 'magnitude']
-            ).agg({
-                'recall': ['mean', 'std', 'min'],
-                'roc_auc': 'mean',
-                'pr_auc': 'mean'
-            }).to_dict(),
-            'stealth_summary': pd.DataFrame(r['stealth_metrics']).groupby(
-                'stealth_type'
-            ).agg({'recall': ['mean', 'std']}).to_dict()
+            "fold_metrics": r["fold_metrics"],
+            "per_attack_summary": pd.DataFrame(r["per_attack_metrics"])
+            .groupby(["attack_type", "magnitude"])
+            .agg({"recall": ["mean", "std", "min"], "roc_auc": "mean", "pr_auc": "mean"})
+            .to_dict(),
+            "stealth_summary": pd.DataFrame(r["stealth_metrics"])
+            .groupby("stealth_type")
+            .agg({"recall": ["mean", "std"]})
+            .to_dict(),
         }
 
     json_path = OUTPUT_DIR / "detailed_results.json"
-    with open(json_path, 'w') as f:
+    with open(json_path, "w") as f:
         json.dump(json_results, f, indent=2, default=convert_numpy)
     print(f"Detailed results saved to: {json_path}")
 

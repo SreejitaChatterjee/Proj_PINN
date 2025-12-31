@@ -9,14 +9,15 @@ If physics-based consistency checking works, it SHOULD transfer.
 This is the real test of whether the approach has value.
 """
 
+import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
-import warnings
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 EUROC_PATH = PROJECT_ROOT / "data" / "euroc" / "all_sequences.csv"
@@ -29,11 +30,11 @@ CONTAMINATION = 0.05
 
 def compute_consistency_features(data, dt=0.005):
     """Compute cross-modal consistency features."""
-    pos = data[['x', 'y', 'z']].values
-    att = data[['roll', 'pitch', 'yaw']].values
-    rates = data[['p', 'q', 'r']].values
-    vel = data[['vx', 'vy', 'vz']].values
-    acc = data[['ax', 'ay', 'az']].values
+    pos = data[["x", "y", "z"]].values
+    att = data[["roll", "pitch", "yaw"]].values
+    rates = data[["p", "q", "r"]].values
+    vel = data[["vx", "vy", "vz"]].values
+    acc = data[["ax", "ay", "az"]].values
 
     n = len(data) - 1
     features = []
@@ -42,25 +43,43 @@ def compute_consistency_features(data, dt=0.005):
         feat = []
 
         # Attitude-Rate consistency
-        att_change = att[i+1] - att[i]
+        att_change = att[i + 1] - att[i]
         expected_att_change = rates[i] * dt
         att_error = att_change - expected_att_change
-        feat.extend([np.abs(att_error[0]), np.abs(att_error[1]),
-                     np.abs(att_error[2]), np.linalg.norm(att_error)])
+        feat.extend(
+            [
+                np.abs(att_error[0]),
+                np.abs(att_error[1]),
+                np.abs(att_error[2]),
+                np.linalg.norm(att_error),
+            ]
+        )
 
         # Velocity-Acceleration consistency
-        vel_change = vel[i+1] - vel[i]
+        vel_change = vel[i + 1] - vel[i]
         expected_vel_change = acc[i] * dt
         vel_error = vel_change - expected_vel_change
-        feat.extend([np.abs(vel_error[0]), np.abs(vel_error[1]),
-                     np.abs(vel_error[2]), np.linalg.norm(vel_error)])
+        feat.extend(
+            [
+                np.abs(vel_error[0]),
+                np.abs(vel_error[1]),
+                np.abs(vel_error[2]),
+                np.linalg.norm(vel_error),
+            ]
+        )
 
         # Position-Velocity consistency
-        pos_change = pos[i+1] - pos[i]
+        pos_change = pos[i + 1] - pos[i]
         expected_pos_change = vel[i] * dt
         pos_error = pos_change - expected_pos_change
-        feat.extend([np.abs(pos_error[0]), np.abs(pos_error[1]),
-                     np.abs(pos_error[2]), np.linalg.norm(pos_error)])
+        feat.extend(
+            [
+                np.abs(pos_error[0]),
+                np.abs(pos_error[1]),
+                np.abs(pos_error[2]),
+                np.linalg.norm(pos_error),
+            ]
+        )
 
         features.append(feat)
 
@@ -78,7 +97,7 @@ def extract_windowed_features(consistency_feats, windows=[5, 10, 25, 50]):
     for i in range(max_window, len(consistency_feats)):
         feat_list = []
         for w_size in windows:
-            window = consistency_feats[i-w_size:i]
+            window = consistency_feats[i - w_size : i]
             feat_list.extend(np.mean(window, axis=0))
             feat_list.extend(np.std(window, axis=0))
             feat_list.extend(np.max(np.abs(window), axis=0))
@@ -109,69 +128,69 @@ def load_padre_as_euroc_format(padre_file):
     cols = df.columns.tolist()
 
     # Try to find position (might not exist in PADRE)
-    if 'x' in cols:
-        result['x'] = df['x']
-        result['y'] = df['y']
-        result['z'] = df['z']
+    if "x" in cols:
+        result["x"] = df["x"]
+        result["y"] = df["y"]
+        result["z"] = df["z"]
     else:
         # Integrate from velocity if available, else zeros
-        result['x'] = 0
-        result['y'] = 0
-        result['z'] = 0
+        result["x"] = 0
+        result["y"] = 0
+        result["z"] = 0
 
     # Attitude - PADRE might have different naming
-    if 'roll' in cols:
-        result['roll'] = df['roll']
-        result['pitch'] = df['pitch']
-        result['yaw'] = df['yaw']
-    elif 'phi' in cols:
-        result['roll'] = df['phi']
-        result['pitch'] = df['theta']
-        result['yaw'] = df['psi']
+    if "roll" in cols:
+        result["roll"] = df["roll"]
+        result["pitch"] = df["pitch"]
+        result["yaw"] = df["yaw"]
+    elif "phi" in cols:
+        result["roll"] = df["phi"]
+        result["pitch"] = df["theta"]
+        result["yaw"] = df["psi"]
     else:
-        result['roll'] = 0
-        result['pitch'] = 0
-        result['yaw'] = 0
+        result["roll"] = 0
+        result["pitch"] = 0
+        result["yaw"] = 0
 
     # Angular rates - average across motors if multiple
-    gyro_cols = [c for c in cols if 'gyro' in c.lower() or c in ['p', 'q', 'r']]
-    if 'p' in cols:
-        result['p'] = df['p']
-        result['q'] = df['q']
-        result['r'] = df['r']
-    elif 'gx_1' in cols:
+    gyro_cols = [c for c in cols if "gyro" in c.lower() or c in ["p", "q", "r"]]
+    if "p" in cols:
+        result["p"] = df["p"]
+        result["q"] = df["q"]
+        result["r"] = df["r"]
+    elif "gx_1" in cols:
         # Average across motors
-        result['p'] = df[[c for c in cols if 'gx' in c]].mean(axis=1)
-        result['q'] = df[[c for c in cols if 'gy' in c]].mean(axis=1)
-        result['r'] = df[[c for c in cols if 'gz' in c]].mean(axis=1)
+        result["p"] = df[[c for c in cols if "gx" in c]].mean(axis=1)
+        result["q"] = df[[c for c in cols if "gy" in c]].mean(axis=1)
+        result["r"] = df[[c for c in cols if "gz" in c]].mean(axis=1)
     else:
-        result['p'] = 0
-        result['q'] = 0
-        result['r'] = 0
+        result["p"] = 0
+        result["q"] = 0
+        result["r"] = 0
 
     # Velocities - might need to integrate or use available
-    if 'vx' in cols:
-        result['vx'] = df['vx']
-        result['vy'] = df['vy']
-        result['vz'] = df['vz']
+    if "vx" in cols:
+        result["vx"] = df["vx"]
+        result["vy"] = df["vy"]
+        result["vz"] = df["vz"]
     else:
-        result['vx'] = 0
-        result['vy'] = 0
-        result['vz'] = 0
+        result["vx"] = 0
+        result["vy"] = 0
+        result["vz"] = 0
 
     # Accelerations - average across motors
-    if 'ax' in cols:
-        result['ax'] = df['ax']
-        result['ay'] = df['ay']
-        result['az'] = df['az']
-    elif 'ax_1' in cols:
-        result['ax'] = df[[c for c in cols if 'ax' in c]].mean(axis=1)
-        result['ay'] = df[[c for c in cols if 'ay' in c]].mean(axis=1)
-        result['az'] = df[[c for c in cols if 'az' in c]].mean(axis=1)
+    if "ax" in cols:
+        result["ax"] = df["ax"]
+        result["ay"] = df["ay"]
+        result["az"] = df["az"]
+    elif "ax_1" in cols:
+        result["ax"] = df[[c for c in cols if "ax" in c]].mean(axis=1)
+        result["ay"] = df[[c for c in cols if "ay" in c]].mean(axis=1)
+        result["az"] = df[[c for c in cols if "az" in c]].mean(axis=1)
     else:
-        result['ax'] = 0
-        result['ay'] = 0
-        result['az'] = 0
+        result["ax"] = 0
+        result["ay"] = 0
+        result["az"] = 0
 
     return result
 
@@ -199,10 +218,7 @@ def run_cross_dataset_test():
     train_scaled = scaler.fit_transform(euroc_features)
 
     detector = IsolationForest(
-        n_estimators=200,
-        contamination=CONTAMINATION,
-        random_state=42,
-        n_jobs=-1
+        n_estimators=200, contamination=CONTAMINATION, random_state=42, n_jobs=-1
     )
     detector.fit(train_scaled)
     print("  Training complete.")
@@ -223,8 +239,10 @@ def run_cross_dataset_test():
     print(f"  Found {len(padre_files)} PADRE files")
 
     # Classify files
-    normal_files = [f for f in padre_files if '_0000' in f.name]
-    fault_files = [f for f in padre_files if '_0000' not in f.name and f.name != 'all_sequences.csv']
+    normal_files = [f for f in padre_files if "_0000" in f.name]
+    fault_files = [
+        f for f in padre_files if "_0000" not in f.name and f.name != "all_sequences.csv"
+    ]
 
     print(f"  Normal flights: {len(normal_files)}")
     print(f"  Fault flights: {len(fault_files)}")
@@ -239,7 +257,7 @@ def run_cross_dataset_test():
                 continue
 
             # Check if we have meaningful data
-            if padre_df['ax'].abs().max() < 0.01:
+            if padre_df["ax"].abs().max() < 0.01:
                 print(f"    {f.name}: No meaningful acceleration data, skipping")
                 continue
 
@@ -266,7 +284,7 @@ def run_cross_dataset_test():
             if len(padre_df) < 100:
                 continue
 
-            if padre_df['ax'].abs().max() < 0.01:
+            if padre_df["ax"].abs().max() < 0.01:
                 continue
 
             consistency = compute_consistency_features(padre_df, dt=0.01)
@@ -340,7 +358,7 @@ CONCLUSION:
 """
 
     report_path = OUTPUT_DIR / "CROSS_DATASET_RESULTS.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(report)
 
     print(f"\nResults saved to: {report_path}")

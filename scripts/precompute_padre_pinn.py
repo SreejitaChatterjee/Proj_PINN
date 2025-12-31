@@ -7,6 +7,7 @@ as .npz files for fast loading during training.
 
 import sys
 from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -22,8 +23,8 @@ def denormalize_padre_data(data, accel_range_g=16, gyro_range_dps=1000):
     data_out = data.copy()
     for motor_idx in range(4):
         base = motor_idx * 6
-        data_out[:, base:base+3] *= accel_range_g * g
-        data_out[:, base+3:base+6] *= gyro_range_dps * (np.pi / 180)
+        data_out[:, base : base + 3] *= accel_range_g * g
+        data_out[:, base + 3 : base + 6] *= gyro_range_dps * (np.pi / 180)
     return data_out
 
 
@@ -44,7 +45,7 @@ def main():
         Jyy=0.005,
         Jzz=0.009,
         complementary_alpha=0.98,
-        drag_coeff=0.01
+        drag_coeff=0.01,
     )
 
     window_size = 128
@@ -55,16 +56,16 @@ def main():
 
     for csv_file in tqdm(csv_files, desc="Converting"):
         # Parse fault label
-        match = re.search(r'normalized_(\d{4})\.csv$', csv_file.name)
+        match = re.search(r"normalized_(\d{4})\.csv$", csv_file.name)
         if not match:
             continue
 
         codes = match.group(1)
         motor_faults = {
-            'A': int(codes[0]),
-            'B': int(codes[1]),
-            'C': int(codes[2]),
-            'D': int(codes[3])
+            "A": int(codes[0]),
+            "B": int(codes[1]),
+            "C": int(codes[2]),
+            "D": int(codes[3]),
         }
         is_faulty = 1 if any(f > 0 for f in motor_faults.values()) else 0
 
@@ -77,13 +78,15 @@ def main():
         try:
             X, Y = converter.convert_windowed(padre_data, window_size, stride)
 
-            all_results.append({
-                'file': csv_file.name,
-                'X': X,
-                'Y': Y,
-                'fault_label': is_faulty,
-                'motor_faults': codes
-            })
+            all_results.append(
+                {
+                    "file": csv_file.name,
+                    "X": X,
+                    "Y": Y,
+                    "fault_label": is_faulty,
+                    "motor_faults": codes,
+                }
+            )
 
             print(f"  {csv_file.name}: {X.shape[0]} windows, fault={is_faulty}")
 
@@ -92,12 +95,9 @@ def main():
 
     # Combine all data
     print("\nCombining data...")
-    X_all = np.concatenate([r['X'] for r in all_results], axis=0)
-    Y_all = np.concatenate([r['Y'] for r in all_results], axis=0)
-    labels = np.concatenate([
-        np.full(r['X'].shape[0], r['fault_label'])
-        for r in all_results
-    ])
+    X_all = np.concatenate([r["X"] for r in all_results], axis=0)
+    Y_all = np.concatenate([r["Y"] for r in all_results], axis=0)
+    labels = np.concatenate([np.full(r["X"].shape[0], r["fault_label"]) for r in all_results])
 
     print(f"\nTotal windows: {X_all.shape[0]}")
     print(f"X shape: {X_all.shape}")
@@ -116,12 +116,7 @@ def main():
     # Save
     output_file = output_dir / "padre_pinn_data.npz"
     np.savez_compressed(
-        output_file,
-        X=X_flat,
-        Y=Y_flat,
-        labels=labels_flat,
-        window_size=window_size,
-        stride=stride
+        output_file, X=X_flat, Y=Y_flat, labels=labels_flat, window_size=window_size, stride=stride
     )
 
     print(f"\nSaved to: {output_file}")

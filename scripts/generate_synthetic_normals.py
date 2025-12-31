@@ -13,17 +13,18 @@ This helps the model learn generalizable "normal" patterns.
 """
 
 import argparse
+import warnings
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import List, Dict, Optional, Tuple, Any
-from scipy.ndimage import gaussian_filter1d
 from scipy.interpolate import interp1d
-import warnings
+from scipy.ndimage import gaussian_filter1d
 
 # Suppress specific interpolation warnings from scipy
-warnings.filterwarnings('ignore', category=RuntimeWarning, message='.*divide by zero.*')
-warnings.filterwarnings('ignore', category=FutureWarning, module='pandas')
+warnings.filterwarnings("ignore", category=RuntimeWarning, message=".*divide by zero.*")
+warnings.filterwarnings("ignore", category=FutureWarning, module="pandas")
 
 # Default number of columns in PADRE data
 DEFAULT_N_COLUMNS = 24
@@ -68,16 +69,13 @@ class SyntheticNormalGenerator:
                         f"File {path} has {df.shape[1]} columns, "
                         f"but {self.n_columns} were requested"
                     )
-                data = df.values.astype(np.float32)[:, :self.n_columns]
+                data = df.values.astype(np.float32)[:, : self.n_columns]
             else:
                 data = df.values.astype(np.float32)
 
-            self.real_normals.append({
-                'data': data,
-                'path': path,
-                'mean': data.mean(axis=0),
-                'std': data.std(axis=0)
-            })
+            self.real_normals.append(
+                {"data": data, "path": path, "mean": data.mean(axis=0), "std": data.std(axis=0)}
+            )
         print(f"Loaded {len(self.real_normals)} real normal flights")
 
     def add_noise(self, data: np.ndarray, noise_level: float = 0.05) -> np.ndarray:
@@ -98,7 +96,7 @@ class SyntheticNormalGenerator:
 
         warped = np.zeros((new_n, data.shape[1]))
         for col in range(data.shape[1]):
-            f = interp1d(x_old, data[:, col], kind='linear', fill_value='extrapolate')
+            f = interp1d(x_old, data[:, col], kind="linear", fill_value="extrapolate")
             warped[:, col] = f(x_new)
 
         return warped
@@ -112,9 +110,7 @@ class SyntheticNormalGenerator:
 
     def jitter(self, data: np.ndarray, sigma: float = 0.01) -> np.ndarray:
         """Add jitter (small random walk)."""
-        jitter_vals = np.cumsum(
-            self.rng.standard_normal(data.shape) * sigma, axis=0
-        )
+        jitter_vals = np.cumsum(self.rng.standard_normal(data.shape) * sigma, axis=0)
         # Remove drift
         jitter_vals -= np.linspace(0, 1, data.shape[0])[:, None] * jitter_vals[-1]
         return data + jitter_vals
@@ -126,9 +122,7 @@ class SyntheticNormalGenerator:
             smoothed[:, col] = gaussian_filter1d(data[:, col], sigma)
         return smoothed
 
-    def mix_segments(
-        self, data1: np.ndarray, data2: np.ndarray, n_segments: int = 5
-    ) -> np.ndarray:
+    def mix_segments(self, data1: np.ndarray, data2: np.ndarray, n_segments: int = 5) -> np.ndarray:
         """Mix segments from two normal flights."""
         n = min(len(data1), len(data2))
 
@@ -154,9 +148,7 @@ class SyntheticNormalGenerator:
 
         return mixed
 
-    def channel_dropout(
-        self, data: np.ndarray, dropout_prob: float = 0.1
-    ) -> np.ndarray:
+    def channel_dropout(self, data: np.ndarray, dropout_prob: float = 0.1) -> np.ndarray:
         """Randomly zero out some channels (simulates sensor issues)."""
         mask = self.rng.random(data.shape[1]) > dropout_prob
         return data * mask
@@ -185,7 +177,7 @@ class SyntheticNormalGenerator:
         for i in range(n_synthetic):
             # Pick a random base normal
             base_idx = self.rng.integers(len(self.real_normals))
-            base_data = self.real_normals[base_idx]['data'].copy()
+            base_data = self.real_normals[base_idx]["data"].copy()
 
             # Define augmentations with captured parameters
             # Use partial functions to avoid lambda closure issues
@@ -194,11 +186,11 @@ class SyntheticNormalGenerator:
             smooth_sigma = float(self.rng.uniform(1, 4))
 
             augmentations = [
-                ('noise', lambda d, nl=noise_level: self.add_noise(d, nl)),
-                ('time_warp', lambda d: self.time_warp(d, (0.85, 1.15))),
-                ('amplitude', lambda d: self.amplitude_scale(d, (0.7, 1.3))),
-                ('jitter', lambda d, js=jitter_sigma: self.jitter(d, js)),
-                ('smooth', lambda d, ss=smooth_sigma: self.smooth(d, ss)),
+                ("noise", lambda d, nl=noise_level: self.add_noise(d, nl)),
+                ("time_warp", lambda d: self.time_warp(d, (0.85, 1.15))),
+                ("amplitude", lambda d: self.amplitude_scale(d, (0.7, 1.3))),
+                ("jitter", lambda d, js=jitter_sigma: self.jitter(d, js)),
+                ("smooth", lambda d, ss=smooth_sigma: self.smooth(d, ss)),
             ]
 
             # Apply 2-4 random augmentations
@@ -215,16 +207,14 @@ class SyntheticNormalGenerator:
             # Optionally mix with another normal
             if len(self.real_normals) > 1 and self.rng.random() > 0.5:
                 other_idx = (base_idx + 1) % len(self.real_normals)
-                other_data = self.real_normals[other_idx]['data']
+                other_data = self.real_normals[other_idx]["data"]
                 n_seg = int(self.rng.integers(3, 8))
                 synth = self.mix_segments(synth, other_data, n_seg)
-                applied.append('mix')
+                applied.append("mix")
 
-            synthetic_flights.append({
-                'data': synth.astype(np.float32),
-                'base': base_idx,
-                'augmentations': applied
-            })
+            synthetic_flights.append(
+                {"data": synth.astype(np.float32), "base": base_idx, "augmentations": applied}
+            )
 
         print(f"Generated {len(synthetic_flights)} synthetic normal flights")
         return synthetic_flights
@@ -245,12 +235,14 @@ def extract_features(window: np.ndarray) -> List[float]:
         ch = window[:, col]
         feat.extend([float(ch.mean()), float(ch.std()), float(ch.max() - ch.min())])
         fft = np.abs(np.fft.rfft(ch))
-        feat.extend([
-            float(fft[1:10].sum()),
-            float(fft[10:50].sum()) if len(fft) > 50 else float(fft[10:].sum()),
-            float(fft[50:].sum()) if len(fft) > 50 else 0.0,
-            float(np.argmax(fft[1:]) + 1) if len(fft) > 1 else 0.0  # +1 to account for slice
-        ])
+        feat.extend(
+            [
+                float(fft[1:10].sum()),
+                float(fft[10:50].sum()) if len(fft) > 50 else float(fft[10:].sum()),
+                float(fft[50:].sum()) if len(fft) > 50 else 0.0,
+                float(np.argmax(fft[1:]) + 1) if len(fft) > 1 else 0.0,  # +1 to account for slice
+            ]
+        )
     return feat
 
 
@@ -263,50 +255,34 @@ def main() -> Tuple[np.ndarray, np.ndarray]:
         "--bebop-path",
         type=str,
         default="data/PADRE_dataset/Parrot_Bebop_2/Normalized_data/Bebop2_16g_1kdps_normalized_0000.csv",
-        help="Path to Bebop normal flight CSV"
+        help="Path to Bebop normal flight CSV",
     )
     parser.add_argument(
         "--solo-path",
         type=str,
         default="data/PADRE_dataset/3DR_Solo/Normalized_data/extracted/Solo_ACCEL_16g_GYRO_2kdps_BAR_16bit_normalized_0000.csv",
-        help="Path to Solo normal flight CSV"
+        help="Path to Solo normal flight CSV",
     )
     parser.add_argument(
         "--output-dir",
         type=str,
         default="data/PADRE_dataset/synthetic_normals",
-        help="Output directory for synthetic data"
+        help="Output directory for synthetic data",
     )
     parser.add_argument(
-        "--n-synthetic",
-        type=int,
-        default=20,
-        help="Number of synthetic flights to generate"
+        "--n-synthetic", type=int, default=20, help="Number of synthetic flights to generate"
     )
     parser.add_argument(
         "--n-columns",
         type=int,
         default=DEFAULT_N_COLUMNS,
-        help=f"Number of columns to use from input data (default: {DEFAULT_N_COLUMNS})"
+        help=f"Number of columns to use from input data (default: {DEFAULT_N_COLUMNS})",
     )
+    parser.add_argument("--seed", type=int, default=42, help="Random seed for reproducibility")
     parser.add_argument(
-        "--seed",
-        type=int,
-        default=42,
-        help="Random seed for reproducibility"
+        "--window-size", type=int, default=256, help="Window size for feature extraction"
     )
-    parser.add_argument(
-        "--window-size",
-        type=int,
-        default=256,
-        help="Window size for feature extraction"
-    )
-    parser.add_argument(
-        "--stride",
-        type=int,
-        default=128,
-        help="Stride for feature extraction"
-    )
+    parser.add_argument("--stride", type=int, default=128, help="Stride for feature extraction")
     args = parser.parse_args()
 
     print("=" * 70)
@@ -348,11 +324,11 @@ def main() -> Tuple[np.ndarray, np.ndarray]:
     sources: List[str] = []
 
     for i, synth in enumerate(synthetic):
-        data = synth['data']
+        data = synth["data"]
         n_windows = (len(data) - window_size) // stride + 1
 
         for j in range(n_windows):
-            window = data[j * stride: j * stride + window_size]
+            window = data[j * stride : j * stride + window_size]
             if window.shape[0] == window_size:
                 X_synth.append(extract_features(window))
                 y_synth.append(0)  # Normal
@@ -370,16 +346,13 @@ def main() -> Tuple[np.ndarray, np.ndarray]:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     np.savez(
-        output_dir / "synthetic_normal_features.npz",
-        X=X_synth_arr,
-        y=y_synth_arr,
-        sources=sources
+        output_dir / "synthetic_normal_features.npz", X=X_synth_arr, y=y_synth_arr, sources=sources
     )
     print(f"Saved to: {output_dir / 'synthetic_normal_features.npz'}")
 
     # Also save as individual CSV files for inspection
     for i, synth in enumerate(synthetic[:5]):  # Save first 5 as CSV
-        df = pd.DataFrame(synth['data'])
+        df = pd.DataFrame(synth["data"])
         df.to_csv(output_dir / f"synthetic_normal_{i:02d}.csv", index=False)
     print(f"Saved 5 sample CSVs to: {output_dir}")
 

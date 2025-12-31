@@ -13,14 +13,15 @@ If roll is biased but p (roll rate) is not, the integral of p won't match roll c
 This INCONSISTENCY is detectable!
 """
 
+import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import StandardScaler
-import warnings
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 EUROC_PATH = PROJECT_ROOT / "data" / "euroc" / "all_sequences.csv"
@@ -43,11 +44,11 @@ def compute_consistency_features(data, dt=0.005):
         features: [N-1, n_features] consistency violation features
     """
     # Extract signals
-    pos = data[['x', 'y', 'z']].values
-    att = data[['roll', 'pitch', 'yaw']].values
-    rates = data[['p', 'q', 'r']].values
-    vel = data[['vx', 'vy', 'vz']].values
-    acc = data[['ax', 'ay', 'az']].values
+    pos = data[["x", "y", "z"]].values
+    att = data[["roll", "pitch", "yaw"]].values
+    rates = data[["p", "q", "r"]].values
+    vel = data[["vx", "vy", "vz"]].values
+    acc = data[["ax", "ay", "az"]].values
 
     n = len(data) - 1
     features = []
@@ -57,7 +58,7 @@ def compute_consistency_features(data, dt=0.005):
 
         # === 1. ATTITUDE-RATE CONSISTENCY ===
         # Actual attitude change
-        att_change = att[i+1] - att[i]
+        att_change = att[i + 1] - att[i]
 
         # Expected change from integrating angular rates (simplified Euler)
         # For small angles: d(roll)/dt ≈ p, d(pitch)/dt ≈ q, d(yaw)/dt ≈ r
@@ -65,16 +66,18 @@ def compute_consistency_features(data, dt=0.005):
 
         # Consistency error
         att_error = att_change - expected_att_change
-        feat.extend([
-            np.abs(att_error[0]),  # roll consistency error
-            np.abs(att_error[1]),  # pitch consistency error
-            np.abs(att_error[2]),  # yaw consistency error
-            np.linalg.norm(att_error),  # total attitude error
-        ])
+        feat.extend(
+            [
+                np.abs(att_error[0]),  # roll consistency error
+                np.abs(att_error[1]),  # pitch consistency error
+                np.abs(att_error[2]),  # yaw consistency error
+                np.linalg.norm(att_error),  # total attitude error
+            ]
+        )
 
         # === 2. VELOCITY-ACCELERATION CONSISTENCY ===
         # Actual velocity change
-        vel_change = vel[i+1] - vel[i]
+        vel_change = vel[i + 1] - vel[i]
 
         # Expected change from integrating accelerations
         # Note: Need to account for gravity (az includes gravity ~9.81)
@@ -82,28 +85,32 @@ def compute_consistency_features(data, dt=0.005):
 
         # Consistency error (may have offset due to gravity/bias)
         vel_error = vel_change - expected_vel_change
-        feat.extend([
-            np.abs(vel_error[0]),  # vx consistency error
-            np.abs(vel_error[1]),  # vy consistency error
-            np.abs(vel_error[2]),  # vz consistency error
-            np.linalg.norm(vel_error),  # total velocity error
-        ])
+        feat.extend(
+            [
+                np.abs(vel_error[0]),  # vx consistency error
+                np.abs(vel_error[1]),  # vy consistency error
+                np.abs(vel_error[2]),  # vz consistency error
+                np.linalg.norm(vel_error),  # total velocity error
+            ]
+        )
 
         # === 3. POSITION-VELOCITY CONSISTENCY ===
         # Actual position change
-        pos_change = pos[i+1] - pos[i]
+        pos_change = pos[i + 1] - pos[i]
 
         # Expected change from integrating velocities
         expected_pos_change = vel[i] * dt
 
         # Consistency error
         pos_error = pos_change - expected_pos_change
-        feat.extend([
-            np.abs(pos_error[0]),  # x consistency error
-            np.abs(pos_error[1]),  # y consistency error
-            np.abs(pos_error[2]),  # z consistency error
-            np.linalg.norm(pos_error),  # total position error
-        ])
+        feat.extend(
+            [
+                np.abs(pos_error[0]),  # x consistency error
+                np.abs(pos_error[1]),  # y consistency error
+                np.abs(pos_error[2]),  # z consistency error
+                np.linalg.norm(pos_error),  # total position error
+            ]
+        )
 
         features.append(feat)
 
@@ -128,7 +135,7 @@ def extract_windowed_features(consistency_feats, windows=[5, 10, 25, 50]):
         feat_list = []
 
         for w_size in windows:
-            window = consistency_feats[i-w_size:i]
+            window = consistency_feats[i - w_size : i]
 
             # Mean error (detects persistent bias)
             feat_list.extend(np.mean(window, axis=0))
@@ -143,7 +150,7 @@ def extract_windowed_features(consistency_feats, windows=[5, 10, 25, 50]):
             cumsum = np.cumsum(window, axis=0)
             feat_list.append(np.max(np.abs(cumsum[:, 3])))  # attitude cumsum
             feat_list.append(np.max(np.abs(cumsum[:, 7])))  # velocity cumsum
-            feat_list.append(np.max(np.abs(cumsum[:, 11]))) # position cumsum
+            feat_list.append(np.max(np.abs(cumsum[:, 11])))  # position cumsum
 
         all_features.append(feat_list)
 
@@ -160,45 +167,44 @@ def generate_attack(clean_df, attack_type, magnitude):
     attacked = clean_df.copy()
     n = len(clean_df)
 
-    if attack_type == 'bias_attitude':
+    if attack_type == "bias_attitude":
         # Bias roll/pitch but NOT angular rates p/q
         # This creates attitude-rate inconsistency
-        attacked['roll'] = attacked['roll'] + magnitude * 0.05
-        attacked['pitch'] = attacked['pitch'] + magnitude * 0.05
+        attacked["roll"] = attacked["roll"] + magnitude * 0.05
+        attacked["pitch"] = attacked["pitch"] + magnitude * 0.05
         # p, q, r remain unchanged -> inconsistency!
 
-    elif attack_type == 'bias_velocity':
+    elif attack_type == "bias_velocity":
         # Bias velocity but NOT accelerations
-        attacked['vx'] = attacked['vx'] + magnitude * 0.5
-        attacked['vy'] = attacked['vy'] + magnitude * 0.5
+        attacked["vx"] = attacked["vx"] + magnitude * 0.5
+        attacked["vy"] = attacked["vy"] + magnitude * 0.5
         # ax, ay, az remain unchanged -> inconsistency!
 
-    elif attack_type == 'bias_position':
+    elif attack_type == "bias_position":
         # Bias position but NOT velocity
-        attacked['x'] = attacked['x'] + magnitude * 1.0
-        attacked['y'] = attacked['y'] + magnitude * 1.0
+        attacked["x"] = attacked["x"] + magnitude * 1.0
+        attacked["y"] = attacked["y"] + magnitude * 1.0
         # vx, vy, vz remain unchanged -> inconsistency!
 
-    elif attack_type == 'bias_rates':
+    elif attack_type == "bias_rates":
         # Bias angular rates but NOT attitudes
-        attacked['p'] = attacked['p'] + magnitude * 0.1
-        attacked['q'] = attacked['q'] + magnitude * 0.1
+        attacked["p"] = attacked["p"] + magnitude * 0.1
+        attacked["q"] = attacked["q"] + magnitude * 0.1
         # roll, pitch remain unchanged -> inconsistency!
 
-    elif attack_type == 'noise':
+    elif attack_type == "noise":
         # Add noise to all channels
-        for col in ['x', 'y', 'z', 'roll', 'pitch', 'yaw',
-                    'p', 'q', 'r', 'vx', 'vy', 'vz']:
+        for col in ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]:
             attacked[col] = attacked[col] + np.random.normal(0, magnitude * 0.1, n)
 
-    elif attack_type == 'coordinated_bias':
+    elif attack_type == "coordinated_bias":
         # Sophisticated attack: bias BOTH attitude AND rates consistently
         # This is HARD to detect (maintains consistency)
-        attacked['roll'] = attacked['roll'] + magnitude * 0.05
-        attacked['pitch'] = attacked['pitch'] + magnitude * 0.05
+        attacked["roll"] = attacked["roll"] + magnitude * 0.05
+        attacked["pitch"] = attacked["pitch"] + magnitude * 0.05
         # Also bias rates to maintain consistency (sophisticated attacker)
-        attacked['p'] = attacked['p'] + magnitude * 0.001  # Small rate to match
-        attacked['q'] = attacked['q'] + magnitude * 0.001
+        attacked["p"] = attacked["p"] + magnitude * 0.001  # Small rate to match
+        attacked["q"] = attacked["q"] + magnitude * 0.001
 
     return attacked
 
@@ -213,7 +219,7 @@ def run_sensor_fusion_evaluation():
     # Load EuRoC data
     print("\nLoading EuRoC data...")
     df = pd.read_csv(EUROC_PATH)
-    sequences = df['sequence'].unique()
+    sequences = df["sequence"].unique()
     print(f"Found {len(sequences)} sequences")
 
     # Leave-One-Sequence-Out CV
@@ -223,8 +229,8 @@ def run_sensor_fusion_evaluation():
         print(f"\n--- Testing on {test_seq} ---")
 
         # Train/test split
-        train_df = df[df['sequence'] != test_seq].copy()
-        test_df = df[df['sequence'] == test_seq].copy()
+        train_df = df[df["sequence"] != test_seq].copy()
+        test_df = df[df["sequence"] == test_seq].copy()
 
         # Step 1: Compute consistency features on training data
         print("  Computing consistency features on training data...")
@@ -242,10 +248,7 @@ def run_sensor_fusion_evaluation():
         train_scaled = scaler.fit_transform(train_features)
 
         detector = IsolationForest(
-            n_estimators=200,
-            contamination=CONTAMINATION,
-            random_state=42,
-            n_jobs=-1
+            n_estimators=200, contamination=CONTAMINATION, random_state=42, n_jobs=-1
         )
         detector.fit(train_scaled)
 
@@ -267,16 +270,16 @@ def run_sensor_fusion_evaluation():
 
         # Step 4: Evaluate on attacks
         attack_types = [
-            'bias_attitude',   # Bias attitude, not rates
-            'bias_velocity',   # Bias velocity, not accelerations
-            'bias_position',   # Bias position, not velocity
-            'bias_rates',      # Bias rates, not attitude
-            'noise',           # Random noise
-            'coordinated_bias' # Sophisticated attack (maintains consistency)
+            "bias_attitude",  # Bias attitude, not rates
+            "bias_velocity",  # Bias velocity, not accelerations
+            "bias_position",  # Bias position, not velocity
+            "bias_rates",  # Bias rates, not attitude
+            "noise",  # Random noise
+            "coordinated_bias",  # Sophisticated attack (maintains consistency)
         ]
         magnitudes = [0.25, 0.5, 1.0, 2.0, 4.0]
 
-        seq_results = {'sequence': test_seq, 'fpr': fpr, 'attacks': {}}
+        seq_results = {"sequence": test_seq, "fpr": fpr, "attacks": {}}
 
         for attack_type in attack_types:
             attack_recalls = []
@@ -301,7 +304,7 @@ def run_sensor_fusion_evaluation():
                 attack_recalls.append(recall)
 
             avg_recall = np.mean(attack_recalls) if attack_recalls else 0
-            seq_results['attacks'][attack_type] = avg_recall
+            seq_results["attacks"][attack_type] = avg_recall
             print(f"    {attack_type:20s}: {avg_recall*100:.1f}% recall")
 
         all_results.append(seq_results)
@@ -315,36 +318,41 @@ def run_sensor_fusion_evaluation():
         print("No results collected!")
         return
 
-    avg_fpr = np.mean([r['fpr'] for r in all_results])
+    avg_fpr = np.mean([r["fpr"] for r in all_results])
     print(f"\nAverage FPR: {avg_fpr*100:.1f}%")
 
     print("\nPer-Attack Recall (averaged across sequences):")
-    attack_types = ['bias_attitude', 'bias_velocity', 'bias_position',
-                    'bias_rates', 'noise', 'coordinated_bias']
+    attack_types = [
+        "bias_attitude",
+        "bias_velocity",
+        "bias_position",
+        "bias_rates",
+        "noise",
+        "coordinated_bias",
+    ]
 
     for attack_type in attack_types:
-        recalls = [r['attacks'].get(attack_type, 0) for r in all_results]
+        recalls = [r["attacks"].get(attack_type, 0) for r in all_results]
         avg = np.mean(recalls)
         print(f"  {attack_type:20s}: {avg*100:.1f}%")
 
     # Compute average of bias attacks
-    bias_types = ['bias_attitude', 'bias_velocity', 'bias_position', 'bias_rates']
+    bias_types = ["bias_attitude", "bias_velocity", "bias_position", "bias_rates"]
     bias_recalls = []
     for r in all_results:
         for bt in bias_types:
-            if bt in r['attacks']:
-                bias_recalls.append(r['attacks'][bt])
+            if bt in r["attacks"]:
+                bias_recalls.append(r["attacks"][bt])
 
     avg_bias_recall = np.mean(bias_recalls) if bias_recalls else 0
 
     # Overall (excluding coordinated_bias which is designed to evade)
-    detectable_attacks = ['bias_attitude', 'bias_velocity', 'bias_position',
-                          'bias_rates', 'noise']
+    detectable_attacks = ["bias_attitude", "bias_velocity", "bias_position", "bias_rates", "noise"]
     all_recalls = []
     for r in all_results:
         for attack in detectable_attacks:
-            if attack in r['attacks']:
-                all_recalls.append(r['attacks'][attack])
+            if attack in r["attacks"]:
+                all_recalls.append(r["attacks"][attack])
 
     overall_avg = np.mean(all_recalls) if all_recalls else 0
 
@@ -357,7 +365,9 @@ def run_sensor_fusion_evaluation():
     print("-" * 70)
     print("Raw multi-scale features:     22.7% recall, 6.5% FPR, 3.1% bias")
     print("PINN-residual features:       11.2% recall, 14.0% FPR, 0.1% bias")
-    print(f"Sensor Fusion (this):         {overall_avg*100:.1f}% recall, {avg_fpr*100:.1f}% FPR, {avg_bias_recall*100:.1f}% bias")
+    print(
+        f"Sensor Fusion (this):         {overall_avg*100:.1f}% recall, {avg_fpr*100:.1f}% FPR, {avg_bias_recall*100:.1f}% bias"
+    )
 
     if avg_bias_recall > 0.031:
         print("\n*** IMPROVEMENT on bias attacks! ***")
@@ -393,7 +403,7 @@ RESULTS (LOSO-CV):
 Per-Attack Type:
 """
     for attack_type in attack_types:
-        recalls = [r['attacks'].get(attack_type, 0) for r in all_results]
+        recalls = [r["attacks"].get(attack_type, 0) for r in all_results]
         avg = np.mean(recalls)
         report += f"  {attack_type:20s}: {avg*100:.1f}%\n"
 
@@ -414,7 +424,7 @@ to detect without external reference (e.g., GPS, visual odometry).
 """
 
     report_path = OUTPUT_DIR / "SENSOR_FUSION_RESULTS.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(report)
 
     print(f"\nResults saved to: {report_path}")

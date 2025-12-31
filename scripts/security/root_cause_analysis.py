@@ -8,13 +8,14 @@ Key questions:
 4. Why does cross-dataset transfer fail so badly?
 """
 
+import warnings
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 from sklearn.preprocessing import StandardScaler
-import warnings
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 EUROC_PATH = PROJECT_ROOT / "data" / "euroc" / "all_sequences.csv"
@@ -30,21 +31,19 @@ def extract_multiscale_features_detailed(data, windows=WINDOWS):
 
     # Generate feature names
     for w_size in windows:
-        feature_names.extend([
-            f'mean_w{w_size}',
-            f'std_w{w_size}',
-            f'maxdiff_w{w_size}'
-        ])
+        feature_names.extend([f"mean_w{w_size}", f"std_w{w_size}", f"maxdiff_w{w_size}"])
 
     for i in range(max_window, len(data)):
         feat_list = []
         for w_size in windows:
-            w = data[i-w_size:i]
-            feat_list.extend([
-                np.mean(w, axis=0).mean(),
-                np.std(w, axis=0).mean(),
-                np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
-            ])
+            w = data[i - w_size : i]
+            feat_list.extend(
+                [
+                    np.mean(w, axis=0).mean(),
+                    np.std(w, axis=0).mean(),
+                    np.max(np.abs(np.diff(w, axis=0))) if len(w) > 1 else 0,
+                ]
+            )
         all_features.append(feat_list)
 
     return np.array(all_features), feature_names
@@ -55,19 +54,19 @@ def generate_attack(clean_data, attack_type, magnitude):
     attacked = clean_data.copy()
     n = len(clean_data)
 
-    if attack_type == 'noise':
+    if attack_type == "noise":
         noise = np.random.normal(0, magnitude * 0.1, attacked.shape)
         attacked += noise
-    elif attack_type == 'bias':
+    elif attack_type == "bias":
         attacked[:, 3] += magnitude * 0.05  # roll
         attacked[:, 4] += magnitude * 0.05  # pitch
-    elif attack_type == 'drift':
+    elif attack_type == "drift":
         drift = np.linspace(0, magnitude * 5.0, n)
         attacked[:, 0] += drift
-    elif attack_type == 'jump':
+    elif attack_type == "jump":
         jump_idx = n // 2
         attacked[jump_idx:, 0] += magnitude * 2.0
-    elif attack_type == 'oscillation':
+    elif attack_type == "oscillation":
         t = np.linspace(0, 10 * np.pi, n)
         attacked[:, 0] += magnitude * np.sin(t)
 
@@ -82,7 +81,7 @@ def analyze_feature_sensitivity():
 
     # Load EuRoC data
     df = pd.read_csv(EUROC_PATH)
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_cols = ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]
     clean_data = df[state_cols].values[:1000]  # Sample
 
     # Extract clean features
@@ -97,7 +96,7 @@ def analyze_feature_sensitivity():
         print(f"{name:<20} {clean_mean[i]:>12.6f} {clean_std[i]:>12.6f}")
 
     # Analyze each attack type
-    attack_types = ['noise', 'bias', 'drift', 'jump', 'oscillation']
+    attack_types = ["noise", "bias", "drift", "jump", "oscillation"]
     magnitudes = [0.25, 1.0, 4.0]
 
     print("\n" + "=" * 70)
@@ -127,10 +126,10 @@ def analyze_feature_sensitivity():
                 print(f"      {feature_names[idx]}: z={z_scores[idx]:.2f}")
 
             results[(attack_type, magnitude)] = {
-                'max_z': np.max(np.abs(z_scores)),
-                'mean_z': np.mean(np.abs(z_scores)),
-                'top_feature': feature_names[top_indices[0]],
-                'top_z': z_scores[top_indices[0]]
+                "max_z": np.max(np.abs(z_scores)),
+                "mean_z": np.mean(np.abs(z_scores)),
+                "top_feature": feature_names[top_indices[0]],
+                "top_z": z_scores[top_indices[0]],
             }
 
     # Summary table
@@ -140,9 +139,9 @@ def analyze_feature_sensitivity():
     print(f"\n{'Attack':<15} {'0.25x':>10} {'1.0x':>10} {'4.0x':>10}")
     print("-" * 45)
     for attack_type in attack_types:
-        z_025 = results[(attack_type, 0.25)]['max_z']
-        z_100 = results[(attack_type, 1.0)]['max_z']
-        z_400 = results[(attack_type, 4.0)]['max_z']
+        z_025 = results[(attack_type, 0.25)]["max_z"]
+        z_100 = results[(attack_type, 1.0)]["max_z"]
+        z_400 = results[(attack_type, 4.0)]["max_z"]
         print(f"{attack_type:<15} {z_025:>10.2f} {z_100:>10.2f} {z_400:>10.2f}")
 
     # Key insight
@@ -151,10 +150,11 @@ def analyze_feature_sensitivity():
     print("=" * 70)
 
     # Why noise works
-    noise_z = results[('noise', 1.0)]['max_z']
-    bias_z = results[('bias', 1.0)]['max_z']
+    noise_z = results[("noise", 1.0)]["max_z"]
+    bias_z = results[("bias", 1.0)]["max_z"]
 
-    print(f"""
+    print(
+        f"""
 1. NOISE vs BIAS at 1.0x magnitude:
    - Noise max z-score: {noise_z:.2f}
    - Bias max z-score: {bias_z:.2f}
@@ -170,13 +170,14 @@ def analyze_feature_sensitivity():
    WHY: Small perturbations are indistinguishable from normal variation
 
 3. WHICH FEATURES MATTER:
-""")
+"""
+    )
 
     # Analyze which features are most discriminative
     feature_importance = {name: 0 for name in feature_names}
     for (attack, mag), res in results.items():
         if mag == 1.0:  # Focus on baseline magnitude
-            feature_importance[res['top_feature']] += abs(res['top_z'])
+            feature_importance[res["top_feature"]] += abs(res["top_z"])
 
     sorted_features = sorted(feature_importance.items(), key=lambda x: x[1], reverse=True)
     print("   Most discriminative features (at 1.0x):")
@@ -193,7 +194,7 @@ def analyze_detection_threshold():
     print("=" * 70)
 
     df = pd.read_csv(EUROC_PATH)
-    state_cols = ['x', 'y', 'z', 'roll', 'pitch', 'yaw', 'p', 'q', 'r', 'vx', 'vy', 'vz']
+    state_cols = ["x", "y", "z", "roll", "pitch", "yaw", "p", "q", "r", "vx", "vy", "vz"]
 
     # Get normal data statistics
     normal_data = df[state_cols].values[:50000]
@@ -208,7 +209,7 @@ def analyze_detection_threshold():
     print("\nTo detect an attack, its feature values must exceed normal percentiles.")
     print("Let's see which attacks exceed which thresholds:\n")
 
-    attack_types = ['noise', 'bias']
+    attack_types = ["noise", "bias"]
     clean_sample = df[state_cols].values[60000:61000]
 
     for attack_type in attack_types:
@@ -326,7 +327,7 @@ This approach should:
 - Generalize across platforms (physics is universal)
 """
 
-    with open(output_dir / "ROOT_CAUSE_ANALYSIS.txt", 'w') as f:
+    with open(output_dir / "ROOT_CAUSE_ANALYSIS.txt", "w") as f:
         f.write(summary)
 
     print(f"\nAnalysis saved to: {output_dir / 'ROOT_CAUSE_ANALYSIS.txt'}")

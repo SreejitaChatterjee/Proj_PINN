@@ -11,13 +11,13 @@ Usage:
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pinn_dynamics import SequencePINN
 
@@ -74,7 +74,11 @@ def create_sequences(
         if labels is not None:
             seq_labels.append(labels[i + sequence_length])
 
-    return np.array(sequences), np.array(targets), np.array(seq_labels) if labels is not None else None
+    return (
+        np.array(sequences),
+        np.array(targets),
+        np.array(seq_labels) if labels is not None else None,
+    )
 
 
 def evaluate_attack(
@@ -156,8 +160,12 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluate sequence detector")
     parser.add_argument("--model-dir", type=str, default="models/security", help="Model directory")
     parser.add_argument("--data", type=str, default="data/euroc", help="Path to EuRoC data")
-    parser.add_argument("--output", type=str, default="research/security/sequence_results", help="Output directory")
-    parser.add_argument("--threshold-percentile", type=float, default=95.0, help="Threshold percentile")
+    parser.add_argument(
+        "--output", type=str, default="research/security/sequence_results", help="Output directory"
+    )
+    parser.add_argument(
+        "--threshold-percentile", type=float, default=95.0, help="Threshold percentile"
+    )
     args = parser.parse_args()
 
     model_dir = Path(args.model_dir)
@@ -213,21 +221,44 @@ def main():
 
     # Categories for organized output
     categories = {
-        "GPS": ["gps_gradual_drift", "gps_sudden_jump", "gps_oscillating", "gps_meaconing",
-                "gps_jamming", "gps_freeze", "gps_multipath"],
-        "IMU": ["imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-                "imu_noise_injection", "imu_scale_factor", "gyro_saturation", "accel_saturation"],
+        "GPS": [
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_jamming",
+            "gps_freeze",
+            "gps_multipath",
+        ],
+        "IMU": [
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            "gyro_saturation",
+            "accel_saturation",
+        ],
         "Mag/Baro": ["magnetometer_spoofing", "barometer_spoofing"],
-        "Actuator": ["actuator_stuck", "actuator_degraded", "control_hijack", "thrust_manipulation"],
+        "Actuator": [
+            "actuator_stuck",
+            "actuator_degraded",
+            "control_hijack",
+            "thrust_manipulation",
+        ],
         "Coordinated": ["coordinated_gps_imu", "stealthy_coordinated"],
         "Temporal": ["replay_attack", "time_delay", "sensor_dropout"],
-        "Stealth": ["adaptive_attack", "intermittent_attack", "slow_ramp", "resonance_attack", "false_data_injection"],
+        "Stealth": [
+            "adaptive_attack",
+            "intermittent_attack",
+            "slow_ramp",
+            "resonance_attack",
+            "false_data_injection",
+        ],
     }
 
     for attack_name, attack_data in attacks.items():
-        metrics = evaluate_attack(
-            model, attack_data, scalers, sequence_length, threshold, device
-        )
+        metrics = evaluate_attack(model, attack_data, scalers, sequence_length, threshold, device)
 
         if metrics is None:
             print(f"  {attack_name:30s} | SKIPPED (too short)")
@@ -238,8 +269,10 @@ def main():
         if attack_name == "clean":
             print(f"  {attack_name:30s} | FPR: {metrics['fpr']*100:5.1f}% | (baseline)")
         else:
-            print(f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
-                  f"F1: {metrics['f1']*100:5.1f}% | FPR: {metrics['fpr']*100:5.1f}%")
+            print(
+                f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
+                f"F1: {metrics['f1']*100:5.1f}% | FPR: {metrics['fpr']*100:5.1f}%"
+            )
 
     # Aggregate results
     print("\n[4/4] Computing aggregate metrics...")
@@ -252,8 +285,11 @@ def main():
 
     overall_precision = all_tp / (all_tp + all_fp) if (all_tp + all_fp) > 0 else 0
     overall_recall = all_tp / (all_tp + all_fn) if (all_tp + all_fn) > 0 else 0
-    overall_f1 = 2 * overall_precision * overall_recall / (overall_precision + overall_recall) \
-        if (overall_precision + overall_recall) > 0 else 0
+    overall_f1 = (
+        2 * overall_precision * overall_recall / (overall_precision + overall_recall)
+        if (overall_precision + overall_recall) > 0
+        else 0
+    )
 
     clean_fpr = results["clean"]["fpr"] if "clean" in results else 0
 

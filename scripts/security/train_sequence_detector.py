@@ -11,17 +11,17 @@ Usage:
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 from torch.utils.data import DataLoader, Dataset
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 from pinn_dynamics import SequencePINN
 
@@ -313,9 +313,7 @@ def main():
     # Train/val split (by index to preserve temporal structure)
     n_samples = len(states) - args.sequence_length
     indices = np.arange(n_samples)
-    train_idx, val_idx = train_test_split(
-        indices, test_size=args.val_split, random_state=args.seed
-    )
+    train_idx, val_idx = train_test_split(indices, test_size=args.val_split, random_state=args.seed)
 
     # Create datasets
     train_dataset = SequenceDataset(
@@ -331,9 +329,7 @@ def main():
     train_loader = DataLoader(
         train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=0
     )
-    val_loader = DataLoader(
-        val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0
-    )
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False, num_workers=0)
 
     print(f"  Train samples: {len(train_dataset):,}")
     print(f"  Val samples: {len(val_dataset):,}")

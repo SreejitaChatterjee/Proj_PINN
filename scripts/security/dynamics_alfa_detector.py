@@ -12,15 +12,15 @@ Usage:
 
 import argparse
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import StandardScaler
 
 
 class DynamicsPredictor(nn.Module):
@@ -68,17 +68,19 @@ def load_temporal_data(data_dir: Path):
         fault_type = df["fault_type"].iloc[0]
 
         # Create transition pairs: (state_t, control_t) -> state_{t+1}
-        flights.append({
-            "name": csv_file.stem,
-            "states": states[:-1],
-            "controls": controls[:-1],
-            "next_states": states[1:],
-            "labels": labels[:-1],  # Label of the transition
-            "fault_type": fault_type,
-            "is_fault_flight": fault_type != "Normal",
-            "n_normal": (labels[:-1] == 0).sum(),
-            "n_fault": (labels[:-1] == 1).sum(),
-        })
+        flights.append(
+            {
+                "name": csv_file.stem,
+                "states": states[:-1],
+                "controls": controls[:-1],
+                "next_states": states[1:],
+                "labels": labels[:-1],  # Label of the transition
+                "fault_type": fault_type,
+                "is_fault_flight": fault_type != "Normal",
+                "n_normal": (labels[:-1] == 0).sum(),
+                "n_fault": (labels[:-1] == 1).sum(),
+            }
+        )
 
     return flights
 
@@ -153,7 +155,7 @@ def run_lofo_cv(flights, seed, device="cpu"):
     all_results = []
 
     for i, test_flight in enumerate(flights):
-        train_flights = flights[:i] + flights[i + 1:]
+        train_flights = flights[:i] + flights[i + 1 :]
 
         # Check we have normal samples to train on
         total_normal = sum(f["n_normal"] for f in train_flights)
@@ -161,20 +163,20 @@ def run_lofo_cv(flights, seed, device="cpu"):
             continue
 
         # Train dynamics model
-        model, state_scaler, control_scaler = train_dynamics_model(
-            train_flights, seed, device
-        )
+        model, state_scaler, control_scaler = train_dynamics_model(train_flights, seed, device)
 
         # Get residuals for test flight
         residuals = get_residuals(model, state_scaler, control_scaler, test_flight, device)
 
-        all_results.append({
-            "name": test_flight["name"],
-            "fault_type": test_flight["fault_type"],
-            "is_fault_flight": test_flight["is_fault_flight"],
-            "labels": test_flight["labels"],
-            "residuals": residuals,
-        })
+        all_results.append(
+            {
+                "name": test_flight["name"],
+                "fault_type": test_flight["fault_type"],
+                "is_fault_flight": test_flight["is_fault_flight"],
+                "labels": test_flight["labels"],
+                "residuals": residuals,
+            }
+        )
 
     return all_results
 
@@ -250,7 +252,9 @@ def main():
     parser = argparse.ArgumentParser(description="Dynamics-based ALFA detector")
     parser.add_argument("--data", type=str, default="data/alfa/temporal")
     parser.add_argument("--seeds", type=int, default=5)
-    parser.add_argument("--output", type=str, default="research/security/dynamics_alfa_results.json")
+    parser.add_argument(
+        "--output", type=str, default="research/security/dynamics_alfa_results.json"
+    )
     args = parser.parse_args()
 
     data_dir = Path(args.data)
@@ -313,9 +317,15 @@ def main():
     print("\n" + "=" * 70)
     print("AGGREGATE RESULTS (Dynamics Predictor)")
     print("=" * 70)
-    print(f"Sample AUROC:           {summary['aggregate']['sample_auroc_mean']:.3f} +/- {summary['aggregate']['sample_auroc_std']:.3f}")
-    print(f"Flight Detection Rate:  {summary['aggregate']['flight_detection_rate_mean']:.1%} +/- {summary['aggregate']['flight_detection_rate_std']:.1%}")
-    print(f"Flight False Alarm Rate:{summary['aggregate']['flight_false_alarm_rate_mean']:.1%} +/- {summary['aggregate']['flight_false_alarm_rate_std']:.1%}")
+    print(
+        f"Sample AUROC:           {summary['aggregate']['sample_auroc_mean']:.3f} +/- {summary['aggregate']['sample_auroc_std']:.3f}"
+    )
+    print(
+        f"Flight Detection Rate:  {summary['aggregate']['flight_detection_rate_mean']:.1%} +/- {summary['aggregate']['flight_detection_rate_std']:.1%}"
+    )
+    print(
+        f"Flight False Alarm Rate:{summary['aggregate']['flight_false_alarm_rate_mean']:.1%} +/- {summary['aggregate']['flight_false_alarm_rate_std']:.1%}"
+    )
     print(f"\nResults saved to {output_path}")
 
 

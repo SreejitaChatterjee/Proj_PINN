@@ -135,11 +135,7 @@ class SyntheticAttackGenerator:
 
         return data
 
-    def handle_nan_values(
-        self,
-        data: pd.DataFrame,
-        method: str = "interpolate"
-    ) -> pd.DataFrame:
+    def handle_nan_values(self, data: pd.DataFrame, method: str = "interpolate") -> pd.DataFrame:
         """
         Handle NaN values created by jamming/dropout attacks.
 
@@ -158,7 +154,7 @@ class SyntheticAttackGenerator:
             # Only interpolate numeric columns
             numeric_cols = data.select_dtypes(include=[np.number]).columns
             data[numeric_cols] = data[numeric_cols].interpolate(
-                method='linear', limit_direction='both'
+                method="linear", limit_direction="both"
             )
         elif method == "ffill":
             # Forward fill (use last known value)
@@ -176,9 +172,7 @@ class SyntheticAttackGenerator:
         return data
 
     def _get_attack_window(
-        self,
-        attack_start_ratio: float,
-        attack_duration: float
+        self, attack_start_ratio: float, attack_duration: float
     ) -> Tuple[int, int, int]:
         """Helper to compute attack window indices."""
         n_total = len(self.clean_data)
@@ -235,12 +229,14 @@ class SyntheticAttackGenerator:
         # Create smooth drift trajectory
         drift_profile = np.linspace(0, drift_magnitude, n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += drift_profile * drift_direction[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += drift_profile * drift_direction[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += drift_profile * drift_direction[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += drift_profile * drift_direction[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += drift_profile * drift_direction[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += (
+            drift_profile * drift_direction[2] * 0.3
+        )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Gradual_Drift"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Gradual_Drift"
 
         return data
 
@@ -269,12 +265,14 @@ class SyntheticAttackGenerator:
         jump_direction = jump_direction / np.linalg.norm(jump_direction)
 
         # Apply sudden constant offset
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += jump_magnitude * jump_direction[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += jump_magnitude * jump_direction[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += jump_magnitude * jump_direction[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += jump_magnitude * jump_direction[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += jump_magnitude * jump_direction[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += (
+            jump_magnitude * jump_direction[2] * 0.3
+        )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Sudden_Jump"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Sudden_Jump"
 
         return data
 
@@ -304,14 +302,14 @@ class SyntheticAttackGenerator:
         t = np.arange(n_attack) * self.dt
         oscillation_x = amplitude * np.sin(2 * np.pi * frequency * t)
         oscillation_y = amplitude * np.cos(2 * np.pi * frequency * t)
-        oscillation_z = amplitude * 0.3 * np.sin(2 * np.pi * frequency * t + np.pi/4)
+        oscillation_z = amplitude * 0.3 * np.sin(2 * np.pi * frequency * t + np.pi / 4)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += oscillation_x
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += oscillation_y
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += oscillation_z
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += oscillation_x
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += oscillation_y
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += oscillation_z
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Oscillating"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Oscillating"
 
         return data
 
@@ -344,11 +342,12 @@ class SyntheticAttackGenerator:
         source_end = attack_end_idx - delay_samples
 
         for col in ["x", "y", "z"]:
-            data.loc[attack_start_idx:attack_end_idx-1, col] = \
-                data.loc[source_start:source_end-1, col].values
+            data.loc[attack_start_idx : attack_end_idx - 1, col] = data.loc[
+                source_start : source_end - 1, col
+            ].values
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Meaconing"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Meaconing"
 
         return data
 
@@ -370,12 +369,12 @@ class SyntheticAttackGenerator:
         )
 
         # Complete GPS loss
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] = np.nan
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] = np.nan
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] = np.nan
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] = np.nan
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] = np.nan
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] = np.nan
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Jamming"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Jamming"
 
         return data
 
@@ -401,12 +400,12 @@ class SyntheticAttackGenerator:
         frozen_y = data.loc[attack_start_idx, "y"]
         frozen_z = data.loc[attack_start_idx, "z"]
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] = frozen_x
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] = frozen_y
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] = frozen_z
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] = frozen_x
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] = frozen_y
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] = frozen_z
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Freeze"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Freeze"
 
         return data
 
@@ -440,16 +439,22 @@ class SyntheticAttackGenerator:
         noise_z = np.zeros(n_attack)
 
         for i in range(1, n_attack):
-            noise_x[i] = (1 - alpha) * noise_x[i-1] + alpha * self.rng.standard_normal() * jitter_std
-            noise_y[i] = (1 - alpha) * noise_y[i-1] + alpha * self.rng.standard_normal() * jitter_std
-            noise_z[i] = (1 - alpha) * noise_z[i-1] + alpha * self.rng.standard_normal() * jitter_std * 0.5
+            noise_x[i] = (1 - alpha) * noise_x[
+                i - 1
+            ] + alpha * self.rng.standard_normal() * jitter_std
+            noise_y[i] = (1 - alpha) * noise_y[
+                i - 1
+            ] + alpha * self.rng.standard_normal() * jitter_std
+            noise_z[i] = (1 - alpha) * noise_z[
+                i - 1
+            ] + alpha * self.rng.standard_normal() * jitter_std * 0.5
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += noise_x
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += noise_y
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += noise_z
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += noise_x
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += noise_y
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += noise_z
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "GPS_Multipath"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "GPS_Multipath"
 
         return data
 
@@ -482,12 +487,12 @@ class SyntheticAttackGenerator:
         # Inject constant bias - affects velocity integration
         velocity_change = accel_bias * self.dt * np.arange(n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_change
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += gyro_bias
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += gyro_bias * 0.7
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_change
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += gyro_bias
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += gyro_bias * 0.7
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "IMU_Constant_Bias"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Constant_Bias"
 
         return data
 
@@ -519,14 +524,14 @@ class SyntheticAttackGenerator:
         # Integrate acceleration drift to velocity
         velocity_change = np.cumsum(accel_drift_profile * self.dt)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_change
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] += velocity_change * 0.5
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += gyro_drift_profile
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += gyro_drift_profile * 0.7
-        data.loc[attack_start_idx:attack_end_idx-1, "r"] += gyro_drift_profile * 0.5
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_change
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] += velocity_change * 0.5
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += gyro_drift_profile
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += gyro_drift_profile * 0.7
+        data.loc[attack_start_idx : attack_end_idx - 1, "r"] += gyro_drift_profile * 0.5
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "IMU_Gradual_Drift"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Gradual_Drift"
 
         return data
 
@@ -560,12 +565,14 @@ class SyntheticAttackGenerator:
         # Integrate to get velocity effect
         velocity_effect = np.cumsum(accel_wave * self.dt)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_effect
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += gyro_wave
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += gyro_wave * np.cos(2 * np.pi * frequency * t)
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_effect
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += gyro_wave
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += gyro_wave * np.cos(
+            2 * np.pi * frequency * t
+        )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "IMU_Sinusoidal"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Sinusoidal"
 
         return data
 
@@ -599,15 +606,19 @@ class SyntheticAttackGenerator:
         # Integrate acceleration noise to velocity
         velocity_noise = np.cumsum(accel_noise * self.dt)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_noise
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] += np.cumsum(self.rng.standard_normal(n_attack) * accel_noise_std * self.dt)
-        data.loc[attack_start_idx:attack_end_idx-1, "vz"] += np.cumsum(self.rng.standard_normal(n_attack) * accel_noise_std * 0.5 * self.dt)
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += gyro_noise_p
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += gyro_noise_q
-        data.loc[attack_start_idx:attack_end_idx-1, "r"] += gyro_noise_r
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_noise
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] += np.cumsum(
+            self.rng.standard_normal(n_attack) * accel_noise_std * self.dt
+        )
+        data.loc[attack_start_idx : attack_end_idx - 1, "vz"] += np.cumsum(
+            self.rng.standard_normal(n_attack) * accel_noise_std * 0.5 * self.dt
+        )
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += gyro_noise_p
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += gyro_noise_q
+        data.loc[attack_start_idx : attack_end_idx - 1, "r"] += gyro_noise_r
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "IMU_Noise_Injection"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Noise_Injection"
 
         return data
 
@@ -633,15 +644,15 @@ class SyntheticAttackGenerator:
         )
 
         # Scale velocities and angular rates
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] *= accel_scale
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] *= accel_scale
-        data.loc[attack_start_idx:attack_end_idx-1, "vz"] *= accel_scale
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] *= gyro_scale
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] *= gyro_scale
-        data.loc[attack_start_idx:attack_end_idx-1, "r"] *= gyro_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] *= accel_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] *= accel_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "vz"] *= accel_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] *= gyro_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] *= gyro_scale
+        data.loc[attack_start_idx : attack_end_idx - 1, "r"] *= gyro_scale
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "IMU_Scale_Factor"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "IMU_Scale_Factor"
 
         return data
 
@@ -665,13 +676,13 @@ class SyntheticAttackGenerator:
 
         # Saturate gyro readings at max value based on original sign
         # (simulates sensor hitting its measurement limits)
-        original_p = data.loc[attack_start_idx:attack_end_idx-1, "p"].values
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] = max_rate * np.sign(original_p + 0.1)
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] = max_rate * 0.8
-        data.loc[attack_start_idx:attack_end_idx-1, "r"] = -max_rate * 0.5
+        original_p = data.loc[attack_start_idx : attack_end_idx - 1, "p"].values
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] = max_rate * np.sign(original_p + 0.1)
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] = max_rate * 0.8
+        data.loc[attack_start_idx : attack_end_idx - 1, "r"] = -max_rate * 0.5
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Gyro_Saturation"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Gyro_Saturation"
 
         return data
 
@@ -698,12 +709,12 @@ class SyntheticAttackGenerator:
         saturated_accel = max_accel * np.ones(n_attack)
         velocity_effect = np.cumsum(saturated_accel * self.dt)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_effect
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] += velocity_effect * 0.3
-        data.loc[attack_start_idx:attack_end_idx-1, "vz"] += velocity_effect * 0.2
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_effect
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] += velocity_effect * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "vz"] += velocity_effect * 0.2
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Accel_Saturation"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Accel_Saturation"
 
         return data
 
@@ -734,19 +745,19 @@ class SyntheticAttackGenerator:
         # Gradually introduce heading error
         offset_profile = np.linspace(0, heading_offset, n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "psi"] += offset_profile
+        data.loc[attack_start_idx : attack_end_idx - 1, "psi"] += offset_profile
 
         # Heading error also affects velocity direction perception
         cos_offset = np.cos(offset_profile)
         sin_offset = np.sin(offset_profile)
-        vx = data.loc[attack_start_idx:attack_end_idx-1, "vx"].values
-        vy = data.loc[attack_start_idx:attack_end_idx-1, "vy"].values
+        vx = data.loc[attack_start_idx : attack_end_idx - 1, "vx"].values
+        vy = data.loc[attack_start_idx : attack_end_idx - 1, "vy"].values
 
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] = vx * cos_offset - vy * sin_offset
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] = vx * sin_offset + vy * cos_offset
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] = vx * cos_offset - vy * sin_offset
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] = vx * sin_offset + vy * cos_offset
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Magnetometer_Spoofing"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Magnetometer_Spoofing"
 
         return data
 
@@ -773,10 +784,10 @@ class SyntheticAttackGenerator:
         # Gradual altitude offset
         offset_profile = np.linspace(0, altitude_offset, n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += offset_profile
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += offset_profile
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Barometer_Spoofing"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Barometer_Spoofing"
 
         return data
 
@@ -805,15 +816,15 @@ class SyntheticAttackGenerator:
         # Freeze thrust at a fixed value
         if "thrust" in data.columns:
             stuck_thrust = data.loc[attack_start_idx, "thrust"] * stuck_value_ratio
-            data.loc[attack_start_idx:attack_end_idx-1, "thrust"] = stuck_thrust
+            data.loc[attack_start_idx : attack_end_idx - 1, "thrust"] = stuck_thrust
 
         # Also freeze one torque channel
         if "torque_x" in data.columns:
             stuck_torque = data.loc[attack_start_idx, "torque_x"]
-            data.loc[attack_start_idx:attack_end_idx-1, "torque_x"] = stuck_torque
+            data.loc[attack_start_idx : attack_end_idx - 1, "torque_x"] = stuck_torque
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Actuator_Stuck"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Actuator_Stuck"
 
         return data
 
@@ -839,14 +850,14 @@ class SyntheticAttackGenerator:
 
         # Reduce control effectiveness
         if "thrust" in data.columns:
-            data.loc[attack_start_idx:attack_end_idx-1, "thrust"] *= efficiency_factor
+            data.loc[attack_start_idx : attack_end_idx - 1, "thrust"] *= efficiency_factor
 
         for col in ["torque_x", "torque_y", "torque_z"]:
             if col in data.columns:
-                data.loc[attack_start_idx:attack_end_idx-1, col] *= efficiency_factor
+                data.loc[attack_start_idx : attack_end_idx - 1, col] *= efficiency_factor
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Actuator_Degraded"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Actuator_Degraded"
 
         return data
 
@@ -872,15 +883,15 @@ class SyntheticAttackGenerator:
 
         # Inject false control commands
         if "thrust" in data.columns:
-            data.loc[attack_start_idx:attack_end_idx-1, "thrust"] += hijack_magnitude
+            data.loc[attack_start_idx : attack_end_idx - 1, "thrust"] += hijack_magnitude
 
         if "torque_x" in data.columns:
-            data.loc[attack_start_idx:attack_end_idx-1, "torque_x"] += hijack_magnitude * 0.1
+            data.loc[attack_start_idx : attack_end_idx - 1, "torque_x"] += hijack_magnitude * 0.1
         if "torque_y" in data.columns:
-            data.loc[attack_start_idx:attack_end_idx-1, "torque_y"] += hijack_magnitude * 0.1
+            data.loc[attack_start_idx : attack_end_idx - 1, "torque_y"] += hijack_magnitude * 0.1
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Control_Hijack"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Control_Hijack"
 
         return data
 
@@ -906,15 +917,15 @@ class SyntheticAttackGenerator:
 
         if "thrust" in data.columns:
             # Sudden thrust reduction
-            data.loc[attack_start_idx:attack_end_idx-1, "thrust"] *= thrust_scale
+            data.loc[attack_start_idx : attack_end_idx - 1, "thrust"] *= thrust_scale
 
         # This affects vertical velocity
         t = np.arange(n_attack) * self.dt
         vz_effect = -GRAVITY * (1 - thrust_scale) * t  # Gravity takes over
-        data.loc[attack_start_idx:attack_end_idx-1, "vz"] += vz_effect
+        data.loc[attack_start_idx : attack_end_idx - 1, "vz"] += vz_effect
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Thrust_Manipulation"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Thrust_Manipulation"
 
         return data
 
@@ -949,18 +960,20 @@ class SyntheticAttackGenerator:
         drift_direction = drift_direction / np.linalg.norm(drift_direction)
         drift_profile = np.linspace(0, gps_drift, n_attack)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += drift_profile * drift_direction[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += drift_profile * drift_direction[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += drift_profile * drift_direction[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += drift_profile * drift_direction[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += drift_profile * drift_direction[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += (
+            drift_profile * drift_direction[2] * 0.3
+        )
 
         # IMU bias injection
         velocity_change = imu_bias * self.dt * np.arange(n_attack)
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_change
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += imu_bias * 0.2
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += imu_bias * 0.15
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_change
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += imu_bias * 0.2
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += imu_bias * 0.15
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Coordinated_GPS_IMU"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Coordinated_GPS_IMU"
 
         return data
 
@@ -989,8 +1002,8 @@ class SyntheticAttackGenerator:
 
         # Need at least 2 samples to compute smooth trajectory
         if n_attack < 2:
-            data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-            data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Stealthy_Coordinated"
+            data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+            data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Stealthy_Coordinated"
             return data
 
         # Create smooth position deviation that's physically consistent
@@ -1006,15 +1019,15 @@ class SyntheticAttackGenerator:
         velocity_drift = np.gradient(position_drift, self.dt)
 
         # Apply to GPS position
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += position_drift
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += position_drift * 0.5
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += position_drift
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += position_drift * 0.5
 
         # Apply matching velocity change (makes attack physics-consistent)
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_drift
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] += velocity_drift * 0.5
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_drift
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] += velocity_drift * 0.5
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Stealthy_Coordinated"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Stealthy_Coordinated"
 
         return data
 
@@ -1069,11 +1082,12 @@ class SyntheticAttackGenerator:
         state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
         for col in state_cols:
             if col in data.columns:
-                data.loc[attack_start_idx:attack_end_idx-1, col] = \
-                    data.loc[replay_source_start:replay_source_end-1, col].values
+                data.loc[attack_start_idx : attack_end_idx - 1, col] = data.loc[
+                    replay_source_start : replay_source_end - 1, col
+                ].values
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Replay_Attack"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Replay_Attack"
 
         return data
 
@@ -1106,11 +1120,12 @@ class SyntheticAttackGenerator:
         all_state_cols = ["x", "y", "z", "phi", "theta", "psi", "p", "q", "r", "vx", "vy", "vz"]
         for col in all_state_cols:
             if col in data.columns:
-                data.loc[attack_start_idx:attack_end_idx-1, col] = \
-                    data.loc[source_start:source_end-1, col].values
+                data.loc[attack_start_idx : attack_end_idx - 1, col] = data.loc[
+                    source_start : source_end - 1, col
+                ].values
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Time_Delay"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Time_Delay"
 
         return data
 
@@ -1139,21 +1154,21 @@ class SyntheticAttackGenerator:
 
         if affect_gps:
             for col in ["x", "y", "z"]:
-                original = data.loc[attack_start_idx:attack_end_idx-1, col].values
-                data.loc[attack_start_idx:attack_end_idx-1, col] = np.where(
+                original = data.loc[attack_start_idx : attack_end_idx - 1, col].values
+                data.loc[attack_start_idx : attack_end_idx - 1, col] = np.where(
                     dropout_mask, np.nan, original
                 )
 
         if affect_imu:
             for col in ["p", "q", "r", "vx", "vy", "vz"]:
                 if col in data.columns:
-                    original = data.loc[attack_start_idx:attack_end_idx-1, col].values
-                    data.loc[attack_start_idx:attack_end_idx-1, col] = np.where(
+                    original = data.loc[attack_start_idx : attack_end_idx - 1, col].values
+                    data.loc[attack_start_idx : attack_end_idx - 1, col] = np.where(
                         dropout_mask, np.nan, original
                     )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Sensor_Dropout"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Sensor_Dropout"
 
         return data
 
@@ -1188,12 +1203,14 @@ class SyntheticAttackGenerator:
         direction = self.rng.standard_normal(3)
         direction = direction / np.linalg.norm(direction)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += magnitude_profile * direction[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += magnitude_profile * direction[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += magnitude_profile * direction[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += magnitude_profile * direction[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += magnitude_profile * direction[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += (
+            magnitude_profile * direction[2] * 0.3
+        )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Adaptive_Attack"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Adaptive_Attack"
 
         return data
 
@@ -1235,9 +1252,9 @@ class SyntheticAttackGenerator:
         offset_y = np.where(attack_active, attack_magnitude * direction[1], 0)
         offset_z = np.where(attack_active, attack_magnitude * direction[2] * 0.3, 0)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += offset_x
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += offset_y
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += offset_z
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += offset_x
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += offset_y
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += offset_z
 
         # Only mark active periods as attack
         attack_indices = data.index[attack_start_idx:attack_end_idx]
@@ -1271,12 +1288,12 @@ class SyntheticAttackGenerator:
         direction = self.rng.standard_normal(3)
         direction = direction / np.linalg.norm(direction)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += ramp_profile * direction[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += ramp_profile * direction[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += ramp_profile * direction[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += ramp_profile * direction[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += ramp_profile * direction[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += ramp_profile * direction[2] * 0.3
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Slow_Ramp"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Slow_Ramp"
 
         return data
 
@@ -1309,19 +1326,19 @@ class SyntheticAttackGenerator:
         # Growing oscillation (resonance builds up)
         envelope = np.linspace(0.1, 1.0, n_attack)
         resonance_p = amplitude * envelope * np.sin(2 * np.pi * frequency * t)
-        resonance_q = amplitude * envelope * np.sin(2 * np.pi * frequency * t + np.pi/3)
-        resonance_r = amplitude * envelope * np.sin(2 * np.pi * frequency * t + 2*np.pi/3)
+        resonance_q = amplitude * envelope * np.sin(2 * np.pi * frequency * t + np.pi / 3)
+        resonance_r = amplitude * envelope * np.sin(2 * np.pi * frequency * t + 2 * np.pi / 3)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "p"] += resonance_p
-        data.loc[attack_start_idx:attack_end_idx-1, "q"] += resonance_q
-        data.loc[attack_start_idx:attack_end_idx-1, "r"] += resonance_r
+        data.loc[attack_start_idx : attack_end_idx - 1, "p"] += resonance_p
+        data.loc[attack_start_idx : attack_end_idx - 1, "q"] += resonance_q
+        data.loc[attack_start_idx : attack_end_idx - 1, "r"] += resonance_r
 
         # Resonance also affects attitude
-        data.loc[attack_start_idx:attack_end_idx-1, "phi"] += np.cumsum(resonance_p * self.dt)
-        data.loc[attack_start_idx:attack_end_idx-1, "theta"] += np.cumsum(resonance_q * self.dt)
+        data.loc[attack_start_idx : attack_end_idx - 1, "phi"] += np.cumsum(resonance_p * self.dt)
+        data.loc[attack_start_idx : attack_end_idx - 1, "theta"] += np.cumsum(resonance_q * self.dt)
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "Resonance_Attack"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "Resonance_Attack"
 
         return data
 
@@ -1360,18 +1377,20 @@ class SyntheticAttackGenerator:
         profile = magnitude * (3 * t**2 - 2 * t**3)  # Smooth step
 
         # Apply to position and velocity consistently
-        data.loc[attack_start_idx:attack_end_idx-1, "x"] += profile * attack_vector[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "y"] += profile * attack_vector[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "z"] += profile * attack_vector[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "x"] += profile * attack_vector[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "y"] += profile * attack_vector[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "z"] += profile * attack_vector[2] * 0.3
 
         # Matching velocity changes (FDI is physics-aware)
         velocity_profile = np.gradient(profile, self.dt)
-        data.loc[attack_start_idx:attack_end_idx-1, "vx"] += velocity_profile * attack_vector[0]
-        data.loc[attack_start_idx:attack_end_idx-1, "vy"] += velocity_profile * attack_vector[1]
-        data.loc[attack_start_idx:attack_end_idx-1, "vz"] += velocity_profile * attack_vector[2] * 0.3
+        data.loc[attack_start_idx : attack_end_idx - 1, "vx"] += velocity_profile * attack_vector[0]
+        data.loc[attack_start_idx : attack_end_idx - 1, "vy"] += velocity_profile * attack_vector[1]
+        data.loc[attack_start_idx : attack_end_idx - 1, "vz"] += (
+            velocity_profile * attack_vector[2] * 0.3
+        )
 
-        data.loc[attack_start_idx:attack_end_idx-1, "label"] = 1
-        data.loc[attack_start_idx:attack_end_idx-1, "attack_type"] = "False_Data_Injection"
+        data.loc[attack_start_idx : attack_end_idx - 1, "label"] = 1
+        data.loc[attack_start_idx : attack_end_idx - 1, "attack_type"] = "False_Data_Injection"
 
         return data
 
@@ -1380,9 +1399,7 @@ class SyntheticAttackGenerator:
     # =========================================================================
 
     def generate_all_attacks(
-        self,
-        handle_nan: bool = False,
-        nan_method: str = "interpolate"
+        self, handle_nan: bool = False, nan_method: str = "interpolate"
     ) -> Dict[str, pd.DataFrame]:
         """
         Generate all attack types (30 total + clean baseline).
@@ -1400,7 +1417,6 @@ class SyntheticAttackGenerator:
             "gps_jamming": self.gps_jamming(),
             "gps_freeze": self.gps_freeze(),
             "gps_multipath": self.gps_multipath(),
-
             # IMU Attacks (7)
             "imu_constant_bias": self.imu_constant_bias(),
             "imu_gradual_drift": self.imu_gradual_drift(),
@@ -1409,33 +1425,27 @@ class SyntheticAttackGenerator:
             "imu_scale_factor": self.imu_scale_factor(),
             "gyro_saturation": self.gyro_saturation(),
             "accel_saturation": self.accel_saturation(),
-
             # Magnetometer/Barometer Attacks (2)
             "magnetometer_spoofing": self.magnetometer_spoofing(),
             "barometer_spoofing": self.barometer_spoofing(),
-
             # Actuator/Control Attacks (4)
             "actuator_stuck": self.actuator_stuck(),
             "actuator_degraded": self.actuator_degraded(),
             "control_hijack": self.control_hijack(),
             "thrust_manipulation": self.thrust_manipulation(),
-
             # Coordinated Attacks (2)
             "coordinated_gps_imu": self.coordinated_gps_imu(),
             "stealthy_coordinated": self.stealthy_coordinated(),
-
             # Temporal Attacks (3)
             "replay_attack": self.replay_attack(),
             "time_delay": self.time_delay_attack(),
             "sensor_dropout": self.sensor_dropout(),
-
             # Stealth/Advanced Attacks (5)
             "adaptive_attack": self.adaptive_attack(),
             "intermittent_attack": self.intermittent_attack(),
             "slow_ramp": self.slow_ramp_attack(),
             "resonance_attack": self.resonance_attack(),
             "false_data_injection": self.false_data_injection(),
-
             # Clean baseline
             "clean": self._init_data(),
         }
@@ -1480,10 +1490,25 @@ class SyntheticAttackGenerator:
 
         # Ensure standard column order for PINN
         pinn_cols = [
-            "timestamp", "x", "y", "z", "phi", "theta", "psi",
-            "p", "q", "r", "vx", "vy", "vz",
-            "thrust", "torque_x", "torque_y", "torque_z",
-            "label", "attack_type"
+            "timestamp",
+            "x",
+            "y",
+            "z",
+            "phi",
+            "theta",
+            "psi",
+            "p",
+            "q",
+            "r",
+            "vx",
+            "vy",
+            "vz",
+            "thrust",
+            "torque_x",
+            "torque_y",
+            "torque_z",
+            "label",
+            "attack_type",
         ]
 
         # Keep only columns that exist
@@ -1492,11 +1517,7 @@ class SyntheticAttackGenerator:
 
         return combined
 
-    def generate_attack_variants(
-        self,
-        attack_name: str,
-        n_variants: int = 5
-    ) -> List[pd.DataFrame]:
+    def generate_attack_variants(self, attack_name: str, n_variants: int = 5) -> List[pd.DataFrame]:
         """Generate multiple variants of a specific attack with randomized parameters."""
         original_randomize = self.randomize
         self.randomize = True
@@ -1514,33 +1535,47 @@ class SyntheticAttackGenerator:
         self.randomize = original_randomize
         return variants
 
-    def generate_combined_dataset(
-        self,
-        attacks_per_type: int = 3
-    ) -> pd.DataFrame:
+    def generate_combined_dataset(self, attacks_per_type: int = 3) -> pd.DataFrame:
         """Generate a combined dataset with multiple attack instances."""
         all_data = []
 
         attack_methods = [
             # GPS Attacks (7)
-            "gps_gradual_drift", "gps_sudden_jump", "gps_oscillating",
-            "gps_meaconing", "gps_freeze", "gps_multipath",
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_freeze",
+            "gps_multipath",
             # IMU Attacks (7)
-            "imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-            "imu_noise_injection", "imu_scale_factor",
-            "gyro_saturation", "accel_saturation",
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            "gyro_saturation",
+            "accel_saturation",
             # Magnetometer/Barometer (2)
-            "magnetometer_spoofing", "barometer_spoofing",
+            "magnetometer_spoofing",
+            "barometer_spoofing",
             # Actuator/Control (4)
-            "actuator_stuck", "actuator_degraded",
-            "control_hijack", "thrust_manipulation",
+            "actuator_stuck",
+            "actuator_degraded",
+            "control_hijack",
+            "thrust_manipulation",
             # Coordinated (2)
-            "coordinated_gps_imu", "stealthy_coordinated",
+            "coordinated_gps_imu",
+            "stealthy_coordinated",
             # Temporal (3)
-            "replay_attack", "time_delay_attack", "sensor_dropout",
+            "replay_attack",
+            "time_delay_attack",
+            "sensor_dropout",
             # Stealth/Advanced (4)
-            "adaptive_attack", "intermittent_attack", "slow_ramp_attack",
-            "resonance_attack", "false_data_injection",
+            "adaptive_attack",
+            "intermittent_attack",
+            "slow_ramp_attack",
+            "resonance_attack",
+            "false_data_injection",
         ]
 
         # Add clean samples
@@ -1581,42 +1616,56 @@ Attack Types:
   Coordinated: gps_imu, stealthy_coordinated
   Temporal: replay, time_delay, sensor_dropout
   Stealth: adaptive, intermittent, slow_ramp
-        """
+        """,
     )
     parser.add_argument(
-        "--input", type=str, required=True,
+        "--input",
+        type=str,
+        required=True,
         help="Path to clean EuRoC data directory",
     )
     parser.add_argument(
-        "--output", type=str, default="data/attack_datasets/synthetic",
+        "--output",
+        type=str,
+        default="data/attack_datasets/synthetic",
         help="Output directory",
     )
     parser.add_argument(
-        "--seed", type=int, default=42,
+        "--seed",
+        type=int,
+        default=42,
         help="Random seed",
     )
     parser.add_argument(
-        "--randomize", action="store_true",
+        "--randomize",
+        action="store_true",
         help="Enable parameter randomization for robustness",
     )
     parser.add_argument(
-        "--variants", type=int, default=1,
+        "--variants",
+        type=int,
+        default=1,
         help="Number of variants per attack type (for robustness)",
     )
     parser.add_argument(
-        "--combined", action="store_true",
+        "--combined",
+        action="store_true",
         help="Generate a single combined dataset with all attacks",
     )
     parser.add_argument(
-        "--pinn-ready", action="store_true",
+        "--pinn-ready",
+        action="store_true",
         help="Generate PINN-compatible dataset (handles NaN, standard columns)",
     )
     parser.add_argument(
-        "--handle-nan", action="store_true",
+        "--handle-nan",
+        action="store_true",
         help="Handle NaN values created by jamming/dropout attacks",
     )
     parser.add_argument(
-        "--nan-method", type=str, default="interpolate",
+        "--nan-method",
+        type=str,
+        default="interpolate",
         choices=["interpolate", "ffill", "drop", "zero"],
         help="Method for handling NaN values (default: interpolate)",
     )
@@ -1643,9 +1692,7 @@ Attack Types:
 
     # Generate attacks
     print("\nGenerating attacks...")
-    generator = SyntheticAttackGenerator(
-        clean_data, seed=args.seed, randomize=args.randomize
-    )
+    generator = SyntheticAttackGenerator(clean_data, seed=args.seed, randomize=args.randomize)
 
     if args.pinn_ready:
         # Generate PINN-compatible dataset
@@ -1682,8 +1729,7 @@ Attack Types:
     else:
         # Generate individual attack files
         attacks = generator.generate_all_attacks(
-            handle_nan=args.handle_nan,
-            nan_method=args.nan_method
+            handle_nan=args.handle_nan, nan_method=args.nan_method
         )
 
         for attack_name, attack_data in attacks.items():
@@ -1702,8 +1748,10 @@ Attack Types:
             with open(meta_file, "w") as f:
                 json.dump(meta, f, indent=2)
 
-            print(f"  {attack_name}: {len(attack_data)} samples "
-                  f"({meta['attack_ratio']*100:.1f}% attack)")
+            print(
+                f"  {attack_name}: {len(attack_data)} samples "
+                f"({meta['attack_ratio']*100:.1f}% attack)"
+            )
 
     print("\n" + "=" * 70)
     print("Attack generation complete!")

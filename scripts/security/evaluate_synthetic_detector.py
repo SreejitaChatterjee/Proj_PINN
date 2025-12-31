@@ -19,14 +19,18 @@ import numpy as np
 import pandas as pd
 import torch
 from sklearn.metrics import (
-    precision_score, recall_score, f1_score,
-    confusion_matrix, classification_report
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
 )
 
 try:
     from pinn_dynamics import QuadrotorPINN
 except ImportError:
     import sys
+
     sys.path.insert(0, str(Path(__file__).parent.parent.parent))
     from pinn_dynamics import QuadrotorPINN
 
@@ -100,9 +104,7 @@ def detect_anomalies(model, X, y, scalers, threshold, device="cpu"):
     return predictions, errors
 
 
-def evaluate_attack(
-    model, attack_data, scalers, threshold, device="cpu"
-):
+def evaluate_attack(model, attack_data, scalers, threshold, device="cpu"):
     """Evaluate detection on a single attack type."""
     X, y, labels = prepare_data(attack_data, scalers)
     predictions, errors = detect_anomalies(model, X, y, scalers, threshold, device)
@@ -137,14 +139,20 @@ def evaluate_attack(
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluate synthetic attack detector")
-    parser.add_argument("--model-dir", type=str, default="models/security",
-                        help="Model directory")
-    parser.add_argument("--data", type=str, default="data/euroc",
-                        help="Path to EuRoC data")
-    parser.add_argument("--output", type=str, default="research/security/synthetic_results",
-                        help="Output directory for results")
-    parser.add_argument("--threshold-percentile", type=float, default=99.0,
-                        help="Threshold percentile (default: 99)")
+    parser.add_argument("--model-dir", type=str, default="models/security", help="Model directory")
+    parser.add_argument("--data", type=str, default="data/euroc", help="Path to EuRoC data")
+    parser.add_argument(
+        "--output",
+        type=str,
+        default="research/security/synthetic_results",
+        help="Output directory for results",
+    )
+    parser.add_argument(
+        "--threshold-percentile",
+        type=float,
+        default=99.0,
+        help="Threshold percentile (default: 99)",
+    )
     args = parser.parse_args()
 
     model_dir = Path(args.model_dir)
@@ -185,7 +193,9 @@ def main():
     test_sequences = config.get("sequence_split", {})
     if test_sequences and test_sequences.get("test_sequences"):
         test_seqs = test_sequences["test_sequences"]
-        df = df[df["sequence"].isin(test_seqs)].reset_index(drop=True)  # Reset index for attack generator
+        df = df[df["sequence"].isin(test_seqs)].reset_index(
+            drop=True
+        )  # Reset index for attack generator
         print(f"  Using held-out test sequences: {test_seqs}")
         print(f"  Test samples: {len(df):,}")
     else:
@@ -218,8 +228,10 @@ def main():
         if attack_name == "clean":
             print(f"  {attack_name:30s} | FPR: {metrics['fpr']*100:5.1f}% | (baseline)")
         else:
-            print(f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
-                  f"F1: {metrics['f1']*100:5.1f}% | FPR: {metrics['fpr']*100:5.1f}%")
+            print(
+                f"  {attack_name:30s} | Recall: {metrics['recall']*100:5.1f}% | "
+                f"F1: {metrics['f1']*100:5.1f}% | FPR: {metrics['fpr']*100:5.1f}%"
+            )
 
     # Aggregate results
     print("\n[4/4] Computing aggregate metrics...")
@@ -232,8 +244,11 @@ def main():
 
     overall_precision = all_tp / (all_tp + all_fp) if (all_tp + all_fp) > 0 else 0
     overall_recall = all_tp / (all_tp + all_fn) if (all_tp + all_fn) > 0 else 0
-    overall_f1 = 2 * overall_precision * overall_recall / (overall_precision + overall_recall) \
-        if (overall_precision + overall_recall) > 0 else 0
+    overall_f1 = (
+        2 * overall_precision * overall_recall / (overall_precision + overall_recall)
+        if (overall_precision + overall_recall) > 0
+        else 0
+    )
     overall_fpr = all_fp / (all_fp + all_tn) if (all_fp + all_tn) > 0 else 0
 
     # Clean data FPR

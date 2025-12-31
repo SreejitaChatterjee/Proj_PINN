@@ -9,13 +9,15 @@ This script analyzes:
 Goal: Design an architecture based on physical sensor relationships.
 """
 
-import numpy as np
-import pandas as pd
-from pathlib import Path
 import json
 
 # Add project root
 import sys
+from pathlib import Path
+
+import numpy as np
+import pandas as pd
+
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from scripts.security.generate_synthetic_attacks import SyntheticAttackGenerator
@@ -66,13 +68,15 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
         # Reported velocity
         reported_vel = df[v]
         # Inconsistency
-        metrics[f"pos_vel_inconsistency_{p}"] = np.abs(pos_deriv.values[1:] - reported_vel.values[1:])
+        metrics[f"pos_vel_inconsistency_{p}"] = np.abs(
+            pos_deriv.values[1:] - reported_vel.values[1:]
+        )
 
     # Combined position-velocity inconsistency (L2 norm)
     metrics["pos_vel_inconsistency"] = np.sqrt(
-        metrics["pos_vel_inconsistency_x"]**2 +
-        metrics["pos_vel_inconsistency_y"]**2 +
-        metrics["pos_vel_inconsistency_z"]**2
+        metrics["pos_vel_inconsistency_x"] ** 2
+        + metrics["pos_vel_inconsistency_y"] ** 2
+        + metrics["pos_vel_inconsistency_z"] ** 2
     )
 
     # ==========================================================================
@@ -91,9 +95,9 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
             metrics[f"vel_accel_inconsistency_{v}"] = np.abs(vel_deriv.values[1:] - reported_accel)
 
         metrics["vel_accel_inconsistency"] = np.sqrt(
-            metrics["vel_accel_inconsistency_vx"]**2 +
-            metrics["vel_accel_inconsistency_vy"]**2 +
-            metrics["vel_accel_inconsistency_vz"]**2
+            metrics["vel_accel_inconsistency_vx"] ** 2
+            + metrics["vel_accel_inconsistency_vy"] ** 2
+            + metrics["vel_accel_inconsistency_vz"] ** 2
         )
 
     # ==========================================================================
@@ -106,12 +110,14 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
     for att, rate in zip(att_cols, rate_cols):
         att_deriv = df[att].diff() / dt
         reported_rate = df[rate]
-        metrics[f"att_rate_inconsistency_{att}"] = np.abs(att_deriv.values[1:] - reported_rate.values[1:])
+        metrics[f"att_rate_inconsistency_{att}"] = np.abs(
+            att_deriv.values[1:] - reported_rate.values[1:]
+        )
 
     metrics["att_rate_inconsistency"] = np.sqrt(
-        metrics["att_rate_inconsistency_phi"]**2 +
-        metrics["att_rate_inconsistency_theta"]**2 +
-        metrics["att_rate_inconsistency_psi"]**2
+        metrics["att_rate_inconsistency_phi"] ** 2
+        + metrics["att_rate_inconsistency_theta"] ** 2
+        + metrics["att_rate_inconsistency_psi"] ** 2
     )
 
     # ==========================================================================
@@ -131,16 +137,16 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
         )
 
     metrics["kinematic_inconsistency"] = np.sqrt(
-        metrics["kinematic_inconsistency_x"]**2 +
-        metrics["kinematic_inconsistency_y"]**2 +
-        metrics["kinematic_inconsistency_z"]**2
+        metrics["kinematic_inconsistency_x"] ** 2
+        + metrics["kinematic_inconsistency_y"] ** 2
+        + metrics["kinematic_inconsistency_z"] ** 2
     )
 
     # ==========================================================================
     # 5. ENERGY CONSISTENCY (Physics-based)
     # ==========================================================================
     # Kinetic energy change should relate to thrust and gravity
-    speed_sq = df["vx"]**2 + df["vy"]**2 + df["vz"]**2
+    speed_sq = df["vx"] ** 2 + df["vy"] ** 2 + df["vz"] ** 2
     kinetic_energy_change = speed_sq.diff() / dt
 
     # Expected energy change from thrust (simplified)
@@ -160,9 +166,7 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
         metrics[f"jerk_{v}"] = np.abs(jerk.values[1:])
 
     metrics["jerk_magnitude"] = np.sqrt(
-        metrics["jerk_vx"]**2 +
-        metrics["jerk_vy"]**2 +
-        metrics["jerk_vz"]**2
+        metrics["jerk_vx"] ** 2 + metrics["jerk_vy"] ** 2 + metrics["jerk_vz"] ** 2
     )
 
     # Angular acceleration (should be bounded)
@@ -171,9 +175,9 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
         metrics[f"angular_accel_{r}"] = np.abs(angular_accel.values[1:])
 
     metrics["angular_accel_magnitude"] = np.sqrt(
-        metrics["angular_accel_p"]**2 +
-        metrics["angular_accel_q"]**2 +
-        metrics["angular_accel_r"]**2
+        metrics["angular_accel_p"] ** 2
+        + metrics["angular_accel_q"] ** 2
+        + metrics["angular_accel_r"] ** 2
     )
 
     # ==========================================================================
@@ -199,9 +203,9 @@ def compute_consistency_metrics(df: pd.DataFrame, dt: float = 0.005) -> pd.DataF
     return metrics
 
 
-def analyze_attack_signatures(normal_metrics: pd.DataFrame,
-                               attack_metrics: dict,
-                               attack_labels: dict) -> dict:
+def analyze_attack_signatures(
+    normal_metrics: pd.DataFrame, attack_metrics: dict, attack_labels: dict
+) -> dict:
     """
     Analyze which consistency metrics detect which attacks.
 
@@ -223,7 +227,7 @@ def analyze_attack_signatures(normal_metrics: pd.DataFrame,
 
         labels = attack_labels[attack_name]
         attack_mask = labels[1:] == 1  # Align with metrics (which skip first row)
-        attack_mask = attack_mask[:len(attack_metric_df)]  # Ensure same length
+        attack_mask = attack_mask[: len(attack_metric_df)]  # Ensure same length
 
         if attack_mask.sum() == 0:
             continue
@@ -242,14 +246,16 @@ def analyze_attack_signatures(normal_metrics: pd.DataFrame,
 
             if len(attack_samples) > 0:
                 detection_rate = np.mean(attack_samples > threshold)
-                separation = (np.mean(attack_samples) - np.mean(normal_metrics[col].dropna())) / (np.std(normal_metrics[col].dropna()) + 1e-6)
+                separation = (np.mean(attack_samples) - np.mean(normal_metrics[col].dropna())) / (
+                    np.std(normal_metrics[col].dropna()) + 1e-6
+                )
             else:
                 detection_rate = 0
                 separation = 0
 
             attack_results[col] = {
                 "detection_rate": float(detection_rate),
-                "separation": float(separation)
+                "separation": float(separation),
             }
 
         results[attack_name] = attack_results
@@ -283,12 +289,14 @@ def main():
         "att_rate_inconsistency",
         "kinematic_inconsistency",
         "jerk_magnitude",
-        "angular_accel_magnitude"
+        "angular_accel_magnitude",
     ]
     for m in key_metrics:
         if m in clean_metrics.columns:
             vals = clean_metrics[m].dropna()
-            print(f"    {m:30s}: mean={vals.mean():.4f}, std={vals.std():.4f}, 99th={np.percentile(vals, 99):.4f}")
+            print(
+                f"    {m:30s}: mean={vals.mean():.4f}, std={vals.std():.4f}, 99th={np.percentile(vals, 99):.4f}"
+            )
 
     # Generate attacks and compute metrics
     print("\n[3/5] Generating attacks and computing metrics...")
@@ -319,9 +327,7 @@ def main():
     for attack_name, metrics_results in signatures.items():
         # Sort metrics by detection rate
         sorted_metrics = sorted(
-            metrics_results.items(),
-            key=lambda x: x[1]["detection_rate"],
-            reverse=True
+            metrics_results.items(), key=lambda x: x[1]["detection_rate"], reverse=True
         )
 
         best_metric = sorted_metrics[0] if sorted_metrics else (None, {"detection_rate": 0})
@@ -331,14 +337,18 @@ def main():
         attack_detection_summary[attack_name] = {
             "best_metric": best_metric_name,
             "best_detection_rate": best_detection_rate,
-            "top_5_metrics": [(m, r["detection_rate"]) for m, r in sorted_metrics[:5]]
+            "top_5_metrics": [(m, r["detection_rate"]) for m, r in sorted_metrics[:5]],
         }
 
-        status = "[OK]" if best_detection_rate > 0.5 else "[..] " if best_detection_rate > 0.1 else "[X]"
+        status = (
+            "[OK]" if best_detection_rate > 0.5 else "[..] " if best_detection_rate > 0.1 else "[X]"
+        )
         print(f"\n{status} {attack_name}")
         print(f"  Best metric: {best_metric_name} (detection: {best_detection_rate*100:.1f}%)")
         if len(sorted_metrics) > 1:
-            print(f"  Runner-up:   {sorted_metrics[1][0]} (detection: {sorted_metrics[1][1]['detection_rate']*100:.1f}%)")
+            print(
+                f"  Runner-up:   {sorted_metrics[1][0]} (detection: {sorted_metrics[1][1]['detection_rate']*100:.1f}%)"
+            )
 
     # Categorize attacks by detectability
     print("\n" + "=" * 80)
@@ -413,7 +423,8 @@ def main():
     print("ARCHITECTURE RECOMMENDATIONS")
     print("=" * 80)
 
-    print("""
+    print(
+        """
 Based on this analysis, the detector should:
 
 1. PRIMARY SIGNALS (High detection power):
@@ -436,7 +447,8 @@ Based on this analysis, the detector should:
    - Longer temporal context (replay, slow drift)
    - Cross-sequence learning (what's normal trajectory shape)
    - Multi-scale analysis (different window sizes)
-""")
+"""
+    )
 
 
 if __name__ == "__main__":

@@ -16,15 +16,15 @@ Usage:
 
 import argparse
 import json
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
-from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
+from sklearn.preprocessing import StandardScaler
 
 
 def extract_features(states, controls, window_size=5):
@@ -34,8 +34,8 @@ def extract_features(states, controls, window_size=5):
 
     for i in range(n_samples):
         start = max(0, i - window_size + 1)
-        window_states = states[start:i + 1]
-        window_controls = controls[start:i + 1]
+        window_states = states[start : i + 1]
+        window_controls = controls[start : i + 1]
 
         # State statistics
         state_mean = window_states.mean(axis=0)
@@ -55,11 +55,11 @@ def extract_features(states, controls, window_size=5):
 
         # Angular rate magnitudes
         angular_rates = window_states[:, 6:9]  # p, q, r
-        angular_mag = np.sqrt((angular_rates ** 2).sum(axis=1)).mean()
+        angular_mag = np.sqrt((angular_rates**2).sum(axis=1)).mean()
 
         # Velocity magnitude
         velocities = window_states[:, 9:12]  # vx, vy, vz
-        vel_mag = np.sqrt((velocities ** 2).sum(axis=1)).mean()
+        vel_mag = np.sqrt((velocities**2).sum(axis=1)).mean()
 
         # Position variance (instability indicator)
         positions = window_states[:, 0:3]  # x, y, z
@@ -70,18 +70,20 @@ def extract_features(states, controls, window_size=5):
         att_var = attitudes.var(axis=0).sum()
 
         # Compile features
-        feature_vec = np.concatenate([
-            state_mean,           # 12
-            state_std,            # 12
-            state_diff,           # 12
-            state_diff_std,       # 12
-            control_mean,         # 4
-            control_std,          # 4
-            [angular_mag],        # 1
-            [vel_mag],            # 1
-            [pos_var],            # 1
-            [att_var],            # 1
-        ])
+        feature_vec = np.concatenate(
+            [
+                state_mean,  # 12
+                state_std,  # 12
+                state_diff,  # 12
+                state_diff_std,  # 12
+                control_mean,  # 4
+                control_std,  # 4
+                [angular_mag],  # 1
+                [vel_mag],  # 1
+                [pos_var],  # 1
+                [att_var],  # 1
+            ]
+        )
         features_list.append(feature_vec)
 
     return np.array(features_list)
@@ -141,13 +143,15 @@ def load_and_featurize(data_dir: Path, window_size=5):
         # Extract features
         features = extract_features(states, controls, window_size)
 
-        flights.append({
-            "name": csv_file.stem,
-            "features": features,
-            "labels": labels,
-            "fault_type": fault_type,
-            "is_fault_flight": fault_type != "Normal",
-        })
+        flights.append(
+            {
+                "name": csv_file.stem,
+                "features": features,
+                "labels": labels,
+                "fault_type": fault_type,
+                "is_fault_flight": fault_type != "Normal",
+            }
+        )
 
     return flights
 
@@ -192,7 +196,7 @@ def run_lofo_cv(flights, seed, device="cpu"):
     all_results = []
 
     for i, test_flight in enumerate(flights):
-        train_flights = flights[:i] + flights[i + 1:]
+        train_flights = flights[:i] + flights[i + 1 :]
 
         # Need enough normal samples
         n_normal = sum((f["labels"] == 0).sum() for f in train_flights)
@@ -207,12 +211,14 @@ def run_lofo_cv(flights, seed, device="cpu"):
         model.eval()
         scores = model.get_anomaly_score(X_test_t).cpu().numpy()
 
-        all_results.append({
-            "name": test_flight["name"],
-            "labels": test_flight["labels"],
-            "scores": scores,
-            "is_fault_flight": test_flight["is_fault_flight"],
-        })
+        all_results.append(
+            {
+                "name": test_flight["name"],
+                "labels": test_flight["labels"],
+                "scores": scores,
+                "is_fault_flight": test_flight["is_fault_flight"],
+            }
+        )
 
     return all_results
 
@@ -244,7 +250,7 @@ def compute_metrics(results, threshold_pct=95, min_consec=3):
         above = r["scores"] > threshold
         if r["is_fault_flight"]:
             fault_idx = np.where(r["labels"] == 1)[0]
-            if len(fault_idx) > 0 and has_consec(above[fault_idx[0]:], min_consec):
+            if len(fault_idx) > 0 and has_consec(above[fault_idx[0] :], min_consec):
                 n_det += 1
         else:
             if has_consec(above, min_consec):

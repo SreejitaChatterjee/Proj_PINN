@@ -17,13 +17,13 @@ Usage:
 import argparse
 import json
 import pickle
+import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import torch
 
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 from pinn_dynamics.security.hybrid_detector import HybridAttackDetector
@@ -55,7 +55,7 @@ def main():
     predictor = None
     model_path = Path(args.model)
     if model_path.exists():
-        from pinn_dynamics import QuadrotorPINN, Predictor
+        from pinn_dynamics import Predictor, QuadrotorPINN
 
         model = QuadrotorPINN()
         model.load_state_dict(torch.load(model_path, map_location="cpu"))
@@ -166,18 +166,13 @@ def main():
             n_normal_test = min(len(normal_states_seq), n_test_attack * 2)
 
             if n_normal_test > 0:
-                test_states = np.vstack([
-                    normal_states_seq[:n_normal_test],
-                    attack_states[n_train:]
-                ])
-                test_controls = np.vstack([
-                    normal_controls_seq[:n_normal_test],
-                    attack_controls[n_train:]
-                ])
-                test_labels = np.concatenate([
-                    np.zeros(n_normal_test),
-                    np.ones(n_test_attack)
-                ])
+                test_states = np.vstack(
+                    [normal_states_seq[:n_normal_test], attack_states[n_train:]]
+                )
+                test_controls = np.vstack(
+                    [normal_controls_seq[:n_normal_test], attack_controls[n_train:]]
+                )
+                test_labels = np.concatenate([np.zeros(n_normal_test), np.ones(n_test_attack)])
             else:
                 test_states = attack_states[n_train:]
                 test_controls = attack_controls[n_train:]
@@ -197,7 +192,9 @@ def main():
     attack_train_ctrl = np.vstack(attack_train_controls)
 
     print(f"  Normal train: {len(normal_train):,}")
-    print(f"  Attack train: {len(attack_train):,} samples from {len(attack_train_states)} attack types")
+    print(
+        f"  Attack train: {len(attack_train):,} samples from {len(attack_train_states)} attack types"
+    )
 
     # Create and train hybrid detector
     print("\n[4/5] Training Hybrid Detector...")
@@ -221,15 +218,40 @@ def main():
 
     results = {}
     categories = {
-        "GPS": ["gps_gradual_drift", "gps_sudden_jump", "gps_oscillating", "gps_meaconing",
-                "gps_jamming", "gps_freeze", "gps_multipath"],
-        "IMU": ["imu_constant_bias", "imu_gradual_drift", "imu_sinusoidal",
-                "imu_noise_injection", "imu_scale_factor", "gyro_saturation", "accel_saturation"],
+        "GPS": [
+            "gps_gradual_drift",
+            "gps_sudden_jump",
+            "gps_oscillating",
+            "gps_meaconing",
+            "gps_jamming",
+            "gps_freeze",
+            "gps_multipath",
+        ],
+        "IMU": [
+            "imu_constant_bias",
+            "imu_gradual_drift",
+            "imu_sinusoidal",
+            "imu_noise_injection",
+            "imu_scale_factor",
+            "gyro_saturation",
+            "accel_saturation",
+        ],
         "Mag/Baro": ["magnetometer_spoofing", "barometer_spoofing"],
-        "Actuator": ["actuator_stuck", "actuator_degraded", "control_hijack", "thrust_manipulation"],
+        "Actuator": [
+            "actuator_stuck",
+            "actuator_degraded",
+            "control_hijack",
+            "thrust_manipulation",
+        ],
         "Coordinated": ["coordinated_gps_imu", "stealthy_coordinated"],
         "Temporal": ["replay_attack", "time_delay", "sensor_dropout"],
-        "Stealth": ["adaptive_attack", "intermittent_attack", "slow_ramp", "resonance_attack", "false_data_injection"],
+        "Stealth": [
+            "adaptive_attack",
+            "intermittent_attack",
+            "slow_ramp",
+            "resonance_attack",
+            "false_data_injection",
+        ],
     }
 
     # Test on normal data
@@ -248,13 +270,16 @@ def main():
             continue
 
         eval_metrics = detector.evaluate(
-            test_states, test_labels,
+            test_states,
+            test_labels,
             controls=test_controls,
         )
         results[attack_name] = eval_metrics
 
-        print(f"  {attack_name:30s} | Recall: {eval_metrics['recall']*100:5.1f}% | "
-              f"FPR: {eval_metrics['fpr']*100:5.1f}% | F1: {eval_metrics['f1']*100:5.1f}%")
+        print(
+            f"  {attack_name:30s} | Recall: {eval_metrics['recall']*100:5.1f}% | "
+            f"FPR: {eval_metrics['fpr']*100:5.1f}% | F1: {eval_metrics['f1']*100:5.1f}%"
+        )
 
     # Category results
     print("\n" + "=" * 70)
@@ -263,7 +288,9 @@ def main():
 
     category_results = {}
     for cat_name, attack_list in categories.items():
-        recalls = [results[a]["recall"] for a in attack_list if a in results and "recall" in results[a]]
+        recalls = [
+            results[a]["recall"] for a in attack_list if a in results and "recall" in results[a]
+        ]
         if recalls:
             avg_recall = np.mean(recalls)
             min_recall = np.min(recalls)
