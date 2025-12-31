@@ -27,7 +27,7 @@ def fix_figure_widths(filepath):
         if in_single_figure and r"width=\textwidth" in line:
             lines[i] = line.replace(r"width=\textwidth", r"width=\columnwidth")
             modified = True
-            print(f"Line {i+1}: Replaced \textwidth with \columnwidth")
+            print(f"Line {i+1}: Replaced \\textwidth with \\columnwidth")
 
     if modified:
         with open(filepath, "w", encoding="utf-8") as f:

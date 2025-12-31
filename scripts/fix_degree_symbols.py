@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""
+r"""
 Fix degree symbols in math mode - replace ° with ^\circ
 """
 
@@ -8,7 +8,7 @@ from pathlib import Path
 
 
 def fix_degree_symbols(input_file, output_file):
-    """Replace ° with ^\circ inside math mode $...$"""
+    r"""Replace ° with ^\circ inside math mode $...$"""
 
     with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
