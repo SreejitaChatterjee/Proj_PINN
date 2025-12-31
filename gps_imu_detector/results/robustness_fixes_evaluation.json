@@ -1,0 +1,5 @@
+{
+  "temporal_contrast": {
+    "auroc": 0.49897299999999994,
+    "degradation_on_shuffle": -0.8749118500792423,
+    "relies_on_structure": 

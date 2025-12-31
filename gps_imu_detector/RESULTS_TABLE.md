@@ -124,4 +124,37 @@ These answer different questions. See `USAGE.md` for track definitions.
 
 ---
 
-*Results reproducible via `scripts/run_hybrid_eval.py` and `scripts/bootstrap_ci.py`*
+## Table 8: Rigorous Evaluation (Realistic Noise)
+
+**Date:** 2025-12-31
+
+Evaluation with realistic GPS/IMU noise models (multipath, bias walk, drift):
+
+| Metric | Result | 95% CI |
+|--------|--------|--------|
+| **Detection Rate** | 100% | [100%, 100%] |
+| **FPR** | 2.0% | [0%, 4.67%] |
+| **Detectability Floor** | ~5-10m | N/A |
+
+### Magnitude Sensitivity
+
+| Magnitude | Offset | Detection |
+|-----------|--------|-----------|
+| 1-5x | 2-4m | 0% |
+| **10x** | **~6m** | **100%** |
+| 20x | ~12m | 100% |
+
+### Baseline Comparison (@ 10x)
+
+| Detector | GPS Drift | IMU Bias | Coordinated |
+|----------|-----------|----------|-------------|
+| **RateBased** | **100%** | **100%** | **100%** |
+| SimpleThreshold | 100% | 100% | 100% |
+| EKF Innovation | 20% | 15% | 100% |
+| ChiSquare | 0% | 0% | 45% |
+
+**Key insight:** With realistic noise (0.5m GPS std), detectability floor is ~5-10m.
+
+---
+
+*Results reproducible via `scripts/rigorous_evaluation.py`*

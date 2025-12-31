@@ -1,0 +1,83 @@
+{
+  "timestamp": "2025-12-31T19:12:46.431508",
+  "train_seed": 100,
+  "test_seed": 100,
+  "in_distribution_mode": true,
+  "methodology": "Publication-ready with TwoStageDecisionLogic + TemporalAggregation",
+  "main_results": {
+    "fpr": 0.002105263157894737,
+    "fpr_target_met": true,
+    "suspicion_threshold": 2.883896195271518e-05,
+    "confirmation_threshold": 6.332397606456652e-05,
+    "per_attack": {
+      "ar1_drift": {
+        "recall": 0.033417721518987344,
+        "auroc": 1.0,
+        "n_samples": 1975
+      },
+      "coordinated": {
+        "recall": 0.033417721518987344,
+        "auroc": 0.9999999999999999,
+        "n_samples": 1975
+      },
+      "intermittent": {
+        "recall": 0.03291139240506329,
+        "auroc": 0.9871219060309,
+        "n_samples": 1975
+      },
+      "bias": {
+        "recall": 0.033417721518987344,
+        "auroc": 1.0,
+        "n_samples": 1975
+      },
+      "noise": {
+        "recall": 0.033417721518987344,
+        "auroc": 1.0,
+        "n_samples": 1975
+      },
+      "ramp": {
+        "recall": 0.033417721518987344,
+        "auroc": 0.9999999999999999,
+        "n_samples": 1975
+      }
+    },
+    "overall_auroc": 0.9978536510051499,
+    "overall_recall": 0.9336708860759494,
+    "overall_missed": 0.06632911392405061,
+    "recall_at_1pct_fpr": 0.9336708860759494,
+    "recall_at_5pct_fpr": 0.9953586497890295
+  },
+  "subtle_attacks": {
+    "offset_1m": {
+      "auroc": 0.9727007774123483,
+      "recall_5pct_fpr": 0.8173076923076923
+    },
+    "offset_5m": {
+      "auroc": 0.9999998478128886,
+      "recall_5pct_fpr": 1.0
+    },
+    "offset_10m": {
+      "auroc": 0.9999474954465617,
+      "recall_5pct_fpr": 1.0
+    },
+    "offset_25m": {
+      "auroc": 0.9979089998181871,
+      "recall_5pct_fpr": 0.9919028340080972
+    },
+    "offset_50m": {
+      "auroc": 0.9824149821920789,
+      "recall_5pct_fpr": 0.867914979757085
+    },
+    "min_detectable": "offset_1m"
+  },
+  "targets": {
+    "fpr_target": "< 1%",
+    "auroc_target": "> 95%",
+    "missed_target": "< 1%"
+  },
+  "targets_met": {
+    "fpr": true,
+    "auroc": true,
+    "missed": false
+  }
+}

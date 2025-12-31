@@ -217,3 +217,37 @@ Achieving ≥90% recall in this regime would require:
 Our contribution is **characterizing WHERE detection is possible**. The floor represents the practical observability boundary for passive detection—a design-complete specification, not a system failure.
 
 **Key result:** 100% detection at standard (1.0x) and moderate (0.5x) magnitudes with worst-case FPR of 1.26%.
+
+---
+
+## Rigorous Evaluation Update (2025-12-31)
+
+### Realistic Noise Testing
+
+With realistic GPS/IMU noise models (multipath, bias walk, 0.5m std):
+
+| Metric | Result | 95% CI |
+|--------|--------|--------|
+| Detection Rate | 100% | [100%, 100%] |
+| FPR | 2.0% | [0%, 4.67%] |
+| Detectability Floor | ~5-10m offset | N/A |
+
+### Updated Detectability Boundary
+
+| Magnitude | Offset | Detection | Status |
+|-----------|--------|-----------|--------|
+| 1-5x | 2-4m | 0% | Below noise floor |
+| **10x** | **~6m** | **100%** | Reliable |
+| 20x | ~12m | 100% | Reliable |
+
+**Key insight:** With realistic GPS noise (0.5m std), the detectability floor shifts from relative magnitudes (0.25-0.3x) to absolute offsets (~5-10m). This provides a more honest, absolute characterization of detection limits.
+
+### Baseline Comparison
+
+| Detector | GPS Drift | GPS Jump | IMU Bias |
+|----------|-----------|----------|----------|
+| **RateBased** | **100%** | **100%** | **100%** |
+| EKF Innovation | 20% | 100% | 15% |
+| ChiSquare | 0% | 100% | 0% |
+
+Reproduce: `scripts/rigorous_evaluation.py`

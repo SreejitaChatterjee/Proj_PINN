@@ -1,0 +1,93 @@
+{
+  "missed_detection": {
+    "total_attacks": 1054,
+    "total_missed": 8,
+    "missed_rate": 0.007590132827324478,
+    "categories": {
+      "short_duration": 6,
+      "low_snr": 2,
+      "transitional": 0,
+      "other": 0
+    }
+  },
+  "loao": {
+    "ar1_drift": {
+      "auroc": 0.986455379534167,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "coordinated": {
+      "auroc": 1.0,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "intermittent": {
+      "auroc": 0.9567981260961497,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "bias": {
+      "auroc": 1.0,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "noise": {
+      "auroc": 0.8001322038551689,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "ramp": {
+      "auroc": 0.7976451220311758,
+      "above_random": true,
+      "graceful_degradation": true
+    },
+    "summary": {
+      "mean_auroc": 0.9235051385861102,
+      "min_auroc": 0.7976451220311758,
+      "all_above_random": true,
+      "all_graceful": true
+    }
+  },
+  "extrapolation": {
+    "train_magnitudes": [
+      1,
+      5,
+      10
+    ],
+    "test_magnitudes": [
+      3,
+      7,
+      13
+    ],
+    "3m": {
+      "auroc": 1.0,
+      "generalizes": true
+    },
+    "7m": {
+      "auroc": 1.0,
+      "generalizes": true
+    },
+    "13m": {
+      "auroc": 1.0,
+      "generalizes": true
+    },
+    "summary": {
+      "mean_auroc": 1.0,
+      "all_generalize": true
+    }
+  },
+  "temporal": {
+    "auroc_coherent": 0.999997438902457,
+    "auroc_shuffled": 0.9599275311839237,
+    "degradation": 0.04006990771853325,
+    "relies_on_structure": false
+  },
+  "coral": {
+    "auroc_baseline": 0.6907738509891983,
+    "auroc_aligned": 0.6089531872346703,
+    "improvement": -0.08182066375452801,
+    "coral_helps": false
+  },
+  "timestamp": "2025-12-31T22:51:29.449027",
+  "methodology": "Robustness evaluation to prove feature learning"
+}

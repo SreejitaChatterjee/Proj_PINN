@@ -173,6 +173,56 @@ python generalization_test.py
 
 ---
 
+## Rigorous Evaluation (Realistic Noise Models)
+
+**Date:** 2025-12-31 | **Version:** 2.0.0
+
+This evaluation addresses critical issues in the original synthetic evaluation by adding:
+- Realistic GPS noise (multipath, bias walk, 0.5m std)
+- Realistic IMU noise (drift, scale errors)
+- Calibrated thresholds from nominal data (no leakage)
+- Baseline comparisons (SimpleThreshold, EKF, ChiSquare)
+- Bootstrap confidence intervals
+
+### Key Results
+
+| Metric | Result | 95% CI |
+|--------|--------|--------|
+| **Detection Rate** | 100% | [100%, 100%] |
+| **FPR** | 2.0% | [0%, 4.67%] |
+| **Detectability Floor** | ~5-10m offset | N/A |
+
+### Magnitude Sensitivity (Realistic Noise)
+
+| Magnitude | Approx. Offset | Detection Rate |
+|-----------|----------------|----------------|
+| 1.0x | ~2m | 0% |
+| 5.0x | ~4m | 0% |
+| **10.0x** | **~6m** | **100%** |
+| 20.0x | ~12m | 100% |
+
+**Key insight:** With realistic GPS noise (0.5m std), the detectability floor shifts from 0.25-0.3x (original synthetic) to ~5-10m absolute offset. This is a more honest assessment.
+
+### Baseline Comparison (@ 10x magnitude)
+
+| Detector | GPS Drift | GPS Jump | IMU Bias | Coordinated |
+|----------|-----------|----------|----------|-------------|
+| **RateBased** | **100%** | **100%** | **100%** | **100%** |
+| SimpleThreshold | 100% | 100% | 100% | 100% |
+| EKF Innovation | 20% | 100% | 15% | 100% |
+| ChiSquare | 0% | 100% | 0% | 45% |
+
+### Reproducibility
+
+```bash
+cd gps_imu_detector/scripts
+python rigorous_evaluation.py
+```
+
+Results saved to: `results/rigorous_evaluation.json`
+
+---
+
 ## Paper-Ready Summary
 
 > Across attack magnitudes, the detector exhibits monotonic and interpretable behavior. All attack types except low-magnitude GPS drift remain fully detectable down to 0.3× nominal strength. For GPS drift, detection transitions to a partial regime below 0.5×, reflecting a noise-limited observability floor rather than overfitting. Importantly, improvements over the baseline are concentrated in IMU bias and actuator faults, where relative and adaptive signatures remove prior control masking, while maintaining a stable false-positive rate.

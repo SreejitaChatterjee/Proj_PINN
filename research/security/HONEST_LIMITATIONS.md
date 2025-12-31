@@ -187,4 +187,22 @@ gps_imu_detector/src/
 
 ---
 
-*Updated 2025-12-31 for v0.9.0*
+## Rigorous Evaluation (Realistic Noise)
+
+Additional evaluation with realistic GPS/IMU noise models (2025-12-31):
+
+| Metric | Result | 95% CI |
+|--------|--------|--------|
+| Detection Rate | 100% | [100%, 100%] |
+| FPR | 2.0% | [0%, 4.67%] |
+| Detectability Floor | ~5-10m offset | N/A |
+
+### Key Finding
+
+With realistic GPS noise (0.5m std, multipath, bias walk), the detectability floor shifts from relative magnitudes to absolute offsets (~5-10m). Attacks below this threshold are indistinguishable from normal GPS variation.
+
+See `gps_imu_detector/docs/HONEST_RESULTS.md` for full methodology.
+
+---
+
+*Updated 2025-12-31 for v0.9.0 + rigorous evaluation*
