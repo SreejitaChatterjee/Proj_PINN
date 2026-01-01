@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "timestamp": "2026-01-01T14:33:51.355818",
+    "timestamp": "2026-01-01T14:49:56.374888",
     "source": "honest_results.json",
     "version": "1.0.0"
   },
@@ -406,15 +406,15 @@
       }
     ],
     "inside_attacks": [
-      "intermittent",
-      "bias",
+      "drift",
       "coordinated",
+      "intermittent",
       "step",
-      "drift"
+      "bias"
     ],
     "outside_attacks": [
-      "noise_injection",
-      "intermittent"
+      "intermittent",
+      "noise_injection"
     ]
   },
   "phase_transitions": {
