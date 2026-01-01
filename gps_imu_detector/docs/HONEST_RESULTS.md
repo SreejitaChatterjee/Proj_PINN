@@ -10,6 +10,21 @@
 
 > **"Across four independent analyses, we find that physics-consistent GPS spoofing attacks form an indistinguishability class under passive, single-vehicle GPS–IMU monitoring, regardless of attack magnitude."**
 
+### The GPS Spoofing Event Horizon
+
+We identify a **GPS spoofing event horizon**: a region of attack space where physics-consistent manipulation lies in the null space of passive GPS–IMU detectors, rendering detection **information-theoretically impossible** regardless of attack magnitude.
+
+**Key Insights:**
+
+| Insight | One-Liner |
+|---------|-----------|
+| **The Illusion of Detectability** | Stronger attacks do not necessarily become easier to detect |
+| **When Spoofing Looks Like Physics** | The most dangerous attacks are the ones that obey the rules |
+| **The Null Space of Detection** | A space where attacks exist but detectors are blind |
+| **Passive Detectors Can Only See Noise** | If an attack doesn't add noise, it leaves no trace |
+| **Security Without Observability** | You cannot secure what you cannot observe |
+| **Attacks That Learn to Behave** | Optimal spoofing imitates physics, not noise |
+
 ---
 
 ## Proposition: Passive GPS–IMU Monitoring Admits a Non-Trivial Indistinguishability Class
