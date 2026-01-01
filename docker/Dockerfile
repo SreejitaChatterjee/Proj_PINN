@@ -57,7 +57,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "from scripts import QuadrotorPINN; print('OK')" || exit 1
 
 # Default command: run API server
-CMD ["uvicorn", "scripts.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "scripts.utils.api:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # ============================================
 # Stage 4: API-only image (smallest)
@@ -74,11 +74,12 @@ RUN pip install --no-cache-dir \
     uvicorn
 
 # Copy only what's needed for API
-COPY scripts/pinn_base.py scripts/pinn_model.py scripts/api.py ./scripts/
+COPY scripts/analysis/pinn_base.py scripts/analysis/pinn_model.py ./scripts/analysis/
+COPY scripts/utils/api.py ./scripts/utils/
 COPY scripts/__init__.py ./scripts/
-COPY models/*.pth ./models/
-COPY models/*.pkl ./models/
+COPY scripts/analysis/__init__.py ./scripts/analysis/
+COPY scripts/utils/__init__.py ./scripts/utils/
 
 EXPOSE 8000
 
-CMD ["uvicorn", "scripts.api:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "scripts.utils.api:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -10,8 +10,8 @@ Quick start:
     print(model.summary())
 """
 
-from .pinn_base import CartPolePINN, DynamicsPINN, PendulumPINN
-from .pinn_model import QuadrotorPINN
+from .analysis.pinn_base import CartPolePINN, DynamicsPINN, PendulumPINN
+from .analysis.pinn_model import QuadrotorPINN
 
 __all__ = [
     "DynamicsPINN",
