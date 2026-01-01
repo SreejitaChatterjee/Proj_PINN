@@ -16,6 +16,8 @@ import pytest
 # Add scripts to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "security"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "scripts" / "generation"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "experiments" / "research" / "scripts_security"))
 
 from generate_synthetic_attacks import GRAVITY, Z_SCALE, SyntheticAttackGenerator
 from generate_synthetic_normals import SyntheticNormalGenerator, extract_features
