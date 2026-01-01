@@ -1,0 +1,778 @@
+{
+  "metadata": {
+    "timestamp": "2026-01-01T14:33:51.355818",
+    "source": "honest_results.json",
+    "version": "1.0.0"
+  },
+  "event_horizon": {
+    "inside_horizon": [
+      {
+        "attack_type": "bias",
+        "magnitude": "0.5x",
+        "auroc": 0.49381172,
+        "ci": [
+          0.4877531815836003,
+          0.5004489988075564
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "bias",
+        "magnitude": "1.0x",
+        "auroc": 0.47695545333333333,
+        "ci": [
+          0.46973495124678266,
+          0.4830323524725221
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "bias",
+        "magnitude": "2.0x",
+        "auroc": 0.5061181033333333,
+        "ci": [
+          0.5000594842849438,
+          0.5120359860013275
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "bias",
+        "magnitude": "5.0x",
+        "auroc": 0.50072429,
+        "ci": [
+          0.494029468291975,
+          0.5058687813392583
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "bias",
+        "magnitude": "10.0x",
+        "auroc": 0.5030256966666666,
+        "ci": [
+          0.49661607095519483,
+          0.5095418140423725
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "bias",
+        "magnitude": "20.0x",
+        "auroc": 0.49678589,
+        "ci": [
+          0.4910998174104805,
+          0.5039723477242397
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "0.5x",
+        "auroc": 0.49630946333333337,
+        "ci": [
+          0.49053154741481636,
+          0.502868005334435
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "1.0x",
+        "auroc": 0.4552119333333333,
+        "ci": [
+          0.4491601445277039,
+          0.4617589183798821
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "2.0x",
+        "auroc": 0.4839700866666667,
+        "ci": [
+          0.4776422834405486,
+          0.4889478903084033
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "5.0x",
+        "auroc": 0.4561927266666667,
+        "ci": [
+          0.449978386998254,
+          0.46187636340510557
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "10.0x",
+        "auroc": 0.4951509233333333,
+        "ci": [
+          0.4883977023688445,
+          0.5022144728011356
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "drift",
+        "magnitude": "20.0x",
+        "auroc": 0.4975388433333333,
+        "ci": [
+          0.4917137548212039,
+          0.5037834249568447
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "0.5x",
+        "auroc": 0.5231148866666666,
+        "ci": [
+          0.5162240110205468,
+          0.5307129371996191
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "1.0x",
+        "auroc": 0.52896484,
+        "ci": [
+          0.5228175965107636,
+          0.5350995107335796
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "2.0x",
+        "auroc": 0.5117200066666666,
+        "ci": [
+          0.5051418456661064,
+          0.5194685322997498
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "5.0x",
+        "auroc": 0.5425366266666667,
+        "ci": [
+          0.5349281500287252,
+          0.5481693852191197
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "10.0x",
+        "auroc": 0.5211307966666666,
+        "ci": [
+          0.5156082838845693,
+          0.5272036347745239
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "coordinated",
+        "magnitude": "20.0x",
+        "auroc": 0.5316549733333333,
+        "ci": [
+          0.5250438720291538,
+          0.5388239294818804
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "0.5x",
+        "auroc": 0.48498198831304284,
+        "ci": [
+          0.47463935390052037,
+          0.4965452748482431
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "1.0x",
+        "auroc": 0.5158853179333125,
+        "ci": [
+          0.5041295175536512,
+          0.5254965309991922
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "0.5x",
+        "auroc": 0.47888774333333334,
+        "ci": [
+          0.4724271927838547,
+          0.4855308509232405
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "1.0x",
+        "auroc": 0.4797327866666667,
+        "ci": [
+          0.4728590339907066,
+          0.4854827559950537
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "2.0x",
+        "auroc": 0.47260544,
+        "ci": [
+          0.46759558942268614,
+          0.4786228921395415
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "5.0x",
+        "auroc": 0.52512547,
+        "ci": [
+          0.519153072133398,
+          0.5320241723122378
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "10.0x",
+        "auroc": 0.4822835033333333,
+        "ci": [
+          0.476329944792105,
+          0.4891600258390663
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      },
+      {
+        "attack_type": "step",
+        "magnitude": "20.0x",
+        "auroc": 0.52447042,
+        "ci": [
+          0.5177029441351717,
+          0.5311398430954436
+        ],
+        "classification": "UNDETECTABLE",
+        "horizon_status": "INSIDE (Indistinguishable)"
+      }
+    ],
+    "outside_horizon": [
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "0.5x",
+        "auroc": 0.6213970333333334,
+        "ci": [
+          0.6159603808419434,
+          0.6274242529164001
+        ],
+        "classification": "MARGINAL",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "1.0x",
+        "auroc": 0.9445236633333334,
+        "ci": [
+          0.9416873253175946,
+          0.9471687270690325
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "2.0x",
+        "auroc": 0.9860388400000001,
+        "ci": [
+          0.9846591824385668,
+          0.9873979933522379
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "5.0x",
+        "auroc": 0.9955789100000001,
+        "ci": [
+          0.995112934804939,
+          0.9960752271877709
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "10.0x",
+        "auroc": 0.9958974233333333,
+        "ci": [
+          0.9954191090488292,
+          0.9964566149753381
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "noise_injection",
+        "magnitude": "20.0x",
+        "auroc": 0.9959628066666666,
+        "ci": [
+          0.9955273418450994,
+          0.9963862832475894
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "2.0x",
+        "auroc": 0.6018031133303765,
+        "ci": [
+          0.5914469041882576,
+          0.6122698656433747
+        ],
+        "classification": "MARGINAL",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "5.0x",
+        "auroc": 0.9113803439670138,
+        "ci": [
+          0.905581747619511,
+          0.9163577097439644
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "10.0x",
+        "auroc": 0.9396331526275374,
+        "ci": [
+          0.9335938911052241,
+          0.9448530737685684
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      },
+      {
+        "attack_type": "intermittent",
+        "magnitude": "20.0x",
+        "auroc": 0.9428263743207924,
+        "ci": [
+          0.9383322106118706,
+          0.9470777008365788
+        ],
+        "classification": "RELIABLE",
+        "horizon_status": "OUTSIDE (Detectable)"
+      }
+    ],
+    "inside_attacks": [
+      "intermittent",
+      "bias",
+      "coordinated",
+      "step",
+      "drift"
+    ],
+    "outside_attacks": [
+      "noise_injection",
+      "intermittent"
+    ]
+  },
+  "phase_transitions": {
+    "bias": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.49381172,
+        0.47695545333333333,
+        0.5061181033333333,
+        0.50072429,
+        0.5030256966666666,
+        0.49678589
+      ],
+      "transition_at": 2.0,
+      "jump_size": 0.029162649999999957,
+      "has_transition": false
+    },
+    "drift": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.49630946333333337,
+        0.4552119333333333,
+        0.4839700866666667,
+        0.4561927266666667,
+        0.4951509233333333,
+        0.4975388433333333
+      ],
+      "transition_at": 10.0,
+      "jump_size": 0.03895819666666661,
+      "has_transition": false
+    },
+    "noise_injection": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.6213970333333334,
+        0.9445236633333334,
+        0.9860388400000001,
+        0.9955789100000001,
+        0.9958974233333333,
+        0.9959628066666666
+      ],
+      "transition_at": 1.0,
+      "jump_size": 0.32312662999999997,
+      "has_transition": true
+    },
+    "coordinated": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.5231148866666666,
+        0.52896484,
+        0.5117200066666666,
+        0.5425366266666667,
+        0.5211307966666666,
+        0.5316549733333333
+      ],
+      "transition_at": 5.0,
+      "jump_size": 0.030816620000000072,
+      "has_transition": false
+    },
+    "intermittent": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.48498198831304284,
+        0.5158853179333125,
+        0.6018031133303765,
+        0.9113803439670138,
+        0.9396331526275374,
+        0.9428263743207924
+      ],
+      "transition_at": 5.0,
+      "jump_size": 0.30957723063663733,
+      "has_transition": true
+    },
+    "step": {
+      "magnitudes": [
+        0.5,
+        1.0,
+        2.0,
+        5.0,
+        10.0,
+        20.0
+      ],
+      "aurocs": [
+        0.47888774333333334,
+        0.4797327866666667,
+        0.47260544,
+        0.52512547,
+        0.4822835033333333,
+        0.52447042
+      ],
+      "transition_at": 5.0,
+      "jump_size": 0.052520029999999995,
+      "has_transition": false
+    }
+  },
+  "equivalence_classes": {
+    "variance_breaking": {
+      "members": [
+        "noise_injection"
+      ],
+      "aurocs": {
+        "noise_injection": 0.9958974233333333
+      },
+      "mean_auroc": 0.9958974233333333,
+      "std_auroc": 0.0
+    },
+    "discontinuity_breaking": {
+      "members": [
+        "intermittent"
+      ],
+      "aurocs": {
+        "intermittent": 0.9396331526275374
+      },
+      "mean_auroc": 0.9396331526275374,
+      "std_auroc": 0.0
+    },
+    "invariant_preserving": {
+      "members": [
+        "bias",
+        "drift",
+        "step",
+        "coordinated"
+      ],
+      "aurocs": {
+        "bias": 0.5030256966666666,
+        "drift": 0.4951509233333333,
+        "coordinated": 0.5211307966666666,
+        "step": 0.4822835033333333
+      },
+      "mean_auroc": 0.50039773,
+      "std_auroc": 0.014074981795141956
+    }
+  },
+  "certificates": [
+    {
+      "attack_type": "bias",
+      "magnitude": "0.5x",
+      "auroc": 0.49381172,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 0.5x (AUROC=0.494, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "bias",
+      "magnitude": "1.0x",
+      "auroc": 0.47695545333333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 1.0x (AUROC=0.477, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "bias",
+      "magnitude": "2.0x",
+      "auroc": 0.5061181033333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 2.0x (AUROC=0.506, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "bias",
+      "magnitude": "5.0x",
+      "auroc": 0.50072429,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 5.0x (AUROC=0.501, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "bias",
+      "magnitude": "10.0x",
+      "auroc": 0.5030256966666666,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 10.0x (AUROC=0.503, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "bias",
+      "magnitude": "20.0x",
+      "auroc": 0.49678589,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: bias @ 20.0x (AUROC=0.497, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "0.5x",
+      "auroc": 0.49630946333333337,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 0.5x (AUROC=0.496, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "1.0x",
+      "auroc": 0.4552119333333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 1.0x (AUROC=0.455, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "2.0x",
+      "auroc": 0.4839700866666667,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 2.0x (AUROC=0.484, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "5.0x",
+      "auroc": 0.4561927266666667,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 5.0x (AUROC=0.456, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "10.0x",
+      "auroc": 0.4951509233333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 10.0x (AUROC=0.495, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "drift",
+      "magnitude": "20.0x",
+      "auroc": 0.4975388433333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: drift @ 20.0x (AUROC=0.498, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "0.5x",
+      "auroc": 0.5231148866666666,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 0.5x (AUROC=0.523, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "1.0x",
+      "auroc": 0.52896484,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 1.0x (AUROC=0.529, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "2.0x",
+      "auroc": 0.5117200066666666,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 2.0x (AUROC=0.512, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "5.0x",
+      "auroc": 0.5425366266666667,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 5.0x (AUROC=0.543, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "10.0x",
+      "auroc": 0.5211307966666666,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 10.0x (AUROC=0.521, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "coordinated",
+      "magnitude": "20.0x",
+      "auroc": 0.5316549733333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: coordinated @ 20.0x (AUROC=0.532, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "intermittent",
+      "magnitude": "0.5x",
+      "auroc": 0.48498198831304284,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: intermittent @ 0.5x (AUROC=0.485, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "intermittent",
+      "magnitude": "1.0x",
+      "auroc": 0.5158853179333125,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: intermittent @ 1.0x (AUROC=0.516, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "0.5x",
+      "auroc": 0.47888774333333334,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 0.5x (AUROC=0.479, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "1.0x",
+      "auroc": 0.4797327866666667,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 1.0x (AUROC=0.480, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "2.0x",
+      "auroc": 0.47260544,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 2.0x (AUROC=0.473, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "5.0x",
+      "auroc": 0.52512547,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 5.0x (AUROC=0.525, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "10.0x",
+      "auroc": 0.4822835033333333,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 10.0x (AUROC=0.482, CI overlaps 50%)"
+    },
+    {
+      "attack_type": "step",
+      "magnitude": "20.0x",
+      "auroc": 0.52447042,
+      "is_certified": true,
+      "certificate": "CERTIFIED INDISTINGUISHABLE: step @ 20.0x (AUROC=0.524, CI overlaps 50%)"
+    }
+  ],
+  "key_sentences": {
+    "event_horizon": "We identify a GPS spoofing event horizon: a region of attack space where physics-consistent manipulation lies in the null space of passive GPS-IMU detectors, rendering detection information-theoretically impossible regardless of attack magnitude.",
+    "illusion": "We show that detectability is governed by invariant violation, not attack strength.",
+    "phase_transition": "Detection exhibits phase transitions governed by signal-to-noise ratio crossing.",
+    "equivalence": "Attacks that preserve kinematics, noise statistics, and temporal smoothness are indistinguishable from real motion.",
+    "null_space": "Bias, drift, step, and coordinated attacks lie in the null space of passive detectors.",
+    "safety_mismatch": "Detection priority does not equal safety priority. Coordinated attacks are both undetectable AND high-impact - this is the critical threat gap."
+  }
+}
