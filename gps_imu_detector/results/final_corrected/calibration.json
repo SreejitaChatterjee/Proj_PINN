@@ -1,0 +1,8 @@
+{
+  "threshold_1pct": 1.2767638004297563,
+  "threshold_5pct": 1.001071115824856,
+  "n_val_normal": 6000,
+  "n_val_attack": 2000,
+  "frozen": true,
+  "calibrated_on": "validation"
+}

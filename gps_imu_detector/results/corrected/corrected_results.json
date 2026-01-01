@@ -1,0 +1,68 @@
+{
+  "config_hash": "2755815c",
+  "environment": {
+    "python_version": "3.14.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "cpu_model": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+    "numpy_version": "2.3.3",
+    "timestamp": "2026-01-01T10:38:17.940354"
+  },
+  "calibration": {
+    "threshold_at_target_fpr": 0.538204448195077,
+    "actual_fpr_at_threshold": 0.01,
+    "target_fpr": 0.01,
+    "percentile_90": 0.4322038490329417,
+    "percentile_95": 0.47022689272920615,
+    "percentile_99": 0.538204448195077,
+    "calibrated_on": "validation",
+    "frozen": true
+  },
+  "leakage_audit": {
+    "causal_features_only": true,
+    "no_future_leakage": true,
+    "no_label_boundary_crossing": true,
+    "no_banned_sensors": true,
+    "max_correlation_to_label": 0.841224758232408,
+    "violations": [],
+    "passed": true
+  },
+  "metrics": {
+    "auroc": {
+      "value": 0.9873976804817344,
+      "ci_lower": 0.9834969980159377,
+      "ci_upper": 0.9909988321162395
+    },
+    "aupr": {
+      "value": 0.989831865187359,
+      "ci_lower": 0.9867097574284162,
+      "ci_upper": 0.9927088392135858
+    },
+    "recall_at_1pct_fpr": {
+      "value": 0.8888839134519183,
+      "ci_lower": 0.850226101942566,
+      "ci_upper": 0.9310742590742591
+    },
+    "recall_at_5pct_fpr": {
+      "value": 0.9507362241753432,
+      "ci_lower": 0.9369115257694968,
+      "ci_upper": 0.9644314734810184
+    },
+    "missed_detection_at_1pct_fpr": 0.1111160865480817,
+    "missed_detection_at_5pct_fpr": 0.0492637758246568
+  },
+  "per_flight": {
+    "auroc_mean": 0.98719,
+    "auroc_std": 0.006609909227818495,
+    "auroc_worst": 0.9688
+  },
+  "controls": {
+    "shuffled_labels_auroc": 0.5016421000000001,
+    "shuffled_labels_std": 0.011893561984956415,
+    "time_reversed_auroc": 0.9873759999999999
+  },
+  "monotonicity": {
+    "passed": true,
+    "issues": []
+  },
+  "consistency_issues": []
+}

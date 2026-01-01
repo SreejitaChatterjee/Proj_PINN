@@ -1,0 +1,10 @@
+{
+  "threshold_at_target_fpr": 0.538204448195077,
+  "actual_fpr_at_threshold": 0.01,
+  "target_fpr": 0.01,
+  "percentile_90": 0.4322038490329417,
+  "percentile_95": 0.47022689272920615,
+  "percentile_99": 0.538204448195077,
+  "calibrated_on": "validation",
+  "frozen": true
+}

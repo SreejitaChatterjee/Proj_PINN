@@ -1,0 +1,544 @@
+{
+  "config": {
+    "gps_noise_std": 1.5,
+    "magnitudes_x_noise": [
+      0.5,
+      1.0,
+      2.0,
+      5.0,
+      10.0,
+      20.0
+    ],
+    "n_test_sequences": 100,
+    "random_seed": 42
+  },
+  "by_attack": {
+    "bias": {
+      "0.5x": {
+        "auroc": 0.49381172,
+        "ci_low": 0.4877531815836003,
+        "ci_high": 0.5004489988075564,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.47695545333333333,
+        "ci_low": 0.46973495124678266,
+        "ci_high": 0.4830323524725221,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.5061181033333333,
+        "ci_low": 0.5000594842849438,
+        "ci_high": 0.5120359860013275,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.50072429,
+        "ci_low": 0.494029468291975,
+        "ci_high": 0.5058687813392583,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.5030256966666666,
+        "ci_low": 0.49661607095519483,
+        "ci_high": 0.5095418140423725,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.49678589,
+        "ci_low": 0.4910998174104805,
+        "ci_high": 0.5039723477242397,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 30.0
+      }
+    },
+    "drift": {
+      "0.5x": {
+        "auroc": 0.49630946333333337,
+        "ci_low": 0.49053154741481636,
+        "ci_high": 0.502868005334435,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.4552119333333333,
+        "ci_low": 0.4491601445277039,
+        "ci_high": 0.4617589183798821,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.4839700866666667,
+        "ci_low": 0.4776422834405486,
+        "ci_high": 0.4889478903084033,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.4561927266666667,
+        "ci_low": 0.449978386998254,
+        "ci_high": 0.46187636340510557,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.4951509233333333,
+        "ci_low": 0.4883977023688445,
+        "ci_high": 0.5022144728011356,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.4975388433333333,
+        "ci_low": 0.4917137548212039,
+        "ci_high": 0.5037834249568447,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 30.0
+      }
+    },
+    "noise_injection": {
+      "0.5x": {
+        "auroc": 0.6213970333333334,
+        "ci_low": 0.6159603808419434,
+        "ci_high": 0.6274242529164001,
+        "classification": "MARGINAL",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.9445236633333334,
+        "ci_low": 0.9416873253175946,
+        "ci_high": 0.9471687270690325,
+        "classification": "RELIABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.9860388400000001,
+        "ci_low": 0.9846591824385668,
+        "ci_high": 0.9873979933522379,
+        "classification": "RELIABLE",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.9955789100000001,
+        "ci_low": 0.995112934804939,
+        "ci_high": 0.9960752271877709,
+        "classification": "RELIABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.9958974233333333,
+        "ci_low": 0.9954191090488292,
+        "ci_high": 0.9964566149753381,
+        "classification": "RELIABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.9959628066666666,
+        "ci_low": 0.9955273418450994,
+        "ci_high": 0.9963862832475894,
+        "classification": "RELIABLE",
+        "magnitude_m": 30.0
+      }
+    },
+    "coordinated": {
+      "0.5x": {
+        "auroc": 0.5231148866666666,
+        "ci_low": 0.5162240110205468,
+        "ci_high": 0.5307129371996191,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.52896484,
+        "ci_low": 0.5228175965107636,
+        "ci_high": 0.5350995107335796,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.5117200066666666,
+        "ci_low": 0.5051418456661064,
+        "ci_high": 0.5194685322997498,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.5425366266666667,
+        "ci_low": 0.5349281500287252,
+        "ci_high": 0.5481693852191197,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.5211307966666666,
+        "ci_low": 0.5156082838845693,
+        "ci_high": 0.5272036347745239,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.5316549733333333,
+        "ci_low": 0.5250438720291538,
+        "ci_high": 0.5388239294818804,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 30.0
+      }
+    },
+    "intermittent": {
+      "0.5x": {
+        "auroc": 0.48498198831304284,
+        "ci_low": 0.47463935390052037,
+        "ci_high": 0.4965452748482431,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.5158853179333125,
+        "ci_low": 0.5041295175536512,
+        "ci_high": 0.5254965309991922,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.6018031133303765,
+        "ci_low": 0.5914469041882576,
+        "ci_high": 0.6122698656433747,
+        "classification": "MARGINAL",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.9113803439670138,
+        "ci_low": 0.905581747619511,
+        "ci_high": 0.9163577097439644,
+        "classification": "RELIABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.9396331526275374,
+        "ci_low": 0.9335938911052241,
+        "ci_high": 0.9448530737685684,
+        "classification": "RELIABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.9428263743207924,
+        "ci_low": 0.9383322106118706,
+        "ci_high": 0.9470777008365788,
+        "classification": "RELIABLE",
+        "magnitude_m": 30.0
+      }
+    },
+    "step": {
+      "0.5x": {
+        "auroc": 0.47888774333333334,
+        "ci_low": 0.4724271927838547,
+        "ci_high": 0.4855308509232405,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 0.75
+      },
+      "1.0x": {
+        "auroc": 0.4797327866666667,
+        "ci_low": 0.4728590339907066,
+        "ci_high": 0.4854827559950537,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.47260544,
+        "ci_low": 0.46759558942268614,
+        "ci_high": 0.4786228921395415,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.52512547,
+        "ci_low": 0.519153072133398,
+        "ci_high": 0.5320241723122378,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.4822835033333333,
+        "ci_low": 0.476329944792105,
+        "ci_high": 0.4891600258390663,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.52447042,
+        "ci_low": 0.5177029441351717,
+        "ci_high": 0.5311398430954436,
+        "classification": "UNDETECTABLE",
+        "magnitude_m": 30.0
+      }
+    }
+  },
+  "full_matrix": {
+    "bias_0.5x": {
+      "auroc": 0.49381172,
+      "ci_low": 0.4877531815836003,
+      "ci_high": 0.5004489988075564,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 0.75
+    },
+    "bias_1.0x": {
+      "auroc": 0.47695545333333333,
+      "ci_low": 0.46973495124678266,
+      "ci_high": 0.4830323524725221,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 1.5
+    },
+    "bias_2.0x": {
+      "auroc": 0.5061181033333333,
+      "ci_low": 0.5000594842849438,
+      "ci_high": 0.5120359860013275,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 3.0
+    },
+    "bias_5.0x": {
+      "auroc": 0.50072429,
+      "ci_low": 0.494029468291975,
+      "ci_high": 0.5058687813392583,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 7.5
+    },
+    "bias_10.0x": {
+      "auroc": 0.5030256966666666,
+      "ci_low": 0.49661607095519483,
+      "ci_high": 0.5095418140423725,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 15.0
+    },
+    "bias_20.0x": {
+      "auroc": 0.49678589,
+      "ci_low": 0.4910998174104805,
+      "ci_high": 0.5039723477242397,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 30.0
+    },
+    "drift_0.5x": {
+      "auroc": 0.49630946333333337,
+      "ci_low": 0.49053154741481636,
+      "ci_high": 0.502868005334435,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 0.75
+    },
+    "drift_1.0x": {
+      "auroc": 0.4552119333333333,
+      "ci_low": 0.4491601445277039,
+      "ci_high": 0.4617589183798821,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 1.5
+    },
+    "drift_2.0x": {
+      "auroc": 0.4839700866666667,
+      "ci_low": 0.4776422834405486,
+      "ci_high": 0.4889478903084033,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 3.0
+    },
+    "drift_5.0x": {
+      "auroc": 0.4561927266666667,
+      "ci_low": 0.449978386998254,
+      "ci_high": 0.46187636340510557,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 7.5
+    },
+    "drift_10.0x": {
+      "auroc": 0.4951509233333333,
+      "ci_low": 0.4883977023688445,
+      "ci_high": 0.5022144728011356,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 15.0
+    },
+    "drift_20.0x": {
+      "auroc": 0.4975388433333333,
+      "ci_low": 0.4917137548212039,
+      "ci_high": 0.5037834249568447,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 30.0
+    },
+    "noise_injection_0.5x": {
+      "auroc": 0.6213970333333334,
+      "ci_low": 0.6159603808419434,
+      "ci_high": 0.6274242529164001,
+      "classification": "MARGINAL",
+      "magnitude_m": 0.75
+    },
+    "noise_injection_1.0x": {
+      "auroc": 0.9445236633333334,
+      "ci_low": 0.9416873253175946,
+      "ci_high": 0.9471687270690325,
+      "classification": "RELIABLE",
+      "magnitude_m": 1.5
+    },
+    "noise_injection_2.0x": {
+      "auroc": 0.9860388400000001,
+      "ci_low": 0.9846591824385668,
+      "ci_high": 0.9873979933522379,
+      "classification": "RELIABLE",
+      "magnitude_m": 3.0
+    },
+    "noise_injection_5.0x": {
+      "auroc": 0.9955789100000001,
+      "ci_low": 0.995112934804939,
+      "ci_high": 0.9960752271877709,
+      "classification": "RELIABLE",
+      "magnitude_m": 7.5
+    },
+    "noise_injection_10.0x": {
+      "auroc": 0.9958974233333333,
+      "ci_low": 0.9954191090488292,
+      "ci_high": 0.9964566149753381,
+      "classification": "RELIABLE",
+      "magnitude_m": 15.0
+    },
+    "noise_injection_20.0x": {
+      "auroc": 0.9959628066666666,
+      "ci_low": 0.9955273418450994,
+      "ci_high": 0.9963862832475894,
+      "classification": "RELIABLE",
+      "magnitude_m": 30.0
+    },
+    "coordinated_0.5x": {
+      "auroc": 0.5231148866666666,
+      "ci_low": 0.5162240110205468,
+      "ci_high": 0.5307129371996191,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 0.75
+    },
+    "coordinated_1.0x": {
+      "auroc": 0.52896484,
+      "ci_low": 0.5228175965107636,
+      "ci_high": 0.5350995107335796,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 1.5
+    },
+    "coordinated_2.0x": {
+      "auroc": 0.5117200066666666,
+      "ci_low": 0.5051418456661064,
+      "ci_high": 0.5194685322997498,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 3.0
+    },
+    "coordinated_5.0x": {
+      "auroc": 0.5425366266666667,
+      "ci_low": 0.5349281500287252,
+      "ci_high": 0.5481693852191197,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 7.5
+    },
+    "coordinated_10.0x": {
+      "auroc": 0.5211307966666666,
+      "ci_low": 0.5156082838845693,
+      "ci_high": 0.5272036347745239,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 15.0
+    },
+    "coordinated_20.0x": {
+      "auroc": 0.5316549733333333,
+      "ci_low": 0.5250438720291538,
+      "ci_high": 0.5388239294818804,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 30.0
+    },
+    "intermittent_0.5x": {
+      "auroc": 0.48498198831304284,
+      "ci_low": 0.47463935390052037,
+      "ci_high": 0.4965452748482431,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 0.75
+    },
+    "intermittent_1.0x": {
+      "auroc": 0.5158853179333125,
+      "ci_low": 0.5041295175536512,
+      "ci_high": 0.5254965309991922,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 1.5
+    },
+    "intermittent_2.0x": {
+      "auroc": 0.6018031133303765,
+      "ci_low": 0.5914469041882576,
+      "ci_high": 0.6122698656433747,
+      "classification": "MARGINAL",
+      "magnitude_m": 3.0
+    },
+    "intermittent_5.0x": {
+      "auroc": 0.9113803439670138,
+      "ci_low": 0.905581747619511,
+      "ci_high": 0.9163577097439644,
+      "classification": "RELIABLE",
+      "magnitude_m": 7.5
+    },
+    "intermittent_10.0x": {
+      "auroc": 0.9396331526275374,
+      "ci_low": 0.9335938911052241,
+      "ci_high": 0.9448530737685684,
+      "classification": "RELIABLE",
+      "magnitude_m": 15.0
+    },
+    "intermittent_20.0x": {
+      "auroc": 0.9428263743207924,
+      "ci_low": 0.9383322106118706,
+      "ci_high": 0.9470777008365788,
+      "classification": "RELIABLE",
+      "magnitude_m": 30.0
+    },
+    "step_0.5x": {
+      "auroc": 0.47888774333333334,
+      "ci_low": 0.4724271927838547,
+      "ci_high": 0.4855308509232405,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 0.75
+    },
+    "step_1.0x": {
+      "auroc": 0.4797327866666667,
+      "ci_low": 0.4728590339907066,
+      "ci_high": 0.4854827559950537,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 1.5
+    },
+    "step_2.0x": {
+      "auroc": 0.47260544,
+      "ci_low": 0.46759558942268614,
+      "ci_high": 0.4786228921395415,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 3.0
+    },
+    "step_5.0x": {
+      "auroc": 0.52512547,
+      "ci_low": 0.519153072133398,
+      "ci_high": 0.5320241723122378,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 7.5
+    },
+    "step_10.0x": {
+      "auroc": 0.4822835033333333,
+      "ci_low": 0.476329944792105,
+      "ci_high": 0.4891600258390663,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 15.0
+    },
+    "step_20.0x": {
+      "auroc": 0.52447042,
+      "ci_low": 0.5177029441351717,
+      "ci_high": 0.5311398430954436,
+      "classification": "UNDETECTABLE",
+      "magnitude_m": 30.0
+    }
+  },
+  "summary": {
+    "timestamp": "2026-01-01T14:02:10.410654",
+    "classifications": {
+      "UNDETECTABLE": 4,
+      "RELIABLE": 2
+    },
+    "monotonic_attacks": 6,
+    "total_attacks": 6
+  }
+}

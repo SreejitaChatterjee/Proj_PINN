@@ -1,0 +1,9 @@
+{
+  "causal_features_only": true,
+  "no_future_leakage": true,
+  "no_label_boundary_crossing": true,
+  "no_banned_sensors": true,
+  "max_correlation_to_label": 0.841224758232408,
+  "violations": [],
+  "passed": true
+}

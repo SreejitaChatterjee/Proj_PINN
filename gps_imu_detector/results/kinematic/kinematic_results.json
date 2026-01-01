@@ -1,0 +1,61 @@
+{
+  "timestamp": "2026-01-01T14:04:16.807170",
+  "by_attack": {
+    "Bias (uncorrelated)_5.0x": {
+      "auroc": 0.5014045233333333,
+      "ci_low": 0.4956132353198756,
+      "ci_high": 0.5072982934570314,
+      "attack_type": "bias",
+      "magnitude": 5.0,
+      "physics_consistent": false
+    },
+    "Bias (uncorrelated)_10.0x": {
+      "auroc": 0.50037804,
+      "ci_low": 0.49540564187463715,
+      "ci_high": 0.5067000700072439,
+      "attack_type": "bias",
+      "magnitude": 10.0,
+      "physics_consistent": false
+    },
+    "Coordinated (naive)_5.0x": {
+      "auroc": 0.5,
+      "ci_low": 0.5,
+      "ci_high": 0.5,
+      "attack_type": "coordinated_naive",
+      "magnitude": 5.0,
+      "physics_consistent": false
+    },
+    "Coordinated (physics-consistent)_5.0x": {
+      "auroc": 0.5068671100000001,
+      "ci_low": 0.5014346044840025,
+      "ci_high": 0.5138651596581906,
+      "attack_type": "coordinated_physics",
+      "magnitude": 5.0,
+      "physics_consistent": true
+    },
+    "Coordinated (physics-consistent)_10.0x": {
+      "auroc": 0.5090256833333333,
+      "ci_low": 0.5033279976129993,
+      "ci_high": 0.5140339121452691,
+      "attack_type": "coordinated_physics",
+      "magnitude": 10.0,
+      "physics_consistent": true
+    },
+    "Noise Injection_5.0x": {
+      "auroc": 0.9818816466666666,
+      "ci_low": 0.9799176140147923,
+      "ci_high": 0.9840897535889099,
+      "attack_type": "noise_injection",
+      "magnitude": 5.0,
+      "physics_consistent": false
+    },
+    "Intermittent_5.0x": {
+      "auroc": 0.5083939053209331,
+      "ci_low": 0.49607345560424937,
+      "ci_high": 0.5199949426883359,
+      "attack_type": "intermittent",
+      "magnitude": 5.0,
+      "physics_consistent": false
+    }
+  }
+}
