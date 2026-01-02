@@ -1,0 +1,145 @@
+{
+  "timestamp": "2026-01-02T08:44:47.081681",
+  "dataset": "ALFA",
+  "n_train_flights": 3,
+  "n_test_flights": 2,
+  "gps_noise_std": 1.5,
+  "by_attack": {
+    "bias": {
+      "1.0x": {
+        "auroc": 0.7412587412587412,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.7282717282717283,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.7444222444222444,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.723942723942724,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.6208791208791209,
+        "magnitude_m": 30.0
+      }
+    },
+    "drift": {
+      "1.0x": {
+        "auroc": 0.7445887445887446,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.7464202464202464,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.7400932400932401,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.7267732267732268,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.6976356976356977,
+        "magnitude_m": 30.0
+      }
+    },
+    "noise_injection": {
+      "1.0x": {
+        "auroc": 0.7622377622377623,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.7584082584082584,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.7097902097902098,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.8426573426573426,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.8448218448218447,
+        "magnitude_m": 30.0
+      }
+    },
+    "coordinated": {
+      "1.0x": {
+        "auroc": 0.7422577422577422,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.7211122211122212,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.6801531801531802,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.6665001665001665,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.6143856143856145,
+        "magnitude_m": 30.0
+      }
+    },
+    "intermittent": {
+      "1.0x": {
+        "auroc": 0.5822676896845695,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.6800486618004866,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.6381074168797953,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.685807150595883,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.7747678018575852,
+        "magnitude_m": 30.0
+      }
+    },
+    "step": {
+      "1.0x": {
+        "auroc": 0.7509157509157509,
+        "magnitude_m": 1.5
+      },
+      "2.0x": {
+        "auroc": 0.7534132534132534,
+        "magnitude_m": 3.0
+      },
+      "5.0x": {
+        "auroc": 0.7514152514152515,
+        "magnitude_m": 7.5
+      },
+      "10.0x": {
+        "auroc": 0.6120546120546121,
+        "magnitude_m": 15.0
+      },
+      "20.0x": {
+        "auroc": 0.6528471528471528,
+        "magnitude_m": 30.0
+      }
+    }
+  },
+  "summary": {
+    "detectable_count": 6,
+    "total_attacks": 6
+  }
+}
