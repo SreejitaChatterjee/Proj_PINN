@@ -24,13 +24,56 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 class ALFAEvaluator:
-    """Evaluate GPS spoofing detection on real ALFA flight data."""
+    """Evaluate GPS spoofing detection on real ALFA + synthetic flight data."""
 
-    def __init__(self, data_dir: str, seed: int = 42):
+    def __init__(self, data_dir: str, seed: int = 42, use_synthetic: bool = True):
         self.data_dir = Path(data_dir)
         self.seed = seed
+        self.use_synthetic = use_synthetic
         np.random.seed(seed)
         self.gps_noise_std = 1.5  # meters (realistic)
+
+    def load_synthetic_normal_flights(self, n_flights: int = 50) -> List[Tuple[str, np.ndarray]]:
+        """Load synthetic normal flights from pinn_ready_attacks.csv."""
+        synthetic_path = self.data_dir.parent.parent / "attack_datasets" / "synthetic" / "pinn_ready_attacks.csv"
+
+        if not synthetic_path.exists():
+            print(f"  Warning: Synthetic data not found at {synthetic_path}")
+            return []
+
+        try:
+            df = pd.read_csv(synthetic_path, nrows=100000)  # Limit for speed
+        except Exception as e:
+            print(f"  Warning: Could not read synthetic data: {e}")
+            return []
+
+        if 'label' not in df.columns:
+            return []
+
+        # Get normal data only
+        normal_df = df[df['label'] == 0]
+
+        required_cols = ['x', 'y', 'z', 'vx', 'vy', 'vz', 'phi', 'theta', 'psi', 'p', 'q', 'r']
+        if not all(c in normal_df.columns for c in required_cols):
+            return []
+
+        # Split into chunks of ~500 samples each to simulate "flights"
+        chunk_size = 500
+        flights = []
+
+        for i in range(min(n_flights, len(normal_df) // chunk_size)):
+            start = i * chunk_size
+            end = start + chunk_size
+            chunk = normal_df.iloc[start:end][required_cols].values
+
+            # Add realistic GPS noise to synthetic data
+            chunk[:, :3] += np.random.randn(len(chunk), 3) * self.gps_noise_std
+            chunk[:, 3:6] += np.random.randn(len(chunk), 3) * self.gps_noise_std * 0.1
+
+            flights.append((f"synthetic_{i:03d}", chunk))
+
+        print(f"  Loaded {len(flights)} synthetic normal flights")
+        return flights
 
     def load_normal_flights(self) -> List[Tuple[str, np.ndarray]]:
         """Load normal flight segments from ALFA (label=0 only)."""
@@ -167,12 +210,26 @@ class ALFAEvaluator:
         return np.concatenate([np.zeros(pad_len), scores])
 
     def evaluate(self) -> Dict:
-        """Run LOSO-CV evaluation on ALFA."""
+        """Run evaluation on ALFA + synthetic data."""
         print("=" * 70)
-        print("GPS SPOOFING EVALUATION ON REAL ALFA FLIGHT DATA")
+        print("GPS SPOOFING EVALUATION ON ALFA + SYNTHETIC FLIGHT DATA")
         print("=" * 70)
 
-        flights = self.load_normal_flights()
+        # Load ALFA flights
+        alfa_flights = self.load_normal_flights()
+        print(f"  ALFA: {len(alfa_flights)} flights")
+
+        # Load synthetic flights to balance dataset
+        synthetic_flights = []
+        if self.use_synthetic:
+            synthetic_flights = self.load_synthetic_normal_flights(n_flights=50)
+            print(f"  Synthetic: {len(synthetic_flights)} flights")
+
+        # Combine
+        flights = alfa_flights + synthetic_flights
+        np.random.shuffle(flights)
+
+        print(f"  Total: {len(flights)} flights")
 
         if len(flights) < 3:
             print("ERROR: Not enough normal flights")
@@ -196,7 +253,9 @@ class ALFAEvaluator:
 
         results = {
             'timestamp': datetime.now().isoformat(),
-            'dataset': 'ALFA',
+            'dataset': 'ALFA + Synthetic',
+            'n_alfa_flights': len(alfa_flights),
+            'n_synthetic_flights': len(synthetic_flights),
             'n_train_flights': len(train_flights),
             'n_test_flights': len(test_flights),
             'gps_noise_std': self.gps_noise_std,
